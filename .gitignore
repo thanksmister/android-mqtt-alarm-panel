@@ -1,0 +1,18 @@
+# IntelliJ IDEA
+.idea
+*.iml
+app.iml
+
+# Gradle
+.gradle
+gradlew.bat
+build
+local.properties
+reports
+
+# Apple
+.DS_Store
+npm-debug.log
+
+#Fabric
+crashlytics.properties
