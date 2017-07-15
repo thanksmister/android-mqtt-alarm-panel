@@ -1,0 +1,60 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:id="@+id/preferenceView">
+
+    <PreferenceCategory
+            android:title="Weather Settings"
+            android:summary="Once activated, the weather settings will appear on the main screen.">
+
+        <CheckBoxPreference
+                android:title="DarkSky"
+                android:summary="Activate the weather module using the DarkSky service"
+                android:key="pref_weather"/>
+
+        <EditTextPreference
+                android:key="pref_weather_api_key"
+                android:enabled="false"
+                android:title="API Secret"
+                android:summary="Enter your DarkSky API secret"
+                android:negativeButtonText="Cancel"
+                android:positiveButtonText="OK"/>
+
+        <EditTextPreference
+                android:key="pref_longitude"
+                android:enabled="false"
+                android:title="Longitude"
+                android:summary="Edit the location latitude"
+                android:digits="-0123456789."
+                android:negativeButtonText="Cancel"
+                android:positiveButtonText="OK"/>
+
+        <EditTextPreference
+                android:key="pref_latitude"
+                android:enabled="false"
+                android:title="Latitude"
+                android:summary="Edit the location longitude"
+                android:digits="-0123456789."
+                android:negativeButtonText="Cancel"
+                android:positiveButtonText="OK"/>
+
+    </PreferenceCategory>
+ 
+</PreferenceScreen>

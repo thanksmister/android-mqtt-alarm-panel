@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">AlarmPanel</string>
+    <string name="account_type" translatable="false">com.thanksmister.androidthings.iot.alarmpanel.ACCOUNT</string>
+    <string name="app_context" translatable="false">com.thanksmister.androidthings.iot.alarmpanel</string>
+    
+    <!-- Menus -->
+    <string name="action_settings">Settings</string>
+    <string name="action_publish">Publish</string>
+
+    <!-- Buttons -->
+    <string name="button_camera">Camera</string>
+    <string name="button_alarm_away">Set Alarm Away</string>
+    <string name="button_alarm_home">Set Alarm Home</string>
+    <string name="button_disarm">Disarm</string>
+    <string name="button_settings">Settings</string>
+
+    <!-- Toasts, Alerts, Errors -->
+    <string name="error_updating_message">Error updating message</string>
+    <string name="alert_publishing_message">Publishing message…</string>
+    <string name="toast_code_match">Alarm code matches current code, try again.</string>
+    <string name="toast_code_alarm_set">Alarm has been set!</string>
+    <string name="toast_code_unchanged">Alarm code unchanged!</string>
+    <string name="toast_code_alarm_canceled">Alarm canceled!</string>
+    <string name="toast_code_changed">Alarm code changed successfully!</string>
+    <string name="toast_code_not_match">Code does not match, try again.</string>
+    <string name="toast_code_invalid">Code is invalid, please try again.</string>
+
+    <!-- Text Content -->
+    <string name="text_enter_alarm_code_title">Enter new code</string>
+    <string name="text_renter_alarm_code_title">Please verify new code</string>
+    <string name="text_count_down_title">Remaining time until active</string>
+
+    <!-- Preferences -->
+    <string name="preference_summary_security_code">Set the alarm system code.</string>
+    <string name="preference_title_security_code">Security Code</string>
+    <string name="preference_title_mqtt_server">MQTT Server Setup</string>
+    <string name="preference_summary_mqtt_server">Set the values for the MQTT server</string>
+    <string name="preference_title_broker">Server Uri or Broker</string>
+    <string name="preference_summary_broker">Set broker service address.</string>
+    <string name="preference_client_id">Client Id</string>
+    <string name="preference_summary_client_id">Set the client Id if required by service.</string>
+    <string name="preference_title_port">Service Port</string>
+    <string name="preference_summary_port">Set the service port value.</string>
+    <string name="preference_title_topic">Topic</string>
+    <string name="preference_summary_topic">Set the topic value.</string>
+    <string name="preference_title_username">Username</string>
+    <string name="preference_summary_username">Set the service username (optional).</string>
+    <string name="preference_title_password">Password</string>
+    <string name="preference_summary_password">Set the service password (optional).</string>
+    <string name="preference_title_alarm">Alarm Code</string>
+    <string name="preference_summary_alarm">Alarm code settings</string>
+
+    <string name="configuration_explanation">Uses the front facing camera to read your expression</string>
+    <string name="device_location">Location</string>
+    <string name="set_up">Set Up</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    
+    <string name="text_title_system">SYSTEM</string>
+    <string name="text_titled_disarmed">DISARMED</string>
+    <string name="text_titled_armed_away">ARMED AWAY</string>
+    <string name="toast_invalid_coordinates">Invalid latitude and longitude values.</string>
+    <string name="toast_invalid_latitude">Value should be between -90 and 90.</string>
+    <string name="toast_invalid_longitude">Value should be between -180 and 180.</string>
+    <string name="toast_invalid_provider">Unable to detect location, please enter lat/long manually.</string>
+
+</resources>

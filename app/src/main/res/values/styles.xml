@@ -1,0 +1,529 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    </style>
+
+    <style name="BorderlessButtonStyle" parent="android:Widget.Holo.Button.Borderless">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/dark_gray_color</item>
+    </style>
+
+    <style name="BorderlessButtonStyle.Active" parent="BorderlessButtonStyle">
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="BorderlessButtonStyle.Blue" parent="BorderlessButtonStyle">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="BottomButtonStyle" parent="BorderlessButtonStyle">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:height">48dp</item>
+        <item name="android:textSize">@dimen/text_size_large_small_action</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="DividerVertical">
+        <item name="android:layout_width"> 1px</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">0dip</item>
+        <item name="android:layout_marginRight">0dip</item>
+        <item name="android:background">@color/stroke_gray</item>
+    </style>
+
+    <style name="DividerVertical.Dark" parent="DividerVertical">>
+        <item name="android:background">@color/dark_gray_color</item>
+    </style>
+
+    <style name="DividerHorizontal" parent="DividerVertical">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="AppTextAppearance" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="TextAppearance" parent="@style/AppTextAppearance">
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TextAppearance.Title">
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="TextAppearance.SubTitle">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextAppearance.Headline">
+        <item name="android:textSize">@dimen/text_size_login</item>
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="TextAppearance.Headline.Black">
+        <item name="android:textSize">@dimen/text_size_login</item>
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="TextAppearance.Headline.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.SmallText">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Black">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Italic">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Red">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.Blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.ExtraSmall">
+        <item name="android:textSize">@dimen/extra_small_text</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.ExtraSmall.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.ExtraSmall.Light">
+        <item name="android:textSize">@dimen/extra_small_text</item>
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.SmallAction">
+        <item name="android:textSize">@dimen/action_small_text</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.ExtraSmall.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.SmallText.ExtraSmall.White.Bold">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Secondary.Dark">
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Secondary">
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Blue">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction" >
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.Bold">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.Red" >
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.Blue" >
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.SmallAction.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Red">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextMedium.Bold.Blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge">
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.Blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction">
+        <item name="android:textSize">@dimen/text_size_large_small_action</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.White">
+        <item name="android:textColor">@color/body_text_1_inverse</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Dark">
+        <item name="android:textColor">@color/dark_gray_color</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Blue">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Green.Bold">
+        <item name="android:textColor">@color/text_green</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextLarge.SmallAction.Red">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge">
+        <item name="android:textSize">@dimen/text_size_headline</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Bold" >
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Green" >
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Blue.Bold">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.White.Bold">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Green.Bold">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.TextExtraLarge.Light">
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Secondary">
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Light" >
+        <item name="android:textColor">@color/body_text</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Red">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Green">
+        <item name="android:textColor">@color/text_green</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Blue">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextAppearance.TextSmall.Blue.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ButtonStyle" parent="@android:style/Widget.Button">
+       
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/body_text_2</item>
+    </style>
+
+    <style name="ButtonGreen" parent="ButtonStyle">
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_green_selector</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ButtonGreen.Small">
+        <item name="android:maxHeight">36dp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_green_small_selector</item>
+    </style>
+
+    <style name="ButtonWhite" parent="ButtonStyle">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:background">@drawable/button_white_small_selector</item>
+    </style>
+
+    <style name="ButtonWhite.Small">
+        <item name="android:maxHeight">36dp</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:background">@drawable/button_white_small_selector</item>
+    </style>
+
+    <style name="ButtonGray" parent="ButtonStyle">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:background">@drawable/button_gray_selector</item>
+    </style>
+
+    <style name="ButtonClear" parent="ButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_transparent</item>
+    </style>
+
+    <style name="ButtonClear.Small">
+        <item name="android:maxHeight">36dp</item>
+        <item name="android:textSize">@dimen/text_size_large_small_action</item>
+    </style>
+
+    <style name="ButtonBlue" parent="ButtonStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_blue_selector</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonRed" parent="ButtonStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_red_selector</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonRed.Small">
+        <item name="android:maxHeight">36dp</item>
+        <item name="android:textSize">@dimen/text_size_large_small_action</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_red_small_selector</item>
+    </style>
+
+    <style name="ButtonBlue.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/button_blue_selector</item>
+    </style>
+
+    <style name="TextButtonStyle" parent="BorderlessButtonStyle">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/dark_gray_color</item>
+        <item name="android:paddingLeft">@dimen/view_padding</item>
+        <item name="android:paddingRight">@dimen/view_padding</item>
+        <item name="android:paddingTop">@dimen/view_padding_xlarge</item>
+        <item name="android:paddingBottom">@dimen/view_padding_xlarge</item>
+        <item name="android:gravity">left|center_vertical</item>
+    </style>
+
+    <style name="TextButtonStyle.Gray">
+        <item name="android:background">@drawable/button_text_selector</item>
+    </style>
+
+    <style name="SmallTextButtonStyle" parent="ButtonStyle">
+        <item name="android:textSize">@dimen/text_size_xsmall</item>
+        <item name="android:textColor">@color/dark_gray_color</item>
+        <item name="android:background">@drawable/button_text_selector</item>
+        <item name="android:paddingLeft">@dimen/view_padding</item>
+        <item name="android:paddingRight">@dimen/view_padding</item>
+        <item name="android:paddingTop">@dimen/view_padding_large</item>
+        <item name="android:paddingBottom">@dimen/view_padding_large</item>
+        <item name="android:layout_gravity">left</item>
+    </style>
+    
+
+    <style name="TextAppearanceFinish" parent="AppTextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearanceStep" parent="AppTextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ButtonBar" parent="@android:style/ButtonBar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="ButtonBarButton">
+        <item name="android:minHeight">@dimen/list_item_height_small</item>
+    </style>
+
+    <style name="WizardPageContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="WizardPageTitle">
+        <item name="android:id">@android:id/title</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding_left</item>
+        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="WizardPageContent">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:paddingLeft">?android:attr/listPreferredItemPaddingLeft</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">#ff0099cc</item>
+    </style>
+
+    <style name="WizardFormLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:textColor">@color/text_light</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+
+    <style name="WizardPageImage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_margin">@dimen/list_item_padding_left</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="WizardPageImageContainer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="ConfigurationItemText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">@dimen/configuration_text_size</item>
+        <item name="android:layout_marginTop">@dimen/item_margin</item>
+    </style>
+
+    <style name="ConfigurationDescriptionText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">@dimen/configuration_description_size</item>
+    </style>
+
+    <style name="ConfigurationEditText" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/configuration_text_size</item>
+    </style>
+
+</resources>

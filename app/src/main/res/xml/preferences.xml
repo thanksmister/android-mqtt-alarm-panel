@@ -1,0 +1,82 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:id="@+id/preferenceView">
+
+    <PreferenceCategory
+            android:title="@string/preference_title_alarm"
+            android:summary="@string/preference_summary_alarm">
+
+        <Preference
+                android:title="@string/preference_title_security_code"
+                android:summary="@string/preference_summary_security_code"
+                android:key="pref_security_code"/>
+
+    </PreferenceCategory>
+   
+    <PreferenceCategory
+            android:title="@string/preference_title_mqtt_server"
+            android:summary="@string/preference_summary_mqtt_server">
+
+        <EditTextPreference
+                android:key="pref_broker"
+                android:title="@string/preference_title_broker"
+                android:summary="@string/preference_summary_broker"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_client_id"
+                android:title="@string/preference_client_id"
+                android:summary="@string/preference_summary_client_id"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_port"
+                android:title="@string/preference_title_port"
+                android:numeric="integer"
+                android:summary="@string/preference_summary_port"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_topic"
+                android:title="@string/preference_title_topic"
+                android:summary="@string/preference_summary_topic"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_username"
+                android:title="@string/preference_title_username"
+                android:summary="@string/preference_summary_username"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_password"
+                android:title="@string/preference_title_password"
+                android:summary="@string/preference_summary_password"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.thanksmister.androidthings.iot.alarmpanel">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission
+            android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+            android:maxSdkVersion="22"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission
+            android:name="android.permission.MANAGE_ACCOUNTS"
+            android:maxSdkVersion="22"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+
+    <!-- Permissions the Application Requires -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+            android:name=".BaseApplication"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+
+        <!-- <uses-library android:name="com.google.android.things"/> -->
+
+        <activity
+                android:name=".MainActivity"
+                android:icon="@mipmap/ic_launcher">
+
+            <!-- Launch activity as default from Android Studio -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- Launch activity automatically on boot -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.IOT_LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name=".ui.activities.LogActivity"/>
+        <activity android:name=".ui.activities.CameraActivity"/>
+
+        <!-- Sync Provider -->
+        <provider
+                android:name=".network.sync.SyncProvider"
+                android:authorities="com.thanksmister.androidthings.iot.alarmpanel"
+                android:exported="false"
+                android:syncable="true"/>
+
+        <!-- Preference Provider -->
+        <provider
+                android:name="dpreference.PreferenceProvider"
+                android:authorities="me.dozen.dpreference.PreferenceProvider"
+                android:enabled="true"
+                android:exported="false"/>
+
+        <!-- Sync Services -->
+        <service
+                android:name=".network.sync.SyncService"
+                android:exported="true"
+                android:process=":sync"
+                >
+            
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter"/>
+        </service>
+
+        <!-- MQTT Services -->
+        <service android:name="org.eclipse.paho.android.service.MqttService"/>
+
+        <activity android:name=".ui.activities.ConfigurationActivity"/>
+    
+    </application>
+
+</manifest>
