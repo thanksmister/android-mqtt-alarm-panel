@@ -40,6 +40,7 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static android.os.Looper.getMainLooper;
 import static java.lang.Math.round;
@@ -90,6 +91,7 @@ public class InformationFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Timber.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         final Handler someHandler = new Handler(getMainLooper());
         someHandler.postDelayed(new Runnable() {
@@ -103,6 +105,8 @@ public class InformationFragment extends BaseFragment {
             }
         }, 10);
 
+        Timber.d("showWeatherModule: " + getConfiguration().showWeatherModule());
+        Timber.d("getDarkSkyKey: " + getConfiguration().getDarkSkyKey());
         if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
                 && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
             connectWeatherModule();

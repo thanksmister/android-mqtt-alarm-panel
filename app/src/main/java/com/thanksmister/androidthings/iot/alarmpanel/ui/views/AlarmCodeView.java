@@ -24,8 +24,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
@@ -33,7 +33,7 @@ import com.thanksmister.androidthings.iot.alarmpanel.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class AlarmCodeView extends FrameLayout {
+public class AlarmCodeView extends LinearLayout {
     public static final int MAX_CODE_LENGTH = 4;
 
     @Bind(R.id.pinCode1)
@@ -81,8 +81,8 @@ public class AlarmCodeView extends FrameLayout {
     @Bind(R.id.buttonDel)
     View buttonDel;
 
-    @Bind(R.id.buttonClear)
-    View buttonClear;
+    @Bind(R.id.buttonCancel)
+    View buttonCancel;
     
     @Bind(R.id.codeTitle)
     TextView codeTitle;
@@ -192,7 +192,7 @@ public class AlarmCodeView extends FrameLayout {
             }
         });
 
-        buttonClear.setOnClickListener(new OnClickListener() {
+        buttonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onCancel();

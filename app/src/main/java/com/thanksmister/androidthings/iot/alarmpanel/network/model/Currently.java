@@ -61,7 +61,7 @@ public class Currently {
     private Integer windBearing;
     @SerializedName("cloudCover")
     @Expose
-    private Integer cloudCover;
+    private Double cloudCover;
     @SerializedName("pressure")
     @Expose
     private Double pressure;
@@ -228,15 +228,15 @@ public class Currently {
         return this;
     }
 
-    public Integer getCloudCover() {
+    public Double getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(Integer cloudCover) {
+    public void setCloudCover(Double cloudCover) {
         this.cloudCover = cloudCover;
     }
 
-    public Currently withCloudCover(Integer cloudCover) {
+    public Currently withCloudCover(Double cloudCover) {
         this.cloudCover = cloudCover;
         return this;
     }

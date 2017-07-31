@@ -35,7 +35,7 @@ import static com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncPro
 
 abstract public class ContentProviderBase extends ContentProvider {
     
-    public static final String CONTENT_AUTHORITY = "com.thanksmister.androidthings.iot.securitysystem";
+    public static final String CONTENT_AUTHORITY = "com.thanksmister.androidthings.iot.alarmpanel";
     public static final Uri CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     
     DbHelper dbOpenHelper;

@@ -17,7 +17,7 @@
     <!-- Toasts, Alerts, Errors -->
     <string name="error_updating_message">Error updating message</string>
     <string name="alert_publishing_message">Publishing message…</string>
-    <string name="toast_code_match">Alarm code matches current code, try again.</string>
+    <string name="toast_code_match">Alarm code matches current code, enter a different code.</string>
     <string name="toast_code_alarm_set">Alarm has been set!</string>
     <string name="toast_code_unchanged">Alarm code unchanged!</string>
     <string name="toast_code_alarm_canceled">Alarm canceled!</string>
@@ -26,8 +26,8 @@
     <string name="toast_code_invalid">Code is invalid, please try again.</string>
 
     <!-- Text Content -->
-    <string name="text_enter_alarm_code_title">Enter new code</string>
-    <string name="text_renter_alarm_code_title">Please verify new code</string>
+    <string name="text_enter_alarm_code_title">Enter a new alarm code</string>
+    <string name="text_renter_alarm_code_title">Please enter the new code again to verify</string>
     <string name="text_count_down_title">Remaining time until active</string>
 
     <!-- Preferences -->
@@ -63,5 +63,9 @@
     <string name="toast_invalid_latitude">Value should be between -90 and 90.</string>
     <string name="toast_invalid_longitude">Value should be between -180 and 180.</string>
     <string name="toast_invalid_provider">Unable to detect location, please enter lat/long manually.</string>
+    <string name="activity_settings_title">Settings</string>
+    <string name="toast_alarm_cancelled">Alarm cancelled...</string>
+    <string name="alarm_timed_out">Alarm timed out...</string>
+    <string name="toast_alarm_deactivated">Alarm deactivated!</string>
 
 </resources>

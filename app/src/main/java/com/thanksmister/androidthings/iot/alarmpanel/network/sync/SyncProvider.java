@@ -41,15 +41,30 @@ public class SyncProvider extends ContentProviderBase {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (isValidUri(uri)) {
-            return super.query(uri, projection, selection, selectionArgs, sortOrder);
+            Cursor cursor = super.query(uri, projection, selection, selectionArgs, sortOrder);
+            // https://stackoverflow.com/questions/7915050/cursorloader-not-updating-after-data-change
+            if (cursor != null) {
+                //cursor.setNotificationUri(contentResolver, uri);
+            }
+            return cursor;
         }
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
+    
+    /*
+     String table = getTableName(uri);
+        SQLiteDatabase database = dbOpenHelper.getReadableDatabase();
+        Cursor cursor = database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+        // https://stackoverflow.com/questions/7915050/cursorloader-not-updating-after-data-change
+        cursor.setNotificationUri(contentResolver, uri);
+        return cursor;
+     */
     
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues initialValues) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
+            //contentResolver.notifyChange(uri, null);
             return super.insert(uri, initialValues);
         }
 
@@ -60,6 +75,7 @@ public class SyncProvider extends ContentProviderBase {
     public int update(@NonNull Uri uri, ContentValues values, String whereClause, String[] whereArgs) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
+            //contentResolver.notifyChange(uri, null);
             return super.update(uri, values, whereClause, whereArgs);
         }
 
@@ -70,6 +86,7 @@ public class SyncProvider extends ContentProviderBase {
     public int delete(@NonNull Uri uri, String where, String[] args) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
+            //contentResolver.notifyChange(uri, null);
             return super.delete(uri, where, args);
         }
 
@@ -79,6 +96,7 @@ public class SyncProvider extends ContentProviderBase {
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values){
         if (isValidUri(uri)) {
+            //contentResolver.notifyChange(uri, null);
             return super.bulkInsert(uri, values);
         }
         throw new IllegalArgumentException("Unknown URI " + uri);

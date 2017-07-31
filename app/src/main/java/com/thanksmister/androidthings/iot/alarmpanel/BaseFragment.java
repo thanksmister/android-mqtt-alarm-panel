@@ -28,8 +28,9 @@ import android.view.ViewGroup;
 
 import com.thanksmister.androidthings.iot.alarmpanel.data.stores.StoreManager;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmCodeView;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.views.ArmOptionsView;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CountDownView;
 
 import butterknife.ButterKnife;
 
@@ -74,7 +75,7 @@ public class BaseFragment extends Fragment {
         return ((BaseActivity) getActivity()).getConfiguration();
     }
 
-    public void showAlarmCodeDialog(AlarmCodeView.ViewListener alarmCodeListener, int code) {
+    public void showAlarmCodeDialog(CodeVerificationView.ViewListener alarmCodeListener, int code) {
         ((BaseActivity) getActivity()).showAlarmCodeDialog(alarmCodeListener, code);
     }
     
@@ -82,7 +83,20 @@ public class BaseFragment extends Fragment {
         ((BaseActivity) getActivity()).showArmOptionsDialog(armListener);
     }
 
+    public void showCountDownDialog(CountDownView.ViewListener armListener) {
+        ((BaseActivity) getActivity()).showCountDownDialog(armListener);
+    }
+
+
     public void hideAlarmCodeDialog() {
         ((BaseActivity) getActivity()).hideAlarmCodeDialog();
+    }
+    
+    public void hideArmOptionsDialog() {
+        ((BaseActivity) getActivity()).hideArmOptionsDialog();
+    }
+
+    public void hideCountDownDialog() {
+        ((BaseActivity) getActivity()).hideCountDownDialog();
     }
 }

@@ -19,10 +19,7 @@
 package com.thanksmister.androidthings.iot.alarmpanel.ui.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -35,6 +32,7 @@ import com.thanksmister.androidthings.iot.alarmpanel.BaseFragment;
 import com.thanksmister.androidthings.iot.alarmpanel.R;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.views.ArmOptionsView;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CountDownView;
 
 import butterknife.Bind;
@@ -70,7 +68,7 @@ public class ControlsFragment extends BaseFragment {
     
     private AlertDialog countDownAlarm;
 
-    private OnFragmentInteractionListener mListener;
+    private OnControlsFragmentListener mListener;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -78,8 +76,12 @@ public class ControlsFragment extends BaseFragment {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    public interface OnControlsFragmentListener {
+        void publishArmedStay();
+        void publishArmedAway();
+        void publishDisarmed();
+        void publishPending();
+        void publishTriggered();
     }
 
     public ControlsFragment() {
@@ -94,19 +96,13 @@ public class ControlsFragment extends BaseFragment {
         return new ControlsFragment();
     }
     
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnControlsFragmentListener) {
+            mListener = (OnControlsFragmentListener) context;
         } else {
-           // throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnControlsFragmentListener");
         }
     }
 
@@ -131,7 +127,7 @@ public class ControlsFragment extends BaseFragment {
             if (armedMode.equals(Configuration.ARMED_AWAY)) {
                 setArmedAwayView();
             } else if (armedMode.equals(Configuration.ARMED_STAY)) {
-                setArmedAwayView();
+                setArmedStayView();
             }
         } else {
            setDisarmedView();
@@ -145,6 +141,7 @@ public class ControlsFragment extends BaseFragment {
     }
 
     private void setArmedAwayView() {
+        mListener.publishArmedAway();
         armedStayView.setVisibility(View.GONE);
         armedAwayView.setVisibility(View.VISIBLE);
         disarmedView.setVisibility(View.GONE);
@@ -156,6 +153,7 @@ public class ControlsFragment extends BaseFragment {
     }
 
     private void setArmedStayView() {
+        mListener.publishArmedStay();
         armedStayView.setVisibility(View.VISIBLE);
         armedAwayView.setVisibility(View.GONE);
         disarmedView.setVisibility(View.GONE);
@@ -167,6 +165,7 @@ public class ControlsFragment extends BaseFragment {
     }
 
     private void setDisarmedView() {
+        mListener.publishDisarmed();
         armedStayView.setVisibility(View.GONE);
         armedAwayView.setVisibility(View.GONE);
         disarmedView.setVisibility(View.VISIBLE);
@@ -177,79 +176,68 @@ public class ControlsFragment extends BaseFragment {
         }*/
     }
 
+    // TODO check sensors open
     private void showArmOptionsDialog() {
         showArmOptionsDialog(new ArmOptionsView.ViewListener() {
             @Override
             public void onArmStay() {
-                getConfiguration().setArmed(true);
-                getConfiguration().setAlarmMode(Configuration.ARMED_STAY);
                 setArmedStayView();
-                hideAlarmCodeDialog();
+                hideArmOptionsDialog();
             }
 
             @Override
             public void onArmAway() {
-                getConfiguration().setArmed(true);
-                getConfiguration().setAlarmMode(Configuration.ARMED_AWAY);
-                setArmedAwayView();
-                hideAlarmCodeDialog();
+                showCountDownAlarm();
+                hideArmOptionsDialog();
             }
         });
     }
 
     private void showAlarmCodeDialog() {
-        /*final int alarmCode = getConfiguration().getAlarmCode();
-        showAlarmCodeDialog(new AlarmCodeView.ViewListener() {
+        final int alarmCode = getConfiguration().getAlarmCode();
+        showAlarmCodeDialog(new CodeVerificationView.ViewListener() {
             @Override
             public void onComplete() {
                 hideAlarmCodeDialog();
-                getConfiguration().setArmed(false);
-                getConfiguration().setAlarmMode(Configuration.DISARMED);
                 setDisarmedView();
+                Toast.makeText(getActivity(), R.string.toast_alarm_deactivated, Toast.LENGTH_LONG).show();
             }
+
+            @Override
+            public void onCancel() {
+                hideAlarmCodeDialog();
+                Toast.makeText(getActivity(), R.string.toast_alarm_cancelled, Toast.LENGTH_SHORT).show();
+            }
+
             @Override
             public void onError() {
                 Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
             }
 
-        }, alarmCode);*/
+            @Override
+            public void onTimedOut() {
+                hideAlarmCodeDialog();
+                Toast.makeText(getActivity(), R.string.alarm_timed_out, Toast.LENGTH_SHORT).show();
+            }
+        }, alarmCode);
     }
 
     /**
      * Shows a count down dialog before setting alarm to away
      */
     public void showCountDownAlarm() {
-
-        if(countDownAlarm != null) {
-            return;
-        }
-
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_alarm_code_set, null, false);
-        final CountDownView countDownView = (CountDownView) view.findViewById(R.id.countDownView);
-        countDownAlarm = new AlertDialog.Builder(getActivity())
-                .setCancelable(false)
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        countDownAlarm.hide();
-                        countDownAlarm = null;
-                        Toast.makeText(getActivity(), R.string.toast_code_alarm_set, Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setView(view)
-                .show();
-
-        new CountDownTimer(20000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                countDownView.setCountDownNumber(millisUntilFinished, 20000);
-            }
-
-            public void onFinish() {
-                countDownAlarm.hide();
-                countDownAlarm = null;
+        showCountDownDialog(new CountDownView.ViewListener() {
+            @Override
+            public void onComplete() {
+                setArmedAwayView();
+                hideCountDownDialog();
                 Toast.makeText(getActivity(), R.string.toast_code_alarm_set, Toast.LENGTH_LONG).show();
             }
-        }.start();
+            @Override
+            public void onCancel() {
+                hideCountDownDialog();
+                Toast.makeText(getActivity(), R.string.toast_alarm_cancelled, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

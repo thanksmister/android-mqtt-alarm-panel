@@ -19,19 +19,40 @@
 package com.thanksmister.androidthings.iot.alarmpanel.ui.views;
 
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
+import com.todddavies.components.progressbar.ProgressWheel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class CountDownView extends FrameLayout {
     
-    @Bind(R.id.countDownNumber)
-    TextView countDownNumber;
+    @Bind(R.id.countDownProgressWheel)
+    ProgressWheel countDownProgressWheel;
+    
+    @OnClick(R.id.buttonCancel)
+    void buttonCancelClicked() {
+        countDownTimer.cancel();
+        countDownTimer = null;
+        listener.onCancel();
+    }
+    
+    private CountDownTimer countDownTimer;
+    private int displaySeconds;
+    private ViewListener listener;
+
+    public interface ViewListener {
+        void onComplete();
+        void onCancel();
+    }
     
     public CountDownView(Context context) {
         super(context);
@@ -45,10 +66,27 @@ public class CountDownView extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+
+        countDownTimer = new CountDownTimer(20000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // decompose difference into days, hours, minutes and seconds
+                displaySeconds = (int) ((millisUntilFinished / 1000) % 60);
+                Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
+                an.setFillAfter(true);
+                countDownProgressWheel.setText(String.valueOf(displaySeconds));
+                countDownProgressWheel.setProgress(displaySeconds * 6);
+            }
+
+            @Override
+            public void onFinish() {
+                listener.onComplete();
+            }
+        }.start();
+    }
+
+    public void setListener(@NonNull ViewListener listener) {
+        this.listener = listener;
     }
     
-    public void setCountDownNumber(long millisUntilFinished, long totalMillisUntilFinished) {
-        long remaining = totalMillisUntilFinished/1000 - millisUntilFinished/1000;
-        countDownNumber.setText(String.valueOf(remaining));
-    }
 }

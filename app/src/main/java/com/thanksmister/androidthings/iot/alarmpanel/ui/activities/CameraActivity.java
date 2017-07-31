@@ -91,8 +91,7 @@ public class CameraActivity extends BaseActivity implements LoaderManager.Loader
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(id == FEED_LOADER_ID) {
-            return new CursorLoader(CameraActivity.this, SyncProvider.FEED_DATA_TABLE_URI, 
-                    FeedDataModel.COLUMN_NAMES, null, null, null);
+            return new CursorLoader(CameraActivity.this, SyncProvider.FEED_DATA_TABLE_URI, FeedDataModel.COLUMN_NAMES, null, null, null);
         }
         return null;
     }
@@ -111,7 +110,6 @@ public class CameraActivity extends BaseActivity implements LoaderManager.Loader
         switch (loader.getId()) {
             case FEED_LOADER_ID:
                 // https://stackoverflow.com/questions/7915050/cursorloader-not-updating-after-data-change
-                data.setNotificationUri(getContentResolver(), SyncProvider.FEED_DATA_TABLE_URI);
                 cursorAdapter = new FeedCursorAdapter(this, data, false);
                 listView.setAdapter(cursorAdapter);
                 /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

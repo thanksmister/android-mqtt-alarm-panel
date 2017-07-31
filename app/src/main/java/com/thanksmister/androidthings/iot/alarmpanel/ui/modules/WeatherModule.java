@@ -75,7 +75,6 @@ public class WeatherModule  {
             final DarkSkyApi api = new DarkSkyApi();
             final DarkSkyFetcher fetcher = new DarkSkyFetcher(api);
             
-            
             task = new DarkSkyTask(fetcher);
             task.setOnExceptionListener(new DarkSkyTask.OnExceptionListener() {
                 public void onException(Exception exception) {

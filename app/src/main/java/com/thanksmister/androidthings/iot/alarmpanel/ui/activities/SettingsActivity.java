@@ -65,6 +65,13 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
 
         setContentView(R.layout.activity_settings);
 
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().show();
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle(R.string.activity_settings_title);
+        }
+
         ButterKnife.bind(this);
 
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());

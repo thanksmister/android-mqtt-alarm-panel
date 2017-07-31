@@ -19,20 +19,39 @@
 package com.thanksmister.androidthings.iot.alarmpanel.ui.views;
 
 import android.content.Context;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
+import com.todddavies.components.progressbar.ProgressWheel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class CodeVerificationView extends LinearLayout {
     
     public static final int MAX_CODE_LENGTH = 4;
+
+    @Bind(R.id.pinCode1)
+    ImageView pinCode1;
+
+    @Bind(R.id.pinCode2)
+    ImageView pinCode2;
+
+    @Bind(R.id.pinCode3)
+    ImageView pinCode3;
+
+    @Bind(R.id.pinCode4)
+    ImageView pinCode4;
     
     @Bind(R.id.button0)
     View button0;
@@ -67,13 +86,19 @@ public class CodeVerificationView extends LinearLayout {
     @Bind(R.id.buttonDel)
     View buttonDel;
 
-    @Bind(R.id.buttonClear)
-    View buttonClear;
+    @Bind(R.id.buttonCancel)
+    View buttonCancel;
     
-    private boolean pinComplete = false;
-    private String pinCode = "";
+    @Bind(R.id.countDownProgressWheel)
+    ProgressWheel countDownProgressWheel;
+    
+    private boolean codeComplete = false;
+    private String enteredCode = "";
     private ViewListener listener;
     private int code;
+    private int displaySeconds;
+    private CountDownTimer countDownTimer;
+    private Handler handler;
 
     public CodeVerificationView(Context context) {
         super(context);
@@ -85,6 +110,7 @@ public class CodeVerificationView extends LinearLayout {
 
     @Override
     protected void onFinishInflate() {
+        
         super.onFinishInflate();
 
         ButterKnife.bind(this);
@@ -173,50 +199,129 @@ public class CodeVerificationView extends LinearLayout {
             }
         });
 
-        buttonClear.setOnClickListener(new OnClickListener() {
+        buttonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                pinComplete = false;
-                pinCode = "";
+                reset();
+                countDownTimer.cancel();
+                countDownTimer = null;
+                listener.onCancel();
             }
         });
+
+        countDownTimer = new CountDownTimer(20000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                displaySeconds = (int) (millisUntilFinished / 1000);
+                Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
+                an.setFillAfter(true);
+                countDownProgressWheel.setText(String.valueOf(displaySeconds));
+                countDownProgressWheel.setProgress(displaySeconds * 18);
+            }
+
+            @Override
+            public void onFinish() {
+                Timber.d("Timed out...");
+                listener.onTimedOut();
+            }
+        }.start();
     }
     
     public void setCode(int code) {
         this.code = code;
     }
     
-    public void clear() {
-        pinComplete = false;
-        pinCode = "";
-    }
-
     public void setListener(@NonNull ViewListener listener) {
         this.listener = listener;
     }
 
     public interface ViewListener {
         void onComplete();
+        void onCancel();
         void onError();
+        void onTimedOut();
+    }
+    
+    private void reset() {
+        codeComplete = false;
+        enteredCode = "";
     }
 
     private void addPinCode(String code) {
-        
-        if (pinComplete) 
+        if (codeComplete)
             return;
 
-        pinCode += code;
-        
-        if (pinCode.length() == MAX_CODE_LENGTH) {
-            pinComplete = true;
+        enteredCode += code;
+
+        showFilledPins(enteredCode.length());
+
+        if (enteredCode.length() == MAX_CODE_LENGTH) {
+            codeComplete = true;
+            handler = new Handler();
+            handler.postDelayed(delayRunnable, 500);
+        }
+    }
+
+    private Runnable delayRunnable = new Runnable() {
+        @Override
+        public void run() {
+            handler.removeCallbacks(delayRunnable);
+            validateCode(enteredCode);
+        }
+    };
+    
+    private void removePinCode() {
+        if (codeComplete) {
+            return;
+        }
+
+        if (!TextUtils.isEmpty(enteredCode)) {
+            enteredCode = enteredCode.substring(0, enteredCode.length() - 1);
         }
     }
     
-    private void removePinCode() {
-        if (pinComplete) return;
+    private void validateCode(String validateCode) {
+        int codeInt = Integer.parseInt(validateCode);
+        if(codeInt == code) {
+            listener.onComplete();
+        } else {
+            reset();
+            listener.onError();
+        }
+    }
 
-        if (!TextUtils.isEmpty(pinCode)) {
-            pinCode = pinCode.substring(0, pinCode.length() - 1);
+    private void showFilledPins(int pinsShown) {
+        switch (pinsShown) {
+            case 1:
+                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode2.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                break;
+            case 2:
+                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                break;
+            case 3:
+                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode3.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                break;
+            case 4:
+                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode3.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode4.setImageResource(R.drawable.ic_pin_code_on);
+                break;
+            default:
+                pinCode1.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode2.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                break;
         }
     }
 }

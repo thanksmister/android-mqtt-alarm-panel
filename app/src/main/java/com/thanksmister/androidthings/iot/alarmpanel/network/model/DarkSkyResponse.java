@@ -22,7 +22,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class DarkSkyResponse {
-
+    
     @SerializedName("latitude")
     @Expose
     private Double latitude;
