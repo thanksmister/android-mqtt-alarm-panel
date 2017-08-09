@@ -18,13 +18,17 @@
 
 package com.thanksmister.androidthings.iot.alarmpanel.network.sync;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.db.FeedDataContract;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.DbHelper;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.ComponentModel;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.SubscriptionModel;
 import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.db.UpdatesContract;
 
 public class SyncProvider extends ContentProviderBase {
@@ -32,20 +36,31 @@ public class SyncProvider extends ContentProviderBase {
     public static final long SYNC_FREQUENCY = 5 * 60;  // 5 minutes in seconds
 
     public static final Uri UPDATES_TABLE_URI = CONTENT_URI.buildUpon().appendPath(UpdatesContract.TABLE_NAME).build();
-    public static final Uri FEED_DATA_TABLE_URI = CONTENT_URI.buildUpon().appendPath(FeedDataContract.TABLE_NAME).build();
+    public static final Uri SUBSCRIPTION_DATA_TABLE_URI = CONTENT_URI.buildUpon().appendPath(SubscriptionModel.TABLE_NAME).build();
+    public static final Uri COMPONENT_DATA_TABLE_URI = CONTENT_URI.buildUpon().appendPath(ComponentModel.TABLE_NAME).build();
 
     public SyncProvider()
     {
     }
 
+    DbHelper dbOpenHelper;
+    ContentResolver contentResolver;
+
+    @Override
+    public boolean onCreate() {
+        dbOpenHelper = new DbHelper(getContext());
+        contentResolver = getContext().getContentResolver();
+        return true;
+    }
+
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (isValidUri(uri)) {
-            Cursor cursor = super.query(uri, projection, selection, selectionArgs, sortOrder);
+            String table = getTableName(uri);
+            SQLiteDatabase database = dbOpenHelper.getReadableDatabase();
+            Cursor cursor = database.query(table, projection, selection, selectionArgs, null, null, sortOrder);
             // https://stackoverflow.com/questions/7915050/cursorloader-not-updating-after-data-change
-            if (cursor != null) {
-                //cursor.setNotificationUri(contentResolver, uri);
-            }
+            cursor.setNotificationUri(contentResolver, uri);
             return cursor;
         }
         throw new IllegalArgumentException("Unknown URI " + uri);
@@ -59,13 +74,22 @@ public class SyncProvider extends ContentProviderBase {
         cursor.setNotificationUri(contentResolver, uri);
         return cursor;
      */
+
+    public static String getTableName(Uri uri) {
+        String value = uri.getPath();
+        value = value.replace("/", "");//we need to remove '/'
+        return value;
+    }
     
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues initialValues) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
-            //contentResolver.notifyChange(uri, null);
-            return super.insert(uri, initialValues);
+            String table = getTableName(uri);
+            SQLiteDatabase database = dbOpenHelper.getWritableDatabase();
+            long value = database.insert(table, null, initialValues);
+            contentResolver.notifyChange(uri, null);
+            return Uri.withAppendedPath(CONTENT_URI, String.valueOf(value));
         }
 
         throw new IllegalArgumentException("Unknown URI " + uri);
@@ -75,8 +99,10 @@ public class SyncProvider extends ContentProviderBase {
     public int update(@NonNull Uri uri, ContentValues values, String whereClause, String[] whereArgs) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
-            //contentResolver.notifyChange(uri, null);
-            return super.update(uri, values, whereClause, whereArgs);
+            String table = getTableName(uri);
+            SQLiteDatabase database = dbOpenHelper.getWritableDatabase();
+            contentResolver.notifyChange(uri, null);
+            return database.update(table, values, whereClause, whereArgs);
         }
 
         throw new IllegalArgumentException("Unknown URI " + uri);
@@ -86,8 +112,10 @@ public class SyncProvider extends ContentProviderBase {
     public int delete(@NonNull Uri uri, String where, String[] args) {
         // Validates the incoming URI. Only the full provider URI is allowed for inserts.
         if (isValidUri(uri)) {
-            //contentResolver.notifyChange(uri, null);
-            return super.delete(uri, where, args);
+            String table = getTableName(uri);
+            SQLiteDatabase dataBase = dbOpenHelper.getWritableDatabase();
+            contentResolver.notifyChange(uri, null);
+            return dataBase.delete(table, where, args);
         }
 
         throw new IllegalArgumentException("Unknown URI " + uri);
@@ -110,6 +138,8 @@ public class SyncProvider extends ContentProviderBase {
     }
 
     public boolean isValidUri(Uri uri) {
-        return (uri.equals(UPDATES_TABLE_URI) || uri.equals(FEED_DATA_TABLE_URI));
+        return (uri.equals(UPDATES_TABLE_URI) 
+                || uri.equals(SUBSCRIPTION_DATA_TABLE_URI)
+                || uri.equals(COMPONENT_DATA_TABLE_URI));
     }
 }

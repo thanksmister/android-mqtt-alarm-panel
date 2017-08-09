@@ -19,9 +19,14 @@
 package com.thanksmister.androidthings.iot.alarmpanel.ui.fragments;
 
 import android.content.Context;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,26 +35,51 @@ import android.widget.Toast;
 
 import com.thanksmister.androidthings.iot.alarmpanel.BaseFragment;
 import com.thanksmister.androidthings.iot.alarmpanel.R;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.SubscriptionModel;
+import com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncProvider;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmDisableView;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmPendingView;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.views.ArmOptionsView;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CountDownView;
+import com.thanksmister.androidthings.iot.alarmpanel.utils.AlarmUtils;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
+
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ARM_AWAY_PENDING;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ARM_HOME;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ARM_HOME_PENDING;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ARM_PENDING;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_DISARM;
 
 
-public class ControlsFragment extends BaseFragment {
+public class ControlsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    // The loader's unique id. Loader ids are specific to the Activity or
+    private static final int DATA_LOADER_ID = 1;
+    
     @Bind(R.id.armedAwayView)
     View armedAwayView;
 
-    @Bind(R.id.armedStayView)
-    View armedStayView;
+    @Bind(R.id.armedHomeView)
+    View armedHomeView;
 
     @Bind(R.id.disarmedView)
     LinearLayout disarmedView;
+
+    @Bind(R.id.pendingView)
+    LinearLayout pendingView;
+    
+    @Bind(R.id.alarmPendingLayout)
+    View countDownLayout;
+    
+    @Bind(R.id.alarmPendingView)
+    AlarmPendingView alarmPendingView;
  
     @OnClick(R.id.armButton)
     public void armButtonClick() {
@@ -58,16 +88,23 @@ public class ControlsFragment extends BaseFragment {
 
     @OnClick(R.id.disarmAwayButton)
     public void disarmAwayButtonClick() {
-        showAlarmCodeDialog();
+        showAlarmDisableDialog();
     }
 
-    @OnClick(R.id.disarmStayButton)
-    public void disarmStayClick() {
-        showAlarmCodeDialog();
+    @OnClick(R.id.disarmHomeButton)
+    public void disarmHomeClick() {
+        showAlarmDisableDialog();
+    }
+
+    @OnClick(R.id.disarmPendingButton)
+    public void disarmPendingButton() {
+        showAlarmDisableDialog();
     }
     
-    private AlertDialog countDownAlarm;
-
+    @AlarmUtils.AlarmStates
+    private String currentState;
+    private SubscriptionObserver subscriptionObserver;
+    
     private OnControlsFragmentListener mListener;
 
     /**
@@ -77,11 +114,9 @@ public class ControlsFragment extends BaseFragment {
      * activity.
      */
     public interface OnControlsFragmentListener {
-        void publishArmedStay();
+        void publishArmedHome();
         void publishArmedAway();
         void publishDisarmed();
-        void publishPending();
-        void publishTriggered();
     }
 
     public ControlsFragment() {
@@ -117,17 +152,31 @@ public class ControlsFragment extends BaseFragment {
         ButterKnife.bind(this, fragmentView);
         return fragmentView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        subscriptionObserver = new SubscriptionObserver(new Handler());
+        getActivity().getContentResolver().registerContentObserver(SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, true, subscriptionObserver);
+        getLoaderManager().restartLoader(DATA_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getContentResolver().unregisterContentObserver(subscriptionObserver);
+        getLoaderManager().destroyLoader(DATA_LOADER_ID);
+    }
     
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if(getConfiguration().isArmed()) {
             String armedMode = getConfiguration().getAlarmMode();
-            if (armedMode.equals(Configuration.ARMED_AWAY)) {
+            if (armedMode.equals(PREF_ARM_AWAY)) {
                 setArmedAwayView();
-            } else if (armedMode.equals(Configuration.ARMED_STAY)) {
-                setArmedStayView();
+            } else if (armedMode.equals(PREF_ARM_HOME)) {
+                setArmedHomeView();
             }
         } else {
            setDisarmedView();
@@ -135,109 +184,214 @@ public class ControlsFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-
-    private void setArmedAwayView() {
-        mListener.publishArmedAway();
-        armedStayView.setVisibility(View.GONE);
-        armedAwayView.setVisibility(View.VISIBLE);
-        disarmedView.setVisibility(View.GONE);
-        /*if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle(" System is armed");
-            getSupportActionBar().setLogo(R.drawable.ic_lock_lg);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.red)));
-        }*/
-    }
-
-    private void setArmedStayView() {
-        mListener.publishArmedStay();
-        armedStayView.setVisibility(View.VISIBLE);
-        armedAwayView.setVisibility(View.GONE);
-        disarmedView.setVisibility(View.GONE);
-        /*if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle(" System is armed");
-            getSupportActionBar().setLogo(R.drawable.ic_lock_lg);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.red)));
-        }*/
-    }
-
-    private void setDisarmedView() {
-        mListener.publishDisarmed();
-        armedStayView.setVisibility(View.GONE);
-        armedAwayView.setVisibility(View.GONE);
-        disarmedView.setVisibility(View.VISIBLE);
-        /*if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle(" System disarmed");
-            getSupportActionBar().setLogo(R.drawable.ic_unlock_lg);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.blue)));
-        }*/
-    }
-
-    // TODO check sensors open
+    
+    // TODO right now we are relying on the pending time from home assistant, maybe we should do this internally
     private void showArmOptionsDialog() {
         showArmOptionsDialog(new ArmOptionsView.ViewListener() {
             @Override
-            public void onArmStay() {
-                setArmedStayView();
-                hideArmOptionsDialog();
+            public void onArmHome() {
+                mListener.publishArmedHome();
+                //setArmedHomeView();
+                //hideArmOptionsDialog();
+                //setPendingView(PREF_ARM_HOME_PENDING);
             }
-
             @Override
             public void onArmAway() {
-                showCountDownAlarm();
                 hideArmOptionsDialog();
+                setPendingView(PREF_ARM_AWAY_PENDING);
             }
         });
     }
+    
+    /**
+     * Handles the application state from the state topic payload changes from the subscriptoin.
+     * @param state Payload from the state topic subscription.
+     */
+    @AlarmUtils.AlarmStates
+    private void handleStateChange(String state) {
 
-    private void showAlarmCodeDialog() {
-        final int alarmCode = getConfiguration().getAlarmCode();
-        showAlarmCodeDialog(new CodeVerificationView.ViewListener() {
-            @Override
-            public void onComplete() {
-                hideAlarmCodeDialog();
+        Timber.d("handleStateChange state: " + state);
+        Timber.d("handleStateChange mode: " + getConfiguration().getAlarmMode());
+        
+        // hide any dialogs
+        hideAlarmDisableDialog(); 
+        hideArmOptionsDialog();
+        hideAlarmPendingView();
+        
+        switch (state) {
+            case AlarmUtils.STATE_ARM_AWAY:
+                setArmedAwayView();
+                Toast.makeText(getActivity(), R.string.toast_code_alarm_set, Toast.LENGTH_LONG).show();
+                break;
+            case AlarmUtils.STATE_ARM_HOME:
+                setArmedHomeView();
+                hideAlarmPendingView();
+                Toast.makeText(getActivity(), R.string.toast_code_alarm_set, Toast.LENGTH_LONG).show();
+                break;
+            case AlarmUtils.STATE_DISARM:
                 setDisarmedView();
                 Toast.makeText(getActivity(), R.string.toast_alarm_deactivated, Toast.LENGTH_LONG).show();
-            }
+                break;
+            case AlarmUtils.STATE_PENDING:
+                // alarm was active and triggered, show dialog to disarm, otherwise we received pending before arm from HASS
+                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
+                    showAlarmDisableDialog();
+                }  else {
+                    setPendingView(PREF_ARM_PENDING);
+                }
+                break;
+            case AlarmUtils.STATE_TRIGGERED:
+                // handled in the main activity
+                break;
+            default:
+                throw new IllegalStateException("Invalid state topic: " + state);
+        }
+    }
 
-            @Override
-            public void onCancel() {
-                hideAlarmCodeDialog();
-                Toast.makeText(getActivity(), R.string.toast_alarm_cancelled, Toast.LENGTH_SHORT).show();
-            }
+    private void setArmedAwayView() {
+        getConfiguration().setArmed(true);
+        getConfiguration().setAlarmMode(PREF_ARM_AWAY);
+        armedHomeView.setVisibility(View.GONE);
+        armedAwayView.setVisibility(View.VISIBLE);
+        disarmedView.setVisibility(View.GONE);
+        pendingView.setVisibility(View.GONE);
+    }
 
-            @Override
-            public void onError() {
-                Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
-            }
+    private void setArmedHomeView() {
+        getConfiguration().setArmed(true);
+        getConfiguration().setAlarmMode(PREF_ARM_HOME);
+        armedHomeView.setVisibility(View.VISIBLE);
+        armedAwayView.setVisibility(View.GONE);
+        disarmedView.setVisibility(View.GONE);
+        pendingView.setVisibility(View.GONE);
+    }
 
+    /**
+     * We want to show a pending countdown view for the given 
+     * mode which can be arm home, arm away, or arm pending (from HASS).
+     * @param mode PREF_ARM_HOME_PENDING, PREF_ARM_AWAY_PENDING, PREF_ARM_PENDING
+     */
+    private void setPendingView(String mode) {
+        getConfiguration().setArmed(true);
+        getConfiguration().setAlarmMode(mode);
+        if(PREF_ARM_HOME_PENDING.equals(mode)) {
+            armedHomeView.setVisibility(View.GONE);
+            armedAwayView.setVisibility(View.VISIBLE);
+            disarmedView.setVisibility(View.GONE);
+            pendingView.setVisibility(View.GONE);
+        } else if (PREF_ARM_AWAY_PENDING.equals(mode)) {
+            armedHomeView.setVisibility(View.VISIBLE);
+            armedAwayView.setVisibility(View.GONE);
+            disarmedView.setVisibility(View.GONE);
+            pendingView.setVisibility(View.GONE);
+        } else if (PREF_ARM_PENDING.equals(mode)) {
+            armedHomeView.setVisibility(View.GONE);
+            armedAwayView.setVisibility(View.GONE);
+            disarmedView.setVisibility(View.GONE);
+            pendingView.setVisibility(View.VISIBLE);
+        }
+        showAlarmPendingView(mode);
+    }
+
+    private void setDisarmedView() {
+        getConfiguration().setArmed(false);
+        getConfiguration().setAlarmMode(PREF_DISARM);
+        armedHomeView.setVisibility(View.GONE);
+        armedAwayView.setVisibility(View.GONE);
+        disarmedView.setVisibility(View.VISIBLE);
+        pendingView.setVisibility(View.GONE);
+    }
+    
+    private void showAlarmPendingView(final String mode) {
+        countDownLayout.setVisibility(View.VISIBLE);
+        alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
             @Override
-            public void onTimedOut() {
-                hideAlarmCodeDialog();
-                Toast.makeText(getActivity(), R.string.alarm_timed_out, Toast.LENGTH_SHORT).show();
+            public void onTimeOut() {
+                if(PREF_ARM_AWAY_PENDING.equals(mode)) {
+                    // alarm was set from panel, publish to HASS
+                    mListener.publishArmedAway();
+                } else if (PREF_ARM_HOME_PENDING.equals(mode)){
+                    // alarm was set from panel, publish to HASS
+                    mListener.publishArmedHome();
+                }
+                hideAlarmPendingView();
             }
-        }, alarmCode);
+        });
+        alarmPendingView.startCountDown(getConfiguration().getPendingTime());
+    }
+    
+    private void hideAlarmPendingView() {
+        countDownLayout.setVisibility(View.GONE);
+        alarmPendingView.stopCountDown();
     }
 
     /**
      * Shows a count down dialog before setting alarm to away
      */
-    public void showCountDownAlarm() {
-        showCountDownDialog(new CountDownView.ViewListener() {
+    private void showAlarmDisableDialog() {
+        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
             @Override
             public void onComplete() {
-                setArmedAwayView();
-                hideCountDownDialog();
-                Toast.makeText(getActivity(), R.string.toast_code_alarm_set, Toast.LENGTH_LONG).show();
+                mListener.publishDisarmed();
+            }
+            @Override
+            public void onError() {
+                Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancel() {
-                hideCountDownDialog();
-                Toast.makeText(getActivity(), R.string.toast_alarm_cancelled, Toast.LENGTH_SHORT).show();
+                hideAlarmDisableDialog();
             }
-        });
+        }, getConfiguration().getAlarmCode());
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        if(id == DATA_LOADER_ID) {
+            return new CursorLoader(getActivity(), SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, SubscriptionModel.COLUMN_NAMES, null, null, null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case DATA_LOADER_ID:
+                List<SubscriptionModel> subscriptionModels = SubscriptionModel.getModelList(cursor);
+                if(subscriptionModels != null && !subscriptionModels.isEmpty()) {
+                    // get the last message
+                    SubscriptionModel subscriptionModel = subscriptionModels.get(subscriptionModels.size() - 1);
+                    // if we have a payload has one of the states
+                    if(AlarmUtils.hasSupportedStates(subscriptionModel.payload())) {
+                        handleStateChange(subscriptionModel.payload());
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    private class SubscriptionObserver extends ContentObserver {
+        SubscriptionObserver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            if(selfChange) {
+                getActivity().getSupportLoaderManager().restartLoader(DATA_LOADER_ID, null, ControlsFragment.this);
+            }
+        }
     }
 }

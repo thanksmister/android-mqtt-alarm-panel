@@ -37,8 +37,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class CodeVerificationView extends LinearLayout {
-    
+public class AlarmDisableView extends LinearLayout {
+
     public static final int MAX_CODE_LENGTH = 4;
 
     @Bind(R.id.pinCode1)
@@ -52,7 +52,7 @@ public class CodeVerificationView extends LinearLayout {
 
     @Bind(R.id.pinCode4)
     ImageView pinCode4;
-    
+
     @Bind(R.id.button0)
     View button0;
 
@@ -88,10 +88,10 @@ public class CodeVerificationView extends LinearLayout {
 
     @Bind(R.id.buttonCancel)
     View buttonCancel;
-    
+
     @Bind(R.id.countDownProgressWheel)
     ProgressWheel countDownProgressWheel;
-    
+
     private boolean codeComplete = false;
     private String enteredCode = "";
     private ViewListener listener;
@@ -99,23 +99,22 @@ public class CodeVerificationView extends LinearLayout {
     private int displaySeconds;
     private CountDownTimer countDownTimer;
     private Handler handler;
-    private int pendingTimeSeconds = 20; // pending time in seconds
-
-    public CodeVerificationView(Context context) {
+  
+    public AlarmDisableView(Context context) {
         super(context);
     }
 
-    public CodeVerificationView(Context context, AttributeSet attrs) {
+    public AlarmDisableView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     protected void onFinishInflate() {
-        
+
         super.onFinishInflate();
 
         ButterKnife.bind(this);
-        
+
         button0.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,58 +202,61 @@ public class CodeVerificationView extends LinearLayout {
         buttonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                reset();
-                countDownTimer.cancel();
-                countDownTimer = null;
+                clear();
                 listener.onCancel();
             }
         });
-        
+    }
+
+    public void startCountDown(int pendingTime) {
+        Timber.d("startCountDown: "+ pendingTime*1000);
         // TODO add a config for this and set it
-        countDownTimer = new CountDownTimer(pendingTimeSeconds*1000, 1000) {
+        final int divideBy = 360/pendingTime;
+        countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 displaySeconds = (int) (millisUntilFinished / 1000);
                 Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
                 an.setFillAfter(true);
                 countDownProgressWheel.setText(String.valueOf(displaySeconds));
-                countDownProgressWheel.setProgress(displaySeconds * 18);
+                countDownProgressWheel.setProgress(displaySeconds * divideBy);
             }
 
             @Override
             public void onFinish() {
-                Timber.d("Timed out...");
-                listener.onTimedOut();
+                Timber.d("Timed up...");
+                listener.onCancel();
             }
         }.start();
     }
 
-    /**
-     * Set the pending time in seconds
-     * @param pendingTime
-     */
-    public void setPendingTime(int pendingTime) {
-        pendingTimeSeconds = pendingTime;
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
     }
     
     public void setCode(int code) {
         this.code = code;
     }
-    
+
     public void setListener(@NonNull ViewListener listener) {
         this.listener = listener;
     }
 
     public interface ViewListener {
         void onComplete();
-        void onCancel();
         void onError();
-        void onTimedOut();
+        void onCancel();
     }
-    
-    private void reset() {
+
+    private void clear() {
         codeComplete = false;
         enteredCode = "";
+        showFilledPins(0);
     }
 
     private void addPinCode(String code) {
@@ -279,7 +281,7 @@ public class CodeVerificationView extends LinearLayout {
             validateCode(enteredCode);
         }
     };
-    
+
     private void removePinCode() {
         if (codeComplete) {
             return;
@@ -289,7 +291,7 @@ public class CodeVerificationView extends LinearLayout {
             enteredCode = enteredCode.substring(0, enteredCode.length() - 1);
         }
     }
-    
+
     private void validateCode(String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
@@ -297,7 +299,7 @@ public class CodeVerificationView extends LinearLayout {
             countDownTimer = null;
             listener.onComplete();
         } else {
-            reset();
+            clear();
             listener.onError();
         }
     }

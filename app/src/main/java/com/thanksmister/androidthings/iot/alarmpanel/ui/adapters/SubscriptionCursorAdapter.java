@@ -28,10 +28,10 @@ import android.widget.TextView;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
 import com.thanksmister.androidthings.iot.alarmpanel.data.database.Db;
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.FeedDataModel;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.SubscriptionModel;
 import com.thanksmister.androidthings.iot.alarmpanel.utils.DateUtils;
 
-public class FeedCursorAdapter extends CursorAdapter {
+public class SubscriptionCursorAdapter extends CursorAdapter {
 
     /**
      * Constructor that allows control over auto-requery. 
@@ -41,7 +41,7 @@ public class FeedCursorAdapter extends CursorAdapter {
      * @param autoRequery If true the adapter will call requery() on the
      * cursor whenever it changes so the most recent
      */
-    public FeedCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+    public SubscriptionCursorAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
     }
 
@@ -56,7 +56,7 @@ public class FeedCursorAdapter extends CursorAdapter {
      */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.history_row, parent, false);
+        return LayoutInflater.from(context).inflate(R.layout.adapter_data_row, parent, false);
     }
 
     /**
@@ -68,11 +68,16 @@ public class FeedCursorAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView textView = (TextView) view.findViewById(R.id.valueText);
+        TextView topicTextView = (TextView) view.findViewById(R.id.topicText);
+        TextView messageTextView = (TextView) view.findViewById(R.id.messageText);
         TextView dateTextView = (TextView) view.findViewById(R.id.dateText);
-        String value = Db.getString(cursor, FeedDataModel.VALUE);
-        String date = DateUtils.parseCreatedAtDate(Db.getString(cursor, FeedDataModel.CREATED_AT));
-        textView.setText(value);
+        
+        String topic = Db.getString(cursor, SubscriptionModel.TOPIC);
+        String payload = Db.getString(cursor, SubscriptionModel.PAYLOAD);
+        String date = DateUtils.parseCreatedAtDate(Db.getString(cursor, SubscriptionModel.CREATED_AT));
+        
+        topicTextView.setText(topic);
+        messageTextView.setText(payload);
         dateTextView.setText(date);
     }
 }

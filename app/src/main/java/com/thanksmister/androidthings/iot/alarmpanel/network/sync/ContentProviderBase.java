@@ -28,9 +28,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.thanksmister.androidthings.iot.alarmpanel.data.database.DbHelper;
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.FeedDataModel;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.UpdatesModel;
 
-import static com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncProvider.FEED_DATA_TABLE_URI;
 import static com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncProvider.UPDATES_TABLE_URI;
 
 abstract public class ContentProviderBase extends ContentProvider {
@@ -101,9 +100,7 @@ abstract public class ContentProviderBase extends ContentProvider {
         int numInserted = 0;
         String table;
         if (uri.equals(UPDATES_TABLE_URI)) {
-            table = FeedDataModel.TABLE_NAME;
-        } else if (uri.equals(FEED_DATA_TABLE_URI)) {
-            table = FeedDataModel.TABLE_NAME;
+            table = UpdatesModel.TABLE_NAME;
         } else {
             throw new SQLException("Unsupported uri " + uri);
         }

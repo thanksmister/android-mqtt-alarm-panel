@@ -258,34 +258,34 @@ public class AlarmCodeView extends LinearLayout {
     private void showFilledPins(int pinsShown) {
         switch (pinsShown) {
             case 1:
-                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode2.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
                 break;
             case 2:
-                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
                 break;
             case 3:
-                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode3.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
                 break;
             case 4:
-                pinCode1.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode2.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode3.setImageResource(R.drawable.ic_pin_code_on);
-                pinCode4.setImageResource(R.drawable.ic_pin_code_on);
+                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
+                pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
                 break;
             default:
-                pinCode1.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode2.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode3.setImageResource(R.drawable.ic_pin_code_off);
-                pinCode4.setImageResource(R.drawable.ic_pin_code_off);
+                pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
+                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
                 break;
         }
     }

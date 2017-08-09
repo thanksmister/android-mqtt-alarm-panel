@@ -104,7 +104,18 @@ public class InformationFragment extends BaseFragment {
                 someHandler.postDelayed(this, 1000);
             }
         }, 10);
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View fragmentView = inflater.inflate(R.layout.fragment_information, container, false);
+        ButterKnife.bind(this, fragmentView);
+        return fragmentView;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
         Timber.d("showWeatherModule: " + getConfiguration().showWeatherModule());
         Timber.d("getDarkSkyKey: " + getConfiguration().getDarkSkyKey());
         if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
@@ -116,42 +127,39 @@ public class InformationFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_information, container, false);
-        ButterKnife.bind(this, fragmentView);
-        return fragmentView;
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         disconnectWeatherModule();
     }
     
     private void disconnectWeatherModule() {
-        weatherModule.cancelDarkSkyHourlyForecast();
+        if(weatherModule != null) {
+            weatherModule.cancelDarkSkyHourlyForecast();
+        }
     }
     
     private void connectWeatherModule() {
-        weatherModule = new WeatherModule();
-        final String apiKey = getConfiguration().getDarkSkyKey();
-        final String units = getConfiguration().getWeatherUnits();
-        final String lat = getConfiguration().getLatitude();
-        final String lon = getConfiguration().getLongitude();
-        weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
-            @Override
-            public void onWeatherToday(String icon, double temperature, String summary) {
-                weatherLayout.setVisibility(View.VISIBLE);
-                outlookText.setText(summary);
-                String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? " °F": " °C");
-                temperatureText.setText(String.valueOf(round(temperature)) + displayUnits);
-                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
-            }
+        if(weatherModule == null) {
+            weatherModule = new WeatherModule();
+            final String apiKey = getConfiguration().getDarkSkyKey();
+            final String units = getConfiguration().getWeatherUnits();
+            final String lat = getConfiguration().getLatitude();
+            final String lon = getConfiguration().getLongitude();
+            weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
+                @Override
+                public void onWeatherToday(String icon, double temperature, String summary) {
+                    weatherLayout.setVisibility(View.VISIBLE);
+                    outlookText.setText(summary);
+                    String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? " °F": " °C");
+                    temperatureText.setText(String.valueOf(round(temperature)) + displayUnits);
+                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
+                }
 
-            @Override
-            public void onShouldTakeUmbrella(boolean takeUmbrella) {
-
-            }
-        });
+                @Override
+                public void onShouldTakeUmbrella(boolean takeUmbrella) {
+                    // TODO show umbrella icon
+                }
+            }); 
+        }
     }
 }

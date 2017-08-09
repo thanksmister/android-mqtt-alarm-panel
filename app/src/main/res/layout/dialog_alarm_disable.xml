@@ -17,12 +17,12 @@
   ~   
   -->
 
-<com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView
+<com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmDisableView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/alarmCodeView"
+        android:id="@+id/alarmDisableView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -386,7 +386,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_backspace"/>
+                        android:tint="@color/dark_gray"
+                        android:src="@drawable/ic_backspace_black_32dp"/>
 
             </LinearLayout>
 
@@ -434,47 +435,51 @@
                 android:layout_gravity="center_vertical">
 
             <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
-                    android:src="@drawable/ic_pin_code_off"/>
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
             <View
-                    android:layout_width="4dp"
+                    android:layout_width="6dp"
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
-                    android:src="@drawable/ic_pin_code_off"/>
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
             <View
-                    android:layout_width="4dp"
+                    android:layout_width="6dp"
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
-                    android:src="@drawable/ic_pin_code_off"/>
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
             <View
-                    android:layout_width="4dp"
+                    android:layout_width="6dp"
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"
-                    android:src="@drawable/ic_pin_code_off"/>
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView>
+</com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmDisableView>

@@ -22,19 +22,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.thanksmister.androidthings.iot.alarmpanel.BaseActivity;
 import com.thanksmister.androidthings.iot.alarmpanel.R;
-import com.thanksmister.androidthings.iot.alarmpanel.tasks.UpdateFeedDataTask;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration;
+import com.thanksmister.androidthings.iot.alarmpanel.constants.Constants;
+import com.thanksmister.androidthings.iot.alarmpanel.network.model.SubscriptionData;
+import com.thanksmister.androidthings.iot.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.fragments.ControlsFragment;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.fragments.InformationFragment;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.fragments.SensorsFragment;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.modules.MqttModule;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmTriggeredView;
+import com.thanksmister.androidthings.iot.alarmpanel.utils.AlarmUtils;
+import com.thanksmister.androidthings.iot.alarmpanel.utils.MqttUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,18 +55,34 @@ import butterknife.OnClick;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements ControlsFragment.OnControlsFragmentListener {
+    
+    private static final String FRAGMENT_CONTROLS = "com.thanksmister.fragment.FRAGMENT_CONTROLS";
+    private static final String FRAGMENT_SENSORS = "com.thanksmister.fragment.FRAGMENT_SENSORS";
+    private static final String FRAGMENT_INFORMATION = "com.thanksmister.fragment.FRAGMENT_INFORMATION";
 
     @Bind(R.id.buttonSettings)
     ImageButton buttonSettings;
 
+    @Bind(R.id.buttonLogs)
+    ImageButton buttonLogs;
+    
+    @Bind(R.id.triggeredView)
+    View triggeredView;
+    
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
         Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
         startActivity(intent);
     }
 
-    private UpdateFeedDataTask updateFeedDataTask;
-    private MqttModule mqttModule;
+    @OnClick(R.id.buttonLogs)
+    void buttonLogsClicked() {
+        Intent intent = LogActivity.createStartIntent(MainActivity.this);
+        startActivity(intent);
+    }
+
+    private SubscriptionDataTask subscriptionDataTask;
+    private MqttAndroidClient mqttAndroidClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,34 +97,47 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             getSupportActionBar().setDisplayUseLogoEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        
+        getStoreManager().reset();
+        
+        // TODO show first time dialog then go to settings
+        /*if(getConfiguration().isFirstTime()) {
+            Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
+            startActivity(intent);
+            return;
+        }*/
 
-        if (savedInstanceState == null) {
+        // TODO move these to settings
+        getConfiguration().setCommandTopic(AlarmUtils.COMMAND_TOPIC);
+        getConfiguration().setStateTopic(AlarmUtils.STATE_TOPIC);
+        getConfiguration().setUserName("homeassistant");
+        getConfiguration().setPassword("3355");
+        getConfiguration().setPort(Constants.PORT);
+        getConfiguration().setBroker("192.168.86.118");
+        
+       if (savedInstanceState == null) {
             ControlsFragment controlsFragment = ControlsFragment.newInstance();
             InformationFragment informationFragment = InformationFragment.newInstance();
             SensorsFragment sensorsFragment = SensorsFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment).commit();
-            getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment).commit();
-            getSupportFragmentManager().beginTransaction().replace(R.id.sensorsContainer, sensorsFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment, FRAGMENT_CONTROLS).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment, FRAGMENT_SENSORS).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.sensorsContainer, sensorsFragment, FRAGMENT_INFORMATION).commit();
         }
-
-        // TODO move these to settings
-        getConfiguration().setTopic("home/alarm/set");
-        getConfiguration().setUserName("homeassistant");
-        getConfiguration().setPassword("2066");
-        getConfiguration().setPort(1883);
-        getConfiguration().setBroker("192.168.86.39");
-
-        mqttModule = new MqttModule(getApplicationContext(), getConfiguration(), mqttModuleListener);
-        mqttModule.makeMqttConnection();
-
+        
         //SyncService.requestSyncNow(this);
+        makeMqttConnection();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (this.updateFeedDataTask != null) {
-            this.updateFeedDataTask.cancel(true);
+        if (this.subscriptionDataTask != null) {
+            this.subscriptionDataTask.cancel(true);
         }
     }
 
@@ -114,104 +156,181 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         } else if (id == R.id.action_settings) {
             Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
             startActivity(intent);
-        } else if (id == R.id.action_publish) {
-            final String topic = getConfiguration().getTopic();
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("value", "close");
-                mqttModule.publishMessage(topic, jsonObject.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        } 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void publishArmedStay() {
-        String topic = "home/alarm/";
-        String message = "armed_home";
-        mqttModule.publishMessage(topic, message);
-        getConfiguration().setArmed(true);
-        getConfiguration().setAlarmMode(Configuration.ARMED_STAY);
+    public void publishArmedHome() {
+        String topic = AlarmUtils.COMMAND_TOPIC;
+        String message = AlarmUtils.COMMAND_ARM_HOME;
+        publishMessage(topic, message);
     }
 
     @Override
     public void publishArmedAway() {
-        String topic = "home/alarm/";
-        String message = "armed_away";
-        mqttModule.publishMessage(topic, message);
-        getConfiguration().setArmed(true);
-        getConfiguration().setAlarmMode(Configuration.ARMED_STAY);
+        String topic = AlarmUtils.COMMAND_TOPIC;
+        String message = AlarmUtils.COMMAND_ARM_AWAY;
+        publishMessage(topic, message);
     }
 
     @Override
     public void publishDisarmed() {
-        String topic = "home/alarm/";
-        String message = "armed_home";
-        mqttModule.publishMessage(topic, message);
-        getConfiguration().setArmed(false);
-        getConfiguration().setAlarmMode(Configuration.DISARMED);
+        String topic = AlarmUtils.COMMAND_TOPIC;
+        String message = AlarmUtils.COMMAND_DISARM;
+        publishMessage(topic, message);
+    }
+    
+    private void makeMqttConnection() {
+        final boolean tlsConnection = getConfiguration().getTlsConnection();
+        final String serverUri;
+        if(tlsConnection) {
+            serverUri = "ssl://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+        } else {
+            serverUri = "tcp://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+        }
+
+        Timber.d("Server Uri: " + serverUri);
+        final String clientId = getConfiguration().getClientId();
+        final String topic = getConfiguration().getStateTopic();
+
+        MqttConnectOptions mqttConnectOptions = MqttUtils.getMqttConnectOptions(getConfiguration().getUserName(), getConfiguration().getPassword());
+        mqttAndroidClient = MqttUtils.getMqttAndroidClient(getApplicationContext(), serverUri, clientId, topic, new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) {
+                    Timber.d("Reconnected to : " + serverURI);
+                    // Because Clean Session is true, we need to re-subscribe
+                    subscribeToTopic(topic);
+                } else {
+                    Timber.d("Connected to: " + serverURI);
+                }
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                Timber.d("The Connection was lost.");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                Timber.i("Sent Message : " + topic + " : " + new String(message.getPayload()));
+                //subscriptionDataTask = getUpdateMqttDataTask();
+                //subscriptionDataTask.execute(new SubscriptionData(topic, new String(message.getPayload()), String.valueOf(message.getId())));
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+            }
+        });
+
+        try {
+            mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                    disconnectedBufferOptions.setBufferEnabled(true);
+                    disconnectedBufferOptions.setBufferSize(100);
+                    disconnectedBufferOptions.setPersistBuffer(false);
+                    disconnectedBufferOptions.setDeleteOldestMessages(false);
+                    mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                    subscribeToTopic(topic);
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Timber.e("Failed to connect to: " + serverUri + " exception: " + exception.getMessage());
+                }
+            });
+
+        } catch (MqttException ex){
+            ex.printStackTrace();
+        }
     }
 
-    @Override
-    public void publishPending() {
-        String topic = "home/alarm/";
-        String message = "pending";
-        mqttModule.publishMessage(topic, message);
+    private void subscribeToTopic(final String topic) {
+        try {
+            mqttAndroidClient.subscribe(topic, 0, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(final String topic, final MqttMessage message) throws Exception {
+                    // message Arrived!
+                    Timber.i("Subscribe Message message : " + topic + " : " + new String(message.getPayload()));
+                    subscriptionDataTask = getUpdateMqttDataTask();
+                    subscriptionDataTask.execute(new SubscriptionData(topic, new String(message.getPayload()), String.valueOf(message.getId())));
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(AlarmUtils.hasSupportedStates(new String(message.getPayload()))) {
+                                handleStateChange(new String(message.getPayload()));
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (MqttException ex){
+            Timber.e("Exception whilst subscribing");
+            ex.printStackTrace();
+            hideProgressDialog();
+        }
     }
 
-    @Override
-    public void publishTriggered() {
-        String topic = "home/alarm/";
-        String message = "triggered";
-        mqttModule.publishMessage(topic, message);
+    private void publishMessage(String publishTopic, String publishMessage) {
+        try {
+            MqttMessage message = new MqttMessage();
+            message.setPayload(publishMessage.getBytes());
+            mqttAndroidClient.publish(publishTopic, message);
+            Timber.d("Message Published: " + publishTopic);
+            if(!mqttAndroidClient.isConnected()){
+                Timber.d(mqttAndroidClient.getBufferedMessageCount() + " messages in buffer.");
+            }
+        } catch (MqttException e) {
+            Timber.e("Error Publishing: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Listen to the callbacks from the MQTT module and update the user interface
-     * and record them to the log
+     * Handle the alarm triggered state
+     * @param state
      */
-    private MqttModule.MqttModuleListener mqttModuleListener = new MqttModule.MqttModuleListener() {
-        @Override
-        public void subscriptionMessage(String topic, String message) {
-            // TODO keep record of outgoing and incoming calls in a log
-            showAlertDialog("Message Arrived", "Topic: " + topic + " Message: " + message);
-            /*FeedData feedData = new FeedData();
-            feedData.setValue(message);
-            feedData.setCreatedAt(DateUtils.generateCreatedAtDate());
-            getUpdateFeedDataTask().execute(feedData);*/
+    @AlarmUtils.AlarmStates
+    private void handleStateChange(String state) {
+        Timber.d("handleStateChange States: " + state);
+        if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
+            triggeredView.setVisibility(View.VISIBLE);
+            int code = getConfiguration().getAlarmCode();
+            final AlarmTriggeredView disarmView = (AlarmTriggeredView) findViewById(R.id.alarmTriggeredView);
+            disarmView.setListener(new AlarmTriggeredView.ViewListener() {
+                @Override
+                public void onComplete() {
+                    publishDisarmed();
+                }
+                @Override
+                public void onError() {
+                    Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+                }
+            });
+            disarmView.setCode(code);
+        } else {
+            triggeredView.setVisibility(View.GONE);
         }
-
-        @Override
-        public void subscriptionError(String message) {
-
-        }
-
-        @Override
-        public void publishError(String message) {
-
-        }
-    };
-
-    private UpdateFeedDataTask getUpdateFeedDataTask() {
-        UpdateFeedDataTask updateFeedDataTask = new UpdateFeedDataTask(getStoreManager());
-        updateFeedDataTask.setOnExceptionListener(new UpdateFeedDataTask.OnExceptionListener() {
+    }
+    
+    private SubscriptionDataTask getUpdateMqttDataTask() {
+        SubscriptionDataTask dataTask = new SubscriptionDataTask(getStoreManager());
+        dataTask.setOnExceptionListener(new SubscriptionDataTask.OnExceptionListener() {
             public void onException(Exception exception) {
                 Timber.e("Update Exception: " + exception.getMessage());
-                hideProgressDialog();
-                showAlertDialog(getString(R.string.error_updating_message));
             }
         });
-        updateFeedDataTask.setOnCompleteListener(new UpdateFeedDataTask.OnCompleteListener<Boolean>() {
+        dataTask.setOnCompleteListener(new SubscriptionDataTask.OnCompleteListener<Boolean>() {
             public void onComplete(Boolean response) {
                 hideProgressDialog();
                 if (!response) {
                     Timber.e("Update Exception response: " + response);
-                    showAlertDialog(getString(R.string.error_updating_message));
                 }
             }
         });
-        return updateFeedDataTask;
+        return dataTask;
     }
 }

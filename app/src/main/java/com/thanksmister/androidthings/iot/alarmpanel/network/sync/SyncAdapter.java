@@ -29,8 +29,6 @@ import android.os.Bundle;
 
 import com.thanksmister.androidthings.iot.alarmpanel.BaseApplication;
 import com.thanksmister.androidthings.iot.alarmpanel.data.stores.StoreManager;
-import com.thanksmister.androidthings.iot.alarmpanel.network.NetworkApi;
-import com.thanksmister.androidthings.iot.alarmpanel.network.fetchers.MQTTFetcher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +52,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private DPreference sharedPreferences;
     private StoreManager storeManager;
     private ContentResolver contentResolver;
-    private MQTTFetcher mqttFetcher;
     private HashMap<String, Boolean> syncMap;
     private final AtomicBoolean canceled = new AtomicBoolean(false);
    
@@ -64,12 +61,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         
         BaseApplication baseApplication = BaseApplication.getInstance();
         contentResolver = getContext().getApplicationContext().getContentResolver();
-        NetworkApi networkApi = new NetworkApi();
 
         sharedPreferences = baseApplication.getAppSharedPreferences();
         storeManager = new StoreManager(baseApplication.getApplicationContext(), contentResolver, sharedPreferences);
         
-        mqttFetcher = new MQTTFetcher(baseApplication, networkApi);
         syncMap = new HashMap<>(); // init sync map
     }
     

@@ -23,9 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.Db;
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.FeedDataModel;
-import com.thanksmister.androidthings.iot.alarmpanel.network.model.FeedData;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.SubscriptionModel;
 import com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncProvider;
 
 import java.util.ArrayList;
@@ -65,56 +63,41 @@ public class StoreManager {
         long expire = System.currentTimeMillis() + PREFS_ALL_DATA_SYNC_FREQUENCY;
         this.sharedPreferences.setPrefLong(PREFS_ALL_DATA_LAST_SYNC_TIME, expire);
     }
-    
+
     /**
-     * Returns the <code>FeedDataModel</code> list from the database
+     * Returns the <code>MqttModel</code> list from the database
      * @return
      */
-    public List<FeedDataModel> getFeedDataList() {
-        List<FeedDataModel> modelList = new ArrayList<>();
-        Cursor cursor = contentResolver.query(SyncProvider.FEED_DATA_TABLE_URI, null, null, null, null);
+    public List<SubscriptionModel> getMqttDataList() {
+        List<SubscriptionModel> modelList = new ArrayList<>();
+        Cursor cursor = contentResolver.query(SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, null, null, null, null);
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-                FeedDataModel feedDataModel = FeedDataModel.getModel(cursor);
-                modelList.add(feedDataModel);
+                SubscriptionModel dataModel = SubscriptionModel.getModel(cursor);
+                modelList.add(dataModel);
             }
             cursor.close();
         }
         return modelList;
     }
 
-    // TODO maybe need bulk insert here
     /**
-     * Save the list of <code>FeedData</code> to the database
+     * Insert the MQTT data into the database
+     * @param topic
+     * @param payload
+     * @param messageId
      */
-    public void updateFeedDataList(List<FeedData> feedDataList) {
-        for(FeedData feedData : feedDataList) {
-            updateFeedData(feedData);
-        }
-    }
-
-    /**
-     * Save the current <code>FeedData</code> to the database
-     */
-    public void updateFeedData(FeedData feedData) {
+    public void insertMqttData(String topic, String payload, String messageId) {
         synchronized( this ) {
-            Cursor cursor = contentResolver.query(SyncProvider.FEED_DATA_TABLE_URI, FeedDataModel.COLUMN_NAMES, FeedDataModel.DATA_ID + " = ?", new String[]{String.valueOf(feedData.getId())}, null);
-            if (cursor != null && cursor.getCount() > 0) {
-                while (cursor.moveToNext()) {
-                    long id = Db.getLong(cursor, FeedDataModel._ID);
-                    contentResolver.update(SyncProvider.FEED_DATA_TABLE_URI, FeedDataModel.createBuilder(feedData).build(), FeedDataModel._ID + " = ?", new String[]{String.valueOf(id)});
-                }
-            } else {
-                contentResolver.insert(SyncProvider.FEED_DATA_TABLE_URI, FeedDataModel.createBuilder(feedData).build());
-                contentResolver.notifyChange(SyncProvider.FEED_DATA_TABLE_URI, null);
-            }
+            contentResolver.insert(SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, SubscriptionModel.createBuilder(topic, payload, messageId).build());
+            contentResolver.notifyChange(SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, null);
         }
     }
 
     public void reset() {
         sharedPreferences.removePreference(PREFS_ALL_DATA_LAST_SYNC_TIME);
         contentResolver.delete(SyncProvider.UPDATES_TABLE_URI, null, null);
-        contentResolver.delete(SyncProvider.FEED_DATA_TABLE_URI, null, null);
+        contentResolver.delete(SyncProvider.SUBSCRIPTION_DATA_TABLE_URI, null, null);
     }
 
     /**

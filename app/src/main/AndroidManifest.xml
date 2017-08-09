@@ -62,8 +62,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activities.SettingsActivity"/>
-        <activity android:name=".ui.activities.LogActivity"/>
-        <activity android:name=".ui.activities.CameraActivity"/>
 
         <!-- Sync Provider -->
         <provider
@@ -105,7 +103,7 @@
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
 
-        <activity android:name=".ui.activities.ConfigurationActivity"/>
+        <activity android:name=".ui.activities.LogActivity"/>
     
     </application>
 

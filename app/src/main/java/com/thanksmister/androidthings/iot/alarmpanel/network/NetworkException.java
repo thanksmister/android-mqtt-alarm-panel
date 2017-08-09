@@ -18,24 +18,21 @@
 
 package com.thanksmister.androidthings.iot.alarmpanel.network;
 
-public class NetworkException extends Exception
-{
+public class NetworkException extends Exception {
+    
     private String message;
     private int code;
 
     @Override
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public int getCode()
-    {
+    public int getCode() {
         return code;
     }
 
-    public NetworkException(String detailMessage, int code)
-    {
+    public NetworkException(String detailMessage, int code) {
         super(detailMessage);
         this.message = detailMessage;
         this.code = code;

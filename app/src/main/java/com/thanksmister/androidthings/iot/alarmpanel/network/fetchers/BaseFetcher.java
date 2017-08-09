@@ -27,17 +27,9 @@ public class BaseFetcher {
 
     private final Context mContext;
     private final NetworkApi mNetworkApi;
-    private MQTTFetcher mHSCFetcher;
   
     public BaseFetcher(@NonNull Context context, @NonNull NetworkApi networkApi) {
         this.mContext = context.getApplicationContext();
         this.mNetworkApi = networkApi;
-    }
-
-    public MQTTFetcher getHSCFetcher() {
-        if (this.mHSCFetcher == null) {
-            this.mHSCFetcher = new MQTTFetcher(this.mContext, this.mNetworkApi);
-        }
-        return this.mHSCFetcher;
     }
 }

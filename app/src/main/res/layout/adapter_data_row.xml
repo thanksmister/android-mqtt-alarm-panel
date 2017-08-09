@@ -20,14 +20,34 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-    <FrameLayout
-            android:id="@+id/contentFrame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"/>
+    <TextView
+            android:id="@+id/topicText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            tools:text="Topic"/>
+
+    <TextView
+            android:id="@+id/messageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            tools:text="Message"/>
+
+    <TextView
+            android:id="@+id/dateText"
+            android:layout_width="0dp"
+            android:gravity="end"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            tools:text="11/11/2017"/>
 
 </LinearLayout>

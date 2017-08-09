@@ -37,7 +37,7 @@ public class ArmOptionsView extends LinearLayout {
 
     @OnClick(R.id.armStayButton)
     public void armHomeButtonClick() {
-        listener.onArmStay();
+        listener.onArmHome();
     }
 
     private ViewListener listener;
@@ -61,7 +61,7 @@ public class ArmOptionsView extends LinearLayout {
     }
 
     public interface ViewListener {
-        void onArmStay();
+        void onArmHome();
         void onArmAway();
     }
 }

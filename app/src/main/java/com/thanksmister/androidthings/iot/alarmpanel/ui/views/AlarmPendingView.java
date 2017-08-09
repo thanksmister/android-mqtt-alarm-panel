@@ -24,41 +24,29 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
 import com.todddavies.components.progressbar.ProgressWheel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import timber.log.Timber;
 
-public class CountDownView extends FrameLayout {
+public class AlarmPendingView extends LinearLayout {
     
     @Bind(R.id.countDownProgressWheel)
     ProgressWheel countDownProgressWheel;
     
-    @OnClick(R.id.buttonCancel)
-    void buttonCancelClicked() {
-        countDownTimer.cancel();
-        countDownTimer = null;
-        listener.onCancel();
-    }
-    
-    private CountDownTimer countDownTimer;
-    private int displaySeconds;
     private ViewListener listener;
+    private int displaySeconds;
+    private CountDownTimer countDownTimer;
 
-    public interface ViewListener {
-        void onComplete();
-        void onCancel();
-    }
-    
-    public CountDownView(Context context) {
+    public AlarmPendingView(Context context) {
         super(context);
     }
 
-    public CountDownView(Context context, AttributeSet attrs) {
+    public AlarmPendingView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -66,27 +54,55 @@ public class CountDownView extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+    }
 
-        countDownTimer = new CountDownTimer(20000, 1000) {
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
+
+    /**
+     * Countdown timer time 
+     * @param pendingTime seconds
+     */
+    public void startCountDown(int pendingTime) {
+        Timber.d("startCountDown: "+ pendingTime*1000);
+        // TODO add a config for this and set it
+        final int divideBy = 360/pendingTime;
+        countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                // decompose difference into days, hours, minutes and seconds
-                displaySeconds = (int) ((millisUntilFinished / 1000) % 60);
+                displaySeconds = (int) (millisUntilFinished / 1000);
                 Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
                 an.setFillAfter(true);
                 countDownProgressWheel.setText(String.valueOf(displaySeconds));
-                countDownProgressWheel.setProgress(displaySeconds * 6);
+                countDownProgressWheel.setProgress(displaySeconds * divideBy);
             }
 
             @Override
             public void onFinish() {
-                listener.onComplete();
+                Timber.d("Timed up...");
+                listener.onTimeOut();
             }
         }.start();
     }
-
+    
+    public void stopCountDown() {
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
+    
     public void setListener(@NonNull ViewListener listener) {
         this.listener = listener;
     }
-    
+
+    public interface ViewListener {
+        void onTimeOut();
+    }
 }

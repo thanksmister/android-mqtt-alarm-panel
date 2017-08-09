@@ -34,10 +34,10 @@ public class Currently {
     private String icon;
     @SerializedName("precipIntensity")
     @Expose
-    private Integer precipIntensity;
+    private Double precipIntensity;
     @SerializedName("precipProbability")
     @Expose
-    private Integer precipProbability;
+    private Double precipProbability;
     @SerializedName("temperature")
     @Expose
     private Double temperature;
@@ -58,7 +58,7 @@ public class Currently {
     private Double windGust;
     @SerializedName("windBearing")
     @Expose
-    private Integer windBearing;
+    private Double windBearing;
     @SerializedName("cloudCover")
     @Expose
     private Double cloudCover;
@@ -111,28 +111,28 @@ public class Currently {
         return this;
     }
 
-    public Integer getPrecipIntensity() {
+    public Double getPrecipIntensity() {
         return precipIntensity;
     }
 
-    public void setPrecipIntensity(Integer precipIntensity) {
+    public void setPrecipIntensity(Double precipIntensity) {
         this.precipIntensity = precipIntensity;
     }
 
-    public Currently withPrecipIntensity(Integer precipIntensity) {
+    public Currently withPrecipIntensity(Double precipIntensity) {
         this.precipIntensity = precipIntensity;
         return this;
     }
 
-    public Integer getPrecipProbability() {
+    public Double getPrecipProbability() {
         return precipProbability;
     }
 
-    public void setPrecipProbability(Integer precipProbability) {
+    public void setPrecipProbability(Double precipProbability) {
         this.precipProbability = precipProbability;
     }
 
-    public Currently withPrecipProbability(Integer precipProbability) {
+    public Currently withPrecipProbability(Double precipProbability) {
         this.precipProbability = precipProbability;
         return this;
     }
@@ -215,15 +215,15 @@ public class Currently {
         return this;
     }
 
-    public Integer getWindBearing() {
+    public Double getWindBearing() {
         return windBearing;
     }
 
-    public void setWindBearing(Integer windBearing) {
+    public void setWindBearing(Double windBearing) {
         this.windBearing = windBearing;
     }
 
-    public Currently withWindBearing(Integer windBearing) {
+    public Currently withWindBearing(Double windBearing) {
         this.windBearing = windBearing;
         return this;
     }

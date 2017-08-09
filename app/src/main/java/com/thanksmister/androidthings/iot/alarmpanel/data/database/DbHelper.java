@@ -22,37 +22,49 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.FeedDataModel;
-import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.UpdatesModel;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.ComponentModel;
+import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.SubscriptionModel;
 import com.thanksmister.androidthings.iot.alarmpanel.data.database.model.WeatherModel;
 
 public class DbHelper extends SQLiteOpenHelper {
 
     //instance for singleton
     private static DbHelper dbInstance;
+    private static Context dbContext;
 
     // If you change the database schema, you must increment the database version.
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "alarm_system.db";
+    private static final String DATABASE_NAME = "mqtt_alarm_panel.db";
 
     //Singleton getInstance class
     public static synchronized DbHelper getInstance(Context context) {
         if(dbInstance == null) {
             dbInstance = new DbHelper(context);
         }
+        dbContext = context;
         return dbInstance;
     }
 
     //private for singleton contract
-    private DbHelper(Context context) {
+    public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        
         db.execSQL(WeatherModel.CREATE_TABLE_STATEMENT);
-        db.execSQL(UpdatesModel.CREATE_TABLE_STATEMENT);
-        db.execSQL(FeedDataModel.CREATE_TABLE_STATEMENT);
+        db.execSQL(ComponentModel.CREATE_TABLE_STATEMENT);
+        db.execSQL(SubscriptionModel.CREATE_TABLE_STATEMENT);
+
+        /*db.insert(MessageModel.TABLE_NAME, null, 
+                MessageModel.createBuilder(
+                        AlarmUtils.TYPE_ALARM_PANEL,
+                        dbContext.getString(R.string.text_alarm_publish_armed_away),
+                        AlarmUtils.MESSAGE_TYPE_PUBLISH,
+                        Constants.TOPIC_PUBLISH, 
+                        Constants.PUBLISH_ARMED_AWAY)
+                        .build());*/
     }
     
     @Override
@@ -67,7 +79,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onDelete() {
         SQLiteDatabase db = getReadableDatabase();
         db.execSQL(WeatherModel.DELETE_TABLE_STATEMENT);
-        db.execSQL(FeedDataModel.DELETE_TABLE_STATEMENT);
-        db.execSQL(UpdatesModel.DELETE_TABLE_STATEMENT);
+        db.execSQL(ComponentModel.DELETE_TABLE_STATEMENT);
+        db.execSQL(SubscriptionModel.DELETE_TABLE_STATEMENT);
     }
 }

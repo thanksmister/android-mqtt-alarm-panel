@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -39,20 +40,35 @@ import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmCodeView;
 
 import timber.log.Timber;
 
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_ALARM_CODE;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_BROKER;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_CLIENT_ID;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_COMMAND_TOPIC;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_PASSWORD;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_PENDING_TIME;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_PORT;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_STATE_TOPIC;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_TLS_CONNECTION;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_TRIGGER_TIME;
+import static com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration.PREF_USERNAME;
+
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private EditTextPreference brokerPreference;
     private EditTextPreference clientPreference;
     private EditTextPreference portPreference;
-    private EditTextPreference topicPreference;
+    private EditTextPreference commandTopicPreference;
+    private EditTextPreference stateTopicPreference;
     private EditTextPreference userNamePreference;
     private EditTextPreference passwordPreference;
+    private EditTextPreference pendingPreference;
+    private EditTextPreference triggerPreference;
+    private CheckBoxPreference sslPreference;
     private Configuration configuration;
     private AlertDialog alarmCodeDialog;
     private int defaultCode;
     private int tempCode;
     private boolean confirmCode = false;
-
   
     /**
      * Called during {@link #onCreate(Bundle)} to supply the preferences for this fragment.
@@ -96,7 +112,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         
         super.onViewCreated(view, savedInstanceState);
 
-        Preference buttonPreference = findPreference("pref_security_code");
+        Preference buttonPreference = findPreference(PREF_ALARM_CODE);
         buttonPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -105,12 +121,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
         });
 
-        brokerPreference = (EditTextPreference) findPreference("pref_broker");
-        clientPreference = (EditTextPreference) findPreference("pref_client_id");
-        portPreference = (EditTextPreference) findPreference("pref_port");
-        topicPreference = (EditTextPreference) findPreference("pref_topic");
-        userNamePreference = (EditTextPreference) findPreference("pref_username");
-        passwordPreference = (EditTextPreference) findPreference("pref_password");
+        brokerPreference = (EditTextPreference) findPreference(PREF_BROKER);
+        clientPreference = (EditTextPreference) findPreference(PREF_CLIENT_ID);
+        portPreference = (EditTextPreference) findPreference(PREF_PORT);
+        commandTopicPreference = (EditTextPreference) findPreference(PREF_COMMAND_TOPIC);
+        stateTopicPreference = (EditTextPreference) findPreference(PREF_STATE_TOPIC);
+        userNamePreference = (EditTextPreference) findPreference(PREF_USERNAME);
+        passwordPreference = (EditTextPreference) findPreference(PREF_PASSWORD);
+        pendingPreference = (EditTextPreference) findPreference(PREF_PENDING_TIME);
+        triggerPreference = (EditTextPreference) findPreference(PREF_TRIGGER_TIME);
+        sslPreference = (CheckBoxPreference) findPreference(PREF_TLS_CONNECTION);
         
         if(isAdded()) {
             configuration = ((BaseActivity) getActivity()).getConfiguration();
@@ -119,51 +139,81 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         brokerPreference.setText(configuration.getBroker());
         clientPreference.setText(String.valueOf(configuration.getClientId()));
         portPreference.setText(String.valueOf(configuration.getPort()));
-        topicPreference.setText(configuration.getTopic());
+        commandTopicPreference.setText(configuration.getCommandTopic());
+        stateTopicPreference.setText(configuration.getStateTopic());
         userNamePreference.setText(configuration.getUserName());
         passwordPreference.setText(configuration.getPassword());
+        pendingPreference.setText(String.valueOf(configuration.getPendingTime()));
+        sslPreference.setChecked(configuration.getTlsConnection());
 
         brokerPreference.setSummary(configuration.getBroker());
         clientPreference.setSummary(configuration.getClientId());
         portPreference.setSummary(String.valueOf(configuration.getPort()));
-        topicPreference.setSummary(configuration.getTopic());
+        commandTopicPreference.setSummary(configuration.getCommandTopic());
+        stateTopicPreference.setSummary(configuration.getStateTopic());
         userNamePreference.setSummary(configuration.getUserName());
         passwordPreference.setSummary(configuration.getPassword());
+        pendingPreference.setSummary(getString(R.string.preference_summary_pending_time, String.valueOf(configuration.getPendingTime())));
+        triggerPreference.setSummary(getString(R.string.preference_summary_trigger_time, String.valueOf(configuration.getTriggerTime())));
+        
+        // the first time we need to set the alarm code
+        if(configuration.isFirstTime()) {
+            showAlarmCodeDialog();
+        }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         String value;
         switch (key) {
-            case "pref_broker":
+            case PREF_BROKER:
                 value = brokerPreference.getText();
                 configuration.setBroker(value);
                 brokerPreference.setSummary(value);
                 break;
-            case "pref_client_id":
-                value = portPreference.getText();
+            case PREF_CLIENT_ID:
+                value = clientPreference.getText();
                 configuration.setClientId(value);
                 clientPreference.setSummary(value);
                 break;
-            case "pref_port":
+            case PREF_PORT:
                 value = portPreference.getText();
                 configuration.setPort(Integer.valueOf(value));
                 portPreference.setSummary(String.valueOf(value));
                 break;
-            case "pref_topic":
-                value = portPreference.getText();
-                configuration.setTopic(value);
-                topicPreference.setSummary(value);
+            case PREF_COMMAND_TOPIC:
+                value = commandTopicPreference.getText();
+                configuration.setCommandTopic(value);
+                commandTopicPreference.setSummary(value);
                 break;
-            case "pref_username":
-                value = portPreference.getText();
+            case PREF_STATE_TOPIC:
+                value = stateTopicPreference.getText();
+                configuration.setStateTopic(value);
+                stateTopicPreference.setSummary(value);
+                break;
+            case PREF_USERNAME:
+                value = userNamePreference.getText();
                 configuration.setUserName(value);
                 userNamePreference.setSummary(value);
                 break;
-            case "pref_password":
-                value = portPreference.getText();
+            case PREF_PASSWORD:
+                value = passwordPreference.getText();
                 configuration.setPassword(value);
                 passwordPreference.setSummary(value);
+                break;
+            case PREF_PENDING_TIME:
+                value = pendingPreference.getText();
+                configuration.setPendingTime(Integer.parseInt(value));
+                pendingPreference.setSummary(getString(R.string.preference_summary_pending_time, String.valueOf(configuration.getPendingTime())));
+                break;
+            case PREF_TRIGGER_TIME:
+                value = triggerPreference.getText();
+                configuration.setTriggerTime(Integer.parseInt(value));
+                triggerPreference.setSummary(getString(R.string.preference_summary_trigger_time, String.valueOf(configuration.getTriggerTime())));
+                break;
+            case PREF_TLS_CONNECTION:
+                boolean checked = sslPreference.isChecked();
+                configuration.setTlsConnection(checked);
                 break;
         }
     }
@@ -208,6 +258,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     showAlarmCodeDialog();
                 } else if (confirmCode && code == tempCode){
                     configuration.setAlarmCode(tempCode);
+                    configuration.setFirstTime(false);
                     tempCode = 0;
                     confirmCode = false;
                     hideAlarmCodeDialog();

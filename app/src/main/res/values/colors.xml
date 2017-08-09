@@ -25,7 +25,7 @@
 
     <color name="transparent">#00000000</color>
 
-    <color name="green">#7cc14a</color>
+    <color name="green">#ff7dac2f</color>
     <color name="light_green">#ff7dac2f</color>
     <color name="light_green_pressed">#ff67932c</color>
     <color name="text_green">#ff67932c</color>

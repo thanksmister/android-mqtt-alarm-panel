@@ -19,22 +19,22 @@
 package com.thanksmister.androidthings.iot.alarmpanel.tasks;
 
 import com.thanksmister.androidthings.iot.alarmpanel.data.stores.StoreManager;
-import com.thanksmister.androidthings.iot.alarmpanel.network.model.FeedData;
+import com.thanksmister.androidthings.iot.alarmpanel.network.model.SubscriptionData;
 
-public class UpdateFeedDataTask extends NetworkTask<FeedData, Void, Boolean> {
+public class SubscriptionDataTask extends NetworkTask<SubscriptionData, Void, Boolean> {
     
     private StoreManager storeManager;
 
-    public UpdateFeedDataTask(StoreManager storeManager) {
+    public SubscriptionDataTask(StoreManager storeManager) {
         this.storeManager = storeManager;
     }
 
-    protected Boolean doNetworkAction(FeedData... params) throws Exception {
+    protected Boolean doNetworkAction(SubscriptionData... params) throws Exception {
         if (params.length != 1) {
             throw new Exception("Wrong number of params, expected 1, received " + params.length);
         }
-        FeedData feedData = params[0];
-        storeManager.updateFeedData(feedData);
+        SubscriptionData mqttData = params[0];
+        storeManager.insertMqttData(mqttData.getTopic(), mqttData.getPayload(), mqttData.getMessageId());
         return true;
     }
 }

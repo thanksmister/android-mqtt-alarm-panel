@@ -26,7 +26,7 @@
         <Preference
                 android:title="@string/preference_title_security_code"
                 android:summary="@string/preference_summary_security_code"
-                android:key="pref_security_code"/>
+                android:key="pref_alarm_code"/>
 
     </PreferenceCategory>
    
@@ -41,25 +41,16 @@
                 android:negativeButtonText="@null"
                 android:positiveButtonText="@null"/>
 
-        <EditTextPreference
-                android:key="pref_client_id"
-                android:title="@string/preference_client_id"
-                android:summary="@string/preference_summary_client_id"
-                android:negativeButtonText="@null"
-                android:positiveButtonText="@null"/>
+        <CheckBoxPreference
+                android:key="pref_tls_connection"
+                android:title="@string/preference_tls_connection"
+                android:summary="@string/preference_summary_tls_connection"/>
 
         <EditTextPreference
                 android:key="pref_port"
                 android:title="@string/preference_title_port"
                 android:numeric="integer"
                 android:summary="@string/preference_summary_port"
-                android:negativeButtonText="@null"
-                android:positiveButtonText="@null"/>
-
-        <EditTextPreference
-                android:key="pref_topic"
-                android:title="@string/preference_title_topic"
-                android:summary="@string/preference_summary_topic"
                 android:negativeButtonText="@null"
                 android:positiveButtonText="@null"/>
 
@@ -74,6 +65,44 @@
                 android:key="pref_password"
                 android:title="@string/preference_title_password"
                 android:summary="@string/preference_summary_password"
+                android:password="true"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_client_id"
+                android:title="@string/preference_client_id"
+                android:summary="@string/preference_summary_client_id"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+        
+        <EditTextPreference
+                android:key="pref_command_topic"
+                android:title="@string/preference_title_command_topic"
+                android:summary="@string/preference_summary_command_topic"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_state_topic"
+                android:title="@string/preference_title_state_topic"
+                android:summary="@string/preference_summary_state_topic"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_pending_time"
+                android:inputType="number"
+                android:title="@string/preference_title_pending_time"
+                android:summary="@string/preference_summary_pending_time"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"/>
+
+        <EditTextPreference
+                android:key="pref_trigger_time"
+                android:inputType="number"
+                android:title="@string/preference_title_trigger_time"
+                android:summary="@string/preference_summary_trigger_time"
                 android:negativeButtonText="@null"
                 android:positiveButtonText="@null"/>
 

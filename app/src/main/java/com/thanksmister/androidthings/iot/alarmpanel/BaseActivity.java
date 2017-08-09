@@ -38,13 +38,10 @@ import android.widget.Toast;
 
 import com.thanksmister.androidthings.iot.alarmpanel.constants.ExceptionCodes;
 import com.thanksmister.androidthings.iot.alarmpanel.data.stores.StoreManager;
-import com.thanksmister.androidthings.iot.alarmpanel.network.NetworkApi;
-import com.thanksmister.androidthings.iot.alarmpanel.network.fetchers.MQTTFetcher;
 import com.thanksmister.androidthings.iot.alarmpanel.network.sync.SyncAdapter;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.Configuration;
+import com.thanksmister.androidthings.iot.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.androidthings.iot.alarmpanel.ui.views.ArmOptionsView;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CodeVerificationView;
-import com.thanksmister.androidthings.iot.alarmpanel.ui.views.CountDownView;
 
 import butterknife.ButterKnife;
 
@@ -56,12 +53,10 @@ abstract public class BaseActivity extends AppCompatActivity {
     
     private StoreManager storeManager;
     private Configuration configuration;
-    private MQTTFetcher mqttFetcher;
     private AlertDialog progressDialog;
     private AlertDialog alertDialog;
-    private AlertDialog alarmCodeDialog;
+    private AlertDialog alarmDisarmDialog;
     private AlertDialog armOptionsDialog;
-    private AlertDialog countDownAlarmDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +93,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        
+
         super.onDestroy();
 
         ButterKnife.unbind(this);
@@ -112,18 +107,6 @@ abstract public class BaseActivity extends AppCompatActivity {
             progressDialog.dismiss();
             progressDialog = null;
         }
-        
-        /*if(downloadPdfTask != null) {
-            downloadPdfTask.cancel(true);
-            downloadPdfTask = null;
-        }*/
-    }
-
-    public MQTTFetcher getMQTTFetcher() {
-        if (mqttFetcher == null) {
-            mqttFetcher = new MQTTFetcher(BaseActivity.this, new NetworkApi());
-        }
-        return mqttFetcher;
     }
 
     public StoreManager getStoreManager() {
@@ -237,10 +220,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public void hideAlarmCodeDialog() {
-        if(alarmCodeDialog != null) {
-            alarmCodeDialog.dismiss();
-            alarmCodeDialog = null;
+    public void hideAlarmDisableDialog() {
+        if(alarmDisarmDialog != null) {
+            alarmDisarmDialog.dismiss();
+            alarmDisarmDialog = null;
         }
     }
 
@@ -250,14 +233,7 @@ abstract public class BaseActivity extends AppCompatActivity {
             armOptionsDialog = null;
         }
     }
-
-    public void hideCountDownDialog() {
-        if(countDownAlarmDialog != null) {
-            countDownAlarmDialog.dismiss();
-            countDownAlarmDialog = null;
-        }
-    }
-
+    
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {
         hideArmOptionsDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -270,31 +246,19 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .show();
     }
     
-    public void showAlarmCodeDialog(CodeVerificationView.ViewListener alarmCodeListener, int code) {
-        hideAlarmCodeDialog();
+    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_alarm_code, null, false);
-        final CodeVerificationView alarmCodeView = view.findViewById(R.id.alarmCodeView);
+        View view = inflater.inflate(R.layout.dialog_alarm_disable, null, false);
+        final AlarmDisableView alarmCodeView = view.findViewById(R.id.alarmDisableView);
         alarmCodeView.setListener(alarmCodeListener);
         alarmCodeView.setCode(code);
-        alarmCodeDialog = new AlertDialog.Builder(BaseActivity.this)
+        alarmCodeView.startCountDown(configuration.getPendingTime());
+        alarmDisarmDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
     }
-
-    public void showCountDownDialog(CountDownView.ViewListener countDownListener) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_alarm_pending, null, false);
-        final CountDownView countDownView = view.findViewById(R.id.countDownView);
-        countDownView.setListener(countDownListener);
-        countDownAlarmDialog = new AlertDialog.Builder(BaseActivity.this)
-                .setView(countDownView)
-                .setCancelable(false)
-                .setView(view)
-                .show();
-    }
-
+    
     public void onError(final String message, final int code) {
         runOnUiThread(new Runnable() {
             public void run() {

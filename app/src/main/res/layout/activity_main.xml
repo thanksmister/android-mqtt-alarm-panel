@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/informationContainer"
             android:layout_above="@+id/settingsContainer"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
         <FrameLayout
                 android:id="@+id/controlContainer"
@@ -64,17 +65,49 @@
             android:gravity="end"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:paddingRight="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:orientation="horizontal">
         
+        <ImageButton
+                android:id="@+id/buttonLogs"
+                style="@style/BorderlessButtonStyle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:tint="@color/dark_gray"
+                android:layout_toEndOf="@+id/spaceButton"
+                android:src="@drawable/ic_log_list_black_24dp"
+                tools:ignore="ContentDescription"/>
+        
+        <android.support.v4.widget.Space
+                android:id="@+id/spaceButton"
+                android:layout_toEndOf="@+id/buttonSettings"
+                android:layout_width="16dp"
+                android:layout_height="24dp"/>
+
         <ImageButton
                 android:id="@+id/buttonSettings"
                 style="@style/BorderlessButtonStyle"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:tint="@color/dark_gray"
-                android:src="@drawable/ic_settings_black_24dp"/>
+                android:src="@drawable/ic_settings_black_24dp"
+                tools:ignore="ContentDescription"/>
         
     </RelativeLayout>
+    
+    <FrameLayout
+            android:id="@+id/triggeredView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/red"
+            tools:visibility="visible"
+            android:visibility="gone">
+        
+        <include
+                android:id="@+id/alarmTriggeredView"
+                layout="@layout/dialog_alarm_triggered_code"/>
+        
+    </FrameLayout>
 
 </RelativeLayout>

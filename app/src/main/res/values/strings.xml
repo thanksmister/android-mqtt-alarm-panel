@@ -33,28 +33,31 @@
     <!-- Preferences -->
     <string name="preference_summary_security_code">Set the alarm system code.</string>
     <string name="preference_title_security_code">Security Code</string>
-    <string name="preference_title_mqtt_server">MQTT Server Setup</string>
-    <string name="preference_summary_mqtt_server">Set the values for the MQTT server</string>
-    <string name="preference_title_broker">Server Uri or Broker</string>
-    <string name="preference_summary_broker">Set broker service address.</string>
+    <string name="preference_title_mqtt_server">MQTT Setup</string>
+    <string name="preference_summary_mqtt_server">Set the values for the MQTT service</string>
+    <string name="preference_title_broker">MQTT Broker</string>
+    <string name="preference_summary_broker">Set MQTT broker service address.</string>
     <string name="preference_client_id">Client Id</string>
     <string name="preference_summary_client_id">Set the client Id if required by service.</string>
+    <string name="preference_tls_connection">SSL/TLS Connection</string>
+    <string name="preference_summary_tls_connection">Listen to broker on port 8883 with SSL/TLS.</string>
     <string name="preference_title_port">Service Port</string>
     <string name="preference_summary_port">Set the service port value.</string>
-    <string name="preference_title_topic">Topic</string>
-    <string name="preference_summary_topic">Set the topic value.</string>
+    <string name="preference_title_command_topic">Command Topic</string>
+    <string name="preference_title_state_topic">State Topic</string>
+    <string name="preference_summary_command_topic">Set the command topic value.</string>
+    <string name="preference_summary_state_topic">Set the state topic value.</string>
     <string name="preference_title_username">Username</string>
     <string name="preference_summary_username">Set the service username (optional).</string>
     <string name="preference_title_password">Password</string>
     <string name="preference_summary_password">Set the service password (optional).</string>
     <string name="preference_title_alarm">Alarm Code</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
+    <string name="preference_title_pending_time">Pending Time</string>
+    <string name="preference_summary_pending_time">The time in seconds before arming the alarm. Currently %1$s seconds.</string>
+    <string name="preference_title_trigger_time">Trigger Time</string>
+    <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
 
-    <string name="configuration_explanation">Uses the front facing camera to read your expression</string>
-    <string name="device_location">Location</string>
-    <string name="set_up">Set Up</string>
-    <string name="latitude">Latitude</string>
-    <string name="longitude">Longitude</string>
     
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
@@ -64,8 +67,27 @@
     <string name="toast_invalid_longitude">Value should be between -180 and 180.</string>
     <string name="toast_invalid_provider">Unable to detect location, please enter lat/long manually.</string>
     <string name="activity_settings_title">Settings</string>
-    <string name="toast_alarm_cancelled">Alarm cancelled...</string>
-    <string name="alarm_timed_out">Alarm timed out...</string>
+    <string name="toast_alarm_cancelled">Alarm cancelled…</string>
+    <string name="alarm_timed_out">Alarm timed out…</string>
     <string name="toast_alarm_deactivated">Alarm deactivated!</string>
+    <string name="activity_logs_title">Subscription Data Logs</string>
+    
+    <string name="text_alarm_publish_armed_away">Publish Alarm Armed Away</string>
+    <string name="text_alarm_publish_armed_home">Publish Alarm Armed Home</string>
+    <string name="text_alarm_publish_disarmed">Publish Alarm Disarmed</string>
+
+    <string name="text_alarm_subscribe_armed_away">Subscribe Alarm Armed Away</string>
+    <string name="text_alarm_subscribe_armed_home">Subscribe Alarm Armed Home</string>
+    <string name="text_alarm_subscribe_disarmed">Subscribe Alarm Disarmed</string>
+    <string name="text_alarm_subscribe_triggered">Subscribe Alarm Triggered</string>
+    <string name="text_alarm_subscribe_pending">Subscribe Alarm Pending</string>
+    <string name="text_please_exit_in_the_time_remaining">Alarm activation pending.</string>
+    <string name="text_arm_home">ARM HOME</string>
+    <string name="text_arm_away">ARM AWAY</string>
+    <string name="text_system">SYSTEM</string>
+    <string name="text_disarmed">DISARMED</string>
+    <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
+    <string name="button_clear">Clear</string>
+
 
 </resources>

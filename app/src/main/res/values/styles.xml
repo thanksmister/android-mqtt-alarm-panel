@@ -9,6 +9,22 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
+    <style name="TriggerDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/red</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="PreferenceButtonStyle" parent="android:Widget.Holo.Button.Borderless">
+        <item name="android:padding">16dp</item>
+    </style>
+
     <style name="BorderlessButtonStyle" parent="android:Widget.Holo.Button.Borderless">
         <item name="android:layout_margin">0dp</item>
         <item name="android:padding">0dp</item>
@@ -56,6 +72,21 @@
     <style name="AppTextAppearance" parent="@style/TextAppearance.AppCompat.Medium">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="TextAppearance.Preference.Caption" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/text_green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="TextAppearance.Preference.Title" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextAppearance.Preference.Description" parent="@style/TextAppearance.AppCompat">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:textColor">@color/dark_gray_color</item>
     </style>
 
     <style name="TextAppearance" parent="@style/AppTextAppearance">

@@ -29,9 +29,9 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 /**
  * TODO: Add a class header comment!
  */
-public class MQTTUtils {
+public class MqttUtils {
 
-    public MQTTUtils(){
+    public MqttUtils(){
     }
 
     public static MqttConnectOptions getMqttConnectOptions () {

@@ -18,26 +18,11 @@
 
 package com.thanksmister.androidthings.iot.alarmpanel.network;
 
-import android.support.annotation.NonNull;
-
-import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.thanksmister.androidthings.iot.alarmpanel.BuildConfig;
-import com.thanksmister.androidthings.iot.alarmpanel.network.model.FeedData;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkApi {
     
-    private MQTTService mqttService;
+    //private MQTTService mqttService;
     
     public NetworkApi(){
         
@@ -48,7 +33,7 @@ public class NetworkApi {
             base_url = NetworkValues.BASE_URL_PROD;
         }
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+       /* HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -68,9 +53,10 @@ public class NetworkApi {
                 .build();
 
         mqttService = retrofit.create(MQTTService.class);
+        */
     }
     
-    private MQTTService getMQTTService() {
+    /*private MQTTService getMQTTService() {
         return mqttService;
     }
 
@@ -82,5 +68,5 @@ public class NetworkApi {
     public Call<List<FeedData>> getFeedData(@NonNull final String key, @NonNull final String username, @NonNull final String feedKey)  {
         final MQTTService mqttService = getMQTTService();
         return mqttService.getFeedData(key, username, feedKey);
-    }
+    }*/
 }

@@ -19,39 +19,21 @@
 package com.thanksmister.androidthings.iot.alarmpanel.ui.views;
 
 import android.content.Context;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thanksmister.androidthings.iot.alarmpanel.R;
-import com.todddavies.components.progressbar.ProgressWheel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
-public class CodeVerificationView extends LinearLayout {
+public class AlarmTriggeredView extends LinearLayout {
     
     public static final int MAX_CODE_LENGTH = 4;
-
-    @Bind(R.id.pinCode1)
-    ImageView pinCode1;
-
-    @Bind(R.id.pinCode2)
-    ImageView pinCode2;
-
-    @Bind(R.id.pinCode3)
-    ImageView pinCode3;
-
-    @Bind(R.id.pinCode4)
-    ImageView pinCode4;
     
     @Bind(R.id.button0)
     View button0;
@@ -85,27 +67,18 @@ public class CodeVerificationView extends LinearLayout {
 
     @Bind(R.id.buttonDel)
     View buttonDel;
-
-    @Bind(R.id.buttonCancel)
-    View buttonCancel;
-    
-    @Bind(R.id.countDownProgressWheel)
-    ProgressWheel countDownProgressWheel;
-    
+   
     private boolean codeComplete = false;
     private String enteredCode = "";
     private ViewListener listener;
     private int code;
-    private int displaySeconds;
-    private CountDownTimer countDownTimer;
     private Handler handler;
-    private int pendingTimeSeconds = 20; // pending time in seconds
 
-    public CodeVerificationView(Context context) {
+    public AlarmTriggeredView(Context context) {
         super(context);
     }
 
-    public CodeVerificationView(Context context, AttributeSet attrs) {
+    public AlarmTriggeredView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -199,42 +172,6 @@ public class CodeVerificationView extends LinearLayout {
                 removePinCode();
             }
         });
-
-        buttonCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reset();
-                countDownTimer.cancel();
-                countDownTimer = null;
-                listener.onCancel();
-            }
-        });
-        
-        // TODO add a config for this and set it
-        countDownTimer = new CountDownTimer(pendingTimeSeconds*1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                displaySeconds = (int) (millisUntilFinished / 1000);
-                Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
-                an.setFillAfter(true);
-                countDownProgressWheel.setText(String.valueOf(displaySeconds));
-                countDownProgressWheel.setProgress(displaySeconds * 18);
-            }
-
-            @Override
-            public void onFinish() {
-                Timber.d("Timed out...");
-                listener.onTimedOut();
-            }
-        }.start();
-    }
-
-    /**
-     * Set the pending time in seconds
-     * @param pendingTime
-     */
-    public void setPendingTime(int pendingTime) {
-        pendingTimeSeconds = pendingTime;
     }
     
     public void setCode(int code) {
@@ -247,9 +184,7 @@ public class CodeVerificationView extends LinearLayout {
 
     public interface ViewListener {
         void onComplete();
-        void onCancel();
         void onError();
-        void onTimedOut();
     }
     
     private void reset() {
@@ -262,9 +197,7 @@ public class CodeVerificationView extends LinearLayout {
             return;
 
         enteredCode += code;
-
-        showFilledPins(enteredCode.length());
-
+        
         if (enteredCode.length() == MAX_CODE_LENGTH) {
             codeComplete = true;
             handler = new Handler();
@@ -293,47 +226,10 @@ public class CodeVerificationView extends LinearLayout {
     private void validateCode(String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
-            countDownTimer.cancel();
-            countDownTimer = null;
             listener.onComplete();
         } else {
             reset();
             listener.onError();
-        }
-    }
-
-    private void showFilledPins(int pinsShown) {
-        switch (pinsShown) {
-            case 1:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 2:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 3:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 4:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                break;
-            default:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
         }
     }
 }

@@ -122,7 +122,7 @@ public class WeatherModule  {
      * Adapted from https://github.com/HannahMitt/HomeMirror/.
      * @return
      */
-    private boolean shouldTakeUmbrellaToday(Integer precipProbability) {
+    private boolean shouldTakeUmbrellaToday(double precipProbability) {
         return precipProbability < 0.3;
     }
 
