@@ -1,0 +1,28 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <path
+        android:fillColor="#000"
+        android:name="rain"
+        android:pathData="m271.3 20c44.5 0 83.1 30.7 91.8 73c1 4.8 5.2 8 10.5 8.1c0.8 -0 1.5 -0.1 1.8 -0.2c49.9 0 93.7 45.4 93.7 97.2c0 51.8 -43.8 97.2 -93.7 97.2h-249.9c-49.9 0 -93.7 -45.4 -93.7 -97.2c0 -51.8 43.8 -97.2 93.7 -97.2c13.1 0 26.1 2.8 38.5 8.3c1.4 0.6 2.8 0.9 4.3 0.9c1.8 0 3.6 -0.4 5.2 -1.3c2.9 -1.6 4.8 -4.5 5.2 -7.7c5.2 -46.2 45.1 -81.1 92.6 -81.1zm0 -20.2c-53.7 0 -99.3 36.3 -111.1 86.3c-11.3 -3.6 -22.9 -5.4 -34.7 -5.4c-62.1 0 -114.5 53.8 -114.5 117.5c0 63.7 52.5 117.5 114.5 117.5h249.9c62.1 0 114.5 -53.8 114.5 -117.5c0 -61.6 -49.1 -113.9 -108.4 -117.3c-13.7 -47.5 -58.8 -81.1 -110.3 -81.1zm-48.6 346.2c-5.8 0 -10.4 4.5 -10.4 10.1v40.5c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1v-40.5c0 -5.6 -4.7 -10.1 -10.4 -10.1zm125 0c-5.8 0 -10.4 4.5 -10.4 10.1v40.5c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1v-40.5c0 -5.6 -4.7 -10.1 -10.4 -10.1zm-187.4 0c-5.8 0 -10.4 4.5 -10.4 10.1v81c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1v-81c0 -5.6 -4.7 -10.1 -10.4 -10.1zm125 0c-5.8 0 -10.4 4.5 -10.4 10.1v81c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1v-81c0 -5.6 -4.7 -10.1 -10.4 -10.1zm-63.9 93.2c-5.8 0 -10.4 4.5 -10.4 10.1c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1c0 -5.6 -4.7 -10.1 -10.4 -10.1zm125 0c-5.8 0 -10.4 4.5 -10.4 10.1c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1c0 -5.6 -4.7 -10.1 -10.4 -10.1zm-187.4 40.5c-5.8 0 -10.4 4.5 -10.4 10.1c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1c0 -5.6 -4.7 -10.1 -10.4 -10.1zm125 0c-5.8 0 -10.4 4.5 -10.4 10.1c0 5.6 4.7 10.1 10.4 10.1c5.8 0 10.4 -4.5 10.4 -10.1c0 -5.6 -4.7 -10.1 -10.4 -10.1z" />
+</vector>

@@ -25,15 +25,18 @@
         android:gravity="center_vertical|top"
         android:paddingTop="8dp"
         android:paddingLeft="8dp"
-        android:paddingRight="16dp"
+        android:paddingRight="18dp"
         android:orientation="horizontal"
         android:baselineAligned="false">
 
     <FrameLayout
             android:id="@+id/weatherLayout"
+            android:foreground="?selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:paddingLeft="8dp"
+            android:paddingEnd="16dp"
+            android:layout_weight="0">
 
         <LinearLayout
                 android:layout_width="wrap_content"
@@ -46,19 +49,20 @@
                     android:layout_marginTop="2dp"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    tools:src="@drawable/ic_action_thunderstorm"/>
+                    android:tint="@color/dark_gray_color"
+                    tools:src="@drawable/ic_thunderstorm"/>
 
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
                     android:orientation="vertical">
 
                 <TextView
                         android:id="@+id/temperatureText"
                         style="@style/TextAppearance.TextLarge"
                         android:textSize="22sp"
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="18°C"/>

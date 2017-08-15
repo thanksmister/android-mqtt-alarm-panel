@@ -1,0 +1,28 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <path
+        android:fillColor="#000"
+        android:name="thunderstorm"
+        android:pathData="m272 20.1c42.7 0 79.8 30.5 88.2 72.6c0.9 4.7 5 8.1 9.8 8.1c0.2 0 0.4 0 0.5 0c0.7 0 1.2 -0.1 1.5 -0.2c47.9 0 90 45 90 96.4c0 51.3 -42.1 96.3 -90 96.3h-240c-47.9 0 -90 -45 -90 -96.3c0 -51.3 42.1 -96.4 90 -96.4c12.6 0 25 2.8 37 8.2c1.3 0.6 2.7 0.9 4.1 0.9c1.7 0 3.4 -0.4 5 -1.3c2.8 -1.6 4.6 -4.4 5 -7.6c5.1 -45.9 43.3 -80.6 89 -80.6zm0 -20.1c-51.6 0 -95.4 36.1 -106.7 85.8c-10.9 -3.5 -22 -5.3 -33.3 -5.3c-59.6 0 -110 53.3 -110 116.5c0 63.1 50.4 116.5 110 116.5h240c59.6 0 110 -53.3 110 -116.5c0 -61.1 -47.1 -112.9 -104.1 -116.3c-13.2 -47.2 -56.5 -80.6 -105.9 -80.6zm-125 351.9c-2.6 0 -5.1 1 -7.1 2.9l-49.9 50.2c-3.9 3.9 -3.9 10.3 0 14.2c2 2 4.5 2.9 7.1 2.9c2.6 0 5.1 -1 7.1 -2.9l49.9 -50.2c3.9 -3.9 3.9 -10.3 0 -14.2c-2 -2 -4.5 -2.9 -7.1 -2.9zm200 0c-2.6 0 -5.1 1 -7.1 2.9l-49.9 50.2c-3.9 3.9 -3.9 10.3 0 14.2c2 2 4.5 2.9 7.1 2.9c2.6 0 5.1 -1 7.1 -2.9l49.9 -50.2c3.9 -3.9 3.9 -10.3 0 -14.2c-2 -2 -4.5 -2.9 -7.1 -2.9zm-105.8 7.1c-2.4 0 -4.9 0.9 -6.8 2.7l-58.7 54.9c-3 2.8 -4 7.2 -2.5 11c1.5 3.8 5.2 6.4 9.3 6.4h25.9l-46.9 48.7c-3.8 4 -3.7 10.3 0.2 14.2c1.9 1.9 4.4 2.8 7 2.8c2.6 0 5.2 -1 7.2 -3.1l63.3 -65.8c2.8 -2.9 3.6 -7.2 2 -10.9c-1.6 -3.7 -5.2 -6.1 -9.2 -6.1h-24.1l40.1 -37.4c4 -3.8 4.3 -10.1 0.5 -14.2c-2 -2.1 -4.7 -3.2 -7.3 -3.2z" />
+</vector>

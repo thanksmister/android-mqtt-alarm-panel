@@ -28,7 +28,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
     defaultConfig {
-        applicationId "com.thanksmister.androidthings.iot.alarmpanel"
+        applicationId "com.thanksmister.iot.mqtt.alarmpanel"
         minSdkVersion 25
         targetSdkVersion 26
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
@@ -46,17 +46,17 @@ android {
         def BASE_ENVIRONMENT = "BASE_ENVIRONMENT"
         dev {
             buildConfigField "String", BASE_ENVIRONMENT, '"DEV_ENVIRONMENT"'
-            applicationId "com.thanksmister.androidthings.iot.alarmpanel"
+            applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}-DEV"
         }
         qa {
             buildConfigField "String", BASE_ENVIRONMENT, '"QA_ENVIRONMENT"'
-            applicationId "com.thanksmister.androidthings.iot.alarmpanel"
+            applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}-QA"
         }
         prod {
             buildConfigField "String", BASE_ENVIRONMENT, '"PROD_ENVIRONMENT"'
-            applicationId "com.thanksmister.androidthings.iot.alarmpanel"
+            applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         }
     }
@@ -69,14 +69,12 @@ dependencies {
     })
 
     compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:gridlayout-v7:26.+'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.android.support:recyclerview-v7:26.+'
     compile "com.android.support:design:26.+"
     compile 'com.android.support:preference-v14:26.+'
     compile 'fr.baloomba:viewpagerindicator:2.4.2'
-    
-    //provided 'com.google.android.things:androidthings:0.4.1-devpreview'
     
     // MQTT
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'

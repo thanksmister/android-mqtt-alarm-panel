@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="window_background">#ffffff</color>
-   
     <color name="colorPrimary">#3880b9</color>
-    <color name="colorPrimaryDark">#3072a6</color>
-    <color name="colorPrimaryLight">#3f83b8</color>
-    <color name="colorAccent">#ff7dac2f</color>
-    <color name="colorActionBarBackground">#3880b9</color>
-
+ 
     <color name="body_text">#9E9E9E</color>
     <color name="body_text_1">#616161</color>
     <color name="body_text_2">#424242</color>
-    <color name="body_text_3">#212121</color>
-    <color name="body_text_disabled">#E0E0E0</color>
     <color name="body_text_1_inverse">#FFFFFF</color>
-    <color name="body_text_2_inverse">#FFFFFF</color>
-    <color name="body_text_blue_1">#3c75c4</color>
-
-    <color name="step_pager_selected_tab_color">#3c75c4</color>
-    <color name="step_pager_selected_last_tab_color">#3c75c4</color>
-    <color name="step_pager_previous_tab_color">#9cb0ce</color>
-    <color name="step_pager_next_tab_color">#cfcfcf</color>
 
     <color name="transparent">#00000000</color>
 
@@ -30,45 +15,25 @@
     <color name="light_green_pressed">#ff67932c</color>
     <color name="text_green">#ff67932c</color>
     <color name="yellow">#eeee22</color>
-    <color name="orange">#D5B213</color>
-    <color name="orange_pressed">#C5A213</color>
-    <color name="disabled_color">#CCCCCC</color>
     <color name="gray">#818181</color>
     <color name="dark_gray">#818181</color>
-    <color name="button_blue">#ff3c75c4</color>
     <color name="blue">#ff3c75c4</color>
     <color name="blue_pressed">#4170c4</color>
-    <color name="light_blue">#6f9fe1</color>
-    
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="light_gray">#efefef</color>
     <color name="red">#d7523e</color>
-    <color name="light_red">#dc7f71</color>
-    <color name="text_red">#d7523e</color>
-    <color name="button_red">#d7523e</color>
     <color name="red_light_up">#fff4492c</color>
     <color name="red_light_pressed">#ffd3402a</color>
-    <color name="black_overlay">#66000000</color>
     <color name="gray_color">#eeeeee</color>
-    <color name="light_background_gray_color">#fafafa</color>
     <color name="background_gray_color">#eeeeee</color>
-    <color name="list_gray_color">#f7f7f7</color>
 
     <color name="gray_up">#e5e5e5</color>
     <color name="gray_pressed">#c2c2c2</color>
 
-    <color name="light_gray_color">#9E9E9E</color>
     <color name="dark_gray_color">#ff707070</color>
-    <color name="darker_gray_color">#ff505050</color>
-    <color name="text_background_gray_color">#ffefefef</color>
-    <color name="stroke">#e5e5e5</color>
-    <color name="stroke_blue">#0099cc</color>
     <color name="stroke_gray">#d8d8d8</color>
     <color name="text">#7e7e7c</color>
-    <color name="text_light">#8A000000</color>
-    <color name="text_lighter">#61000000</color>
-    <color name="text_link">#0099cc</color>
-    <color name="login_background_color">#eeeeee</color>
-    
+
 </resources>

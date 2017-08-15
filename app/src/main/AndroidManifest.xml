@@ -17,33 +17,24 @@
   ~   
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.thanksmister.androidthings.iot.alarmpanel">
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" android:maxSdkVersion="22"/>
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS"/>-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!--<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" android:maxSdkVersion="22"/>-->
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-
+          package="com.thanksmister.iot.mqtt.alarmpanel">
+    
     <!-- Permissions the Application Requires -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-            android:name=".BaseApplication"
+            android:name="com.thanksmister.iot.mqtt.alarmpanel.BaseApplication"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
-
-        <!-- <uses-library android:name="com.google.android.things"/> -->
-
+        
         <activity
-                android:name=".ui.activities.MainActivity"
+                android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity"
                 android:icon="@mipmap/ic_launcher">
 
             <!-- Launch activity as default from Android Studio -->
@@ -61,12 +52,12 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.SettingsActivity"/>
+        <activity android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity"/>
 
-        <!-- Sync Provider -->
+        <!-- Database Provider -->
         <provider
-                android:name=".network.sync.SyncProvider"
-                android:authorities="com.thanksmister.androidthings.iot.alarmpanel"
+                android:name=".data.provider.ContentProvider"
+                android:authorities="com.thanksmister.iot.mqtt.alarmpanel"
                 android:exported="false"
                 android:syncable="true"/>
 
@@ -76,34 +67,11 @@
                 android:authorities="me.dozen.dpreference.PreferenceProvider"
                 android:enabled="true"
                 android:exported="false"/>
-
-        <!-- Sync Services -->
-        <service
-                android:name=".network.sync.SyncService"
-                android:exported="true"
-                android:process=":sync"
-                >
-            
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
-            </intent-filter>
-            
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-
-            <meta-data
-                    android:name="android.accounts.AccountAuthenticator"
-                    android:resource="@xml/authenticator"/>
-            <meta-data
-                    android:name="android.content.SyncAdapter"
-                    android:resource="@xml/syncadapter"/>
-        </service>
-
+        
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
 
-        <activity android:name=".ui.activities.LogActivity"/>
+        <activity android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity"/>
     
     </application>
 

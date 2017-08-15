@@ -26,13 +26,12 @@
         android:background="@drawable/background_rounded_gray"
         android:gravity="center_vertical">
 
-
     <LinearLayout
             android:id="@+id/pendingView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingRight="78dp"
+            android:paddingLeft="42dp"
             android:orientation="horizontal"
             tools:visibility="visible"
             android:visibility="gone">
@@ -58,7 +57,7 @@
                         android:src="@drawable/ic_lock_large"/>
 
             </LinearLayout>
-            
+
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,7 +79,7 @@
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PENDING"/>
+                        android:text="ALARM PENDING"/>
 
             </LinearLayout>
 
@@ -117,7 +116,7 @@
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         android:src="@drawable/ic_unlock_large"/>
-                
+
             </LinearLayout>
 
             <LinearLayout
@@ -145,7 +144,7 @@
             </LinearLayout>
 
         </LinearLayout>
-        
+
     </LinearLayout>
 
     <LinearLayout
@@ -153,9 +152,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingRight="38dp"
+            android:paddingRight="42dp"
             android:orientation="horizontal"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:visibility="gone">
 
         <LinearLayout
@@ -177,7 +176,7 @@
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         android:src="@drawable/ic_lock_large"/>
-                
+
             </LinearLayout>
 
 
@@ -205,7 +204,7 @@
                         android:text="@string/text_arm_home"/>
 
             </LinearLayout>
-            
+
         </LinearLayout>
 
     </LinearLayout>
@@ -215,8 +214,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:paddingRight="2dp"
             android:orientation="horizontal"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:visibility="gone">
 
         <LinearLayout
@@ -238,9 +238,9 @@
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         android:src="@drawable/ic_lock_large"/>
-                
+
             </LinearLayout>
-            
+
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -270,7 +270,7 @@
         </LinearLayout>
 
     </LinearLayout>
-    
+
     <FrameLayout
             android:id="@+id/alarmPendingLayout"
             android:paddingBottom="160dp"

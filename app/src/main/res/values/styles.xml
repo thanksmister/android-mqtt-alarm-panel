@@ -1,6 +1,7 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base application theme.  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"-->
+    
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <!--<item name="colorPrimary">@color/colorPrimary</item>
@@ -485,18 +486,6 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="ButtonBarButton">
-        <item name="android:minHeight">@dimen/list_item_height_small</item>
-    </style>
-
-    <style name="WizardPageContainer">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-    </style>
-
     <style name="WizardPageTitle">
         <item name="android:id">@android:id/title</item>
         <item name="android:layout_width">match_parent</item>
@@ -505,52 +494,6 @@
         <item name="android:paddingLeft">@dimen/list_item_padding_left</item>
         <item name="android:textSize">@dimen/text_size_headline</item>
         <item name="android:textColor">@color/body_text_1</item>
-    </style>
-
-    <style name="WizardPageContent">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:paddingLeft">?android:attr/listPreferredItemPaddingLeft</item>
-        <item name="android:textSize">36sp</item>
-        <item name="android:textColor">#ff0099cc</item>
-    </style>
-
-    <style name="WizardFormLabel">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">0dp</item>
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
-        <item name="android:textColor">@color/text_light</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-    </style>
-
-    <style name="WizardPageImage">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:layout_margin">@dimen/list_item_padding_left</item>
-        <item name="android:adjustViewBounds">true</item>
-        <item name="android:scaleType">centerInside</item>
-    </style>
-
-    <style name="WizardPageImageContainer">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-    </style>
-
-    <style name="ConfigurationItemText">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textSize">@dimen/configuration_text_size</item>
-        <item name="android:layout_marginTop">@dimen/item_margin</item>
-    </style>
-
-    <style name="ConfigurationDescriptionText">
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textSize">@dimen/configuration_description_size</item>
     </style>
 
     <style name="ConfigurationEditText" parent="Base.Widget.AppCompat.EditText">

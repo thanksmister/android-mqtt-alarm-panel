@@ -12,7 +12,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.thanksmister.androidthings.iot.alarmpanel.R;
+import com.thanksmister.iot.mqtt.alarmpanel.R;
 
 /**
  * An indicator of progress, similar to Android's ProgressBar.

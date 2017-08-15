@@ -1,0 +1,28 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <path
+        android:fillColor="#000"
+        android:name="wind"
+        android:pathData="m9.3 269.1c-5.1 0 -9.3 4.2 -9.3 9.3c0 5.1 4.1 9.3 9.3 9.3h222.5c5.1 0 9.3 -4.2 9.3 -9.3c0 -5.1 -4.1 -9.3 -9.3 -9.3zm304.7 -76.7c-5.1 0 -9.3 4.2 -9.3 9.3c0 5.1 4.1 9.3 9.3 9.3c22.1 0 40.9 20.2 40.9 44.1c0 23 -19.1 51.1 -41.3 51.1h-230.1c-5.1 0 -9.3 4.2 -9.3 9.3c0 5.1 4.1 9.3 9.3 9.3h230.1c33.7 0 59.9 -37.5 59.9 -69.7c0 -34 -27.2 -62.7 -59.4 -62.7zm82.8 -53.4c-5.1 0 -9.3 4.2 -9.3 9.3c0 5.1 4.1 9.3 9.3 9.3c44.3 0 84.6 44.3 84.6 92.9c0 43.9 -35.7 92.9 -83.5 92.9h-221.8c-5.1 0 -9.3 4.2 -9.3 9.3c0 5.1 4.1 9.3 9.3 9.3h221.8c54.3 0 102 -52.1 102 -111.5c0 -58.4 -49.2 -111.5 -103.2 -111.5z" />
+</vector>

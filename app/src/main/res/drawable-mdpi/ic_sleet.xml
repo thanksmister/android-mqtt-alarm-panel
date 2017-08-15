@@ -1,0 +1,28 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <path
+        android:fillColor="#000"
+        android:name="sleet"
+        android:pathData="m283.4 31.8c44.1 0 82.4 31.6 91.1 75.2c1 5 4.5 8.3 10.4 8.4c0.8 -0 1.5 -0.1 1.8 -0.2c50.4 0 92.9 45.3 92.9 98.9c0 53.6 -42.6 98.9 -92.9 98.9h-247.8c-50.4 0 -92.9 -45.3 -92.9 -98.9c0 -53.6 42.6 -98.9 92.9 -98.9c13 0 25.9 2.9 38.2 8.5c1.4 0.6 2.8 0.9 4.3 0.9c1.8 0 3.5 -0.5 5.1 -1.4c2.9 -1.6 4.8 -4.6 5.2 -7.9c5.2 -47.6 44.7 -83.5 91.8 -83.5zm0 -20.8c-53.2 0 -98.5 37.4 -110.2 88.8c-11.2 -3.7 -22.7 -5.5 -34.4 -5.5c-61.6 0 -113.6 54.8 -113.6 119.8c0 64.9 52 119.8 113.6 119.8h247.8c61.6 0 113.6 -54.8 113.6 -119.8c0 -62.8 -48.6 -116.1 -107.5 -119.6c-13.6 -48.9 -58.3 -83.5 -109.3 -83.5zm-170.4 354c-2.6 0 -5.3 1 -7.3 3.1l-51.6 52c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l51.6 -52c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-51.6 52c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l51.6 -52c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-51.6 52c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l51.6 -52c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-51.6 52c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l51.6 -52c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm-330.4 83.3c-2.6 0 -5.3 1 -7.3 3.1l-20.7 20.8c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l20.7 -20.8c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-20.7 20.8c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l20.7 -20.8c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-20.7 20.8c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l20.7 -20.8c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1zm82.6 0c-2.6 0 -5.3 1 -7.3 3.1l-20.7 20.8c-4 4.1 -4 10.7 0 14.7c2 2 4.7 3.1 7.3 3.1c2.6 0 5.3 -1 7.3 -3.1l20.7 -20.8c4 -4.1 4 -10.7 0 -14.7c-2 -2 -4.7 -3.1 -7.3 -3.1z" />
+</vector>

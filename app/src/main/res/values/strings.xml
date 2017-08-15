@@ -1,26 +1,16 @@
 <resources>
     <string name="app_name">AlarmPanel</string>
-    <string name="account_type" translatable="false">com.thanksmister.androidthings.iot.alarmpanel.ACCOUNT</string>
-    <string name="app_context" translatable="false">com.thanksmister.androidthings.iot.alarmpanel</string>
-    
+
     <!-- Menus -->
     <string name="action_settings">Settings</string>
     <string name="action_publish">Publish</string>
 
     <!-- Buttons -->
-    <string name="button_camera">Camera</string>
-    <string name="button_alarm_away">Set Alarm Away</string>
-    <string name="button_alarm_home">Set Alarm Home</string>
-    <string name="button_disarm">Disarm</string>
-    <string name="button_settings">Settings</string>
 
     <!-- Toasts, Alerts, Errors -->
-    <string name="error_updating_message">Error updating message</string>
-    <string name="alert_publishing_message">Publishing message…</string>
     <string name="toast_code_match">Alarm code matches current code, enter a different code.</string>
     <string name="toast_code_alarm_set">Alarm has been set!</string>
     <string name="toast_code_unchanged">Alarm code unchanged!</string>
-    <string name="toast_code_alarm_canceled">Alarm canceled!</string>
     <string name="toast_code_changed">Alarm code changed successfully!</string>
     <string name="toast_code_not_match">Code does not match, try again.</string>
     <string name="toast_code_invalid">Code is invalid, please try again.</string>
@@ -28,7 +18,6 @@
     <!-- Text Content -->
     <string name="text_enter_alarm_code_title">Enter a new alarm code</string>
     <string name="text_renter_alarm_code_title">Please enter the new code again to verify</string>
-    <string name="text_count_down_title">Remaining time until active</string>
 
     <!-- Preferences -->
     <string name="preference_summary_security_code">Set the alarm system code.</string>
@@ -58,6 +47,19 @@
     <string name="preference_title_trigger_time">Trigger Time</string>
     <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
 
+    <string name="preference_title_weather_settings">Weather Settings</string>
+    <string name="preference_summary_weather_settings">Once activated, the weather settings will appear on the main screen.</string>
+    <string name="preference_title_darksky">DarkSky</string>
+    <string name="preference_summary_darksky">Activate the weather module using the DarkSky service.</string>
+    <string name="preference_title_darksky_api">API Secret</string>
+    <string name="preference_summary_darksky_api">Enter your DarkSky API secret.</string>
+    <string name="preference_title_latitude">Latitude</string>
+    <string name="preference_summary_latitude_summary">Edit the location latitude.</string>
+    <string name="preference_title_longitude">Longitude</string>
+    <string name="preference_summary_longitude_summary">Edit the location longitude.</string>
+
+    <string name="preference_title_units">Use Celsius (°C)</string>
+    <string name="preference_summary_units">Use celsius for temperature values.</string>
     
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
@@ -67,27 +69,19 @@
     <string name="toast_invalid_longitude">Value should be between -180 and 180.</string>
     <string name="toast_invalid_provider">Unable to detect location, please enter lat/long manually.</string>
     <string name="activity_settings_title">Settings</string>
-    <string name="toast_alarm_cancelled">Alarm cancelled…</string>
-    <string name="alarm_timed_out">Alarm timed out…</string>
     <string name="toast_alarm_deactivated">Alarm deactivated!</string>
-    <string name="activity_logs_title">Subscription Data Logs</string>
-    
-    <string name="text_alarm_publish_armed_away">Publish Alarm Armed Away</string>
-    <string name="text_alarm_publish_armed_home">Publish Alarm Armed Home</string>
-    <string name="text_alarm_publish_disarmed">Publish Alarm Disarmed</string>
+    <string name="activity_logs_title">Data Logs</string>
 
-    <string name="text_alarm_subscribe_armed_away">Subscribe Alarm Armed Away</string>
-    <string name="text_alarm_subscribe_armed_home">Subscribe Alarm Armed Home</string>
-    <string name="text_alarm_subscribe_disarmed">Subscribe Alarm Disarmed</string>
-    <string name="text_alarm_subscribe_triggered">Subscribe Alarm Triggered</string>
-    <string name="text_alarm_subscribe_pending">Subscribe Alarm Pending</string>
-    <string name="text_please_exit_in_the_time_remaining">Alarm activation pending.</string>
     <string name="text_arm_home">ARM HOME</string>
     <string name="text_arm_away">ARM AWAY</string>
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">DISARMED</string>
     <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
-    <string name="button_clear">Clear</string>
-
+    <string name="dialog_first_time">Since this is your first time, please setup your MQTT and Alarm information.</string>
+    <string name="text_alarm_pending">ALARM PENDING</string>
+    <string name="text_f">°F</string>
+    <string name="text_c">°C</string>
+    <string name="text_temperature">%1$s %2$s</string>
+    <string name="text_temperature_range">H%1$s°  L%2$s°</string>
 
 </resources>
