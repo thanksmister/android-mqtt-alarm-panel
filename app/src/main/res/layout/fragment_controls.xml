@@ -92,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingRight="52dp"
+            android:paddingRight="54dp"
             android:orientation="horizontal"
             tools:visibility="visible"
             android:visibility="gone">
@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingRight="42dp"
+            android:paddingRight="44dp"
             android:orientation="horizontal"
             tools:visibility="visible"
             android:visibility="gone">
@@ -214,7 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingRight="2dp"
+            android:paddingRight="4dp"
             android:orientation="horizontal"
             tools:visibility="visible"
             android:visibility="gone">
