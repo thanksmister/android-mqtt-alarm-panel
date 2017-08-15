@@ -29,7 +29,7 @@ android {
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
-        minSdkVersion 25
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
@@ -71,6 +71,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.android.support:cardview-v7:26.+'
     compile 'com.android.support:recyclerview-v7:26.+'
     compile "com.android.support:design:26.+"
     compile 'com.android.support:preference-v14:26.+'

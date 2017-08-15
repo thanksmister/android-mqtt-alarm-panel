@@ -192,20 +192,25 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         super.onDetach();
         mListener = null;
     }
-    
+
+    // TODO right now we are relying on the pending time from home assistant, maybe we should do this internally
     private void showArmOptionsDialog() {
         showArmOptionsDialog(new ArmOptionsView.ViewListener() {
             @Override
             public void onArmHome() {
+                hideArmOptionsDialog();
                 mListener.publishArmedHome();
+                setPendingView(PREF_ARM_HOME_PENDING);
             }
             @Override
             public void onArmAway() {
+                hideArmOptionsDialog();
                 mListener.publishArmedAway();
+                setPendingView(PREF_ARM_AWAY_PENDING);
             }
         });
     }
-    
+
     /**
      * Handles the application state from the state topic payload changes from the subscriptoin.
      * @param state Payload from the state topic subscription.
@@ -215,26 +220,28 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
 
         Timber.d("handleStateChange state: " + state);
         Timber.d("handleStateChange mode: " + getConfiguration().getAlarmMode());
-        
+
         // hide any dialogs
-        hideAlarmDisableDialog(); 
+        hideAlarmDisableDialog();
         hideArmOptionsDialog();
-        hideAlarmPendingView();
-        
+
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
+                hideAlarmPendingView();
                 setArmedAwayView();
                 break;
             case AlarmUtils.STATE_ARM_HOME:
-                setArmedHomeView();
                 hideAlarmPendingView();
+                setArmedHomeView();
                 break;
             case AlarmUtils.STATE_DISARM:
+                hideAlarmPendingView();
                 setDisarmedView();
                 break;
             case AlarmUtils.STATE_PENDING:
-                // alarm was active and triggered, show dialog to disarm, otherwise we received pending before arm from HASS
-                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
+                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
+                    // do nothing
+                } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
                     showAlarmDisableDialog();
                 }  else {
                     setPendingView(PREF_ARM_PENDING);
@@ -244,7 +251,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                 // handled in the main activity
                 break;
             default:
-                throw new IllegalStateException("Invalid state topic: " + state);
+                throw new IllegalStateException("Invalid state: " + state);
         }
     }
 
@@ -272,16 +279,17 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      * @param mode PREF_ARM_HOME_PENDING, PREF_ARM_AWAY_PENDING, PREF_ARM_PENDING
      */
     private void setPendingView(String mode) {
+        Timber.d("setPendingView: " + mode);
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(mode);
         if(PREF_ARM_HOME_PENDING.equals(mode)) {
-            armedHomeView.setVisibility(View.GONE);
-            armedAwayView.setVisibility(View.VISIBLE);
+            armedHomeView.setVisibility(View.VISIBLE);
+            armedAwayView.setVisibility(View.GONE);
             disarmedView.setVisibility(View.GONE);
             pendingView.setVisibility(View.GONE);
         } else if (PREF_ARM_AWAY_PENDING.equals(mode)) {
-            armedHomeView.setVisibility(View.VISIBLE);
-            armedAwayView.setVisibility(View.GONE);
+            armedHomeView.setVisibility(View.GONE);
+            armedAwayView.setVisibility(View.VISIBLE);
             disarmedView.setVisibility(View.GONE);
             pendingView.setVisibility(View.GONE);
         } else if (PREF_ARM_PENDING.equals(mode)) {
@@ -290,7 +298,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             disarmedView.setVisibility(View.GONE);
             pendingView.setVisibility(View.VISIBLE);
         }
-        showAlarmPendingView(mode);
+        showAlarmPendingView();
     }
 
     private void setDisarmedView() {
@@ -302,18 +310,12 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         pendingView.setVisibility(View.GONE);
     }
     
-    private void showAlarmPendingView(final String mode) {
+    private void showAlarmPendingView() {
+        Timber.d("showAlarmPendingView");
         countDownLayout.setVisibility(View.VISIBLE);
         alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
             @Override
             public void onTimeOut() {
-                if(PREF_ARM_AWAY_PENDING.equals(mode)) {
-                    // alarm was set from panel, publish to HASS
-                    mListener.publishArmedAway();
-                } else if (PREF_ARM_HOME_PENDING.equals(mode)){
-                    // alarm was set from panel, publish to HASS
-                    mListener.publishArmedHome();
-                }
                 hideAlarmPendingView();
             }
         });

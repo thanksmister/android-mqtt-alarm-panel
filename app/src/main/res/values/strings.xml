@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AlarmPanel</string>
+    <string name="app_name">Alarm Panel</string>
 
     <!-- Menus -->
     <string name="action_settings">Settings</string>

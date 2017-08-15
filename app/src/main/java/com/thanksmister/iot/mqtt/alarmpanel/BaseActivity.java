@@ -21,6 +21,7 @@ package com.thanksmister.iot.mqtt.alarmpanel;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -252,8 +253,15 @@ abstract public class BaseActivity extends AppCompatActivity {
             extendedForecastDialog.cancel();
             extendedForecastDialog = null;
         }
+
+        Rect displayRectangle = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_extended_forecast, null, false);
+        view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
+        //view.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
         final ExtendedForecastView  extendedForecastView = (ExtendedForecastView) view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
         extendedForecastDialog = new AlertDialog.Builder(BaseActivity.this)

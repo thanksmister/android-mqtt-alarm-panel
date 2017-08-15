@@ -24,12 +24,12 @@
         android:id="@+id/extendedForecastView"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView>

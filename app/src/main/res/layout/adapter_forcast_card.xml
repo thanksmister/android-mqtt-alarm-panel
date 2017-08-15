@@ -17,17 +17,17 @@
   ~   
   -->
 
-<FrameLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="8dp">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minWidth="220dp"
+            android:minWidth="250dp"
             android:padding="16dp"
             android:background="@drawable/background_rounded_gray"
             android:gravity="center"
@@ -35,14 +35,14 @@
 
         <ImageView
                 android:id="@+id/iconImage"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
                 android:tint="@color/gray"
                 tools:src="@drawable/ic_thunderstorm"/>
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                android:layout_height="32dp"/>
 
         <TextView
                 android:id="@+id/dayText"
@@ -59,7 +59,8 @@
 
         <TextView
                 android:id="@+id/outlookText"
-                style="@style/TextAppearance.TextMedium"
+                style="@style/TextAppearance.TextLarge"
+                android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
@@ -74,7 +75,8 @@
 
         <TextView
                 android:id="@+id/temperatureText"
-                style="@style/TextAppearance.TextMedium"
+                style="@style/TextAppearance.TextLarge"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
@@ -82,4 +84,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

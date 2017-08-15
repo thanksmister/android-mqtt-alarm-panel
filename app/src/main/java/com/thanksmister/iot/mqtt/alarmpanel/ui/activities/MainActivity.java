@@ -90,6 +90,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         }
 
         // TODO move these to settings
+        getConfiguration().setDarkSkyKey("d0ad3a84efde97eaedfaad53472944be");
         getConfiguration().setCommandTopic(AlarmUtils.COMMAND_TOPIC);
         getConfiguration().setStateTopic(AlarmUtils.STATE_TOPIC);
         getConfiguration().setUserName("homeassistant");

@@ -70,8 +70,7 @@ public class AlarmPendingView extends LinearLayout {
      * @param pendingTime seconds
      */
     public void startCountDown(int pendingTime) {
-        Timber.d("startCountDown: "+ pendingTime*1000);
-        // TODO add a config for this and set it
+        Timber.d("startCountDown: "+ pendingTime*1300);
         final int divideBy = 360/pendingTime;
         countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
             @Override
