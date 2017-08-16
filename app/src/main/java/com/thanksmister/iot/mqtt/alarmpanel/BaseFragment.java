@@ -87,11 +87,7 @@ public class BaseFragment extends Fragment {
         ((BaseActivity) getActivity()).showExtendedForecastDialog(daily);
     }
     
-    public void hideArmOptionsDialog() {
-        ((BaseActivity) getActivity()).hideArmOptionsDialog();
-    }
-
-    public void hideAlarmDisableDialog() {
-        ((BaseActivity) getActivity()).hideAlarmDisableDialog();
+    public void hideDialog() {
+        ((BaseActivity) getActivity()).hideDialog();
     }
 }

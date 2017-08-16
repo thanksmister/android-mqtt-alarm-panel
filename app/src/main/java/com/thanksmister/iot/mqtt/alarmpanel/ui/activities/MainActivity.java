@@ -83,14 +83,10 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
         ButterKnife.bind(this);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-            getSupportActionBar().setDisplayUseLogoEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         // TODO move these to settings
         getConfiguration().setDarkSkyKey("d0ad3a84efde97eaedfaad53472944be");
+        getConfiguration().setLat("-34.6158037");
+        getConfiguration().setLon("-58.5033387");
         getConfiguration().setCommandTopic(AlarmUtils.COMMAND_TOPIC);
         getConfiguration().setStateTopic(AlarmUtils.STATE_TOPIC);
         getConfiguration().setUserName("homeassistant");
@@ -195,6 +191,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                     subscribeToTopic(topic);
                 } else {
                     Timber.d("Connected to: " + serverURI);
+                    
                 }
             }
 
@@ -269,9 +266,15 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             message.setPayload(publishMessage.getBytes());
             mqttAndroidClient.publish(publishTopic, message);
             Timber.d("Message Published: " + publishTopic);
-            // TODO throwing error
             if(!mqttAndroidClient.isConnected()){
-                Timber.d(mqttAndroidClient.getBufferedMessageCount() + " messages in buffer.");
+                //Timber.d(mqttAndroidClient.getBufferedMessageCount() + " messages in buffer.");
+                showAlertDialog(getString(R.string.error_mqtt_connection), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        makeMqttConnection();
+                    }
+                });
+                Timber.d("Unable to connect client.");
             }
         } catch (MqttException e) {
             Timber.e("Error Publishing: " + e.getMessage());

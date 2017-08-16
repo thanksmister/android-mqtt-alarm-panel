@@ -30,7 +30,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
@@ -62,48 +62,30 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     // The loader's unique id. Loader ids are specific to the Activity or
     private static final int DATA_LOADER_ID = 1;
     
-    @Bind(R.id.armedAwayView)
-    View armedAwayView;
-
-    @Bind(R.id.armedHomeView)
-    View armedHomeView;
-
-    @Bind(R.id.disarmedView)
-    LinearLayout disarmedView;
-
-    @Bind(R.id.pendingView)
-    LinearLayout pendingView;
-    
     @Bind(R.id.alarmPendingLayout)
-    View countDownLayout;
+    View alarmPendingLayout;
+    
+    @Bind(R.id.alarmButtonBackground)
+    View alarmButtonBackground;
+    
+    @Bind(R.id.alarmText)
+    TextView alarmText;
     
     @Bind(R.id.alarmPendingView)
     AlarmPendingView alarmPendingView;
  
-    @OnClick(R.id.armButton)
+    @OnClick(R.id.alarmButton)
     public void armButtonClick() {
-        showArmOptionsDialog();
-    }
-
-    @OnClick(R.id.disarmAwayButton)
-    public void disarmAwayButtonClick() {
-        showAlarmDisableDialog();
-    }
-
-    @OnClick(R.id.disarmHomeButton)
-    public void disarmHomeClick() {
-        showAlarmDisableDialog();
-    }
-
-    @OnClick(R.id.disarmPendingButton)
-    public void disarmPendingButton() {
-        showAlarmDisableDialog();
+        if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
+            showArmOptionsDialog();
+        } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
+            showAlarmDisableDialog();
+        } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
+            showAlarmDisableDialog();
+        } 
     }
     
-    @AlarmUtils.AlarmStates
-    private String currentState;
     private SubscriptionObserver subscriptionObserver;
-    
     private OnControlsFragmentListener mListener;
 
     /**
@@ -198,13 +180,13 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         showArmOptionsDialog(new ArmOptionsView.ViewListener() {
             @Override
             public void onArmHome() {
-                hideArmOptionsDialog();
+                hideDialog();
                 mListener.publishArmedHome();
                 setPendingView(PREF_ARM_HOME_PENDING);
             }
             @Override
             public void onArmAway() {
-                hideArmOptionsDialog();
+                hideDialog();
                 mListener.publishArmedAway();
                 setPendingView(PREF_ARM_AWAY_PENDING);
             }
@@ -222,8 +204,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         Timber.d("handleStateChange mode: " + getConfiguration().getAlarmMode());
 
         // hide any dialogs
-        hideAlarmDisableDialog();
-        hideArmOptionsDialog();
+        hideDialog();
 
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
@@ -258,19 +239,15 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     private void setArmedAwayView() {
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(PREF_ARM_AWAY);
-        armedHomeView.setVisibility(View.GONE);
-        armedAwayView.setVisibility(View.VISIBLE);
-        disarmedView.setVisibility(View.GONE);
-        pendingView.setVisibility(View.GONE);
+        alarmText.setText(R.string.text_arm_away);
+        alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
     }
 
     private void setArmedHomeView() {
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(PREF_ARM_HOME);
-        armedHomeView.setVisibility(View.VISIBLE);
-        armedAwayView.setVisibility(View.GONE);
-        disarmedView.setVisibility(View.GONE);
-        pendingView.setVisibility(View.GONE);
+        alarmText.setText(R.string.text_arm_home);
+        alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
     }
 
     /**
@@ -283,20 +260,14 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(mode);
         if(PREF_ARM_HOME_PENDING.equals(mode)) {
-            armedHomeView.setVisibility(View.VISIBLE);
-            armedAwayView.setVisibility(View.GONE);
-            disarmedView.setVisibility(View.GONE);
-            pendingView.setVisibility(View.GONE);
+            alarmText.setText(R.string.text_arm_home);
+            alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
         } else if (PREF_ARM_AWAY_PENDING.equals(mode)) {
-            armedHomeView.setVisibility(View.GONE);
-            armedAwayView.setVisibility(View.VISIBLE);
-            disarmedView.setVisibility(View.GONE);
-            pendingView.setVisibility(View.GONE);
+            alarmText.setText(R.string.text_arm_away);
+            alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
         } else if (PREF_ARM_PENDING.equals(mode)) {
-            armedHomeView.setVisibility(View.GONE);
-            armedAwayView.setVisibility(View.GONE);
-            disarmedView.setVisibility(View.GONE);
-            pendingView.setVisibility(View.VISIBLE);
+            alarmText.setText(R.string.text_alarm_pending);
+            alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_gray));
         }
         showAlarmPendingView();
     }
@@ -304,15 +275,13 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     private void setDisarmedView() {
         getConfiguration().setArmed(false);
         getConfiguration().setAlarmMode(PREF_DISARM);
-        armedHomeView.setVisibility(View.GONE);
-        armedAwayView.setVisibility(View.GONE);
-        disarmedView.setVisibility(View.VISIBLE);
-        pendingView.setVisibility(View.GONE);
+        alarmText.setText(R.string.text_disarmed);
+        alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_green));
     }
     
     private void showAlarmPendingView() {
         Timber.d("showAlarmPendingView");
-        countDownLayout.setVisibility(View.VISIBLE);
+        alarmPendingLayout.setVisibility(View.VISIBLE);
         alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
             @Override
             public void onTimeOut() {
@@ -323,7 +292,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     }
     
     private void hideAlarmPendingView() {
-        countDownLayout.setVisibility(View.GONE);
+        alarmPendingLayout.setVisibility(View.GONE);
         alarmPendingView.stopCountDown();
     }
 
@@ -342,7 +311,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             }
             @Override
             public void onCancel() {
-                hideAlarmDisableDialog();
+                hideDialog();
             }
         }, getConfiguration().getAlarmCode());
     }

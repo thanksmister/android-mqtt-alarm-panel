@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -99,6 +100,7 @@ public class AlarmDisableView extends LinearLayout {
     private int displaySeconds;
     private CountDownTimer countDownTimer;
     private Handler handler;
+    private MediaPlayer mediaPlayer;
   
     public AlarmDisableView(Context context) {
         super(context);
@@ -115,9 +117,12 @@ public class AlarmDisableView extends LinearLayout {
 
         ButterKnife.bind(this);
 
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.beep);
+
         button0.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("0");
             }
         });
@@ -125,6 +130,7 @@ public class AlarmDisableView extends LinearLayout {
         button1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("1");
             }
         });
@@ -132,6 +138,7 @@ public class AlarmDisableView extends LinearLayout {
         button2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("2");
             }
         });
@@ -139,6 +146,7 @@ public class AlarmDisableView extends LinearLayout {
         button3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("3");
             }
         });
@@ -146,6 +154,7 @@ public class AlarmDisableView extends LinearLayout {
         button4.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("4");
             }
         });
@@ -153,6 +162,7 @@ public class AlarmDisableView extends LinearLayout {
         button5.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("5");
             }
         });
@@ -160,6 +170,7 @@ public class AlarmDisableView extends LinearLayout {
         button6.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("6");
             }
         });
@@ -167,6 +178,7 @@ public class AlarmDisableView extends LinearLayout {
         button7.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("7");
             }
         });
@@ -174,6 +186,7 @@ public class AlarmDisableView extends LinearLayout {
         button8.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("8");
             }
         });
@@ -181,6 +194,7 @@ public class AlarmDisableView extends LinearLayout {
         button9.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 addPinCode("9");
             }
         });
@@ -188,6 +202,7 @@ public class AlarmDisableView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 removePinCode();
             }
         });
@@ -195,6 +210,7 @@ public class AlarmDisableView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 removePinCode();
             }
         });
@@ -202,6 +218,7 @@ public class AlarmDisableView extends LinearLayout {
         buttonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mediaPlayer.start();
                 clear();
                 listener.onCancel();
             }
@@ -210,7 +227,6 @@ public class AlarmDisableView extends LinearLayout {
 
     public void startCountDown(int pendingTime) {
         Timber.d("startCountDown: "+ pendingTime*1000);
-        // TODO add a config for this and set it
         final int divideBy = 360/pendingTime;
         countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
             @Override

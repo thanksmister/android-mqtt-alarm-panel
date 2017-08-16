@@ -21,16 +21,23 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.LogFragment;
 
-public class LogActivity extends AppCompatActivity {
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+public class LogActivity extends BaseActivity {
 
     private static final String LOGS_FRAGMENT = "com.thanksmister.fragment.LOGS_FRAGMENT";
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    
     public static Intent createStartIntent(Context context) {
         return new Intent(context, LogActivity.class);
     }
@@ -38,13 +45,19 @@ public class LogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_logs);
 
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().show();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle(R.string.activity_logs_title);
+        ButterKnife.bind(this);
+
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().show();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setTitle(R.string.activity_logs_title);
+            }
         }
 
         if(savedInstanceState == null) {

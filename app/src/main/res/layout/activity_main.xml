@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:gravity="end"
-            android:paddingTop="8dp"
+            android:paddingTop="4dp"
             android:paddingBottom="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
@@ -54,10 +54,12 @@
         <ImageButton
                 android:id="@+id/buttonLogs"
                 style="@style/BorderlessButtonStyle"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:padding="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:tint="@color/dark_gray"
                 android:layout_toEndOf="@+id/spaceButton"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_log_list_black_24dp"
                 tools:ignore="ContentDescription"/>
         
@@ -70,9 +72,11 @@
         <ImageButton
                 android:id="@+id/buttonSettings"
                 style="@style/BorderlessButtonStyle"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:padding="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:tint="@color/dark_gray"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_settings_black_24dp"
                 tools:ignore="ContentDescription"/>
         
@@ -83,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/red"
-            tools:visibility="visible"
+            tools:visibility="gone"
             android:visibility="gone">
         
         <include

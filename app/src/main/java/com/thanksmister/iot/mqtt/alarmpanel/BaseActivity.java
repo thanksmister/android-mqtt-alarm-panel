@@ -35,9 +35,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.thanksmister.iot.mqtt.alarmpanel.constants.ExceptionCodes;
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
@@ -52,34 +50,34 @@ abstract public class BaseActivity extends AppCompatActivity {
     private StoreManager storeManager;
     private Configuration configuration;
     private AlertDialog progressDialog;
-    private AlertDialog alertDialog;
-    private AlertDialog alarmDisarmDialog;
-    private AlertDialog extendedForecastDialog;
-    private AlertDialog armOptionsDialog;
+    private AlertDialog dialog;
+    private View decorView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
-        // this would make the app run full screen
-        /* 
-        int mUIFlag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-        getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
-        */
+        decorView = getWindow().getDecorView();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+    
     @Override
     protected void onDestroy() {
 
@@ -87,9 +85,9 @@ abstract public class BaseActivity extends AppCompatActivity {
 
         ButterKnife.unbind(this);
 
-        if (alertDialog != null && alertDialog.isShowing()) {
-            alertDialog.dismiss();
-            alertDialog = null;
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
         }
 
         if (progressDialog != null && progressDialog.isShowing()) {
@@ -97,7 +95,7 @@ abstract public class BaseActivity extends AppCompatActivity {
             progressDialog = null;
         }
     }
-
+    
     public StoreManager getStoreManager() {
         if (storeManager == null) {
             BaseApplication baseApplication = BaseApplication.getInstance();
@@ -149,42 +147,17 @@ abstract public class BaseActivity extends AppCompatActivity {
             progressDialog = null;
         }
     }
-
-    public AlertDialog showAlertDialog(String message) {
-        return new AlertDialog.Builder(this)
-                .setMessage(Html.fromHtml(message))
-                .setNeutralButton(android.R.string.ok, null)
-                .show();
-    }
-
-    public AlertDialog showAlertDialog(String title, String message) {
-        return new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(Html.fromHtml(message))
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
-
-    public void showAlertDialog(String title, String message, DialogInterface.OnClickListener onClickListener) {
-        if (alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
+    
+    public void hideDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+            dialog = null;
         }
-
-        alertDialog = new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(Html.fromHtml(message))
-                .setPositiveButton(android.R.string.ok, onClickListener)
-                .show();
     }
-
+    
     public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
-        if (alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
-
-        alertDialog = new AlertDialog.Builder(this)
+        hideDialog();
+        dialog = new AlertDialog.Builder(this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, onClickListener)
                 .show();
@@ -208,28 +181,14 @@ abstract public class BaseActivity extends AppCompatActivity {
         } 
         return false;
     }
-
-    public void hideAlarmDisableDialog() {
-        if(alarmDisarmDialog != null) {
-            alarmDisarmDialog.dismiss();
-            alarmDisarmDialog = null;
-        }
-    }
-
-    public void hideArmOptionsDialog() {
-        if(armOptionsDialog != null) {
-            armOptionsDialog.dismiss();
-            armOptionsDialog = null;
-        }
-    }
     
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {
-        hideArmOptionsDialog();
+        hideDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_options, null, false);
         final ArmOptionsView optionsView = (ArmOptionsView) view.findViewById(R.id.armOptionsView);
         optionsView.setListener(armListener);
-        armOptionsDialog = new AlertDialog.Builder(BaseActivity.this)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
@@ -242,18 +201,14 @@ abstract public class BaseActivity extends AppCompatActivity {
         alarmCodeView.setListener(alarmCodeListener);
         alarmCodeView.setCode(code);
         alarmCodeView.startCountDown(configuration.getPendingTime());
-        alarmDisarmDialog = new AlertDialog.Builder(BaseActivity.this)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
     }
 
     public void showExtendedForecastDialog(Daily daily) {
-        if(extendedForecastDialog != null) {
-            extendedForecastDialog.cancel();
-            extendedForecastDialog = null;
-        }
-
+        hideDialog();
         Rect displayRectangle = new Rect();
         Window window = getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
@@ -264,21 +219,9 @@ abstract public class BaseActivity extends AppCompatActivity {
         //view.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
         final ExtendedForecastView  extendedForecastView = (ExtendedForecastView) view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
-        extendedForecastDialog = new AlertDialog.Builder(BaseActivity.this)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
-    }
-    
-    public void onError(final String message, final int code) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                if (code == ExceptionCodes.NETWORK_CONNECTION_ERROR_CODE) {
-                    Toast.makeText(BaseActivity.this, message, Toast.LENGTH_LONG).show();
-                } else {
-                    showAlertDialog("Error: " + message + " Code: " + code);
-                }
-            }
-        });
     }
 }

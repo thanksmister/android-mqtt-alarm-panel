@@ -27,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,7 +46,10 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
 
     private int dotsCount;
     private ImageView[] dots;
-    
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
     @Bind(R.id.viewPager)
     ViewPager viewPager; 
     
@@ -62,18 +66,21 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
     protected void onCreate(Bundle savedInstanceState) {
         
         super.onCreate(savedInstanceState);
-
+        
         setContentView(R.layout.activity_settings);
-
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().show();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle(R.string.activity_settings_title);
-        }
 
         ButterKnife.bind(this);
 
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().show();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setTitle(R.string.activity_settings_title);
+            }
+        }
+        
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
