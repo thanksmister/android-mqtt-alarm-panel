@@ -32,6 +32,8 @@
             android:name="com.thanksmister.iot.mqtt.alarmpanel.BaseApplication"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
+
+        <uses-library android:name="com.google.android.things"/>
         
         <activity
                 android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity"
@@ -64,7 +66,7 @@
         <!-- Preference Provider -->
         <provider
                 android:name="dpreference.PreferenceProvider"
-                android:authorities="me.dozen.dpreference.PreferenceProvider"
+                android:authorities="thanksmister.me.dozen.dpreference.PreferenceProvider"
                 android:enabled="true"
                 android:exported="false"/>
         

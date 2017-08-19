@@ -25,18 +25,26 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
+import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
+import com.thanksmister.iot.mqtt.alarmpanel.MusicNotes;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.todddavies.components.progressbar.ProgressWheel;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static android.content.ContentValues.TAG;
 
 public class AlarmDisableView extends LinearLayout {
 
@@ -100,7 +108,8 @@ public class AlarmDisableView extends LinearLayout {
     private int displaySeconds;
     private CountDownTimer countDownTimer;
     private Handler handler;
-    private MediaPlayer mediaPlayer;
+
+    private Speaker mSpeaker;
   
     public AlarmDisableView(Context context) {
         super(context);
@@ -117,12 +126,17 @@ public class AlarmDisableView extends LinearLayout {
 
         ButterKnife.bind(this);
 
-        mediaPlayer = MediaPlayer.create(getContext(), R.raw.beep);
+        try {
+            mSpeaker = new Speaker(BoardDefaults.getPwmPin());
+            mSpeaker.stop(); // in case the PWM pin was enabled already
+        } catch (IOException e) {
+            Log.e(TAG, "Error initializing speaker");
+        }
 
         button0.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("0");
             }
         });
@@ -130,7 +144,7 @@ public class AlarmDisableView extends LinearLayout {
         button1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("1");
             }
         });
@@ -138,7 +152,7 @@ public class AlarmDisableView extends LinearLayout {
         button2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("2");
             }
         });
@@ -146,7 +160,7 @@ public class AlarmDisableView extends LinearLayout {
         button3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("3");
             }
         });
@@ -154,7 +168,7 @@ public class AlarmDisableView extends LinearLayout {
         button4.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("4");
             }
         });
@@ -162,7 +176,7 @@ public class AlarmDisableView extends LinearLayout {
         button5.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("5");
             }
         });
@@ -170,7 +184,7 @@ public class AlarmDisableView extends LinearLayout {
         button6.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("6");
             }
         });
@@ -178,7 +192,7 @@ public class AlarmDisableView extends LinearLayout {
         button7.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("7");
             }
         });
@@ -186,7 +200,7 @@ public class AlarmDisableView extends LinearLayout {
         button8.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("8");
             }
         });
@@ -194,7 +208,7 @@ public class AlarmDisableView extends LinearLayout {
         button9.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 addPinCode("9");
             }
         });
@@ -202,7 +216,7 @@ public class AlarmDisableView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 removePinCode();
             }
         });
@@ -210,7 +224,7 @@ public class AlarmDisableView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 removePinCode();
             }
         });
@@ -218,11 +232,25 @@ public class AlarmDisableView extends LinearLayout {
         buttonCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
+                playBuzzerOnButtonPress();
                 clear();
                 listener.onCancel();
             }
         });
+    }
+
+    public void playBuzzerOnButtonPress() {
+        double note = MusicNotes.DRAMATIC_THEME[0];
+        try {
+            mSpeaker.play(note);
+            Thread.sleep(100);
+            mSpeaker.stop();
+            button0.setEnabled(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startCountDown(int pendingTime) {
@@ -248,10 +276,22 @@ public class AlarmDisableView extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
+
         super.onDetachedFromWindow();
         if(countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
+        }
+
+        if (mSpeaker != null) {
+            try {
+                mSpeaker.stop();
+                mSpeaker.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Error closing speaker", e);
+            } finally {
+                mSpeaker = null;
+            }
         }
     }
     
@@ -306,6 +346,8 @@ public class AlarmDisableView extends LinearLayout {
         if (!TextUtils.isEmpty(enteredCode)) {
             enteredCode = enteredCode.substring(0, enteredCode.length() - 1);
         }
+
+        showFilledPins(enteredCode.length());
     }
 
     private void validateCode(String validateCode) {

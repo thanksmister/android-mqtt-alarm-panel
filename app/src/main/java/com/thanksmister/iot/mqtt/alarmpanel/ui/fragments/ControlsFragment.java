@@ -240,6 +240,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(PREF_ARM_AWAY);
         alarmText.setText(R.string.text_arm_away);
+        alarmText.setTextColor(getResources().getColor(R.color.red));
         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
     }
 
@@ -247,6 +248,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(PREF_ARM_HOME);
         alarmText.setText(R.string.text_arm_home);
+        alarmText.setTextColor(getResources().getColor(R.color.yellow));
         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
     }
 
@@ -261,12 +263,15 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         getConfiguration().setAlarmMode(mode);
         if(PREF_ARM_HOME_PENDING.equals(mode)) {
             alarmText.setText(R.string.text_arm_home);
+            alarmText.setTextColor(getResources().getColor(R.color.yellow));
             alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
         } else if (PREF_ARM_AWAY_PENDING.equals(mode)) {
             alarmText.setText(R.string.text_arm_away);
+            alarmText.setTextColor(getResources().getColor(R.color.red));
             alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
         } else if (PREF_ARM_PENDING.equals(mode)) {
             alarmText.setText(R.string.text_alarm_pending);
+            alarmText.setTextColor(getResources().getColor(R.color.gray));
             alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_gray));
         }
         showAlarmPendingView();
@@ -276,6 +281,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         getConfiguration().setArmed(false);
         getConfiguration().setAlarmMode(PREF_DISARM);
         alarmText.setText(R.string.text_disarmed);
+        alarmText.setTextColor(getResources().getColor(R.color.green));
         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_green));
     }
     
@@ -304,6 +310,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             @Override
             public void onComplete() {
                 mListener.publishDisarmed();
+                hideDialog();
             }
             @Override
             public void onError() {

@@ -96,4 +96,12 @@
         
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/screenSaverContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        tools:visibility="visible"
+        android:visibility="visible"/>
+
 </RelativeLayout>

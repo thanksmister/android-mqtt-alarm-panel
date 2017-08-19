@@ -21,6 +21,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,10 +57,16 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     
     private static final String FRAGMENT_CONTROLS = "com.thanksmister.fragment.FRAGMENT_CONTROLS";
     private static final String FRAGMENT_INFORMATION = "com.thanksmister.fragment.FRAGMENT_INFORMATION";
-    
+
+    public static final long INACTIVITY_TIMEOUT = 300000; // 5 min = 5 * 60 * 1000 ms
+
     @Bind(R.id.triggeredView)
     View triggeredView;
-    
+
+    @Bind(R.id.screenSaverContainer)
+    View screenSaverContainer;
+
+
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
         Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
@@ -74,6 +81,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
+    private Handler inactivityHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +93,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
         // TODO move these to settings
         getConfiguration().setDarkSkyKey("d0ad3a84efde97eaedfaad53472944be");
+        getConfiguration().setShowWeatherModule(true);
         getConfiguration().setLat("-34.6158037");
         getConfiguration().setLon("-58.5033387");
         getConfiguration().setCommandTopic(AlarmUtils.COMMAND_TOPIC);
@@ -92,7 +101,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         getConfiguration().setUserName("homeassistant");
         getConfiguration().setPassword("3355");
         getConfiguration().setPort(AlarmUtils.PORT);
-        getConfiguration().setBroker("192.168.86.118");
+        getConfiguration().setBroker("192.168.86.150");
         
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
@@ -107,6 +116,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
        if (savedInstanceState == null) {
             ControlsFragment controlsFragment = ControlsFragment.newInstance();
             InformationFragment informationFragment = InformationFragment.newInstance();
+
             getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment, FRAGMENT_CONTROLS).commit();
             getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment, FRAGMENT_INFORMATION).commit();
         }
@@ -117,6 +127,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     @Override
     public void onResume() {
         super.onResume();
+        resetInactivityTimer();
     }
 
     @Override
@@ -124,6 +135,10 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         super.onDestroy();
         if (this.subscriptionDataTask != null) {
             this.subscriptionDataTask.cancel(true);
+        }
+        if(inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityCallback);
+            inactivityHandler = null;
         }
     }
 
@@ -144,6 +159,35 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             startActivity(intent);
         } 
         return super.onOptionsItemSelected(item);
+    }
+
+    private Runnable inactivityCallback = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(MainActivity.this, "Inactivity Detected!", Toast.LENGTH_LONG).show();
+            screenSaverContainer.setVisibility(View.VISIBLE);
+        }
+    };
+
+    public void resetInactivityTimer() {
+        screenSaverContainer.setVisibility(View.GONE);
+        inactivityHandler.removeCallbacks(inactivityCallback);
+        inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+    }
+
+    public void stopDisconnectTimer(){
+        inactivityHandler.removeCallbacks(inactivityCallback);
+    }
+
+    @Override
+    public void onUserInteraction(){
+        resetInactivityTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopDisconnectTimer();
     }
 
     @Override

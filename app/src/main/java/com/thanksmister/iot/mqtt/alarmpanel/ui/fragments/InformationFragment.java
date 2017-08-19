@@ -103,6 +103,8 @@ public class InformationFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Timber.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+
+        // start the clock
         final Handler someHandler = new Handler(getMainLooper());
         someHandler.postDelayed(new Runnable() {
             @Override
@@ -114,6 +116,14 @@ public class InformationFragment extends BaseFragment {
                 someHandler.postDelayed(this, 1000);
             }
         }, 10);
+
+        // start the weather module
+        if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
+                && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
+            connectWeatherModule();
+        } else {
+            weatherLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -126,8 +136,7 @@ public class InformationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Timber.d("showWeatherModule: " + getConfiguration().showWeatherModule());
-        Timber.d("getDarkSkyKey: " + getConfiguration().getDarkSkyKey());
+        // this picks up changes made in the settings and connects weather if needed
         if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
                 && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
             connectWeatherModule();

@@ -92,7 +92,6 @@ public class AlarmCodeView extends LinearLayout {
     private String enteredCode = "";
     private ViewListener listener;
     private Handler handler;
-    private MediaPlayer mediaPlayer;
 
     public AlarmCodeView(Context context) {
         super(context);
@@ -109,8 +108,6 @@ public class AlarmCodeView extends LinearLayout {
         ButterKnife.bind(this);
         
         codeTitle.setText(R.string.text_enter_alarm_code_title);
-
-        mediaPlayer = MediaPlayer.create(getContext(), R.raw.beep);
 
         button0.setOnClickListener(new OnClickListener() {
             @Override
@@ -129,7 +126,6 @@ public class AlarmCodeView extends LinearLayout {
         button2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("2");
             }
         });
@@ -137,7 +133,6 @@ public class AlarmCodeView extends LinearLayout {
         button3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("3");
             }
         });
@@ -145,7 +140,6 @@ public class AlarmCodeView extends LinearLayout {
         button4.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("4");
             }
         });
@@ -153,7 +147,6 @@ public class AlarmCodeView extends LinearLayout {
         button5.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("5");
             }
         });
@@ -161,7 +154,6 @@ public class AlarmCodeView extends LinearLayout {
         button6.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("6");
             }
         });
@@ -169,7 +161,6 @@ public class AlarmCodeView extends LinearLayout {
         button7.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("7");
             }
         });
@@ -177,7 +168,6 @@ public class AlarmCodeView extends LinearLayout {
         button8.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("8");
             }
         });
@@ -185,7 +175,6 @@ public class AlarmCodeView extends LinearLayout {
         button9.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.start();
                 addPinCode("9");
             }
         });
