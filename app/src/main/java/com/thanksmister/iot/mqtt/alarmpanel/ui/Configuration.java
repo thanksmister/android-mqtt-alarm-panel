@@ -61,11 +61,48 @@ public class Configuration {
     public static final String PREF_ARM_AWAY = "ARM_AWAY";
     public static final String PREF_ARM_AWAY_PENDING = "prefs_arm_away_pending";
     public static final String PREF_DISARM = "DISARM";
-    
-    
+
+
+    public static final String PREF_MODULE_SAVER = "pref_module_saver";
+    public static final String PREF_IMAGE_SOURCE = "pref_image_source";
+    public static final String PREF_IMAGE_SIZE = "pref_image_size";
+    public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
+
     public Configuration(Context context, DPreference sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         this.context = context;
+    }
+
+    public boolean getScreenSaverModule() {
+        return this.sharedPreferences.getPrefBoolean(PREF_MODULE_SAVER, false);
+    }
+
+    public void setScreenSaverModule(boolean value) {
+        this.sharedPreferences.setPrefBoolean(PREF_MODULE_SAVER, value);
+    }
+
+    public String getImageSource() {
+        return this.sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "https://source.unsplash.com/random");
+    }
+
+    public void setImageSource(String value) {
+        this.sharedPreferences.setPrefString(PREF_IMAGE_SOURCE, value);
+    }
+
+    public String getImageSize() {
+        return this.sharedPreferences.getPrefString(PREF_IMAGE_SIZE, "800x480");
+    }
+
+    public void setImageRotation(int value) {
+        this.sharedPreferences.setPrefInt(PREF_IMAGE_ROTATION, value);
+    }
+
+    public int getImageRotation() {
+        return this.sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, 10);
+    }
+
+    public void setImageSize(String value) {
+        this.sharedPreferences.setPrefString(PREF_IMAGE_SIZE, value);
     }
 
     public void setFirstTime(boolean value){

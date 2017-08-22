@@ -57,9 +57,23 @@
     <string name="preference_summary_latitude_summary">Edit the location latitude.</string>
     <string name="preference_title_longitude">Longitude</string>
     <string name="preference_summary_longitude_summary">Edit the location longitude.</string>
-
     <string name="preference_title_units">Use Celsius (°C)</string>
     <string name="preference_summary_units">Use celsius for temperature values.</string>
+
+    <string name="preference_title_screen_saver_settings">Screen Saver Settings</string>
+    <string name="preference_summary_screen_saver_settings">When active, replaces the black screen saver with rotating images.</string>
+
+    <string name="preference_title_screen_saver">Use Image Screen Saver</string>
+    <string name="preference_summary_screen_saver">Use rotating images as screen saver.</string>
+
+    <string name="preference_title_image_source">Image Source</string>
+    <string name="preference_summary_image_source">Source url to use for images. Currently %1$s.</string>
+
+    <string name="preference_title_image_size">Image Dimensions</string>
+    <string name="preference_summary_image_size">Enter size to match the screen resolution. Currently %1$s.</string>
+
+    <string name="preference_title_image_rotation">Image Rotation Interval</string>
+    <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
     
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>

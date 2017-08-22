@@ -37,9 +37,6 @@ public class ScreenSaverModule {
 
     private final long TIME_IN_MILLISECONDS = 9 * 60 * 1000; // 9 minutes
 
-    private static String apiKey = "kwjg2vxjhfwvnudcghx24bpg";
-    private static String apiSecret = "XURWumWJVNunK57sNFyExJSDz7YCw8QgXNFHctCCDXQTq";
-
     private GettyImagesTask task;
     private ScreenSavorListener listener;
     private Handler handler;
