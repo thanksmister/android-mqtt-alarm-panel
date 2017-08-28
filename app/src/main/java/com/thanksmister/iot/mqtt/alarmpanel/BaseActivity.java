@@ -168,13 +168,16 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .show();
     }
     
-    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code) {
+    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_disable, null, false);
         final AlarmDisableView alarmCodeView = view.findViewById(R.id.alarmDisableView);
         alarmCodeView.setListener(alarmCodeListener);
         alarmCodeView.setCode(code);
         alarmCodeView.startCountDown(configuration.getPendingTime());
+        if(beep) {
+            alarmCodeView.playContinuousBeep();
+        }
         dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)

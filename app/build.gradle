@@ -29,7 +29,7 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
-        minSdkVersion 26
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
@@ -80,6 +80,9 @@ dependencies {
     // MQTT
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    // Image
+    compile 'com.squareup.picasso:picasso:2.5.2'
     
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.2.0'

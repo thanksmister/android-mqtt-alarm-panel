@@ -32,6 +32,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.ScreenSaverModule;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.WeatherModule;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils;
 
@@ -49,6 +50,8 @@ import static java.lang.Math.round;
 
 public class InformationFragment extends BaseFragment {
 
+    public static final long DATE_INTERVAL = 3600000; // 1 hour
+
     @Bind(R.id.temperatureText)
     TextView temperatureText;
 
@@ -57,9 +60,6 @@ public class InformationFragment extends BaseFragment {
     
     @Bind(R.id.conditionImage)
     ImageView conditionImage;
-
-    @Bind(R.id.timeText)
-    TextView timeText;
 
     @Bind(R.id.dateText)
     TextView dateText;
@@ -101,7 +101,7 @@ public class InformationFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Timber.d("onViewCreated");
+
         super.onViewCreated(view, savedInstanceState);
 
         // start the clock
@@ -109,11 +109,9 @@ public class InformationFragment extends BaseFragment {
         someHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                String currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(new Date());
                 String currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(new Date());
-                timeText.setText(currentTimeString);
                 dateText.setText(currentDateString);
-                someHandler.postDelayed(this, 1000);
+                someHandler.postDelayed(this, DATE_INTERVAL);
             }
         }, 10);
 
@@ -141,6 +139,7 @@ public class InformationFragment extends BaseFragment {
                 && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
             connectWeatherModule();
         } else {
+            disconnectWeatherModule();
             weatherLayout.setVisibility(View.GONE);
         }
     }
@@ -160,33 +159,34 @@ public class InformationFragment extends BaseFragment {
     private void connectWeatherModule() {
         if(weatherModule == null) {
             weatherModule = new WeatherModule();
-            final String apiKey = getConfiguration().getDarkSkyKey();
-            final String units = getConfiguration().getWeatherUnits();
-            Timber.d("units: " + units);
-            final String lat = getConfiguration().getLatitude();
-            final String lon = getConfiguration().getLongitude();
-            weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
-                @Override
-                public void onWeatherToday(String icon, double temperature, String summary) {
-                    weatherLayout.setVisibility(View.VISIBLE);
-                    outlookText.setText(summary);
-                    String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? getString(R.string.text_f): getString(R.string.text_c));
-                    temperatureText.setText(getString(R.string.text_temperature, String.valueOf(round(temperature)), displayUnits));
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
-                }
-
-                @Override
-                public void onExtendedDaily(Daily daily) {
-                    extendedDaily = daily;
-                }
-
-                @Override
-                public void onShouldTakeUmbrella(boolean takeUmbrella) {
-                    if(takeUmbrella) {
-                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_rain_umbrella, getActivity().getTheme()));
-                    }
-                }
-            }); 
         }
+
+        final String apiKey = getConfiguration().getDarkSkyKey();
+        final String units = getConfiguration().getWeatherUnits();
+        Timber.d("units: " + units);
+        final String lat = getConfiguration().getLatitude();
+        final String lon = getConfiguration().getLongitude();
+        weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
+            @Override
+            public void onWeatherToday(String icon, double temperature, String summary) {
+                weatherLayout.setVisibility(View.VISIBLE);
+                outlookText.setText(summary);
+                String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? getString(R.string.text_f): getString(R.string.text_c));
+                temperatureText.setText(getString(R.string.text_temperature, String.valueOf(round(temperature)), displayUnits));
+                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
+            }
+
+            @Override
+            public void onExtendedDaily(Daily daily) {
+                extendedDaily = daily;
+            }
+
+            @Override
+            public void onShouldTakeUmbrella(boolean takeUmbrella) {
+                if(takeUmbrella) {
+                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_rain_umbrella, getActivity().getTheme()));
+                }
+            }
+        });
     }
 }

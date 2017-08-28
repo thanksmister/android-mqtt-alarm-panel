@@ -25,6 +25,8 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextClock;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
@@ -33,6 +35,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.ScreenSaverModule;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils;
@@ -57,8 +60,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     
     private static final String FRAGMENT_CONTROLS = "com.thanksmister.fragment.FRAGMENT_CONTROLS";
     private static final String FRAGMENT_INFORMATION = "com.thanksmister.fragment.FRAGMENT_INFORMATION";
-
-    public static final long INACTIVITY_TIMEOUT = 300000; // 5 min = 5 * 60 * 1000 ms
+    public static final long INACTIVITY_TIMEOUT = 1 * 60 * 1000; // 5 min
 
     @Bind(R.id.triggeredView)
     View triggeredView;
@@ -66,6 +68,11 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     @Bind(R.id.screenSaverContainer)
     View screenSaverContainer;
 
+    @Bind(R.id.screenSaverImage)
+    ImageView screenSaverImage;
+
+    @Bind(R.id.screenSaverClock)
+    TextClock screenSaverClock;
 
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
@@ -82,6 +89,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
     private Handler inactivityHandler = new Handler();
+    private ScreenSaverModule screenSaverModule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +109,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         getConfiguration().setUserName("homeassistant");
         getConfiguration().setPassword("3355");
         getConfiguration().setPort(AlarmUtils.PORT);
-        getConfiguration().setBroker("192.168.86.150");
+        getConfiguration().setBroker("192.168.86.154");
         
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
@@ -116,11 +124,10 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
        if (savedInstanceState == null) {
             ControlsFragment controlsFragment = ControlsFragment.newInstance();
             InformationFragment informationFragment = InformationFragment.newInstance();
-
             getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment, FRAGMENT_CONTROLS).commit();
             getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment, FRAGMENT_INFORMATION).commit();
         }
-  
+
         makeMqttConnection();
     }
     
@@ -133,13 +140,17 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (this.subscriptionDataTask != null) {
-            this.subscriptionDataTask.cancel(true);
+
+        if (subscriptionDataTask != null) {
+            subscriptionDataTask.cancel(true);
         }
+
         if(inactivityHandler != null) {
             inactivityHandler.removeCallbacks(inactivityCallback);
             inactivityHandler = null;
         }
+
+        disconnectScreenSaverModule();
     }
 
     @Override
@@ -164,13 +175,38 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     private Runnable inactivityCallback = new Runnable() {
         @Override
         public void run() {
-            Toast.makeText(MainActivity.this, "Inactivity Detected!", Toast.LENGTH_LONG).show();
-            screenSaverContainer.setVisibility(View.VISIBLE);
+            connectScreenSaverModule();
         }
     };
 
-    public void resetInactivityTimer() {
+    private void connectScreenSaverModule() {
+        Timber.d("Show Screen Module: " + getConfiguration().showScreenSaverModule());
+        if(getConfiguration().showScreenSaverModule()) {
+            if(screenSaverModule == null) {
+                screenSaverModule = new ScreenSaverModule();
+                screenSaverModule.getScreenSaverImages(MainActivity.this, screenSaverImage, getConfiguration().getImageSource(), getConfiguration().getImageFitScreen());
+            }
+            screenSaverImage.setVisibility(View.VISIBLE);
+            screenSaverClock.setVisibility(View.GONE);
+            screenSaverModule.startScreenSavor();
+        } else { // use clock
+            screenSaverImage.setVisibility(View.GONE);
+            screenSaverClock.setVisibility(View.VISIBLE);
+        }
+        screenSaverContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void disconnectScreenSaverModule() {
+        if(screenSaverModule != null) {
+            screenSaverModule.stopScreeSaver();
+            screenSaverImage.setVisibility(View.GONE);
+            screenSaverModule = null;
+        }
         screenSaverContainer.setVisibility(View.GONE);
+    }
+
+    public void resetInactivityTimer() {
+        disconnectScreenSaverModule();
         inactivityHandler.removeCallbacks(inactivityCallback);
         inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
     }
@@ -327,30 +363,35 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     }
 
     /**
-     * Handle the alarm triggered state
+     * Handle the alarm triggered state and remove the screen saver on state change.
      * @param state
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
-        Timber.d("handleStateChange States: " + state);
         if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
             triggeredView.setVisibility(View.VISIBLE);
             int code = getConfiguration().getAlarmCode();
             final AlarmTriggeredView disarmView = (AlarmTriggeredView) findViewById(R.id.alarmTriggeredView);
             disarmView.setListener(new AlarmTriggeredView.ViewListener() {
                 @Override
-                public void onComplete() {
-                    publishDisarmed();
+                public void onComplete(int code) {
                 }
                 @Override
                 public void onError() {
                     Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onCancel() {
+
                 }
             });
             disarmView.setCode(code);
         } else {
             triggeredView.setVisibility(View.GONE);
         }
+
+        // remove screen saver if active
+        resetInactivityTimer();
     }
     
     private SubscriptionDataTask getUpdateMqttDataTask() {

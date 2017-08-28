@@ -53,7 +53,7 @@ import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TLS_CON
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGER_TIME;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_USERNAME;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class AlarmSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private EditTextPreference brokerPreference;
     private EditTextPreference clientPreference;
@@ -284,6 +284,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     hideAlarmCodeDialog();
                     Toast.makeText(getActivity(), R.string.toast_code_not_match, Toast.LENGTH_LONG).show();
                 }
+            }
+
+            @Override
+            public void onError() {
+                // handle error
             }
 
             @Override

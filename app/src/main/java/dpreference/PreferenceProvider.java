@@ -37,7 +37,7 @@ public class PreferenceProvider extends ContentProvider {
 
     private static final String TAG = PreferenceProvider.class.getSimpleName();
 
-    private static final String AUTHORITY = "thanksmister.me.dozen.dpreference.PreferenceProvider";
+    private static final String AUTHORITY = "com.thanksmister.iot.mqtt.alarmpanel.dpreference.PreferenceProvider";
 
     public static final String CONTENT_PREF_BOOLEAN_URI = "content://" + AUTHORITY + "/boolean/";
     public static final String CONTENT_PREF_STRING_URI = "content://" + AUTHORITY + "/string/";

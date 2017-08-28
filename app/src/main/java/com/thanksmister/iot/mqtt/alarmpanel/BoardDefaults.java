@@ -6,6 +6,9 @@ import com.google.android.things.pio.PeripheralManagerService;
 
 import java.util.List;
 
+/**
+ * From the Android Things samples https://github.com/intel-iot-devkit/android-things-samples
+ */
 @SuppressWarnings("WeakerAccess")
 public class BoardDefaults {
     private static final String DEVICE_EDISON_ARDUINO = "edison_arduino";

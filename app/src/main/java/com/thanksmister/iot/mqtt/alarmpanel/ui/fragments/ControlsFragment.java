@@ -74,15 +74,13 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     @Bind(R.id.alarmPendingView)
     AlarmPendingView alarmPendingView;
  
-    @OnClick(R.id.alarmButton)
+    @OnClick(R.id.alarmView)
     public void armButtonClick() {
         if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
             showArmOptionsDialog();
-        } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
-            showAlarmDisableDialog();
-        } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
-            showAlarmDisableDialog();
-        } 
+        } else {
+            showAlarmDisableDialog(false);
+        }
     }
     
     private SubscriptionObserver subscriptionObserver;
@@ -221,9 +219,17 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                 break;
             case AlarmUtils.STATE_PENDING:
                 if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
-                    // do nothing
+                    if(PREF_ARM_HOME_PENDING.equals(getConfiguration().getAlarmMode())) {
+                        alarmText.setText(R.string.text_arm_home);
+                        alarmText.setTextColor(getResources().getColor(R.color.yellow));
+                        alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
+                    } else if (PREF_ARM_AWAY_PENDING.equals(getConfiguration().getAlarmMode())) {
+                        alarmText.setText(R.string.text_arm_away);
+                        alarmText.setTextColor(getResources().getColor(R.color.red));
+                        alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
+                    }
                 } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
-                    showAlarmDisableDialog();
+                    showAlarmDisableDialog(true);
                 }  else {
                     setPendingView(PREF_ARM_PENDING);
                 }
@@ -305,10 +311,10 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     /**
      * Shows a count down dialog before setting alarm to away
      */
-    private void showAlarmDisableDialog() {
+    private void showAlarmDisableDialog(boolean beep) {
         showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
             @Override
-            public void onComplete() {
+            public void onComplete(int pin) {
                 mListener.publishDisarmed();
                 hideDialog();
             }
@@ -320,7 +326,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             public void onCancel() {
                 hideDialog();
             }
-        }, getConfiguration().getAlarmCode());
+        }, getConfiguration().getAlarmCode(), beep);
     }
 
     @Override

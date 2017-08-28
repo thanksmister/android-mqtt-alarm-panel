@@ -98,6 +98,10 @@
         <item name="android:textSize">32sp</item>
     </style>
 
+    <style name="TextAppearance.Clock">
+        <item name="android:textSize">84sp</item>
+    </style>
+
     <style name="TextAppearance.SubTitle">
         <item name="android:textSize">24sp</item>
     </style>

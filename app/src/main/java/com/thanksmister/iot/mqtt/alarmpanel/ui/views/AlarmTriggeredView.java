@@ -23,56 +23,22 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
+import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class AlarmTriggeredView extends LinearLayout {
-    
-    public static final int MAX_CODE_LENGTH = 4;
-    
-    @Bind(R.id.button0)
-    View button0;
+import static android.content.ContentValues.TAG;
 
-    @Bind(R.id.button1)
-    View button1;
-
-    @Bind(R.id.button2)
-    View button2;
-
-    @Bind(R.id.button3)
-    View button3;
-
-    @Bind(R.id.button4)
-    View button4;
-
-    @Bind(R.id.button5)
-    View button5;
-
-    @Bind(R.id.button6)
-    View button6;
-
-    @Bind(R.id.button7)
-    View button7;
-
-    @Bind(R.id.button8)
-    View button8;
-
-    @Bind(R.id.button9)
-    View button9;
-
-    @Bind(R.id.buttonDel)
-    View buttonDel;
-   
-    private boolean codeComplete = false;
-    private String enteredCode = "";
-    private ViewListener listener;
-    private int code;
-    private Handler handler;
+public class AlarmTriggeredView extends BaseAlarmView {
 
     public AlarmTriggeredView(Context context) {
         super(context);
@@ -84,115 +50,21 @@ public class AlarmTriggeredView extends LinearLayout {
 
     @Override
     protected void onFinishInflate() {
-        
         super.onFinishInflate();
-
-        ButterKnife.bind(this);
-        
-        button0.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("0");
-            }
-        });
-
-        button1.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("1");
-            }
-        });
-
-        button2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("2");
-            }
-        });
-
-        button3.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("3");
-            }
-        });
-
-        button4.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("4");
-            }
-        });
-
-        button5.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("5");
-            }
-        });
-
-        button6.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("6");
-            }
-        });
-
-        button7.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("7");
-            }
-        });
-
-        button8.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("8");
-            }
-        });
-
-        button9.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("9");
-            }
-        });
-
-        buttonDel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removePinCode();
-            }
-        });
-
-        buttonDel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removePinCode();
-            }
-        });
-    }
-    
-    public void setCode(int code) {
-        this.code = code;
-    }
-    
-    public void setListener(@NonNull ViewListener listener) {
-        this.listener = listener;
     }
 
-    public interface ViewListener {
-        void onComplete();
-        void onError();
+    @Override
+    void onCancel() {
     }
-    
-    private void reset() {
+
+    @Override
+    protected void reset() {
         codeComplete = false;
         enteredCode = "";
     }
 
-    private void addPinCode(String code) {
+    @Override
+    protected void addPinCode(String code) {
         if (codeComplete)
             return;
 
@@ -212,8 +84,9 @@ public class AlarmTriggeredView extends LinearLayout {
             validateCode(enteredCode);
         }
     };
-    
-    private void removePinCode() {
+
+    @Override
+    protected void removePinCode() {
         if (codeComplete) {
             return;
         }
@@ -226,7 +99,7 @@ public class AlarmTriggeredView extends LinearLayout {
     private void validateCode(String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
-            listener.onComplete();
+            listener.onComplete(code);
         } else {
             reset();
             listener.onError();

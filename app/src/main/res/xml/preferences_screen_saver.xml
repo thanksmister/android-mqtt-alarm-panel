@@ -21,39 +21,35 @@
                   android:id="@+id/preferenceView">
 
     <PreferenceCategory
-            android:title="Screen Saver Settings"
-            android:summary="When active, replaces the black screen saver with rotating images.">
+            android:title="@string/preference_title_screen_saver_settings"
+            android:summary="@string/preference_summary_screen_saver_settings">
         
         <CheckBoxPreference
-                android:title="Use Image Screen Saver"
-                android:summary="Use rotating images as screen saver."
-                android:key="pref_weather"/>
+                android:title="@string/preference_title_screen_saver"
+                android:summary="@string/preference_summary_screen_saver"
+                android:key="pref_module_saver"/>
 
         <EditTextPreference
-                android:key="pref_image_link"
+                android:key="pref_image_source"
                 android:enabled="false"
-                android:title="Image Source"
+                android:title="@string/preference_title_image_source"
                 android:autoLink="web"
                 android:linksClickable="true"
                 android:textColorLink="@color/blue"
-                android:summary="Url use for images, currently https://source.unsplash.com/random."
+                android:summary="@string/preference_summary_image_source"
                 android:negativeButtonText="@android:string/cancel"
                 android:positiveButtonText="@android:string/ok"/>
 
-        <EditTextPreference
-                android:key="pref_image_dimensions"
-                android:enabled="false"
-                android:title="Image Dimensions"
-                android:summary="Enter size to match the screen resolution, currently 800x480."
-                android:digits="0123456789x"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+       <CheckBoxPreference
+                android:key="pref_image_fit"
+                android:title="@string/preference_title_image_fit"
+                android:summary="@string/preference_summary_image_fit"/>
 
         <EditTextPreference
             android:key="pref_image_rotation"
             android:enabled="false"
-            android:title="Image Rotation Interval"
-            android:summary="Time in minutes between image refresh, currently 10 minutes."
+            android:title="@string/preference_title_image_rotation"
+            android:summary="@string/preference_summary_image_rotation"
             android:digits="0123456789"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"/>

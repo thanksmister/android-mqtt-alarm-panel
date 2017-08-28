@@ -19,79 +19,26 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
+import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 
+import java.io.IOException;
+
 import butterknife.Bind;
-import butterknife.ButterKnife;
 
-public class AlarmCodeView extends LinearLayout {
-    public static final int MAX_CODE_LENGTH = 4;
+import static android.content.ContentValues.TAG;
 
-    @Bind(R.id.pinCode1)
-    ImageView pinCode1;
+public class AlarmCodeView extends BaseAlarmView {
 
-    @Bind(R.id.pinCode2)
-    ImageView pinCode2;
-
-    @Bind(R.id.pinCode3)
-    ImageView pinCode3;
-
-    @Bind(R.id.pinCode4)
-    ImageView pinCode4;
-
-    @Bind(R.id.button0)
-    View button0;
-
-    @Bind(R.id.button1)
-    View button1;
-
-    @Bind(R.id.button2)
-    View button2;
-
-    @Bind(R.id.button3)
-    View button3;
-
-    @Bind(R.id.button4)
-    View button4;
-
-    @Bind(R.id.button5)
-    View button5;
-
-    @Bind(R.id.button6)
-    View button6;
-
-    @Bind(R.id.button7)
-    View button7;
-
-    @Bind(R.id.button8)
-    View button8;
-
-    @Bind(R.id.button9)
-    View button9;
-
-    @Bind(R.id.buttonDel)
-    View buttonDel;
-
-    @Bind(R.id.buttonCancel)
-    View buttonCancel;
-    
     @Bind(R.id.codeTitle)
     TextView codeTitle;
-    
-    private boolean codeComplete = false;
-    private String enteredCode = "";
-    private ViewListener listener;
-    private Handler handler;
 
     public AlarmCodeView(Context context) {
         super(context);
@@ -104,126 +51,27 @@ public class AlarmCodeView extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
-        ButterKnife.bind(this);
-        
         codeTitle.setText(R.string.text_enter_alarm_code_title);
-
-        button0.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("0");
-            }
-        });
-
-        button1.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("1");
-            }
-        });
-
-        button2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("2");
-            }
-        });
-
-        button3.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("3");
-            }
-        });
-
-        button4.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("4");
-            }
-        });
-
-        button5.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("5");
-            }
-        });
-
-        button6.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("6");
-            }
-        });
-
-        button7.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("7");
-            }
-        });
-
-        button8.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("8");
-            }
-        });
-
-        button9.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPinCode("9");
-            }
-        });
-
-        buttonDel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removePinCode();
-            }
-        });
-
-        buttonDel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removePinCode();
-            }
-        });
-
-        buttonCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onCancel();
-                codeComplete = false;
-                enteredCode = "";
-                showFilledPins(0);
-            }
-        });
     }
 
     public int getEnteredCode() {
         return Integer.valueOf(this.enteredCode);
     }
-    
-    public void clear() {
+
+    @Override
+    protected void onCancel() {
+        listener.onCancel();
         codeComplete = false;
         enteredCode = "";
         showFilledPins(0);
     }
 
-    public void setListener(@NonNull ViewListener listener) {
-        this.listener = listener;
+    @Override
+    void reset() {
     }
 
-    public interface ViewListener {
-        void onComplete(int code);
-        void onCancel();
-    }
-
-    private void addPinCode(String code) {
+    @Override
+    protected void addPinCode(String code) {
         
         if (codeComplete) 
             return;
@@ -247,47 +95,12 @@ public class AlarmCodeView extends LinearLayout {
         }
     };
 
-    private void removePinCode() {
+    @Override
+    protected void removePinCode() {
         if (codeComplete) return;
-
         if (!TextUtils.isEmpty(enteredCode)) {
             enteredCode = enteredCode.substring(0, enteredCode.length() - 1);
             showFilledPins(enteredCode.length());
-        }
-    }
-
-    private void showFilledPins(int pinsShown) {
-        switch (pinsShown) {
-            case 1:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 2:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 3:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
-            case 4:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black_32dp);
-                break;
-            default:
-                pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp);
-                break;
         }
     }
 }

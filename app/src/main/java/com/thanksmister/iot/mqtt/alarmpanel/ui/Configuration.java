@@ -62,10 +62,9 @@ public class Configuration {
     public static final String PREF_ARM_AWAY_PENDING = "prefs_arm_away_pending";
     public static final String PREF_DISARM = "DISARM";
 
-
     public static final String PREF_MODULE_SAVER = "pref_module_saver";
     public static final String PREF_IMAGE_SOURCE = "pref_image_source";
-    public static final String PREF_IMAGE_SIZE = "pref_image_size";
+    public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
 
     public Configuration(Context context, DPreference sharedPreferences) {
@@ -73,8 +72,8 @@ public class Configuration {
         this.context = context;
     }
 
-    public boolean getScreenSaverModule() {
-        return this.sharedPreferences.getPrefBoolean(PREF_MODULE_SAVER, false);
+    public boolean showScreenSaverModule(){
+        return sharedPreferences.getPrefBoolean(PREF_MODULE_SAVER, false);
     }
 
     public void setScreenSaverModule(boolean value) {
@@ -82,15 +81,11 @@ public class Configuration {
     }
 
     public String getImageSource() {
-        return this.sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "https://source.unsplash.com/random");
+        return this.sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "daciangroza"); //brahmino
     }
 
     public void setImageSource(String value) {
         this.sharedPreferences.setPrefString(PREF_IMAGE_SOURCE, value);
-    }
-
-    public String getImageSize() {
-        return this.sharedPreferences.getPrefString(PREF_IMAGE_SIZE, "800x480");
     }
 
     public void setImageRotation(int value) {
@@ -101,8 +96,12 @@ public class Configuration {
         return this.sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, 10);
     }
 
-    public void setImageSize(String value) {
-        this.sharedPreferences.setPrefString(PREF_IMAGE_SIZE, value);
+    public boolean getImageFitScreen() {
+        return this.sharedPreferences.getPrefBoolean(PREF_IMAGE_FIT_SIZE, false);
+    }
+
+    public void setImageFitScreen(boolean value) {
+        this.sharedPreferences.setPrefBoolean(PREF_IMAGE_FIT_SIZE, value);
     }
 
     public void setFirstTime(boolean value){

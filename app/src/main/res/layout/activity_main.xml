@@ -102,6 +102,28 @@
         android:layout_height="match_parent"
         android:background="@color/black"
         tools:visibility="visible"
-        android:visibility="visible"/>
+        android:visibility="gone">
+
+        <TextClock
+            android:id="@+id/screenSaverClock"
+            style="@style/TextAppearance.Clock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:format24Hour="hh:mm:ss"
+            android:format12Hour="hh:mm:ss a"
+            android:gravity="center_horizontal"
+            android:textColor="@color/light_gray"
+            tools:visibility="visible"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/screenSaverImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:visibility="visible"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
 </RelativeLayout>

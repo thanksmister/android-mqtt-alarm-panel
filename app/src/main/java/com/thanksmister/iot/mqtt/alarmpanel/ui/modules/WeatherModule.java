@@ -18,6 +18,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.modules;
 
+import android.os.AsyncTask;
 import android.os.Handler;
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyApi;
@@ -35,7 +36,7 @@ import timber.log.Timber;
  */
 public class WeatherModule  {
     
-    private final long TIME_IN_MILLISECONDS = 60 * 60 * 1000; // 1 hour
+    private final long TIME_IN_MILLISECONDS = 1800000; // 30 minutes
     
     private DarkSkyTask task;
     private ForecastListener listener;
@@ -46,7 +47,7 @@ public class WeatherModule  {
     private Handler handler;
     
     public WeatherModule() {
-        handler = new Handler();
+
     }
 
     public interface ForecastListener {
@@ -75,50 +76,57 @@ public class WeatherModule  {
     }
     
     private void startDarkSkyHourlyForecast() {
-        
-        if(task == null || task.isCancelled()) {
-            
-            final DarkSkyApi api = new DarkSkyApi();
-            final DarkSkyFetcher fetcher = new DarkSkyFetcher(api);
-            
-            task = new DarkSkyTask(fetcher);
-            task.setOnExceptionListener(new DarkSkyTask.OnExceptionListener() {
-                public void onException(Exception exception) {
-                    Timber.e("Weather Exception: " + exception.getMessage());
-                }
-            });
-            task.setOnCompleteListener(new DarkSkyTask.OnCompleteListener<Response<DarkSkyResponse>>() {
-                public void onComplete(Response<DarkSkyResponse> response) {
-                    Timber.d("Response: " + response);
-                    Timber.d("Response: " + response.code());
-                    DarkSkyResponse darkSkyResponse = response.body();
-                    if (darkSkyResponse != null) {
-                        
-                        // current weather
-                        if (darkSkyResponse.getCurrently() != null) {
-                            listener.onWeatherToday(darkSkyResponse.getCurrently().getIcon(), darkSkyResponse.getCurrently().getApparentTemperature(),  darkSkyResponse.getCurrently().getSummary());
-                        }
 
-                        // should we take an umbrella today? 
-                        if (darkSkyResponse.getCurrently() != null && darkSkyResponse.getCurrently().getPrecipProbability() != null) {
-                            listener.onShouldTakeUmbrella(shouldTakeUmbrellaToday(darkSkyResponse.getCurrently().getPrecipProbability()));
-                        } else {
-                            listener.onShouldTakeUmbrella(false);
-                        }
-                        
-                        // extended forecast
-                        if(darkSkyResponse.getDaily() != null) {
-                            listener.onExtendedDaily(darkSkyResponse.getDaily());
-                        }
-                    }
-
-                    if(handler != null) {
-                        handler.postDelayed(delayRunnable, TIME_IN_MILLISECONDS);  
-                    }
-                }
-            });
-            task.execute(apiKey, tempUnits, latitude, longitude);
+        if(task != null && task.getStatus().equals(AsyncTask.Status.RUNNING)) {
+            return; // we have a running task alreadyß
         }
+
+        Timber.d("startDarkSkyHourlyForecast");
+
+        final DarkSkyApi api = new DarkSkyApi();
+        final DarkSkyFetcher fetcher = new DarkSkyFetcher(api);
+
+        task = new DarkSkyTask(fetcher);
+        task.setOnExceptionListener(new DarkSkyTask.OnExceptionListener() {
+            public void onException(Exception exception) {
+                Timber.e("Weather Exception: " + exception.getMessage());
+            }
+        });
+        task.setOnCompleteListener(new DarkSkyTask.OnCompleteListener<Response<DarkSkyResponse>>() {
+            public void onComplete(Response<DarkSkyResponse> response) {
+                Timber.d("Response: " + response);
+                Timber.d("Response: " + response.code());
+                DarkSkyResponse darkSkyResponse = response.body();
+                if (darkSkyResponse != null) {
+
+                    // current weather
+                    if (darkSkyResponse.getCurrently() != null) {
+                        listener.onWeatherToday(darkSkyResponse.getCurrently().getIcon(), darkSkyResponse.getCurrently().getApparentTemperature(),  darkSkyResponse.getCurrently().getSummary());
+                    }
+
+                    // should we take an umbrella today?
+                    if (darkSkyResponse.getCurrently() != null && darkSkyResponse.getCurrently().getPrecipProbability() != null) {
+                        listener.onShouldTakeUmbrella(shouldTakeUmbrellaToday(darkSkyResponse.getCurrently().getPrecipProbability()));
+                    } else {
+                        listener.onShouldTakeUmbrella(false);
+                    }
+
+                    // extended forecast
+                    if(darkSkyResponse.getDaily() != null) {
+                        listener.onExtendedDaily(darkSkyResponse.getDaily());
+                    }
+                    setHandler();
+                }
+            }
+        });
+        task.execute(apiKey, tempUnits, latitude, longitude);
+    }
+
+    private void setHandler() {
+        if(handler == null) {
+            handler = new Handler();
+        }
+        handler.postDelayed(delayRunnable, TIME_IN_MILLISECONDS);
     }
 
     public void cancelDarkSkyHourlyForecast() {

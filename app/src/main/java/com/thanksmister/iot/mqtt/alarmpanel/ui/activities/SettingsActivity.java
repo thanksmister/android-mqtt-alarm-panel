@@ -34,7 +34,8 @@ import android.widget.LinearLayout;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SettingsFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ScreenSettingsFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AlarmSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.WeatherSettingsFragment;
 
 import butterknife.Bind;
@@ -42,7 +43,7 @@ import butterknife.ButterKnife;
 
 public class SettingsActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
     
-    private final int NUM_PAGES = 2;
+    private final int NUM_PAGES = 3;
 
     private int dotsCount;
     private ImageView[] dots;
@@ -158,11 +159,13 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
             
             switch (position) {
                 case 0:
-                    return new SettingsFragment();
+                    return new AlarmSettingsFragment();
                 case 1:
                     return new WeatherSettingsFragment();
+                case 2:
+                    return new ScreenSettingsFragment();
                 default:
-                    return new SettingsFragment();
+                    return new AlarmSettingsFragment();
             }
         }
 

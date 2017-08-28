@@ -59,19 +59,14 @@
     <string name="preference_summary_longitude_summary">Edit the location longitude.</string>
     <string name="preference_title_units">Use Celsius (°C)</string>
     <string name="preference_summary_units">Use celsius for temperature values.</string>
-
     <string name="preference_title_screen_saver_settings">Screen Saver Settings</string>
-    <string name="preference_summary_screen_saver_settings">When active, replaces the black screen saver with rotating images.</string>
-
-    <string name="preference_title_screen_saver">Use Image Screen Saver</string>
-    <string name="preference_summary_screen_saver">Use rotating images as screen saver.</string>
-
-    <string name="preference_title_image_source">Image Source</string>
-    <string name="preference_summary_image_source">Source url to use for images. Currently %1$s.</string>
-
-    <string name="preference_title_image_size">Image Dimensions</string>
-    <string name="preference_summary_image_size">Enter size to match the screen resolution. Currently %1$s.</string>
-
+    <string name="preference_summary_screen_saver_settings">When active, replaces the black screen saver with Instagram images.</string>
+    <string name="preference_title_screen_saver">Use Instagram Screen Saver</string>
+    <string name="preference_summary_screen_saver">Use rotating images from Instagram as screen saver.</string>
+    <string name="preference_title_image_source">Instagram Username</string>
+    <string name="preference_summary_image_source">Enter the username of the Instagram account to use for images. Currently %1$s.</string>
+    <string name="preference_title_image_fit">Crop Images</string>
+    <string name="preference_summary_image_fit">Crop the images to fit the screen size.</string>
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
     

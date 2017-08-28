@@ -105,14 +105,17 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         }
         
         if(!TextUtils.isEmpty(configuration.getDarkSkyKey())) {
+            weatherApiKeyPreference.setText(String.valueOf(configuration.getDarkSkyKey()));
             weatherApiKeyPreference.setSummary(String.valueOf(configuration.getDarkSkyKey()));
         }
 
         if(!TextUtils.isEmpty(configuration.getLatitude())) {
+            weatherLatitude.setText(String.valueOf(configuration.getLatitude()));
             weatherLatitude.setSummary(String.valueOf(configuration.getLatitude()));
         }
 
         if(!TextUtils.isEmpty(configuration.getLongitude())) {
+            weatherLongitude.setText(configuration.getLongitude());
             weatherLongitude.setSummary(configuration.getLongitude());
         }
 
