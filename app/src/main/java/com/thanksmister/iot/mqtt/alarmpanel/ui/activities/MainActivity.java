@@ -291,7 +291,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             disarmView.setListener(new AlarmTriggeredView.ViewListener() {
                 @Override
                 public void onComplete(int code) {
-                    triggeredView.setVisibility(View.GONE);
+                    publishDisarmed();
                 }
                 @Override
                 public void onError() {
