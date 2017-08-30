@@ -244,7 +244,6 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void showScreenSaver() {
-        
         if(screenSaverDialog != null && screenSaverDialog.isShowing()) return;
         Rect displayRectangle = new Rect();
         Window window = getWindow();

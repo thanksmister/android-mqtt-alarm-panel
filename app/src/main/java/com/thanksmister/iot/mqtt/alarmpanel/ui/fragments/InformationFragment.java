@@ -32,7 +32,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.ScreenSaverModule;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.WeatherModule;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils;
 

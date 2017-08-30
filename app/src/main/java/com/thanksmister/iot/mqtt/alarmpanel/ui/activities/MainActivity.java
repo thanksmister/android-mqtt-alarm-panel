@@ -83,18 +83,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
-        // TODO move these to settings
-        getConfiguration().setDarkSkyKey("d0ad3a84efde97eaedfaad53472944be");
-        getConfiguration().setShowWeatherModule(true);
-        getConfiguration().setLat("-34.6158037");
-        getConfiguration().setLon("-58.5033387");
-        getConfiguration().setCommandTopic(AlarmUtils.COMMAND_TOPIC);
-        getConfiguration().setStateTopic(AlarmUtils.STATE_TOPIC);
-        getConfiguration().setUserName("homeassistant");
-        getConfiguration().setPassword("3355");
-        getConfiguration().setPort(AlarmUtils.PORT);
-        getConfiguration().setBroker("192.168.86.154");
         
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
@@ -287,18 +275,23 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     }
 
     /**
-     * Handle the alarm triggered state and remove the screen saver on state change.
+     * Handles the state change and shows triggered view and remove any dialogs or screen savers if 
+     * state is triggered. Returns to normal state if disarmed from HASS.
      * @param state
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
         if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
+            stopDisconnectTimer(); // stop screen saver mode
+            closeScreenSaver(); // close screen saver
             triggeredView.setVisibility(View.VISIBLE);
             int code = getConfiguration().getAlarmCode();
             final AlarmTriggeredView disarmView = (AlarmTriggeredView) findViewById(R.id.alarmTriggeredView);
+            disarmView.setCode(code);
             disarmView.setListener(new AlarmTriggeredView.ViewListener() {
                 @Override
                 public void onComplete(int code) {
+                    triggeredView.setVisibility(View.GONE);
                 }
                 @Override
                 public void onError() {
@@ -309,13 +302,10 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
                 }
             });
-            disarmView.setCode(code);
         } else {
+            resetInactivityTimer(); // restart screen saver
             triggeredView.setVisibility(View.GONE);
         }
-
-        // remove screen saver if active
-        resetInactivityTimer();
     }
     
     private SubscriptionDataTask getUpdateMqttDataTask() {

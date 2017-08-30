@@ -20,23 +20,8 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
-
-import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
-import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
-import com.thanksmister.iot.mqtt.alarmpanel.R;
-
-import java.io.IOException;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
-import static android.content.ContentValues.TAG;
 
 public class AlarmTriggeredView extends BaseAlarmView {
 
@@ -55,6 +40,7 @@ public class AlarmTriggeredView extends BaseAlarmView {
 
     @Override
     void onCancel() {
+        // do nothing, can't cancel
     }
 
     @Override
