@@ -20,9 +20,9 @@ package com.thanksmister.iot.mqtt.alarmpanel;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
@@ -42,19 +40,23 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView;
 
 import butterknife.ButterKnife;
 
 abstract public class BaseActivity extends AppCompatActivity {
 
+    public static final long INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 3 min
+    
     private StoreManager storeManager;
     private Configuration configuration;
     private AlertDialog progressDialog;
     private AlertDialog dialog;
+    private AlertDialog screenSaverDialog;
+    private Handler inactivityHandler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
     
@@ -74,6 +76,41 @@ abstract public class BaseActivity extends AppCompatActivity {
             progressDialog.dismiss();
             progressDialog = null;
         }
+
+        if(inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityCallback);
+            inactivityHandler = null;
+        }
+    }
+
+    private Runnable inactivityCallback = new Runnable() {
+        @Override
+        public void run() {
+            hideDialog();
+            showScreenSaver();
+        }
+    };
+
+    public void resetInactivityTimer() {
+        closeScreenSaver();
+        inactivityHandler.removeCallbacks(inactivityCallback);
+        inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+    }
+
+    public void stopDisconnectTimer(){
+        hideDialog();
+        inactivityHandler.removeCallbacks(inactivityCallback);
+    }
+
+    @Override
+    public void onUserInteraction(){
+        resetInactivityTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopDisconnectTimer();
     }
     
     public StoreManager getStoreManager() {
@@ -150,10 +187,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home ) {
-            return true;
-        } 
-        return false;
+        return item.getItemId() == android.R.id.home;
     }
     
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {
@@ -194,9 +228,44 @@ abstract public class BaseActivity extends AppCompatActivity {
         View view = inflater.inflate(R.layout.dialog_extended_forecast, null, false);
         view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
         //view.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
-        final ExtendedForecastView  extendedForecastView = (ExtendedForecastView) view.findViewById(R.id.extendedForecastView);
+        final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
         dialog = new AlertDialog.Builder(BaseActivity.this)
+                .setCancelable(true)
+                .setView(view)
+                .show();
+    }
+    
+    public void closeScreenSaver() {
+        if(screenSaverDialog != null) {
+            screenSaverDialog.dismiss();
+            screenSaverDialog = null;
+        }
+    }
+
+    public void showScreenSaver() {
+        
+        if(screenSaverDialog != null && screenSaverDialog.isShowing()) return;
+        Rect displayRectangle = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
+        //view.setMinimumWidth((int)(displayRectangle.width() * 1f));
+        //view.setMinimumHeight((int)(displayRectangle.height() * 1f));
+        final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
+        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showScreenSaverModule(), getConfiguration().getImageSource(), getConfiguration().getImageFitScreen());
+        screenSaverView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(screenSaverDialog != null) {
+                    screenSaverDialog.dismiss();
+                    screenSaverDialog = null;
+                    resetInactivityTimer();
+                }
+            }
+        });
+        screenSaverDialog = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
                 .setCancelable(true)
                 .setView(view)
                 .show();

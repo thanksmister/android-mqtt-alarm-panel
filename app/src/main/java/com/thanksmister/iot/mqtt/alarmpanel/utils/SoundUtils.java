@@ -1,7 +1,6 @@
 package com.thanksmister.iot.mqtt.alarmpanel.utils;
 
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 
 import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
@@ -9,8 +8,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.AlarmSounds;
 import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
 
 import java.io.IOException;
-
-import timber.log.Timber;
 
 import static android.content.ContentValues.TAG;
 
@@ -69,6 +66,12 @@ public class SoundUtils {
             }
         }
     }
+
+    public void stopBuzzerRepeat() {
+        mHandler = new Handler();
+        mHandler.post(mPlaybackRunnable);
+    }
+
 
     public void playBuzzerRepeat() {
         mHandler = new Handler();

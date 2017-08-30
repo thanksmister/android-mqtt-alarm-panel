@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/black"
+        android:id="@+id/screenSaverView"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextClock
+                android:id="@+id/screenSaverClock"
+                style="@style/TextAppearance.Clock"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:format24Hour="hh:mm:ss"
+                android:format12Hour="h:mm:ss a"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:textColor="@color/light_gray"
+                tools:visibility="visible"
+                android:visibility="gone"/>
+    
+        <ImageView
+                android:id="@+id/screenSaverImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                tools:visibility="visible"
+                android:visibility="visible"/>
+        
+        <TextView
+                android:id="@+id/imageCaption"
+                style="@style/TextAppearance.TextSmall"
+                android:layout_marginBottom="32dp"
+                android:layout_marginEnd="32dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                tools:text="My dog cooling off"/>
+        
+</com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView>

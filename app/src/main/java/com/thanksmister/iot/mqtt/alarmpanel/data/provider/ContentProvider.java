@@ -32,7 +32,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionMode
 public class ContentProvider extends ContentProviderBase {
     
     public static final Uri SUBSCRIPTION_DATA_TABLE_URI = CONTENT_URI.buildUpon().appendPath(SubscriptionModel.TABLE_NAME).build();
-   
+    
     public ContentProvider()
     {
     }

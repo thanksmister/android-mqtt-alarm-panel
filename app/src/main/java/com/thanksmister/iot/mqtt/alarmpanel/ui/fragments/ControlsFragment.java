@@ -61,7 +61,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
 
     // The loader's unique id. Loader ids are specific to the Activity or
     private static final int DATA_LOADER_ID = 1;
-    
+   
     @Bind(R.id.alarmPendingLayout)
     View alarmPendingLayout;
     
@@ -333,7 +333,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         if(id == DATA_LOADER_ID) {
             return new CursorLoader(getActivity(), ContentProvider.SUBSCRIPTION_DATA_TABLE_URI, SubscriptionModel.COLUMN_NAMES, null, null, null);
-        }
+        } 
         return null;
     }
 

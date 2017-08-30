@@ -47,7 +47,6 @@ public class WeatherModule  {
     private Handler handler;
     
     public WeatherModule() {
-
     }
 
     public interface ForecastListener {
@@ -80,9 +79,7 @@ public class WeatherModule  {
         if(task != null && task.getStatus().equals(AsyncTask.Status.RUNNING)) {
             return; // we have a running task alreadyß
         }
-
-        Timber.d("startDarkSkyHourlyForecast");
-
+        
         final DarkSkyApi api = new DarkSkyApi();
         final DarkSkyFetcher fetcher = new DarkSkyFetcher(api);
 

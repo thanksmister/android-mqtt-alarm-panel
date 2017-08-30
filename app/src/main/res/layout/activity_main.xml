@@ -96,7 +96,7 @@
         
     </FrameLayout>
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/screenSaverContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -124,6 +124,6 @@
             tools:visibility="visible"
             android:visibility="gone"/>
 
-    </FrameLayout>
+    </FrameLayout>-->
 
 </RelativeLayout>

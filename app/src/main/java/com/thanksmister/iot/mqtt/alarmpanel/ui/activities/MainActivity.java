@@ -21,12 +21,9 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextClock;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
@@ -35,7 +32,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.ScreenSaverModule;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils;
@@ -60,19 +56,9 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     
     private static final String FRAGMENT_CONTROLS = "com.thanksmister.fragment.FRAGMENT_CONTROLS";
     private static final String FRAGMENT_INFORMATION = "com.thanksmister.fragment.FRAGMENT_INFORMATION";
-    public static final long INACTIVITY_TIMEOUT = 1 * 60 * 1000; // 5 min
 
     @Bind(R.id.triggeredView)
     View triggeredView;
-
-    @Bind(R.id.screenSaverContainer)
-    View screenSaverContainer;
-
-    @Bind(R.id.screenSaverImage)
-    ImageView screenSaverImage;
-
-    @Bind(R.id.screenSaverClock)
-    TextClock screenSaverClock;
 
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
@@ -88,8 +74,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
-    private Handler inactivityHandler = new Handler();
-    private ScreenSaverModule screenSaverModule;
+   
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,13 +129,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         if (subscriptionDataTask != null) {
             subscriptionDataTask.cancel(true);
         }
-
-        if(inactivityHandler != null) {
-            inactivityHandler.removeCallbacks(inactivityCallback);
-            inactivityHandler = null;
-        }
-
-        disconnectScreenSaverModule();
     }
 
     @Override
@@ -171,61 +149,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         } 
         return super.onOptionsItemSelected(item);
     }
-
-    private Runnable inactivityCallback = new Runnable() {
-        @Override
-        public void run() {
-            connectScreenSaverModule();
-        }
-    };
-
-    private void connectScreenSaverModule() {
-        Timber.d("Show Screen Module: " + getConfiguration().showScreenSaverModule());
-        if(getConfiguration().showScreenSaverModule()) {
-            if(screenSaverModule == null) {
-                screenSaverModule = new ScreenSaverModule();
-                screenSaverModule.getScreenSaverImages(MainActivity.this, screenSaverImage, getConfiguration().getImageSource(), getConfiguration().getImageFitScreen());
-            }
-            screenSaverImage.setVisibility(View.VISIBLE);
-            screenSaverClock.setVisibility(View.GONE);
-            screenSaverModule.startScreenSavor();
-        } else { // use clock
-            screenSaverImage.setVisibility(View.GONE);
-            screenSaverClock.setVisibility(View.VISIBLE);
-        }
-        screenSaverContainer.setVisibility(View.VISIBLE);
-    }
-
-    private void disconnectScreenSaverModule() {
-        if(screenSaverModule != null) {
-            screenSaverModule.stopScreeSaver();
-            screenSaverImage.setVisibility(View.GONE);
-            screenSaverModule = null;
-        }
-        screenSaverContainer.setVisibility(View.GONE);
-    }
-
-    public void resetInactivityTimer() {
-        disconnectScreenSaverModule();
-        inactivityHandler.removeCallbacks(inactivityCallback);
-        inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
-    }
-
-    public void stopDisconnectTimer(){
-        inactivityHandler.removeCallbacks(inactivityCallback);
-    }
-
-    @Override
-    public void onUserInteraction(){
-        resetInactivityTimer();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopDisconnectTimer();
-    }
-
+    
     @Override
     public void publishArmedHome() {
         String topic = AlarmUtils.COMMAND_TOPIC;
