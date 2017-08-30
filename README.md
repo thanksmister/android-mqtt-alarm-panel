@@ -1,4 +1,4 @@
-# AndroidThings MQTT Alarm Panel for Home Assistant
+# MQTT Alarm Panel for Home Assistant
 
 This project is a MQTT Alarm Control Panel for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. This project was built for a Raspberry Pi 3 using Android Things and a 7" Touchscreen Display.
 
