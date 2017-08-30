@@ -29,10 +29,10 @@ Raspberry Pi 3 and SD Card.
 
 # Software
 
-[Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html)
-[MQTT Android library for the Paho Android Service](https://github.com/eclipse/paho.mqtt.android)
-[PMW Speaker Drivers for Android Things](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker)
-Android Studio with Android SDK N or above.
+- [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html)
+- [MQTT Android library for the Paho Android Service](https://github.com/eclipse/paho.mqtt.android)
+- [PMW Speaker Drivers for Android Things](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker)
+- Android Studio with Android SDK N or above.
 
 # Home Assistant Setup
 
