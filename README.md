@@ -51,7 +51,7 @@ Setup your RPi3 to use [Android Things 0.4.1-devpreview for Raspbery Pi 3](https
 
 # Software Setup
 
-The easiest way to get up and running is to download the APK from the "release" section and side load the app onto the device using the ADB tool. However if you want build the application from the code you can clone the repository and compile the application using Andoid Studio.
+The easiest way to get up and running is to download the APK from the [release](https://github.com/thanksmister/androidthings-mqtt-alarm-panel/releases/tag/v1.3) section and side load the app onto the device using the ADB tool. However if you want build the application from the code you can clone the repository and compile the application using Andoid Studio.
 
 - Hook the device to your computer using a USB cable and connect with the ADB tool adb connect Android.local.
 - Side load the application apk file from the download section using the ADB tool adb install mqtt_alarm_panel.apk
