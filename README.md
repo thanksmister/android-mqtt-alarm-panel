@@ -6,7 +6,6 @@ The hardware alarm panel acts as an interface for Home Assistant's manual alarm 
 
 MQTT allows for communication between the hardware alarm panel and the manual alarm panel. The hardware alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, Home Assistanat is responsible for triggering the alarm through automation and sensor states.
 
-For example, in my home I have several Z-Wave door sensors and a Z-Wave siren connected to Home Assistant using a Z-Wave USB dongle. I setup automations in HASS that will set the state of the manual alarm panel component to be triggered if any of the senors states change while the alarm is set to away or home. This will update the hardware alarm panel interface as well as a trigger the siren unless I enter the alarm code.
 
 ![alarm_home](https://user-images.githubusercontent.com/142340/29889460-9f615642-8d9a-11e7-99a6-1a49529dd580.png)
 
@@ -30,13 +29,9 @@ Raspberry Pi 3 and SD Card.
 # Software
 
 - [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html)
-- [MQTT Android library for the Paho Android Service](https://github.com/eclipse/paho.mqtt.android)
-- [PMW Speaker Drivers for Android Things](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker)
 - Android Studio with Android SDK N or above.
 
 # Home Assistant Setup
-
-I won't go into detail about how to setup Home Assistant with MQTT because the Home Assistant documentation covers this. I will just list the required steps needed to get up and running quickly.
 
 - Setup [Home Assistant](https://home-assistant.io/getting-started/)
 - Configure the [MQTT service](https://home-assistant.io/components/mqtt/) and broker for Home Assistant not your broker address and username/password if applicable.
@@ -49,14 +44,12 @@ Make sure you properly setup the RPi3 with the 7" Touchscreen Display.
 Connect the buzzer as shown in the [sampel diagram](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker).
 Setup your RPi3 to use [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html). Be sure to setup network access either using WiFi or ethernet.
 
-# Software Setup
+# Installation
 
 The easiest way to get up and running is to download the APK from the [release](https://github.com/thanksmister/androidthings-mqtt-alarm-panel/releases/tag/v1.3) section and side load the app onto the device using the ADB tool. However if you want build the application from the code you can clone the repository and compile the application using Andoid Studio.
 
-- Hook the device to your computer using a USB cable and connect with the ADB tool adb connect Android.local.
-- Side load the application apk file from the download section using the ADB tool adb install mqtt_alarm_panel.apk
 
-# Initial Alarm Setup
+# Alarm Setup
 
 - Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
 - Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel.
