@@ -23,8 +23,7 @@ MQTT allows for communication between the hardware alarm panel and the manual al
 # Hardware
 
 - Raspberry Pi 3 and SD Card.
-[7" Touchscreen Display for display](https://www.adafruit.com/product/2718).
-
+- [7" Touchscreen Display for display](https://www.adafruit.com/product/2718).
 - [5V Buzzer](https://www.adafruit.com/product/1536) for button feedback and sounds.
 
 # Software
