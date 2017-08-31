@@ -54,7 +54,7 @@ The easiest way to get up and running is to download the APK from the [release](
 - Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
 - Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel.
 - If you choose to get weather updates, enter your [DarkSky API key](https://darksky.net/dev) and location (lat/lon which you can get from maps.google.com) in the weather setting screen.
-- To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. Optionally you can load other Instagram images by change the Instagram profile name in the settings. For example, use flowersgallery for flower images.  Just search google for popular Instagram profiles for different topics.
+- To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. Optionally you can load other Instagram images by change the Instagram profile name in the settings. 
 
 # Notes
 
