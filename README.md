@@ -53,18 +53,14 @@ The easiest way to get up and running is to download the APK from the [release](
 
 - Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
 - Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel.
-- If you choose to get weather updates, enter your DarkSky API key and location (lat/lon) in the weather setting screen.
-- To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. Optionally you can load other Instagram images by change the Instagram profile name in the settings.
-
-# Enclosures
-
-It would be nice to have a wall mountable or free standing enclosure for the project once completed. I 3D printed an enclosure so I could mount mine on the wall https://www.thingiverse.com/thing:1082431. However you can also use any enclosure that will fit the RPi3 and 7" Touchscreen display combo.
+- If you choose to get weather updates, enter your [DarkSky API key](https://darksky.net/dev) and location (lat/lon which you can get from maps.google.com) in the weather setting screen.
+- To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. Optionally you can load other Instagram images by change the Instagram profile name in the settings. For example, use flowersgallery for flower images.  Just search google for popular Instagram profiles for different topics.
 
 # Notes
 
 - At this time there is an issue dimming the brighness of the backlight for the display. So for now I have included a screen saver feature as a short-term fix until the bug is addressed by the Android Things development team.
 - There have been multiple display issues using Android Things 0.5.0 and 0.5.1, therefore this application runs best under 0.4.1.
-- It's important that the hardware alarm control panel settings reflect the settings of those used in the alarm control panel component. Initially the hardware control panel is set to the default settings of the alarm control panel component. There are settings to change the hardware control panel to match those used in the HASS alarm panel if changed.
+- It's important that the alarm control panel settings reflect the settings of those used in the alarm control panel component. Initially the hardware control panel is set to the default settings of the alarm control panel component. There are settings options to match those used in the manual alarm panel.
 
 # Acknowledgements
 
