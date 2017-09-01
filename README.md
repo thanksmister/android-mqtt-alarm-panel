@@ -56,7 +56,7 @@ adb shell am startservice \
     -e passphrase <Network_Passcode>
 ```
 
-- You probably also want to set the timezone of the device:
+- You probably also want to set the time and timezone of the device:
 
 ```
 # Reboot ADB into root mode
@@ -64,6 +64,9 @@ $ adb root
 
 # Set the date to 2017/12/31 12:00:00
 $ adb shell date 123112002017.00
+
+# Set the time zone to US Mountain Time
+$ adb shell setprop persist.sys.timezone "America/Denver"
 ```
 
 # Installation
