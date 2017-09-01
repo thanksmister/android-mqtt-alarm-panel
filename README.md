@@ -44,6 +44,29 @@ MQTT allows for communication between the hardware alarm panel and the manual al
 - Connect the buzzer as shown in the [sampel diagram](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker).
 - Setup your RPi3 to use [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html). Be sure to setup network access either using WiFi or ethernet.
 
+Connect the ethernet cable and then use the ADB tool to connect to the device:
+```
+# Use the adb tool to connect over ethernet to the device
+adb connect Android.local
+
+# Then set your your WiFi SSID and password
+adb shell am startservice \
+    -n com.google.wifisetup/.WifiSetupService \
+    -a WifiSetupService.Connect \
+    -e ssid <Network_SSID> \
+    -e passphrase <Network_Passcode>
+```
+
+- You probably also want to set the timezone of the device:
+
+```
+# Reboot ADB into root mode
+$ adb root
+
+# Set the date to 2017/12/13 12:00:00
+$ adb shell date 123112002017.00
+```
+
 # Installation
 
 The easiest way to get up and running is to download the APK from the [release](https://github.com/thanksmister/androidthings-mqtt-alarm-panel/releases/tag/v1.3) section and side load the app onto the device using the ADB tool. However if you want build the application from the code you can clone the repository and compile the application using Andoid Studio.
