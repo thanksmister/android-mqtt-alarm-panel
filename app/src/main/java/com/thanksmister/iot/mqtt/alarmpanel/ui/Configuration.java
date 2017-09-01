@@ -81,7 +81,7 @@ public class Configuration {
     }
 
     public String getImageSource() {
-        return this.sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "daciangroza"); //brahmino
+        return this.sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "omjsk"); //brahmino
     }
 
     public void setImageSource(String value) {

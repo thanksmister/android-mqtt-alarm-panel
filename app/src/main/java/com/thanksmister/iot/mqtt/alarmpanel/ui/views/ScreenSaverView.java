@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextClock;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
@@ -54,9 +53,6 @@ public class ScreenSaverView extends RelativeLayout {
 
     @Bind(R.id.screenSaverClock)
     TextClock screenSaverClock;
-
-    @Bind(R.id.imageCaption)
-    TextView imageCaption;
     
     private InstagramTask task;
     private String userName;
@@ -143,12 +139,6 @@ public class ScreenSaverView extends RelativeLayout {
             final int random = new Random().nextInt((max - min) + 1) + min;
             InstagramItem instagramItem = itemList.get(random);
             imageUrl = instagramItem.getImages().getStandardResolution().getUrl();
-            Timber.d("startImageRotation imageUrl:" + imageUrl);
-            if(instagramItem.getCaption() != null) {
-                imageCaption.setText(instagramItem.getCaption().getText()); 
-            } else {
-                imageCaption.setText("");
-            }
             if(fitToScreen) {
                 picasso.load(imageUrl)
                         .placeholder(R.color.black)

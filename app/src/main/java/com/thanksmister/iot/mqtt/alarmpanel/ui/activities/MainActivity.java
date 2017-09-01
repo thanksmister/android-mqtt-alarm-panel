@@ -32,6 +32,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils;
@@ -62,8 +63,12 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
-        Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
-        startActivity(intent);
+        if(!getConfiguration().isArmed()) {
+            Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
+            startActivity(intent);
+        } else {
+            showAlarmDisableDialog(true);
+        }
     }
 
     @OnClick(R.id.buttonLogs)
@@ -324,5 +329,26 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             }
         });
         return dataTask;
+    }
+
+    /**
+     * Shows a count down dialog before setting alarm to away
+     */
+    private void showAlarmDisableDialog(boolean beep) {
+        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
+            @Override
+            public void onComplete(int pin) {
+                publishDisarmed();
+                hideDialog();
+            }
+            @Override
+            public void onError() {
+                Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onCancel() {
+                hideDialog();
+            }
+        }, getConfiguration().getAlarmCode(), beep);
     }
 }
