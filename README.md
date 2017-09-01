@@ -42,9 +42,8 @@ MQTT allows for communication between the hardware alarm panel and the manual al
 
 - Make sure you properly setup the RPi3 with the 7" Touchscreen Display.
 - Connect the buzzer as shown in the [sampel diagram](https://github.com/androidthings/drivers-samples/tree/master/pwmspeaker).
-- Setup your RPi3 to use [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html). Be sure to setup network access either using WiFi or ethernet.
+- Setup your RPi3 to use [Android Things 0.4.1-devpreview for Raspbery Pi 3](https://developer.android.com/things/hardware/raspberrypi.html). Be sure to setup network access either using WiFi or ethernet. If you setup WiFi be sure to unplug the Ethernet cable, at this time Android Things can't use both. 
 
-Connect the ethernet cable and then use the ADB tool to connect to the device:
 ```
 # Use the adb tool to connect over ethernet to the device
 adb connect Android.local
