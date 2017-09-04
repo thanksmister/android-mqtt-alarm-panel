@@ -203,6 +203,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
     
     public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep) {
+        hideDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_disable, null, false);
         final AlarmDisableView alarmCodeView = view.findViewById(R.id.alarmDisableView);
@@ -245,6 +246,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showScreenSaver() {
         if(screenSaverDialog != null && screenSaverDialog.isShowing()) return;
+        inactivityHandler.removeCallbacks(inactivityCallback);
         Rect displayRectangle = new Rect();
         Window window = getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);

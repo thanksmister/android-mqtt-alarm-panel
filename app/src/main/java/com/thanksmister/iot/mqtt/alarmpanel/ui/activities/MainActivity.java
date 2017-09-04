@@ -76,6 +76,11 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         Intent intent = LogActivity.createStartIntent(MainActivity.this);
         startActivity(intent);
     }
+    
+    @OnClick(R.id.buttonSleep)
+    void buttonSleep() {
+        showScreenSaver();
+    }
 
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
