@@ -45,8 +45,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class ScreenSaverView extends RelativeLayout {
-
-    //private final long ROTATE_TIME_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
     
     @Bind(R.id.screenSaverImage)
     ImageView screenSaverImage;
