@@ -67,6 +67,8 @@ public class Configuration {
     public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
 
+    private final int ROTATE_TIME_IN_MINUTES = 30; // 30 minutes
+
     public Configuration(Context context, DPreference sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         this.context = context;
@@ -93,7 +95,7 @@ public class Configuration {
     }
 
     public int getImageRotation() {
-        return this.sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, 10);
+        return this.sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, ROTATE_TIME_IN_MINUTES);
     }
 
     public boolean getImageFitScreen() {

@@ -255,7 +255,9 @@ abstract public class BaseActivity extends AppCompatActivity {
         //view.setMinimumWidth((int)(displayRectangle.width() * 1f));
         //view.setMinimumHeight((int)(displayRectangle.height() * 1f));
         final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
-        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showScreenSaverModule(), getConfiguration().getImageSource(), getConfiguration().getImageFitScreen());
+        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showScreenSaverModule(), 
+                getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(), 
+                getConfiguration().getImageRotation());
         screenSaverView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

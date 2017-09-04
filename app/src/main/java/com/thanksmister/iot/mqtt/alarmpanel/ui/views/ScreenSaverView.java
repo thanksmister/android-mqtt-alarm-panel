@@ -46,7 +46,7 @@ import timber.log.Timber;
 
 public class ScreenSaverView extends RelativeLayout {
 
-    private final long ROTATE_TIME_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
+    //private final long ROTATE_TIME_IN_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
     
     @Bind(R.id.screenSaverImage)
     ImageView screenSaverImage;
@@ -62,6 +62,7 @@ public class ScreenSaverView extends RelativeLayout {
     private List<InstagramItem> itemList;
     private Context context;
     private String imageUrl;
+    private long rotationInterval;
 
     public ScreenSaverView(Context context) {
         super(context);
@@ -98,10 +99,12 @@ public class ScreenSaverView extends RelativeLayout {
         }
     }
     
-    public void setScreenSaver(Context context, boolean useImageScreenSaver, String userName, boolean fitToScreen) {
+    public void setScreenSaver(Context context, boolean useImageScreenSaver, String userName, boolean fitToScreen, 
+                               int rotationIntervalMinutes) {
         this.context = context;
         this.userName = userName;
         this.fitToScreen = fitToScreen;
+        this.rotationInterval = rotationIntervalMinutes*1000; // convert to milliseconds
        
         if(useImageScreenSaver && !TextUtils.isEmpty(userName) ) {
             screenSaverImage.setVisibility(View.VISIBLE);
@@ -155,7 +158,7 @@ public class ScreenSaverView extends RelativeLayout {
             if(rotationHandler == null) {
                 rotationHandler = new Handler();
             }
-            rotationHandler.postDelayed(delayRotationRunnable, ROTATE_TIME_IN_MILLISECONDS);
+            rotationHandler.postDelayed(delayRotationRunnable, rotationInterval);
         }
     }
     
