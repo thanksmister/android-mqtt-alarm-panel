@@ -71,8 +71,14 @@ $ adb shell setprop persist.sys.timezone "America/Denver"
 
 # Installation
 
-The easiest way to get up and running is to download the APK from the [release](https://github.com/thanksmister/androidthings-mqtt-alarm-panel/releases/tag/v1.3) section and side load the app onto the device using the ADB tool. However if you want build the application from the code you can clone the repository and compile the application using Andoid Studio.
+The build includes both Android Things Preview 0.4.1 and the APK file for the MQTT control panel application and allows for OTA updates.
 
+- Download the latest build from the [release](https://github.com/thanksmister/androidthings-mqtt-alarm-panel/releases/) section. 
+- Unzip the file to get the 'iot_rpi3.img'.
+- Burn image to an SD card using a tool like [Etcher](https://etcher.io/).
+- Insert the SD card into RPi3 and boot.  
+
+Alternatively you can clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device running Android Things Preview 0.4.1 using the ADB tool. 
 
 # Alarm Setup
 
