@@ -32,7 +32,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 
 # Installation
 
-Clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device.
+Clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device. You can also install the application from the [Google Play store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 
 # Alarm Setup
 
