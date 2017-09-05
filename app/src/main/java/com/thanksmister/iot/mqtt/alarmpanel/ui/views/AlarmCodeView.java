@@ -22,18 +22,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.google.android.things.contrib.driver.pwmspeaker.Speaker;
-import com.thanksmister.iot.mqtt.alarmpanel.BoardDefaults;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 
-import java.io.IOException;
-
 import butterknife.Bind;
-
-import static android.content.ContentValues.TAG;
 
 public class AlarmCodeView extends BaseAlarmView {
 

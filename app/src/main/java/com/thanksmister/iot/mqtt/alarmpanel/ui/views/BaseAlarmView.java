@@ -112,7 +112,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button0.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("0");
             }
@@ -121,7 +120,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("1");
             }
@@ -130,7 +128,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils(). playBuzzerOnButtonPress();
                 addPinCode("2");
             }
@@ -139,7 +136,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("3");
             }
@@ -148,7 +144,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button4.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("4");
             }
@@ -157,7 +152,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button5.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("5");
             }
@@ -166,7 +160,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button6.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("6");
             }
@@ -175,7 +168,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button7.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("7");
             }
@@ -184,7 +176,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button8.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("8");
             }
@@ -193,7 +184,6 @@ abstract class BaseAlarmView extends LinearLayout {
         button9.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 addPinCode("9");
             }
@@ -202,7 +192,6 @@ abstract class BaseAlarmView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 removePinCode();
             }
@@ -211,7 +200,6 @@ abstract class BaseAlarmView extends LinearLayout {
         buttonDel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSoundUtils().destroyBuzzer();
                 getSoundUtils().playBuzzerOnButtonPress();
                 removePinCode();
             }
@@ -221,7 +209,6 @@ abstract class BaseAlarmView extends LinearLayout {
             buttonCancel.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getSoundUtils().destroyBuzzer();
                     getSoundUtils().playBuzzerOnButtonPress();
                     onCancel();
                 }
@@ -249,7 +236,7 @@ abstract class BaseAlarmView extends LinearLayout {
 
     public SoundUtils getSoundUtils() {
         if(soundUtils == null) {
-            soundUtils = new SoundUtils();
+            soundUtils = new SoundUtils(getContext());
         }
 
         return soundUtils;
