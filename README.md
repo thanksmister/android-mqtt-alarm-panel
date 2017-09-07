@@ -27,7 +27,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 
 - Setup [Home Assistant](https://home-assistant.io/getting-started/)
 - Configure the [MQTT service](https://home-assistant.io/components/mqtt/) note thr broker address and username/password if applicable.
-- Add the [MQTT Alarm Control Panel] (https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuraiton with the default settings for now.
+- Add the [MQTT Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuraiton with the default settings for now.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
 
 # Installation
