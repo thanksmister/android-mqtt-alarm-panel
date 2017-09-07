@@ -43,7 +43,9 @@ Clone the repository and compile the APK using Andoid Studio, then side load the
 
 # Notes
 
-- It's important that the alarm control panel settings reflect the settings of those used in the alarm control panel component. Initially the hardware control panel is set to the default settings of the alarm control panel component. There are settings options to match those used in the manual alarm panel.
+- At this time there is an issue dimming the brightness of the backlight for the display. So for now I have included a screen saver feature as a short-term fix until the bug is addressed by the Android Things development team.  I will update the application once this feature is working.
+- There have been multiple display issues using Android Things 0.5.0 and 0.5.1, therefore this application runs best under Android Things 0.4.1. 
+- It's important that the alarm control panel settings reflect the settings of those used in the alarm control panel component. Initially the hardware control panel is set to the default settings of the alarm control panel component. 
 
 # Acknowledgements
 
