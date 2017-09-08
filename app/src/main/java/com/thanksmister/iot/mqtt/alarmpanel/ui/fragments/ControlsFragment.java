@@ -316,6 +316,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             @Override
             public void onComplete(int pin) {
                 mListener.publishDisarmed();
+                setDisarmedView();
                 hideDialog();
             }
             @Override

@@ -88,7 +88,9 @@ public class AlarmDisableView extends BaseAlarmView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        handler.removeCallbacks(delayRunnable);
+        if(handler != null) {
+            handler.removeCallbacks(delayRunnable);
+        }
         if(countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
