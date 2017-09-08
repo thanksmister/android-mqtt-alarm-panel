@@ -32,12 +32,16 @@ public class ArmOptionsView extends LinearLayout {
 
     @OnClick(R.id.armAwayButton)
     public void armAwayButtonClick() {
-        listener.onArmAway();
+        if(listener != null) {
+            listener.onArmAway();
+        }
     }
 
     @OnClick(R.id.armStayButton)
     public void armHomeButtonClick() {
-        listener.onArmHome();
+        if(listener != null) {
+            listener.onArmHome();
+        }
     }
 
     private ViewListener listener;

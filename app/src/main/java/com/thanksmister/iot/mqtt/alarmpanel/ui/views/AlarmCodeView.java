@@ -53,10 +53,20 @@ public class AlarmCodeView extends BaseAlarmView {
 
     @Override
     protected void onCancel() {
-        listener.onCancel();
+        if(listener != null) {
+            listener.onCancel();
+        }
         codeComplete = false;
         enteredCode = "";
         showFilledPins(0);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(handler != null) {
+            handler.removeCallbacks(delayRunnable);
+        }
     }
 
     @Override
@@ -84,7 +94,9 @@ public class AlarmCodeView extends BaseAlarmView {
         @Override
         public void run() {
             handler.removeCallbacks(delayRunnable);
-            listener.onComplete(getEnteredCode());
+            if(listener != null) {
+                listener.onComplete(getEnteredCode());
+            }
         }
     };
 

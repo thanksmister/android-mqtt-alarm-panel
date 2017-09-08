@@ -37,12 +37,19 @@ public class AlarmTriggeredView extends BaseAlarmView {
     protected void onFinishInflate() {
         super.onFinishInflate();
     }
-
+    
     @Override
-    void onCancel() {
-        // do nothing, can't cancel
+    protected void onCancel() {
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(handler != null) {
+            handler.removeCallbacks(delayRunnable);
+        }
+    }
+    
     @Override
     protected void reset() {
         codeComplete = false;
@@ -85,10 +92,14 @@ public class AlarmTriggeredView extends BaseAlarmView {
     private void validateCode(String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
-            listener.onComplete(code);
+            if(listener != null) {
+                listener.onComplete(code);
+            }
         } else {
             reset();
-            listener.onError();
+            if(listener != null) {
+                listener.onError();
+            }
         }
     }
 }

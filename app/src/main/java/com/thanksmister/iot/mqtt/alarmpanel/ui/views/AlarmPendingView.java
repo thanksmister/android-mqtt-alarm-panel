@@ -85,7 +85,9 @@ public class AlarmPendingView extends LinearLayout {
             @Override
             public void onFinish() {
                 Timber.d("Timed up...");
-                listener.onTimeOut();
+                if(listener != null) {
+                    listener.onTimeOut(); 
+                }
             }
         }.start();
     }

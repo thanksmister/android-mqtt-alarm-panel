@@ -57,7 +57,9 @@ public class AlarmDisableView extends BaseAlarmView {
         codeComplete = false;
         enteredCode = "";
         showFilledPins(0);
-        listener.onCancel();
+        if(listener != null) {
+            listener.onCancel();
+        }
     }
 
     public void startCountDown(int pendingTime) {
@@ -76,7 +78,9 @@ public class AlarmDisableView extends BaseAlarmView {
             @Override
             public void onFinish() {
                 Timber.d("Timed up...");
-                listener.onCancel();
+                if(listener != null) {
+                    listener.onCancel();
+                }
             }
         }.start();
     }
@@ -84,6 +88,7 @@ public class AlarmDisableView extends BaseAlarmView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        handler.removeCallbacks(delayRunnable);
         if(countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
@@ -139,14 +144,20 @@ public class AlarmDisableView extends BaseAlarmView {
     private void validateCode(String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-            listener.onComplete(code);
+            if(countDownTimer != null) {
+                countDownTimer.cancel();
+                countDownTimer = null; 
+            }
+            if(listener != null) {
+                listener.onComplete(code);
+            }
         } else {
             codeComplete = false;
             enteredCode = "";
             showFilledPins(0);
-            listener.onError();
+            if(listener != null) {
+                listener.onError();
+            }
         }
     }
 }
