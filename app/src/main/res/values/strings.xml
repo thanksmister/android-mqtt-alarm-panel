@@ -86,7 +86,7 @@
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">DISARMED</string>
     <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
-    <string name="dialog_first_time">Since this is your first time, please setup your MQTT and Alarm information.</string>
+    <string name="dialog_first_time">Since this is your first time, please setup your MQTT and Alarm information. The default alarm code is 1234.</string>
     <string name="text_alarm_pending">ALARM PENDING</string>
     <string name="text_f">°F</string>
     <string name="text_c">°C</string>

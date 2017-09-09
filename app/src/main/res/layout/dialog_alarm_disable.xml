@@ -31,7 +31,7 @@
     <View style="@style/DividerVertical"/>
     
     <LinearLayout
-            android:layout_width="280dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -39,7 +39,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -128,7 +128,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -220,7 +220,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -311,7 +311,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -325,7 +325,7 @@
 
                 <TextView
                         style="?android:textAppearanceLarge"
-                        android:textSize="22dp"
+                        android:textSize="18sp"
                         android:layout_gravity="center"
                         android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
@@ -400,29 +400,31 @@
     <View style="@style/DividerVertical"/>
 
     <LinearLayout
-            android:layout_width="290dp"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
+            android:paddingTop="16dp"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
             android:orientation="vertical">
-        
+
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             android:layout_weight="1">
 
             <com.todddavies.components.progressbar.ProgressWheel
-                    android:id="@+id/countDownProgressWheel"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    ProgressWheel:textColor="@color/text"
-                    ProgressWheel:textSize="64sp"
-                    ProgressWheel:rimColor="@color/gray_color"
-                    ProgressWheel:contourColor="@color/gray_color"
-                    ProgressWheel:barColor="@color/green"
-                    ProgressWheel:barWidth="16dp"
-                    ProgressWheel:rimWidth="16dp"
-                    android:gravity="center"
-                    android:layout_gravity="center" />
+                android:id="@+id/countDownProgressWheel"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                ProgressWheel:barColor="@color/green"
+                ProgressWheel:barWidth="8dp"
+                ProgressWheel:contourColor="@color/gray_color"
+                ProgressWheel:rimColor="@color/gray_color"
+                ProgressWheel:rimWidth="8dp"
+                ProgressWheel:textColor="@color/text"
+                ProgressWheel:textSize="32sp" />
 
         </FrameLayout>
 
@@ -430,13 +432,13 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:padding="8dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center_vertical">
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
@@ -447,8 +449,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
@@ -459,8 +461,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
@@ -471,8 +473,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"

@@ -17,22 +17,21 @@
   ~   
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/alarmDisableView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/red"
         android:padding="16dp"
         android:orientation="horizontal">
 
     <View style="@style/DividerVertical"/>
-
+    
     <LinearLayout
-            android:layout_width="270dp"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -54,8 +53,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1"/>
@@ -80,8 +80,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2"
@@ -107,8 +108,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3"/>
@@ -140,8 +142,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="4"/>
@@ -167,8 +170,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="5"
@@ -196,8 +200,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="6"/>
@@ -229,8 +234,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="7"/>
@@ -256,8 +262,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="8"
@@ -284,8 +291,9 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="9"/>
@@ -312,14 +320,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="invisible"
                     android:gravity="center"
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="22dp"
                         android:layout_gravity="center"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
@@ -346,9 +354,10 @@
                     android:layout_weight="1">
 
                 <TextView
-                        style="?android:textAppearanceLargeInverse"
+                        style="?android:textAppearanceLarge"
                         android:textSize="@dimen/text_size_login"
                         android:layout_gravity="center"
+                        android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"/>
@@ -377,7 +386,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:tint="@color/white"
+                        android:tint="@color/dark_gray"
                         android:src="@drawable/ic_backspace_black_32dp"/>
 
             </LinearLayout>
@@ -391,37 +400,86 @@
     <View style="@style/DividerVertical"/>
 
     <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="290dp"
             android:layout_height="match_parent"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
             android:orientation="vertical">
-
-        <TextView
-                android:id="@+id/codeTitle"
-                style="@style/TextAppearance.AppCompat.Large.Inverse"
-                android:textSize="72sp"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
+        
+        <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="ALARM"/>
+                android:layout_height="wrap_content">
 
-        <TextView
-                android:id="@+id/codeDescription"
-                style="@style/TextAppearance.AppCompat.Large.Inverse"
-                android:textSize="20sp"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textStyle="bold"
+            <com.todddavies.components.progressbar.ProgressWheel
+                    android:id="@+id/countDownProgressWheel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    ProgressWheel:textColor="@color/text"
+                    ProgressWheel:textSize="64sp"
+                    ProgressWheel:rimColor="@color/gray_color"
+                    ProgressWheel:contourColor="@color/gray_color"
+                    ProgressWheel:barColor="@color/green"
+                    ProgressWheel:barWidth="16dp"
+                    ProgressWheel:rimWidth="16dp"
+                    android:gravity="center"
+                    android:layout_gravity="center" />
+
+        </FrameLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                tools:text="Enter code to dismiss"
-                android:text="@string/dialog_alarm_triggered"/>
+                android:padding="8dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_gravity="center_vertical">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
+                    android:id="@+id/pinCode1"
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
+                    android:id="@+id/pinCode2"
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
+                    android:id="@+id/pinCode3"
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
+                    android:id="@+id/pinCode4"
+                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>
+</com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView>

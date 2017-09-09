@@ -30,7 +30,7 @@
     <View style="@style/DividerVertical"/>
 
     <LinearLayout
-            android:layout_width="280dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -38,7 +38,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -127,7 +127,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -219,7 +219,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -310,7 +310,7 @@
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:orientation="horizontal">
 
             <LinearLayout
@@ -324,7 +324,7 @@
 
                 <TextView
                         style="?android:textAppearanceLarge"
-                        android:textSize="22dp"
+                        android:textSize="18sp"
                         android:layout_gravity="center"
                         android:textColor="@color/dark_gray_color"
                         android:layout_width="wrap_content"
@@ -399,7 +399,7 @@
     <View style="@style/DividerVertical"/>
 
     <RelativeLayout
-            android:layout_width="300dp"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
@@ -408,6 +408,7 @@
         <TextView
                 android:id="@+id/codeTitle"
                 style="@style/WizardPageTitle"
+                android:textSize="18sp"
                 android:textAllCaps="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -423,8 +424,8 @@
                 android:gravity="center">
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
@@ -435,8 +436,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
@@ -447,8 +448,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
@@ -459,8 +460,8 @@
                     android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"

@@ -22,31 +22,31 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:padding="6dp">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minWidth="250dp"
-            android:padding="16dp"
+            android:minWidth="180dp"
+            android:padding="8dp"
             android:background="@drawable/background_rounded_gray"
             android:gravity="center"
             android:orientation="vertical">
 
         <ImageView
                 android:id="@+id/iconImage"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:tint="@color/gray"
                 tools:src="@drawable/ic_thunderstorm"/>
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                android:layout_height="8dp"/>
 
         <TextView
                 android:id="@+id/dayText"
-                style="@style/TextAppearance.TextLarge"
+                style="@style/TextAppearance.TextLarge.SmallAction"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,11 +55,11 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp"/>
+                android:layout_height="2dp"/>
 
         <TextView
                 android:id="@+id/outlookText"
-                style="@style/TextAppearance.TextLarge.SmallAction"
+                style="@style/TextAppearance.TextMedium"
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,11 +71,11 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp"/>
+                android:layout_height="2dp"/>
 
         <TextView
                 android:id="@+id/temperatureText"
-                style="@style/TextAppearance.TextLarge.SmallAction"
+                style="@style/TextAppearance.TextMedium"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
