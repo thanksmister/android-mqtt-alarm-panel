@@ -99,11 +99,12 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        
+
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    getConfiguration().setAlarmCode(1234); // set default code
                     Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
                     startActivity(intent);
                 }
@@ -116,14 +117,13 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment, FRAGMENT_CONTROLS).commit();
             getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment, FRAGMENT_INFORMATION).commit();
         }
-
-        makeMqttConnection();
     }
     
     @Override
     public void onResume() {
         super.onResume();
         resetInactivityTimer();
+        makeMqttConnection();
     }
 
     @Override
