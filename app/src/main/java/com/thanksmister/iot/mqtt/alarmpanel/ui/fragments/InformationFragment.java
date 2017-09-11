@@ -42,7 +42,6 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
 
 import static android.os.Looper.getMainLooper;
 import static java.lang.Math.round;
@@ -60,6 +59,9 @@ public class InformationFragment extends BaseFragment {
     @Bind(R.id.conditionImage)
     ImageView conditionImage;
 
+    @Bind(R.id.timeText)
+    TextView timeText;
+
     @Bind(R.id.dateText)
     TextView dateText;
     
@@ -75,6 +77,8 @@ public class InformationFragment extends BaseFragment {
     
     private WeatherModule weatherModule;
     private Daily extendedDaily;
+    private Handler weatherHandler;
+    private Handler timeHandler;
     
     public InformationFragment() {
         // Required empty public constructor
@@ -102,25 +106,9 @@ public class InformationFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
-
-        // start the clock
-        final Handler someHandler = new Handler(getMainLooper());
-        someHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(new Date());
-                dateText.setText(currentDateString);
-                someHandler.postDelayed(this, DATE_INTERVAL);
-            }
-        }, 10);
-
-        // start the weather module
-        if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
-                && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
-            connectWeatherModule();
-        } else {
-            weatherLayout.setVisibility(View.GONE);
-        }
+        weatherHandler = new Handler(getMainLooper());
+        timeHandler = new Handler(getMainLooper());
+        timeHandler.postDelayed(timeRunnable, 1000);
     }
 
     @Override
@@ -136,6 +124,9 @@ public class InformationFragment extends BaseFragment {
         // this picks up changes made in the settings and connects weather if needed
         if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
                 && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
+            if(weatherHandler != null) {
+                weatherHandler.removeCallbacks(weatherRunnable);
+            }
             connectWeatherModule();
         } else {
             disconnectWeatherModule();
@@ -147,9 +138,35 @@ public class InformationFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         disconnectWeatherModule();
+        if(timeHandler != null) {
+            timeHandler.removeCallbacks(timeRunnable);
+        }
     }
+
+    private Runnable timeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(new Date());
+            String currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(new Date());
+            dateText.setText(currentDateString);
+            timeText.setText(currentTimeString);
+            if(timeHandler != null) {
+                timeHandler.postDelayed(timeRunnable, 1000);
+            }
+        }
+    };
+
+    private Runnable weatherRunnable = new Runnable() {
+        @Override
+        public void run() {
+            weatherHandler.postDelayed(weatherRunnable, DATE_INTERVAL);
+        }
+    };
     
     private void disconnectWeatherModule() {
+        if(weatherHandler != null) {
+            weatherHandler.removeCallbacks(weatherRunnable);
+        }
         if(weatherModule != null) {
             weatherModule.cancelDarkSkyHourlyForecast();
         }
@@ -162,7 +179,6 @@ public class InformationFragment extends BaseFragment {
 
         final String apiKey = getConfiguration().getDarkSkyKey();
         final String units = getConfiguration().getWeatherUnits();
-        Timber.d("units: " + units);
         final String lat = getConfiguration().getLatitude();
         final String lon = getConfiguration().getLongitude();
         weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
@@ -173,6 +189,11 @@ public class InformationFragment extends BaseFragment {
                 String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? getString(R.string.text_f): getString(R.string.text_c));
                 temperatureText.setText(getString(R.string.text_temperature, String.valueOf(round(temperature)), displayUnits));
                 conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
+
+                // start the clock
+                if(weatherHandler != null) {
+                    weatherHandler.postDelayed(weatherRunnable, DATE_INTERVAL);
+                }
             }
 
             @Override

@@ -35,18 +35,18 @@
 
         <ImageView
                 android:id="@+id/iconImage"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
                 android:tint="@color/gray"
                 tools:src="@drawable/ic_thunderstorm"/>
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="32dp"/>
+                android:layout_height="16dp"/>
 
         <TextView
                 android:id="@+id/dayText"
-                style="@style/TextAppearance.TextExtraLarge"
+                style="@style/TextAppearance.TextLarge"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:gravity="center"
                 android:lines="2"
                 android:ellipsize="end"
-                tools:text="Light rain starting in the evening."/>
+                tools:text="Light rain starting in the morning and breezy until the afternoon."/>
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"

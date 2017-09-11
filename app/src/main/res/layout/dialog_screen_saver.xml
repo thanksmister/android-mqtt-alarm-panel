@@ -27,14 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextClock
+        <TextView
                 android:id="@+id/screenSaverClock"
                 style="@style/TextAppearance.Clock"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:format24Hour="hh:mm:ss"
-                android:format12Hour="h:mm:ss a"
                 android:gravity="center"
                 android:layout_centerInParent="true"
                 android:textColor="@color/light_gray"

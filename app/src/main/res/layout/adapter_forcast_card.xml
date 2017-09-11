@@ -28,21 +28,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:minWidth="250dp"
-            android:padding="16dp"
+            android:padding="8dp"
             android:background="@drawable/background_rounded_gray"
             android:gravity="center"
             android:orientation="vertical">
 
         <ImageView
                 android:id="@+id/iconImage"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:tint="@color/gray"
                 tools:src="@drawable/ic_thunderstorm"/>
 
         <android.support.v4.widget.Space
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                android:layout_height="22dp"/>
 
         <TextView
                 android:id="@+id/dayText"
@@ -55,7 +56,7 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp"/>
+                android:layout_height="2dp"/>
 
         <TextView
                 android:id="@+id/outlookText"
@@ -71,7 +72,7 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp"/>
+                android:layout_height="2dp"/>
 
         <TextView
                 android:id="@+id/temperatureText"

@@ -25,7 +25,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextClock;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
@@ -36,7 +36,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.model.InstagramResponse;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.DarkSkyTask;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.InstagramTask;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import butterknife.Bind;
@@ -50,12 +53,13 @@ public class ScreenSaverView extends RelativeLayout {
     ImageView screenSaverImage;
 
     @Bind(R.id.screenSaverClock)
-    TextClock screenSaverClock;
+    TextView screenSaverClock;
     
     private InstagramTask task;
     private String userName;
     private boolean fitToScreen;
     private Handler rotationHandler;
+    private Handler timeHandler;
     private Picasso picasso;
     private List<InstagramItem> itemList;
     private Context context;
@@ -95,6 +99,10 @@ public class ScreenSaverView extends RelativeLayout {
         if(rotationHandler != null) {
             rotationHandler.removeCallbacks(delayRotationRunnable);
         }
+        
+        if(timeHandler != null) {
+            timeHandler.removeCallbacks(timeRunnable);
+        }
     }
     
     public void setScreenSaver(Context context, boolean useImageScreenSaver, String userName, boolean fitToScreen, 
@@ -107,10 +115,15 @@ public class ScreenSaverView extends RelativeLayout {
         if(useImageScreenSaver && !TextUtils.isEmpty(userName) ) {
             screenSaverImage.setVisibility(View.VISIBLE);
             screenSaverClock.setVisibility(View.GONE);
+            if(timeHandler != null) {
+                timeHandler.removeCallbacks(timeRunnable);
+            }
             startScreenSavor();
         } else { // use clock
             screenSaverImage.setVisibility(View.GONE);
             screenSaverClock.setVisibility(View.VISIBLE);
+            timeHandler = new Handler();
+            timeHandler.postDelayed(timeRunnable, 10);
         }
     }
     
@@ -127,6 +140,17 @@ public class ScreenSaverView extends RelativeLayout {
         public void run() {
             rotationHandler.removeCallbacks(delayRotationRunnable);
             startImageRotation();
+        }
+    };
+
+    private Runnable timeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(new Date());
+            screenSaverClock.setText(currentTimeString);
+            if(timeHandler != null) {
+                timeHandler.postDelayed(timeRunnable, 1000);
+            }
         }
     };
 

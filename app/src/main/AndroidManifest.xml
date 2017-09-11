@@ -35,7 +35,7 @@
         
         <activity
                 android:name=".ui.activities.MainActivity"
-                android:screenOrientation="landscape"
+                android:screenOrientation="sensorLandscape"
                 android:icon="@mipmap/ic_launcher">
 
             <!-- Launch activity as default from Android Studio -->
@@ -47,7 +47,7 @@
         </activity>
 
         <activity android:name=".ui.activities.SettingsActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="sensorLandscape"/>
 
         <!-- Database Provider -->
         <provider
@@ -66,7 +66,8 @@
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
 
-        <activity android:name=".ui.activities.LogActivity"/>
+        <activity android:name=".ui.activities.LogActivity"
+                  android:screenOrientation="sensorLandscape"/>
     
     </application>
 

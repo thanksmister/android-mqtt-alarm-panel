@@ -93,13 +93,17 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void resetInactivityTimer() {
         closeScreenSaver();
-        inactivityHandler.removeCallbacks(inactivityCallback);
-        inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+        if(inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityCallback);
+            inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+        }
     }
 
     public void stopDisconnectTimer(){
         hideDialog();
-        inactivityHandler.removeCallbacks(inactivityCallback);
+        if(inactivityHandler != null) {
+            inactivityHandler.removeCallbacks(inactivityCallback);
+        }
     }
 
     @Override
@@ -194,7 +198,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         hideDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_options, null, false);
-        final ArmOptionsView optionsView = (ArmOptionsView) view.findViewById(R.id.armOptionsView);
+        final ArmOptionsView optionsView = view.findViewById(R.id.armOptionsView);
         optionsView.setListener(armListener);
         dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
@@ -221,14 +225,8 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showExtendedForecastDialog(Daily daily) {
         hideDialog();
-        Rect displayRectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_extended_forecast, null, false);
-        view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
-        //view.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
         final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
         dialog = new AlertDialog.Builder(BaseActivity.this)
@@ -247,13 +245,8 @@ abstract public class BaseActivity extends AppCompatActivity {
     public void showScreenSaver() {
         if(screenSaverDialog != null && screenSaverDialog.isShowing()) return;
         inactivityHandler.removeCallbacks(inactivityCallback);
-        Rect displayRectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
-        //view.setMinimumWidth((int)(displayRectangle.width() * 1f));
-        //view.setMinimumHeight((int)(displayRectangle.height() * 1f));
         final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
         screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showScreenSaverModule(), 
                 getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(), 
@@ -272,5 +265,12 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .setCancelable(true)
                 .setView(view)
                 .show();
+    }
+    
+    private Rect getDisplayRectangle() {
+        Rect displayRectangle = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        return displayRectangle;
     }
 }

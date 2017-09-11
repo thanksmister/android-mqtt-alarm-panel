@@ -37,17 +37,17 @@
             android:layout_below="@+id/informationContainer"
             android:layout_above="@+id/settingsContainer"
             android:baselineAligned="false"
-            android:padding="8dp"/>
-  
+            android:padding="4dp"/>
+
     <LinearLayout
             android:id="@+id/settingsContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:gravity="end"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp"
+            android:paddingBottom="2dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:orientation="horizontal">
@@ -81,7 +81,7 @@
         <android.support.v4.widget.Space
                 android:layout_width="16dp"
                 android:layout_height="24dp"/>
-        
+
         <ImageButton
                 android:id="@+id/buttonLogs"
                 style="@style/BorderlessButtonStyle"
@@ -92,9 +92,9 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_log_list_black_24dp"
                 tools:ignore="ContentDescription"/>
-        
+
     </LinearLayout>
-    
+
     <FrameLayout
             android:id="@+id/triggeredView"
             android:layout_width="match_parent"
@@ -102,11 +102,11 @@
             android:background="@color/red"
             tools:visibility="gone"
             android:visibility="gone">
-        
+
         <include
                 android:id="@+id/alarmTriggeredView"
                 layout="@layout/dialog_alarm_triggered_code"/>
-        
+
     </FrameLayout>
-    
+
 </RelativeLayout>

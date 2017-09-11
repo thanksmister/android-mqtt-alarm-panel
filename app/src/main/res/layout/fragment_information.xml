@@ -35,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="8dp"
+            android:paddingRight="16dp"
             android:paddingEnd="16dp"
             android:layout_weight="0">
 
@@ -56,6 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
+                    android:paddingLeft="8dp"
                     android:orientation="vertical">
 
                 <TextView
@@ -88,14 +90,12 @@
         android:layout_gravity="end"
         android:layout_weight="1"
         android:orientation="vertical">
-
-        <TextClock
+        
+        <TextView
             android:id="@+id/timeText"
             style="@style/TextAppearance.TextLarge"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:format24Hour="hh:mm:ss"
-            android:format12Hour="hh:mm:ss a"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="12:55 PM"/>
