@@ -42,7 +42,15 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
+                android:layout_weight="2"
                 android:layout_height="16dp"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|bottom"
+                android:orientation="vertical">
 
         <TextView
                 android:id="@+id/dayText"
@@ -81,6 +89,8 @@
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
                 tools:text="Hi 75 L 43"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

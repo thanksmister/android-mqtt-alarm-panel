@@ -20,13 +20,10 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
@@ -87,16 +84,11 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
-    private View decorView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        decorView = getWindow().getDecorView();
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         setContentView(R.layout.activity_main);
 
@@ -134,34 +126,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
         if (subscriptionDataTask != null) {
             subscriptionDataTask.cancel(true);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            int visibility;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                
-            } else {
-                visibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            }
-            decorView.setSystemUiVisibility(visibility);
         }
     }
 

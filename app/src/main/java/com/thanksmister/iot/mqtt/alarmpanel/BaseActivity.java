@@ -21,17 +21,20 @@ package com.thanksmister.iot.mqtt.alarmpanel;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
@@ -54,10 +57,12 @@ abstract public class BaseActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private AlertDialog screenSaverDialog;
     private Handler inactivityHandler = new Handler();
+    private View decorView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        decorView = getWindow().getDecorView();
     }
     
     @Override
@@ -80,6 +85,34 @@ abstract public class BaseActivity extends AppCompatActivity {
         if(inactivityHandler != null) {
             inactivityHandler.removeCallbacks(inactivityCallback);
             inactivityHandler = null;
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            int visibility;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+            } else {
+                visibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+            decorView.setSystemUiVisibility(visibility);
         }
     }
 
@@ -198,6 +231,20 @@ abstract public class BaseActivity extends AppCompatActivity {
         hideDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_options, null, false);
+        Rect displayRectangle = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        int density= getResources().getDisplayMetrics().densityDpi;
+        if(density == DisplayMetrics.DENSITY_TV ) {
+            view.setMinimumWidth((int) (displayRectangle.width() * 0.6f));
+            view.setMinimumHeight((int) (displayRectangle.height() * 0.7f));
+        } else if (density == DisplayMetrics.DENSITY_MEDIUM) {
+            view.setMinimumWidth((int) (displayRectangle.width() * 0.5f));
+            view.setMinimumHeight((int) (displayRectangle.height() * 0.6f));
+        } else {
+            view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
+            view.setMinimumHeight((int)(displayRectangle.height() * 0.8f));
+        }
         final ArmOptionsView optionsView = view.findViewById(R.id.armOptionsView);
         optionsView.setListener(armListener);
         dialog = new AlertDialog.Builder(BaseActivity.this)
@@ -227,6 +274,18 @@ abstract public class BaseActivity extends AppCompatActivity {
         hideDialog();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_extended_forecast, null, false);
+        Rect displayRectangle = new Rect();
+        Window window = getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
+
+        int density= getResources().getDisplayMetrics().densityDpi;
+        if(density == DisplayMetrics.DENSITY_TV ) {
+        } else if (density == DisplayMetrics.DENSITY_MEDIUM) {
+            view.setMinimumHeight((int) (displayRectangle.height() * 0.6f));
+        } else {
+            view.setMinimumHeight((int)(displayRectangle.height() * 0.8f));
+        }
         final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
         dialog = new AlertDialog.Builder(BaseActivity.this)

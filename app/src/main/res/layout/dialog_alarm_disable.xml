@@ -31,17 +31,17 @@
     <include layout="@layout/view_keypad"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:layout_weight="1"/>
+             android:layout_weight="2"/>
 
     <android.support.v4.widget.Space
-            android:layout_width="16dp"
+            android:layout_width="8dp"
             android:layout_weight="0"
             android:layout_height="match_parent"/>
 
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="3">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             android:layout_above="@+id/imageLayout"
             android:gravity="center"
             android:layout_alignParentTop="true"
-            android:padding="16dp">
+            android:paddingTop="16dp">
 
             <com.todddavies.components.progressbar.ProgressWheel
                 android:id="@+id/countDownProgressWheel"
@@ -58,12 +58,12 @@
                 android:gravity="center_horizontal|top"
                 android:layout_gravity="center_horizontal|top"
                 ProgressWheel:barColor="@color/green"
-                ProgressWheel:barWidth="12dp"
+                ProgressWheel:barWidth="10dp"
                 ProgressWheel:contourColor="@color/gray_color"
                 ProgressWheel:rimColor="@color/gray_color"
-                ProgressWheel:rimWidth="12dp"
+                ProgressWheel:rimWidth="10dp"
                 ProgressWheel:textColor="@color/text"
-                ProgressWheel:textSize="32sp" />
+                ProgressWheel:textSize="28sp" />
 
         </LinearLayout>
 
@@ -77,44 +77,33 @@
                 android:gravity="center">
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
-
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+            
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
-
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
-
+            
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
-
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"

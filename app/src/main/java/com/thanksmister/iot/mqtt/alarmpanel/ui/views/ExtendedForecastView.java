@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
@@ -32,7 +32,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.ForecastCardAdapter;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ExtendedForecastView extends FrameLayout {
+public class ExtendedForecastView extends LinearLayout {
 
     @Bind(R.id.recycleView)
     RecyclerView recycleView;

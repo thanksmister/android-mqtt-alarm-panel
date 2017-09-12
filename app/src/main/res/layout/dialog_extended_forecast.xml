@@ -22,14 +22,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/extendedForecastView"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView>

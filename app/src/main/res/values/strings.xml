@@ -94,5 +94,7 @@
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>
     <string name="error_mqtt_connection">The MQTT client connection wasn\'t established or was closed unexpectedly. Will try to reconnect.</string>
     <string name="text_alarm">ALARM</string>
+    <string name="string_device_location">Device location</string>
+    <string name="string_location_services_disabled">Your location services are disabled, would you like to enable it?</string>
 
 </resources>

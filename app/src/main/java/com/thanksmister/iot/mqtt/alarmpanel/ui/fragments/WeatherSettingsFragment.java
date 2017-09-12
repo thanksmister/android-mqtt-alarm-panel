@@ -18,17 +18,29 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -44,6 +56,7 @@ import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather;
 public class WeatherSettingsFragment extends PreferenceFragmentCompat 
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final int REQUEST_PERMISSIONS = 6;
     private static final long HOUR_MILLIS = 60 * 60 * 1000;
     private static final int METERS_MIN = 500;
 
@@ -54,22 +67,42 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
     private EditTextPreference weatherLongitude;
     private Configuration configuration;
     private LocationManager locationManager;
+    private Handler locationHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         addPreferencesFromResource(preferences_weather);
     }
     
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_location:
+                checkLocationEnabled();
+                return true;
+        }
+        return false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        if(TextUtils.isEmpty(configuration.getLongitude()) || TextUtils.isEmpty(configuration.getLatitude()) ) {
+            checkLocationEnabled(); // check that we have location permissions 
+        }
     }
 
     @Override
@@ -81,6 +114,9 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(locationHandler != null) {
+            locationHandler.removeCallbacks(locationRunnable);
+        }
     }
 
     @Override
@@ -128,6 +164,40 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         weatherLongitude.setEnabled(configuration.showWeatherModule());
     }
 
+    public void checkLocationEnabled() {
+        if (isAdded() && getActivity() != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS);
+                    return;
+                }
+            }
+            setUpLocationMonitoring();
+        }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS: {
+                if (grantResults.length > 0) {
+                    boolean permissionsDenied = false;
+                    for (int permission : grantResults) {
+                        if (permission != PackageManager.PERMISSION_GRANTED) {
+                            permissionsDenied = true;
+                            break;
+                        }
+                    }
+                    if (!permissionsDenied) {
+                        setUpLocationMonitoring();
+                    } 
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+    
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         
@@ -179,19 +249,20 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
     
     private void setUpLocationMonitoring() {
         
+        Timber.d("setUpLocationMonitoring");
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-       
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);
         
         try {
-            LocationListener locationListener = new LocationListener() {
+            final LocationListener locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     if (location != null) {
                         String latitude = String.valueOf(location.getLatitude());
                         String longitude = String.valueOf(location.getLongitude());
                         if(LocationUtils.coordinatesValid(latitude, longitude)){
+                            Timber.d("setUpLocationMonitoring complete");
                             configuration.setLat(String.valueOf(location.getLatitude()));
                             configuration.setLon(String.valueOf(location.getLongitude()));
                             weatherLatitude.setSummary(String.valueOf(configuration.getLatitude()));
@@ -217,6 +288,8 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
                 @Override
                 public void onProviderDisabled(String provider) {
                     Timber.d("onProviderDisabled");
+                    locationHandler = new Handler();
+                    locationHandler.postDelayed(locationRunnable, 500);
                 }
             };
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HOUR_MILLIS, 0, locationListener);
@@ -225,4 +298,26 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
             Toast.makeText(getActivity(), R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show();
         }
     }
+    
+    private Runnable locationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isAdded()) { // Without this in certain cases application will show ANR
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.string_location_services_disabled).setCancelable(false).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(gpsOptionsIntent);
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    };
 }

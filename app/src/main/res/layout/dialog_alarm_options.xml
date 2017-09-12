@@ -36,8 +36,8 @@
             android:orientation="horizontal">
 
         <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:tint="@color/green"
                 android:src="@drawable/ic_unlock_large"/>
 
@@ -51,7 +51,7 @@
 
             <TextView
                     style="@style/TextAppearance.SubTitle"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
 
             <TextView
                     style="@style/TextAppearance.SubTitle"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textColor="@color/green"
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
@@ -72,8 +72,9 @@
 
     <android.support.v4.widget.Space
             android:layout_width="match_parent"
+            android:layout_weight="2"
             android:layout_height="8dp"/>
-
+    
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,8 +92,8 @@
             <FrameLayout
                     android:id="@+id/armStayButton"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="148dp"
-                    android:layout_height="148dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:padding="34dp"
                     android:background="@drawable/button_round_yellow">
 
@@ -106,11 +107,12 @@
 
             <android.support.v4.widget.Space
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"/>
+                    android:layout_height="4dp"/>
 
             <TextView
                     style="@style/TextAppearance.SubTitle"
                     android:textStyle="bold"
+                    android:textSize="22sp"
                     android:textColor="@color/yellow"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -134,8 +136,8 @@
             <FrameLayout
                     android:id="@+id/armAwayButton"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="148dp"
-                    android:layout_height="148dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:padding="34dp"
                     android:background="@drawable/button_round_red">
 
@@ -149,11 +151,12 @@
 
             <android.support.v4.widget.Space
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"/>
+                    android:layout_height="4dp"/>
 
             <TextView
                     style="@style/TextAppearance.SubTitle"
                     android:textStyle="bold"
+                    android:textSize="22sp"
                     android:textColor="@color/red"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"

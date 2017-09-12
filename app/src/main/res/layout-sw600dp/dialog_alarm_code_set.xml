@@ -26,21 +26,20 @@
         android:layout_height="match_parent"
         android:padding="16dp"
         android:orientation="horizontal">
-    
+
     <include layout="@layout/view_keypad"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_weight="2"/>
+             android:layout_width="300dp"
+             android:layout_height="360dp"/>
     
     <android.support.v4.widget.Space
             android:layout_width="8dp"
             android:layout_height="match_parent"/>
     
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="320dp"
             android:paddingTop="16dp"
-            android:layout_weight="3">
+            android:layout_height="360dp"
+            android:orientation="vertical">
 
         <TextView
                 android:id="@+id/codeTitle"
@@ -61,33 +60,44 @@
                 android:gravity="center">
 
             <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
-            
+
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
 
             <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
-            
+
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
+
             <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
                     android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
+            <View
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"/>
+
             <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"
