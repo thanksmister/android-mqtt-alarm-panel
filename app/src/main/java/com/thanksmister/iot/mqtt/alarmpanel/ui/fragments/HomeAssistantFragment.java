@@ -18,38 +18,29 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments;
 
-
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
-import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionModel;
-import com.thanksmister.iot.mqtt.alarmpanel.data.provider.ContentProvider;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SubscriptionCursorAdapter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
-public class LogFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    // The loader's unique id. Loader ids are specific to the Activity or
-    private static final int DATA_LOADER_ID = 1;
+public class HomeAssistantFragment extends BaseFragment {
     
-    @Bind(R.id.logsListView)
-    ListView listView;
-
-    private SubscriptionCursorAdapter cursorAdapter;
+    @Bind(R.id.webView)
+    WebView webView;
     
-    public LogFragment() {
+    public HomeAssistantFragment() {
         // Required empty public constructor
     }
 
@@ -57,13 +48,31 @@ public class LogFragment extends BaseFragment implements LoaderManager.LoaderCal
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      */
-    public static LogFragment newInstance() {
-        return new LogFragment();
+    public static HomeAssistantFragment newInstance() {
+        return new HomeAssistantFragment();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Timber.d("onViewCreated");
+        Timber.d("onViewCreated Url: " + getConfiguration().getHassUrl());
+        
+        if(getConfiguration().showHassModule() 
+                && !TextUtils.isEmpty(getConfiguration().getHassUrl()) && webView != null) {
+            webView.setWebChromeClient(new WebChromeClient());
+            WebSettings settings = webView.getSettings();
+            settings.setJavaScriptEnabled(true);
+            webView.loadUrl(getConfiguration().getHassUrl());
+        } else if (webView != null) {
+            webView.loadUrl("about:blank");
+        }
     }
 
     @Override
@@ -74,40 +83,16 @@ public class LogFragment extends BaseFragment implements LoaderManager.LoaderCal
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getLoaderManager().initLoader(DATA_LOADER_ID, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_logs, container, false);
+        return inflater.inflate(R.layout.fragment_hass, container, false);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        if(id == DATA_LOADER_ID) {
-            return new CursorLoader(getActivity(), ContentProvider.SUBSCRIPTION_DATA_TABLE_URI, SubscriptionModel.COLUMN_NAMES, null, null, SubscriptionModel.CREATED_AT + " DESC");
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()) {
-            case DATA_LOADER_ID:
-                cursorAdapter = new SubscriptionCursorAdapter(getActivity(), data, false);
-                listView.setAdapter(cursorAdapter);
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.swapCursor(null);
     }
 }

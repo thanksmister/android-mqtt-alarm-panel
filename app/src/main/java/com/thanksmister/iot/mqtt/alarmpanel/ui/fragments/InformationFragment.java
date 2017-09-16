@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,7 @@ public class InformationFragment extends BaseFragment {
     
     @Bind(R.id.weatherLayout)
     View weatherLayout;
-    
+
     @OnClick(R.id.weatherLayout)
     void weatherLayoutClicked() {
         if(extendedDaily != null) {
@@ -122,15 +123,15 @@ public class InformationFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         // this picks up changes made in the settings and connects weather if needed
-        if(getConfiguration().showWeatherModule() && getConfiguration().getDarkSkyKey() != null
-                && getConfiguration().getLatitude() != null && getConfiguration().getLongitude() != null) {
+        if(getConfiguration().showWeatherModule() && !TextUtils.isEmpty(getConfiguration().getDarkSkyKey())
+                && !TextUtils.isEmpty(getConfiguration().getLatitude()) && !TextUtils.isEmpty(getConfiguration().getLongitude())) {
             if(weatherHandler != null) {
                 weatherHandler.removeCallbacks(weatherRunnable);
             }
             connectWeatherModule();
         } else {
             disconnectWeatherModule();
-            weatherLayout.setVisibility(View.GONE);
+            weatherLayout.setVisibility(View.INVISIBLE);
         }
     }
 

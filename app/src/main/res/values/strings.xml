@@ -69,7 +69,14 @@
     <string name="preference_summary_image_fit">Crop the images to fit the screen size.</string>
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
-    
+
+    <string name="preference_title_hass_settings">Home Assistant Settings</string>
+    <string name="preference_summary_hass_settings">Allows you to load Home Assistant into a web page to access other controls.</string>
+    <string name="preference_title_hass">Home Assistant</string>
+    <string name="preference_summary_hass">Displays the Home Assistant web page by swiping main screen.</string>
+    <string name="preference_title_hass_url">Home Assistant Address</string>
+    <string name="preference_summary_hass_url">Enter the IP address of Home Assistant (http://ipaddress:8123).</string>
+
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
     <string name="text_titled_armed_away">ARMED AWAY</string>

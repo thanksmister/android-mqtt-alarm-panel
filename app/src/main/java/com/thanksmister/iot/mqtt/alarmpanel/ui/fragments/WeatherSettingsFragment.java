@@ -49,6 +49,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.LocationUtils;
 
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather;
@@ -110,20 +111,15 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
-
+    
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDetach() {
+        super.onDetach();
         if(locationHandler != null) {
             locationHandler.removeCallbacks(locationRunnable);
         }
+        ButterKnife.unbind(this);
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-    
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {

@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ScreenSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AlarmSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.WeatherSettingsFragment;
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 
 public class SettingsActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
     
-    private final int NUM_PAGES = 3;
+    private final int NUM_PAGES = 4;
 
     private int dotsCount;
     private ImageView[] dots;
@@ -101,7 +102,6 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
 
     @Override
     public void onBackPressed() {
-        
         if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
@@ -164,6 +164,8 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
                     return new WeatherSettingsFragment();
                 case 2:
                     return new ScreenSettingsFragment();
+                case 3:
+                    return new HomeAssistantSettingsFragment();
                 default:
                     return new AlarmSettingsFragment();
             }

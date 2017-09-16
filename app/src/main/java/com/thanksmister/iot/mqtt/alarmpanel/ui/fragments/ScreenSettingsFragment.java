@@ -29,6 +29,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 
+import butterknife.ButterKnife;
+
 import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_screen_saver;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_FIT_SIZE;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_ROTATION;
@@ -68,16 +70,11 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
+        ButterKnife.unbind(this);
     }
     
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         

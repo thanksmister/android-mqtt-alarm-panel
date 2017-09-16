@@ -67,11 +67,30 @@ public class Configuration {
     public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
 
+    public static final String PREF_MODULE_HASS = "pref_module_hass";
+    public static final String PREF_HASS_WEB_URL = "pref_hass_web_url";
+
     private final int ROTATE_TIME_IN_MINUTES = 30; // 30 minutes
 
     public Configuration(Context context, DPreference sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         this.context = context;
+    }
+
+    public boolean showHassModule(){
+        return sharedPreferences.getPrefBoolean(PREF_MODULE_HASS, false);
+    }
+
+    public void setShowHassModule(boolean value) {
+        this.sharedPreferences.setPrefBoolean(PREF_MODULE_HASS, value);
+    }
+
+    public String getHassUrl() {
+        return this.sharedPreferences.getPrefString(PREF_HASS_WEB_URL, null); 
+    }
+
+    public void setHassUrl(String value) {
+        this.sharedPreferences.setPrefString(PREF_HASS_WEB_URL, value);
     }
 
     public boolean showScreenSaverModule(){

@@ -21,6 +21,12 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,9 +36,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils;
@@ -50,40 +57,22 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity implements ControlsFragment.OnControlsFragmentListener {
-    
-    private static final String FRAGMENT_CONTROLS = "com.thanksmister.fragment.FRAGMENT_CONTROLS";
-    private static final String FRAGMENT_INFORMATION = "com.thanksmister.fragment.FRAGMENT_INFORMATION";
+public class MainActivity extends BaseActivity implements ControlsFragment.OnControlsFragmentListener, 
+        ViewPager.OnPageChangeListener, MainFragment.OnMainFragmentListener  {
 
+    private final int NUM_PAGES = 2;
+    
     @Bind(R.id.triggeredView)
     View triggeredView;
 
-    @OnClick(R.id.buttonSettings)
-    void buttonSettingsClicked() {
-        if(!getConfiguration().isArmed()) {
-            Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
-            startActivity(intent);
-        } else {
-            showAlarmDisableDialog(false);
-        }
-    }
-
-    @OnClick(R.id.buttonLogs)
-    void buttonLogsClicked() {
-        Intent intent = LogActivity.createStartIntent(MainActivity.this);
-        startActivity(intent);
-    }
-    
-    @OnClick(R.id.buttonSleep)
-    void buttonSleep() {
-        showScreenSaver();
-    }
+    @Bind(R.id.viewPager)
+    CustomViewPager viewPager;
 
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
+    private PagerAdapter pagerAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +82,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        
+
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -104,13 +93,11 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 }
             });
         }
-        
-       if (savedInstanceState == null) {
-            ControlsFragment controlsFragment = ControlsFragment.newInstance();
-            InformationFragment informationFragment = InformationFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.controlContainer, controlsFragment, FRAGMENT_CONTROLS).commit();
-            getSupportFragmentManager().beginTransaction().replace(R.id.informationContainer, informationFragment, FRAGMENT_INFORMATION).commit();
-        }
+
+        pagerAdapter = new MainSlidePagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setPagingEnabled(false);
     }
     
     @Override
@@ -118,6 +105,11 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         super.onResume();
         resetInactivityTimer();
         makeMqttConnection();
+        if(getConfiguration().showHassModule() && !TextUtils.isEmpty(getConfiguration().getHassUrl())) {
+            viewPager.setPagingEnabled(true);
+        } else {
+            viewPager.setPagingEnabled(false);
+        }
     }
 
     @Override
@@ -146,6 +138,18 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             startActivity(intent);
         } 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
     }
     
     @Override
@@ -294,7 +298,8 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
             stopDisconnectTimer(); // stop screen saver mode
             closeScreenSaver(); // close screen saver
-            triggeredView.setVisibility(View.VISIBLE);
+            resetMainView(); // set control panel back to main view
+            showTriggerView(true); // show trigger view
             int code = getConfiguration().getAlarmCode();
             final AlarmTriggeredView disarmView = (AlarmTriggeredView) findViewById(R.id.alarmTriggeredView);
             disarmView.setCode(code);
@@ -303,20 +308,34 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 public void onComplete(int code) {
                     publishDisarmed();
                 }
+
                 @Override
                 public void onError() {
                     Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
                 }
+
                 @Override
                 public void onCancel() {
 
                 }
             });
+        } else if (AlarmUtils.STATE_ARM_AWAY.equals(state) || AlarmUtils.STATE_ARM_HOME.equals(state)) {
+            resetMainView(); // set control panel back to main view
         } else {
             resetInactivityTimer(); // restart screen saver
-            if(triggeredView != null) {
-                triggeredView.setVisibility(View.GONE);
-            }
+            showTriggerView(false);
+        }
+    }
+    
+    private void showTriggerView(boolean show) {
+        if(triggeredView != null) {
+            triggeredView.setVisibility(show?View.VISIBLE:View.GONE);
+        }
+    }
+    
+    private void resetMainView() {
+        if(viewPager != null && pagerAdapter != null && pagerAdapter.getCount() > 0) {
+            viewPager.setCurrentItem(0);
         }
     }
     
@@ -338,24 +357,40 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         return dataTask;
     }
 
-    /**
-     * Shows a count down dialog before setting alarm to away
-     */
-    private void showAlarmDisableDialog(boolean beep) {
-        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
-            @Override
-            public void onComplete(int pin) {
-                publishDisarmed();
-                hideDialog();
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+    }
+
+    private class MainSlidePagerAdapter extends FragmentStatePagerAdapter {
+
+        public MainSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return MainFragment.newInstance();
+                case 1:
+                    return HomeAssistantFragment.newInstance();
+                default:
+                    return HomeAssistantFragment.newInstance();
             }
-            @Override
-            public void onError() {
-                Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancel() {
-                hideDialog();
-            }
-        }, getConfiguration().getAlarmCode(), beep);
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
     }
 }

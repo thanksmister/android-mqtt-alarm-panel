@@ -127,9 +127,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_controls, container, false);
-        ButterKnife.bind(this, fragmentView);
-        return fragmentView;
+        return inflater.inflate(R.layout.fragment_controls, container, false);
     }
 
     @Override
@@ -171,6 +169,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        ButterKnife.unbind(this);
     }
 
     // TODO right now we are relying on the pending time from home assistant, maybe we should do this internally
