@@ -25,13 +25,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -44,7 +42,7 @@ public class MainFragment extends BaseFragment {
             Intent intent = SettingsActivity.createStartIntent(getActivity());
             startActivity(intent);
         } else {
-            showAlarmDisableDialog(false);
+            listener.showAlarmDisableDialog(false);
         }
     }
 
@@ -70,6 +68,7 @@ public class MainFragment extends BaseFragment {
     public interface OnMainFragmentListener {
         void showScreenSaver();
         void publishDisarmed();
+        void showAlarmDisableDialog(boolean beep);
     }
     
     public MainFragment() {
@@ -113,26 +112,5 @@ public class MainFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
-    }
-
-    /**
-     * Shows a count down dialog before setting alarm to away
-     */
-    private void showAlarmDisableDialog(boolean beep) {
-        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
-            @Override
-            public void onComplete(int pin) {
-                listener.publishDisarmed();
-                hideDialog();
-            }
-            @Override
-            public void onError() {
-                Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancel() {
-                hideDialog();
-            }
-        }, getConfiguration().getAlarmCode(), beep);
     }
 }

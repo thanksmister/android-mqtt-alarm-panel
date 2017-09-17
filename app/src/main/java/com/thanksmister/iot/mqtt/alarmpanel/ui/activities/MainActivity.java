@@ -36,10 +36,12 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils;
@@ -58,6 +60,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
 
 public class MainActivity extends BaseActivity implements ControlsFragment.OnControlsFragmentListener, 
         ViewPager.OnPageChangeListener, MainFragment.OnMainFragmentListener  {
@@ -296,6 +300,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
         if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
+            hideDialog();
             stopDisconnectTimer(); // stop screen saver mode
             closeScreenSaver(); // close screen saver
             resetMainView(); // set control panel back to main view
@@ -316,11 +321,12 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
                 @Override
                 public void onCancel() {
-
                 }
             });
-        } else if (AlarmUtils.STATE_ARM_AWAY.equals(state) || AlarmUtils.STATE_ARM_HOME.equals(state)) {
+        } else if (AlarmUtils.STATE_PENDING.equals(state) && (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
+                || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY))) {
             resetMainView(); // set control panel back to main view
+            showAlarmDisableDialog(true); // 
         } else {
             resetInactivityTimer(); // restart screen saver
             showTriggerView(false);
@@ -337,6 +343,25 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         if(viewPager != null && pagerAdapter != null && pagerAdapter.getCount() > 0) {
             viewPager.setCurrentItem(0);
         }
+    }
+
+    @Override
+    public void showAlarmDisableDialog(boolean beep) {
+        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
+            @Override
+            public void onComplete(int pin) {
+                publishDisarmed();
+                hideDialog();
+            }
+            @Override
+            public void onError() {
+                Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onCancel() {
+                hideDialog();
+            }
+        }, getConfiguration().getAlarmCode(), beep);
     }
     
     private SubscriptionDataTask getUpdateMqttDataTask() {

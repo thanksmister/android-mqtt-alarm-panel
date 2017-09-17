@@ -79,12 +79,12 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
             showArmOptionsDialog();
         } else {
-            showAlarmDisableDialog(false);
+            listener.showAlarmDisableDialog(false);
         }
     }
     
     private SubscriptionObserver subscriptionObserver;
-    private OnControlsFragmentListener mListener;
+    private OnControlsFragmentListener listener;
 
     /**
      * This interface must be implemented by activities that contain this
@@ -96,6 +96,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         void publishArmedHome();
         void publishArmedAway();
         void publishDisarmed();
+        void showAlarmDisableDialog(boolean beep);
     }
 
     public ControlsFragment() {
@@ -114,7 +115,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnControlsFragmentListener) {
-            mListener = (OnControlsFragmentListener) context;
+            listener = (OnControlsFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnControlsFragmentListener");
         }
@@ -168,23 +169,22 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
         ButterKnife.unbind(this);
     }
 
-    // TODO right now we are relying on the pending time from home assistant, maybe we should do this internally
     private void showArmOptionsDialog() {
         showArmOptionsDialog(new ArmOptionsView.ViewListener() {
             @Override
             public void onArmHome() {
                 hideDialog();
-                mListener.publishArmedHome();
+                listener.publishArmedHome();
                 setPendingView(PREF_ARM_HOME_PENDING);
             }
             @Override
             public void onArmAway() {
                 hideDialog();
-                mListener.publishArmedAway();
+                listener.publishArmedAway();
                 setPendingView(PREF_ARM_AWAY_PENDING);
             }
         });
@@ -196,23 +196,20 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
-
-        Timber.d("handleStateChange state: " + state);
-        Timber.d("handleStateChange mode: " + getConfiguration().getAlarmMode());
-
-        // hide any dialogs
-        hideDialog();
-
+        
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
+                hideDialog();
                 hideAlarmPendingView();
                 setArmedAwayView();
                 break;
             case AlarmUtils.STATE_ARM_HOME:
+                hideDialog();
                 hideAlarmPendingView();
                 setArmedHomeView();
                 break;
             case AlarmUtils.STATE_DISARM:
+                hideDialog();
                 hideAlarmPendingView();
                 setDisarmedView();
                 break;
@@ -228,7 +225,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
                     }
                 } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
-                    showAlarmDisableDialog(true);
+                    // handled in main activity
                 }  else {
                     setPendingView(PREF_ARM_PENDING);
                 }
@@ -310,11 +307,11 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     /**
      * Shows a count down dialog before setting alarm to away
      */
-    private void showAlarmDisableDialog(boolean beep) {
+    private void showAlarmDisableDialog() {
         showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
             @Override
             public void onComplete(int pin) {
-                mListener.publishDisarmed();
+                listener.publishDisarmed();
                 setDisarmedView();
                 hideAlarmPendingView();
                 hideDialog();
@@ -327,7 +324,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             public void onCancel() {
                 hideDialog();
             }
-        }, getConfiguration().getAlarmCode(), beep);
+        }, getConfiguration().getAlarmCode(), false);
     }
 
     @Override
