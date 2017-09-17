@@ -104,4 +104,41 @@
     <string name="string_device_location">Device location</string>
     <string name="string_location_services_disabled">Your location services are disabled, would you like to enable it?</string>
 
+    <string name="mail_to_subject_text">MQTT Alarm Panel Feedback</string>
+    <string name="mail_subject_text">Send Feedback:</string>
+
+    <string name="license" translatable="false"><![CDATA[
+        <br><b>Copyright 2017 ThanksMister LLC</b><br>
+        <br>
+        This application contains open source libraries under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+        <br>
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+        <br>
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    ]]></string>
+
+    <string name="thanks_mister_title">Thanks, Mister!</string>
+    <string name="designer_developer_text">Design and development</string>
+    <string name="company_url_text">thanksmister.com</string>
+    <string name="text_feedback">Feedback</string>
+    <string name="text_rate_application">Rate application</string>
+    <string name="text_license_information">License information</string>
+    <string name="text_github_code">GitHub code</string>
+    <string name="text_about">About</string>
+    <string name="text_alarm_settings">Alarm Settings</string>
+    
+    <string-array name="settings_titles">
+        <item>@string/text_alarm_settings</item>
+        <item>@string/preference_title_weather_settings</item>
+        <item>@string/preference_title_screen_saver_settings</item>
+        <item>@string/preference_title_hass_settings</item>
+        <item>@string/text_about</item>
+    </string-array>
+
 </resources>

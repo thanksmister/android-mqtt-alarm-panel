@@ -217,6 +217,14 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void showAlertDialog(String message) {
+        hideDialog();
+        dialog = new AlertDialog.Builder(this)
+                .setMessage(Html.fromHtml(message))
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;

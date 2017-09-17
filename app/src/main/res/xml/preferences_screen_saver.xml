@@ -19,33 +19,29 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
                   android:id="@+id/preferenceView">
+    
+    <CheckBoxPreference
+            android:title="@string/preference_title_screen_saver"
+            android:summary="@string/preference_summary_screen_saver"
+            android:key="pref_module_saver"/>
 
-    <PreferenceCategory
-            android:title="@string/preference_title_screen_saver_settings"
-            android:summary="@string/preference_summary_screen_saver_settings">
-        
-        <CheckBoxPreference
-                android:title="@string/preference_title_screen_saver"
-                android:summary="@string/preference_summary_screen_saver"
-                android:key="pref_module_saver"/>
+    <EditTextPreference
+            android:key="pref_image_source"
+            android:enabled="false"
+            android:title="@string/preference_title_image_source"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:textColorLink="@color/blue"
+            android:summary="@string/preference_summary_image_source"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"/>
 
-        <EditTextPreference
-                android:key="pref_image_source"
-                android:enabled="false"
-                android:title="@string/preference_title_image_source"
-                android:autoLink="web"
-                android:linksClickable="true"
-                android:textColorLink="@color/blue"
-                android:summary="@string/preference_summary_image_source"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+    <CheckBoxPreference
+            android:key="pref_image_fit"
+            android:title="@string/preference_title_image_fit"
+            android:summary="@string/preference_summary_image_fit"/>
 
-       <CheckBoxPreference
-                android:key="pref_image_fit"
-                android:title="@string/preference_title_image_fit"
-                android:summary="@string/preference_summary_image_fit"/>
-
-        <EditTextPreference
+    <EditTextPreference
             android:key="pref_image_rotation"
             android:enabled="false"
             android:title="@string/preference_title_image_rotation"
@@ -53,7 +49,5 @@
             android:digits="0123456789"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"/>
-
-    </PreferenceCategory>
- 
+    
 </PreferenceScreen>

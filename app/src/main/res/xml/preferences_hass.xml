@@ -19,25 +19,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
                   android:id="@+id/preferenceView">
+    
+    <CheckBoxPreference
+            android:title="@string/preference_title_hass"
+            android:summary="@string/preference_summary_hass"
+            android:key="pref_module_hass"/>
 
-    <PreferenceCategory
-            android:title="@string/preference_title_hass_settings"
-            android:summary="@string/preference_summary_hass_settings">
-        
-        <CheckBoxPreference
-                android:title="@string/preference_title_hass"
-                android:summary="@string/preference_summary_hass"
-                android:key="pref_module_hass"/>
-
-        <EditTextPreference
-                android:key="pref_hass_web_url"
-                android:enabled="false"
-                android:inputType="textWebEmailAddress"
-                android:title="@string/preference_title_hass_url"
-                android:summary="@string/preference_summary_hass_url"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-
-    </PreferenceCategory>
+    <EditTextPreference
+            android:key="pref_hass_web_url"
+            android:enabled="false"
+            android:inputType="textWebEmailAddress"
+            android:title="@string/preference_title_hass_url"
+            android:summary="@string/preference_summary_hass_url"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"/>
  
 </PreferenceScreen>
