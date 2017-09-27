@@ -330,7 +330,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
         final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
-        dialog = new AlertDialog.Builder(context)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
