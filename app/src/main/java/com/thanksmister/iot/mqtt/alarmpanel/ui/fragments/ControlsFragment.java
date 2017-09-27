@@ -59,6 +59,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
 
     // The loader's unique id. Loader ids are specific to the Activity or
     private static final int DATA_LOADER_ID = 1;
+    private static final String ALARM_STATE = "alarm_state";
    
     @Bind(R.id.alarmPendingLayout)
     View alarmPendingLayout;
@@ -83,6 +84,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     
     private SubscriptionObserver subscriptionObserver;
     private OnControlsFragmentListener listener;
+    private String alarmState;  // store our last alarm state
 
     /**
      * This interface must be implemented by activities that contain this
@@ -122,6 +124,15 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            alarmState = savedInstanceState.getString(ALARM_STATE);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(ALARM_STATE, alarmState);
     }
 
     @Override
@@ -168,6 +179,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         listener = null;
+        alarmState = null;
         ButterKnife.unbind(this);
     }
 
@@ -194,7 +206,11 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
-        
+        // let's not repeat states
+        if(state.equals(alarmState)) {
+            return;
+        }
+        alarmState = state; // store our alarm state
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
                 hideDialog();
@@ -258,7 +274,6 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      * @param mode PREF_ARM_HOME_PENDING, PREF_ARM_AWAY_PENDING, PREF_ARM_PENDING
      */
     private void setPendingView(String mode) {
-        Timber.d("setPendingView: " + mode);
         getConfiguration().setArmed(true);
         getConfiguration().setAlarmMode(mode);
         if(PREF_ARM_HOME_PENDING.equals(mode)) {

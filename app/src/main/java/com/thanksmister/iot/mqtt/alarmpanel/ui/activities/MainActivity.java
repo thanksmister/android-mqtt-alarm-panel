@@ -80,13 +80,9 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -97,7 +93,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 }
             });
         }
-
         pagerAdapter = new MainSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
@@ -264,9 +259,9 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 }
             });
         } catch (MqttException ex){
-            Timber.e("Exception whilst subscribing");
-            ex.printStackTrace();
             hideProgressDialog();
+            Timber.e("Exception while subscribing");
+            ex.printStackTrace();
         }
     }
 
@@ -277,7 +272,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             mqttAndroidClient.publish(publishTopic, message);
             Timber.d("Message Published: " + publishTopic);
             if(!mqttAndroidClient.isConnected()){
-                //Timber.d(mqttAndroidClient.getBufferedMessageCount() + " messages in buffer.");
                 showAlertDialog(getString(R.string.error_mqtt_connection), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -407,7 +401,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
 
         @Override
         public Fragment getItem(int position) {
-
             switch (position) {
                 case 0:
                     return MainFragment.newInstance();
