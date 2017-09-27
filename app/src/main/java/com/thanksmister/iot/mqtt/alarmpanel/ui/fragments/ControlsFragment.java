@@ -31,14 +31,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionModel;
 import com.thanksmister.iot.mqtt.alarmpanel.data.provider.ContentProvider;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmPendingView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
@@ -79,7 +77,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
             showArmOptionsDialog();
         } else {
-            listener.showAlarmDisableDialog(false);
+            listener.showAlarmDisableDialog(false, false);
         }
     }
     
@@ -96,7 +94,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         void publishArmedHome();
         void publishArmedAway();
         void publishDisarmed();
-        void showAlarmDisableDialog(boolean beep);
+        void showAlarmDisableDialog(boolean beep, boolean settings);
     }
 
     public ControlsFragment() {
@@ -302,29 +300,6 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     private void hideAlarmPendingView() {
         alarmPendingLayout.setVisibility(View.GONE);
         alarmPendingView.stopCountDown();
-    }
-
-    /**
-     * Shows a count down dialog before setting alarm to away
-     */
-    private void showAlarmDisableDialog() {
-        showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
-            @Override
-            public void onComplete(int pin) {
-                listener.publishDisarmed();
-                setDisarmedView();
-                hideAlarmPendingView();
-                hideDialog();
-            }
-            @Override
-            public void onError() {
-                Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onCancel() {
-                hideDialog();
-            }
-        }, getConfiguration().getAlarmCode(), false);
     }
 
     @Override

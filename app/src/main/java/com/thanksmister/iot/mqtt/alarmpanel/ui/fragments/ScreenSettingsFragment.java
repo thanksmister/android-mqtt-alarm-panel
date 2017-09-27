@@ -35,12 +35,14 @@ import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_screen_save
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_FIT_SIZE;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_ROTATION;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_SOURCE;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_MODULE_PHOTO_SAVER;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_MODULE_SAVER;
 
 public class ScreenSettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private CheckBoxPreference modulePreference;
+    private CheckBoxPreference photoSaverPreference;
     private EditTextPreference urlPreference;
     private CheckBoxPreference imageFitPreference;
     private EditTextPreference rotationPreference;
@@ -81,6 +83,7 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
         super.onViewCreated(view, savedInstanceState);
 
         modulePreference = (CheckBoxPreference) findPreference(PREF_MODULE_SAVER);
+        photoSaverPreference = (CheckBoxPreference) findPreference(PREF_MODULE_PHOTO_SAVER);
         urlPreference = (EditTextPreference) findPreference(PREF_IMAGE_SOURCE);
         imageFitPreference = (CheckBoxPreference) findPreference(PREF_IMAGE_FIT_SIZE);
         rotationPreference = (EditTextPreference) findPreference(PREF_IMAGE_ROTATION);
@@ -96,23 +99,29 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
         rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(configuration.getImageRotation())));
 
         modulePreference.setChecked(configuration.showScreenSaverModule());
+        photoSaverPreference.setEnabled(configuration.showScreenSaverModule());
+        photoSaverPreference.setChecked(configuration.showPhotoScreenSaver());
         imageFitPreference.setChecked(configuration.getImageFitScreen());
-        urlPreference.setEnabled(configuration.showScreenSaverModule());
-        imageFitPreference.setEnabled(configuration.showScreenSaverModule());
-        rotationPreference.setEnabled(configuration.showScreenSaverModule());
+        urlPreference.setEnabled(configuration.showPhotoScreenSaver());
+        imageFitPreference.setEnabled(configuration.showPhotoScreenSaver());
+        rotationPreference.setEnabled(configuration.showPhotoScreenSaver());
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        
         String value = "";
         switch (key) {
             case PREF_MODULE_SAVER:
                 boolean checked = modulePreference.isChecked();
                 configuration.setScreenSaverModule(checked);
-                urlPreference.setEnabled(checked);
-                rotationPreference.setEnabled(checked);
-                imageFitPreference.setEnabled(checked);
+                photoSaverPreference.setEnabled(checked);
+                break;
+            case PREF_MODULE_PHOTO_SAVER:
+                boolean usePhotos = photoSaverPreference.isChecked();
+                configuration.setPhotoScreenSaver(usePhotos);
+                urlPreference.setEnabled(usePhotos);
+                rotationPreference.setEnabled(usePhotos);
+                imageFitPreference.setEnabled(usePhotos);
                 break;
             case PREF_IMAGE_SOURCE:
                 value = urlPreference.getText();

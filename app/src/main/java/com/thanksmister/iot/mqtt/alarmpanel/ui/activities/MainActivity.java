@@ -119,7 +119,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (subscriptionDataTask != null) {
             subscriptionDataTask.cancel(true);
         }
@@ -180,17 +179,18 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     private void makeMqttConnection() {
         final boolean tlsConnection = getConfiguration().getTlsConnection();
         final String serverUri;
-        if(tlsConnection) {
-            serverUri = "ssl://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+        // allow for cloud based MQTT brokers (experimental, just ignore links with http or https)
+        if(getConfiguration().getBroker().contains("http://") || getConfiguration().getBroker().contains("https://")) {
+            serverUri = getConfiguration().getBroker() + ":" + getConfiguration().getPort();
         } else {
-            serverUri = "tcp://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+            if(tlsConnection) {
+                serverUri = "ssl://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+            } else {
+                serverUri = "tcp://" + getConfiguration().getBroker() + ":" + getConfiguration().getPort();
+            }
         }
-
-        Timber.d("Server Uri: " + serverUri);
-        
         final String clientId = getConfiguration().getClientId();
         final String topic = getConfiguration().getStateTopic();
-
         MqttConnectOptions mqttConnectOptions = MqttUtils.getMqttConnectOptions(getConfiguration().getUserName(), getConfiguration().getPassword());
         mqttAndroidClient = MqttUtils.getMqttAndroidClient(getApplicationContext(), serverUri, clientId, topic, new MqttCallbackExtended() {
             @Override
@@ -201,7 +201,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                     subscribeToTopic(topic);
                 } else {
                     Timber.d("Connected to: " + serverURI);
-                    
                 }
             }
 
@@ -236,6 +235,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Timber.e("Failed to connect to: " + serverUri + " exception: " + exception.getMessage());
+                    showAlertDialog("Failed to connect to: " + serverUri + " exception: " + exception.getMessage());
                 }
             });
 
@@ -326,7 +326,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
         } else if (AlarmUtils.STATE_PENDING.equals(state) && (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
                 || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY))) {
             resetMainView(); // set control panel back to main view
-            showAlarmDisableDialog(true); // 
+            showAlarmDisableDialog(true, false); // 
         } else {
             resetInactivityTimer(); // restart screen saver
             showTriggerView(false);
@@ -344,14 +344,19 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             viewPager.setCurrentItem(0);
         }
     }
-
+    
     @Override
-    public void showAlarmDisableDialog(boolean beep) {
+    public void showAlarmDisableDialog(boolean beep, final boolean settings) {
         showAlarmDisableDialog(new AlarmDisableView.ViewListener() {
             @Override
             public void onComplete(int pin) {
                 publishDisarmed();
                 hideDialog();
+                // we want to go the settings even if we are not able to disarm due of MQTT error
+                if(settings) {
+                    Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
+                    startActivity(intent);
+                }
             }
             @Override
             public void onError() {

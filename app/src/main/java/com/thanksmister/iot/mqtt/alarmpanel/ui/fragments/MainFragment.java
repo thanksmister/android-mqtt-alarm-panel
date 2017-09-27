@@ -42,7 +42,7 @@ public class MainFragment extends BaseFragment {
             Intent intent = SettingsActivity.createStartIntent(getActivity());
             startActivity(intent);
         } else {
-            listener.showAlarmDisableDialog(false);
+            listener.showAlarmDisableDialog(false, true);
         }
     }
 
@@ -68,7 +68,7 @@ public class MainFragment extends BaseFragment {
     public interface OnMainFragmentListener {
         void showScreenSaver();
         void publishDisarmed();
-        void showAlarmDisableDialog(boolean beep);
+        void showAlarmDisableDialog(boolean beep, boolean settings);
     }
     
     public MainFragment() {

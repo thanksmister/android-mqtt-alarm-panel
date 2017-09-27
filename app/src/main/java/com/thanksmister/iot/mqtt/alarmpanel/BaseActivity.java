@@ -308,30 +308,32 @@ abstract public class BaseActivity extends AppCompatActivity {
             screenSaverDialog = null;
         }
     }
-
+    
     public void showScreenSaver() {
-        if(screenSaverDialog != null && screenSaverDialog.isShowing()) return;
-        inactivityHandler.removeCallbacks(inactivityCallback);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
-        final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
-        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showScreenSaverModule(), 
-                getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(), 
-                getConfiguration().getImageRotation());
-        screenSaverView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(screenSaverDialog != null) {
-                    screenSaverDialog.dismiss();
-                    screenSaverDialog = null;
-                    resetInactivityTimer();
+        if(getConfiguration().showScreenSaverModule()) {
+            if (screenSaverDialog != null && screenSaverDialog.isShowing()) return;
+            inactivityHandler.removeCallbacks(inactivityCallback);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
+            final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
+            screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
+                    getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(),
+                    getConfiguration().getImageRotation());
+            screenSaverView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (screenSaverDialog != null) {
+                        screenSaverDialog.dismiss();
+                        screenSaverDialog = null;
+                        resetInactivityTimer();
+                    }
                 }
-            }
-        });
-        screenSaverDialog = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-                .setCancelable(true)
-                .setView(view)
-                .show();
+            });
+            screenSaverDialog = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+                    .setCancelable(true)
+                    .setView(view)
+                    .show();
+        }
     }
     
     private Rect getDisplayRectangle() {

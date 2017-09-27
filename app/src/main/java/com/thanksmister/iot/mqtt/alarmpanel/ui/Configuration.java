@@ -63,6 +63,7 @@ public class Configuration {
     public static final String PREF_DISARM = "DISARM";
 
     public static final String PREF_MODULE_SAVER = "pref_module_saver";
+    public static final String PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo";
     public static final String PREF_IMAGE_SOURCE = "pref_image_source";
     public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
@@ -94,11 +95,19 @@ public class Configuration {
     }
 
     public boolean showScreenSaverModule(){
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_SAVER, false);
+        return sharedPreferences.getPrefBoolean(PREF_MODULE_SAVER, true);
     }
 
     public void setScreenSaverModule(boolean value) {
         this.sharedPreferences.setPrefBoolean(PREF_MODULE_SAVER, value);
+    }
+
+    public boolean showPhotoScreenSaver(){
+        return sharedPreferences.getPrefBoolean(PREF_MODULE_PHOTO_SAVER, false);
+    }
+
+    public void setPhotoScreenSaver(boolean value) {
+        this.sharedPreferences.setPrefBoolean(PREF_MODULE_PHOTO_SAVER, value);
     }
 
     public String getImageSource() {

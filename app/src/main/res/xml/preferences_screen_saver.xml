@@ -19,11 +19,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
                   android:id="@+id/preferenceView">
-    
+
     <CheckBoxPreference
             android:title="@string/preference_title_screen_saver"
-            android:summary="@string/preference_summary_screen_saver"
+            android:summary="@string/preference_summary_screen_saver_settings"
             android:key="pref_module_saver"/>
+    
+    <CheckBoxPreference
+            android:title="@string/preference_title_screen_saver_photo"
+            android:summary="@string/preference_summary_screen_saver_photo_settings"
+            android:enabled="false"
+            android:key="pref_module_saver_photo"/>
 
     <EditTextPreference
             android:key="pref_image_source"
@@ -38,6 +44,7 @@
 
     <CheckBoxPreference
             android:key="pref_image_fit"
+            android:enabled="false"
             android:title="@string/preference_title_image_fit"
             android:summary="@string/preference_summary_image_fit"/>
 
