@@ -223,14 +223,14 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void hideProgressDialog() {
-        if (progressDialog != null) {
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
             progressDialog = null;
         }
     }
     
     public void hideDialog() {
-        if (dialog != null) {
+        if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;
         }
@@ -238,7 +238,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     
     public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
         hideDialog();
-        dialog = new AlertDialog.Builder(this)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, onClickListener)
                 .show();
@@ -246,7 +246,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showAlertDialog(String message) {
         hideDialog();
-        dialog = new AlertDialog.Builder(this)
+        dialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
@@ -330,7 +330,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
         final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
         extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
-        dialog = new AlertDialog.Builder(BaseActivity.this)
+        dialog = new AlertDialog.Builder(context)
                 .setCancelable(true)
                 .setView(view)
                 .show();
@@ -344,7 +344,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
     
     public void showScreenSaver(boolean force) {
-        if(getConfiguration().showScreenSaverModule()) {
+        if(getConfiguration().showScreenSaverModule() && !force) {
             if (screenSaverDialog != null && screenSaverDialog.isShowing()) return;
             inactivityHandler.removeCallbacks(inactivityCallback);
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
