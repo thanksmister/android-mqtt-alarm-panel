@@ -220,15 +220,19 @@ abstract class BaseAlarmView extends LinearLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         ButterKnife.unbind(this);
-        if(soundUtils != null) {
-            soundUtils.destroyBuzzer();
-        }
+        destroySoundUtils();
     }
 
     abstract void onCancel();
     abstract void removePinCode();
     abstract void addPinCode(String code);
     abstract void reset();
+    
+    public void destroySoundUtils() {
+        if(soundUtils != null) {
+            soundUtils.destroyBuzzer();
+        }
+    }
 
     public void playContinuousBeep() {
         getSoundUtils().playBuzzerRepeat();
@@ -238,7 +242,6 @@ abstract class BaseAlarmView extends LinearLayout {
         if(soundUtils == null) {
             soundUtils = new SoundUtils(getContext());
         }
-
         return soundUtils;
     }
 

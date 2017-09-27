@@ -30,7 +30,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.todddavies.components.progressbar.ProgressWheel;
 
 import butterknife.Bind;
-import timber.log.Timber;
 
 public class AlarmDisableView extends BaseAlarmView {
 
@@ -63,7 +62,6 @@ public class AlarmDisableView extends BaseAlarmView {
     }
 
     public void startCountDown(int pendingTime) {
-        Timber.d("startCountDown: "+ pendingTime*1000);
         final int divideBy = 360/pendingTime;
         countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
             @Override
@@ -77,7 +75,6 @@ public class AlarmDisableView extends BaseAlarmView {
 
             @Override
             public void onFinish() {
-                Timber.d("Timed up...");
                 if(listener != null) {
                     listener.onCancel();
                 }

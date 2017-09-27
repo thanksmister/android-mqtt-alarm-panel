@@ -12,7 +12,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 
 public class SoundUtils {
 
-    private static final long PLAYBACK_BEEP_DELAY = 800;
+    private static final long PLAYBACK_BEEP_DELAY = 1000;
     private Handler mHandler;
     private MediaPlayer speaker;
     private Context context;
@@ -21,14 +21,18 @@ public class SoundUtils {
         this.context = context;
     }
 
+    /**
+     * We want to fully destroy the media player.
+     */
     public void destroyBuzzer() {
+        stopBuzzerRepeat(); // stop the buzzer if 
         if (speaker != null) {
             if(speaker.isPlaying()) {
                 speaker.stop();
             }
             speaker.release();
         }
-        stopBuzzerRepeat();
+        speaker = null;
     }
 
     private void initSpeaker() {
@@ -40,6 +44,9 @@ public class SoundUtils {
         initSpeaker();
         if(speaker != null) {
             try {
+                if(speaker.isPlaying()) {
+                    speaker.stop();
+                }
                 speaker.start();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -65,6 +72,9 @@ public class SoundUtils {
             initSpeaker();
             if(speaker != null) {
                 try {
+                    if(speaker.isPlaying()) {
+                        speaker.stop();
+                    }
                     speaker.start();
                 } catch (Exception e) {
                     e.printStackTrace();

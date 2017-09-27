@@ -66,6 +66,7 @@ import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWA
 public class MainActivity extends BaseActivity implements ControlsFragment.OnControlsFragmentListener, 
         ViewPager.OnPageChangeListener, MainFragment.OnMainFragmentListener  {
 
+    private static final String EXTRA_ALARM_STATE = "com.thanksmister.iot.mqtt.alarmpanel.EXTRA_ALARM_STATE";
     private final int NUM_PAGES = 2;
     
     @Bind(R.id.triggeredView)
@@ -77,12 +78,21 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     private SubscriptionDataTask subscriptionDataTask;
     private MqttAndroidClient mqttAndroidClient;
     private PagerAdapter pagerAdapter;
+    private String alarmState;  // store our last alarm state
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_main);
+
+        if(savedInstanceState != null) {
+            alarmState = savedInstanceState.getString(EXTRA_ALARM_STATE);
+        }
+        
         ButterKnife.bind(this);
+        
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -93,10 +103,17 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 }
             });
         }
+        
         pagerAdapter = new MainSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setPagingEnabled(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_ALARM_STATE, alarmState);
     }
     
     @Override
@@ -174,7 +191,7 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     private void makeMqttConnection() {
         final boolean tlsConnection = getConfiguration().getTlsConnection();
         final String serverUri;
-        // allow for cloud based MQTT brokers (experimental, just ignore links with http or https)
+        // allow for cloud based MQTT brokers
         if(getConfiguration().getBroker().contains("http://") || getConfiguration().getBroker().contains("https://")) {
             serverUri = getConfiguration().getBroker() + ":" + getConfiguration().getPort();
         } else {
@@ -293,8 +310,13 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
+        if(state.equals(alarmState)) {
+            return;
+        }
+        this.alarmState = state; // save previous state
         if(AlarmUtils.STATE_TRIGGERED.equals(state)) {
-            hideDialog();
+            acquireWakeLock();
+            hideDialog(); // hide any dialogs
             stopDisconnectTimer(); // stop screen saver mode
             closeScreenSaver(); // close screen saver
             resetMainView(); // set control panel back to main view
@@ -306,19 +328,19 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                 @Override
                 public void onComplete(int code) {
                     publishDisarmed();
+                    releaseWakeLock();
                 }
-
                 @Override
                 public void onError() {
                     Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
                 }
-
                 @Override
                 public void onCancel() {
                 }
             });
         } else if (AlarmUtils.STATE_PENDING.equals(state) && (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
                 || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY))) {
+            acquireWakeLock();
             resetMainView(); // set control panel back to main view
             showAlarmDisableDialog(true, false); // 
         } else {
@@ -345,12 +367,13 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
             @Override
             public void onComplete(int pin) {
                 publishDisarmed();
-                hideDialog();
                 // we want to go the settings even if we are not able to disarm due of MQTT error
                 if(settings) {
                     Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
                     startActivity(intent);
                 }
+                releaseWakeLock();
+                hideDialog();
             }
             @Override
             public void onError() {
@@ -394,11 +417,9 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
     }
 
     private class MainSlidePagerAdapter extends FragmentStatePagerAdapter {
-
         public MainSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
-
         @Override
         public Fragment getItem(int position) {
             switch (position) {
@@ -410,7 +431,6 @@ public class MainActivity extends BaseActivity implements ControlsFragment.OnCon
                     return HomeAssistantFragment.newInstance();
             }
         }
-
         @Override
         public int getCount() {
             return NUM_PAGES;

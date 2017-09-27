@@ -46,7 +46,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY_PENDING;
@@ -59,7 +58,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
 
     // The loader's unique id. Loader ids are specific to the Activity or
     private static final int DATA_LOADER_ID = 1;
-    private static final String ALARM_STATE = "alarm_state";
+    private static final String EXTRA_ALARM_STATE = "com.thanksmister.iot.mqtt.alarmpanel.EXTRA_ALARM_STATE";
    
     @Bind(R.id.alarmPendingLayout)
     View alarmPendingLayout;
@@ -125,14 +124,14 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
-            alarmState = savedInstanceState.getString(ALARM_STATE);
+            alarmState = savedInstanceState.getString(EXTRA_ALARM_STATE);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ALARM_STATE, alarmState);
+        outState.putString(EXTRA_ALARM_STATE, alarmState);
     }
 
     @Override
@@ -301,7 +300,6 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     }
     
     private void showAlarmPendingView() {
-        Timber.d("showAlarmPendingView");
         alarmPendingLayout.setVisibility(View.VISIBLE);
         alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
             @Override

@@ -105,7 +105,6 @@ public class InformationFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
         weatherHandler = new Handler(getMainLooper());
         timeHandler = new Handler(getMainLooper());

@@ -54,7 +54,7 @@ public class MainFragment extends BaseFragment {
 
     @OnClick(R.id.buttonSleep)
     void buttonSleep() {
-        listener.showScreenSaver();
+        listener.showScreenSaver(true);
     }
 
     private OnMainFragmentListener listener;
@@ -66,7 +66,7 @@ public class MainFragment extends BaseFragment {
      * activity.
      */
     public interface OnMainFragmentListener {
-        void showScreenSaver();
+        void showScreenSaver(boolean force);
         void publishDisarmed();
         void showAlarmDisableDialog(boolean beep, boolean settings);
     }

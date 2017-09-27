@@ -18,12 +18,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -58,30 +60,38 @@ abstract public class BaseActivity extends AppCompatActivity {
     private AlertDialog screenSaverDialog;
     private Handler inactivityHandler = new Handler();
     private View decorView;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // for wakelock
+        this.getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         decorView = getWindow().getDecorView();
     }
     
     @Override
+    public void onResume() {
+        super.onResume();
+        releaseWakeLock();
+    }
+    
+    @Override
     protected void onDestroy() {
-
         super.onDestroy();
-
         ButterKnife.unbind(this);
-
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;
         }
-
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
             progressDialog = null;
         }
-
         if(inactivityHandler != null) {
             inactivityHandler.removeCallbacks(inactivityCallback);
             inactivityHandler = null;
@@ -116,11 +126,29 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Wakes the device when the alarm is triggered or to disarm.
+     */
+    public void acquireWakeLock() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_WAKE_TAG");
+        wakeLock.acquire();
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG");
+        keyguardLock.disableKeyguard();
+    }
+    
+    public void releaseWakeLock() {
+        if(wakeLock != null && wakeLock.isHeld()){
+            wakeLock.release();
+        }
+    }
+
     private Runnable inactivityCallback = new Runnable() {
         @Override
         public void run() {
             hideDialog();
-            showScreenSaver();
+            showScreenSaver(false);
         }
     };
 
@@ -133,7 +161,6 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void stopDisconnectTimer(){
-        hideDialog();
         if(inactivityHandler != null) {
             inactivityHandler.removeCallbacks(inactivityCallback);
         }
@@ -276,6 +303,13 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .setCancelable(true)
                 .setView(view)
                 .show();
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                alarmCodeView.destroySoundUtils();
+            }
+        });
     }
 
     public void showExtendedForecastDialog(Daily daily) {
@@ -309,7 +343,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
     }
     
-    public void showScreenSaver() {
+    public void showScreenSaver(boolean force) {
         if(getConfiguration().showScreenSaverModule()) {
             if (screenSaverDialog != null && screenSaverDialog.isShowing()) return;
             inactivityHandler.removeCallbacks(inactivityCallback);
