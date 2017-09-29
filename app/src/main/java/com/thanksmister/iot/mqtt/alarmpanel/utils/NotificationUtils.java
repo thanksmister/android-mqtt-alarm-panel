@@ -40,13 +40,14 @@ public class NotificationUtils extends ContextWrapper {
     
     private static int NOTIFICATION_ID = 1138;
     public static final String ANDROID_CHANNEL_ID = "com.thanksmister.iot.mqtt.alarmpanel.ANDROID";
-    public static final String ANDROID_CHANNEL_NAME = "Entry Detection / Alarm Triggered";
+    public static String ANDROID_CHANNEL_NAME;
     private NotificationManager notificationManager;
     private final PendingIntent pendingIntent;
     private final Intent notificationIntent;
 
     public NotificationUtils(Context context) {
         super(context);
+        ANDROID_CHANNEL_NAME = getString(R.string.notification_channel_name);
         notificationIntent = new Intent(context, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -57,7 +58,7 @@ public class NotificationUtils extends ContextWrapper {
     
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createChannels() {
-        String description = "Alarm Panel Notifications";
+        String description = getString(R.string.text_channel_description);
         int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel mChannel = new NotificationChannel(ANDROID_CHANNEL_ID, ANDROID_CHANNEL_NAME, importance);
         mChannel.setDescription(description);

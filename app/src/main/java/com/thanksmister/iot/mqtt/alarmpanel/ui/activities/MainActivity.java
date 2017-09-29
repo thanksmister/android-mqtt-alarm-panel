@@ -243,7 +243,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                         || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
                     if (!PREF_TRIGGERED_PENDING.equals(getConfiguration().getAlarmMode()) 
                             && getConfiguration().showNotifications()) {
-                        notificationUtils.createAlarmNotification("Entry Detected", "An entry has been detected, take the necessary action.");
+                        notificationUtils.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description));
                     }
                     getConfiguration().setAlarmMode(PREF_TRIGGERED_PENDING);
                     awakenDeviceForAction();
@@ -256,7 +256,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             case AlarmUtils.STATE_TRIGGERED:
                 if (!PREF_TRIGGERED.equals(getConfiguration().getAlarmMode()) 
                         && getConfiguration().showNotifications()) {
-                    notificationUtils.createAlarmNotification("Alarm Triggered", "The alarm has been triggered, take the necessary action.");
+                    notificationUtils.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description));
                 }
                 getConfiguration().setAlarmMode(PREF_TRIGGERED);
                 awakenDeviceForAction();

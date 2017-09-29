@@ -143,7 +143,13 @@
     <string name="text_github_code">GitHub code</string>
     <string name="text_about">About</string>
     <string name="text_alarm_settings">Alarm Settings</string>
-    
+    <string name="notification_channel_name">Entry Detection / Alarm Triggered</string>
+    <string name="text_channel_description">Alarm Panel Notifications</string>
+    <string name="text_notification_entry_title">Entry Detected</string>
+    <string name="text_notification_entry_description">An entry has been detected, take the necessary action.</string>
+    <string name="text_notification_trigger_title">Alarm Triggered</string>
+    <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
+
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>
         <item>@string/preference_title_weather_settings</item>
