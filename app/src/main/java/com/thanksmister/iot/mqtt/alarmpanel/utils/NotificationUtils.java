@@ -78,15 +78,6 @@ public class NotificationUtils extends ContextWrapper {
     }
 
     public void createAlarmNotification(String title, String message) {
-
-        /*StatusBarNotification[] notifications = new StatusBarNotification[0];
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            notifications = getManager().getActiveNotifications();
-            if(notifications.length > 0) {
-                return;
-            }
-        }*/
-        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder nb = getAndroidChannelNotification(title, message);
             getManager().notify(NOTIFICATION_ID, nb.build());
@@ -97,7 +88,7 @@ public class NotificationUtils extends ContextWrapper {
             stackBuilder.addParentStack(MainActivity.class);
             stackBuilder.addNextIntent(notificationIntent);
             nb.setContentIntent(pendingIntent);
-            notificationManager.notify(NOTIFICATION_ID, nb.build());
+            getManager().notify(NOTIFICATION_ID, nb.build());
         }
     }
 

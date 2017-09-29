@@ -22,7 +22,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 def versionMajor = 0
 def versionMinor = 3
 def versionPatch = 6
-def versionBuild = 0 // bump for dog food builds, public betas, etc.
+def versionBuild = 1 // bump for dog food builds, public betas, etc.
 
 android {
     compileSdkVersion 26
