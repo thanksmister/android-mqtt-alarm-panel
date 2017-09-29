@@ -6,10 +6,6 @@ import android.os.Handler;
 
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 
-/**
- * Created by michaelritchie on 8/25/17.
- */
-
 public class SoundUtils {
 
     private static final long PLAYBACK_BEEP_DELAY = 1000;
@@ -25,7 +21,10 @@ public class SoundUtils {
      * We want to fully destroy the media player.
      */
     public void destroyBuzzer() {
-        stopBuzzerRepeat(); // stop the buzzer if 
+        if(mHandler != null) {
+            mHandler.removeCallbacks(mPlaybackRunnable);
+            mHandler = null;
+        }
         if (speaker != null) {
             if(speaker.isPlaying()) {
                 speaker.stop();
@@ -40,8 +39,8 @@ public class SoundUtils {
     }
 
     public void playBuzzerOnButtonPress() {
-        stopBuzzerRepeat(); // stop the buzzer if 
-        initSpeaker();
+        stopBuzzerRepeat(); // stop the buzzer if repeating
+        initSpeaker(); // init a new speaker and play
         if(speaker != null) {
             try {
                 if(speaker.isPlaying()) {
@@ -58,6 +57,12 @@ public class SoundUtils {
         if(mHandler != null) {
             mHandler.removeCallbacks(mPlaybackRunnable);
             mHandler = null;
+            if (speaker != null) {
+                if(speaker.isPlaying()) {
+                    speaker.stop();
+                }
+                speaker.release();
+            }
         }
     }
     

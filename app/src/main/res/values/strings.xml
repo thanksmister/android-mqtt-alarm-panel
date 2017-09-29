@@ -40,7 +40,7 @@
     <string name="preference_summary_username">Set the service username (optional).</string>
     <string name="preference_title_password">Password</string>
     <string name="preference_summary_password">Set the service password (optional).</string>
-    <string name="preference_title_alarm">Alarm Code</string>
+    <string name="preference_title_alarm">Alarm Settings</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
     <string name="preference_title_pending_time">Pending Time</string>
     <string name="preference_summary_pending_time">The time in seconds before arming the alarm. Currently %1$s seconds.</string>
@@ -84,6 +84,9 @@
     <string name="preference_title_hass_url">Home Assistant Address</string>
     <string name="preference_summary_hass_url">Enter the IP address of Home Assistant (http://ipaddress:8123).</string>
 
+    <string name="preference_title_notification">Notifications</string>
+    <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
+   
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
     <string name="text_titled_armed_away">ARMED AWAY</string>

@@ -63,6 +63,7 @@ public class AlarmPendingView extends LinearLayout {
             countDownTimer.cancel();
             countDownTimer = null;
         }
+        displaySeconds = 0;
     }
 
     /**
@@ -70,6 +71,11 @@ public class AlarmPendingView extends LinearLayout {
      * @param pendingTime seconds
      */
     public void startCountDown(int pendingTime) {
+        if(countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+            displaySeconds = 0;
+        }
         Timber.d("startCountDown: "+ pendingTime*1300);
         final int divideBy = 360/pendingTime;
         countDownTimer = new CountDownTimer(pendingTime*1000, 1000) {
@@ -81,15 +87,23 @@ public class AlarmPendingView extends LinearLayout {
                 countDownProgressWheel.setText(String.valueOf(displaySeconds));
                 countDownProgressWheel.setProgress(displaySeconds * divideBy);
             }
-
             @Override
             public void onFinish() {
                 Timber.d("Timed up...");
                 if(listener != null) {
-                    listener.onTimeOut(); 
+                    listener.onTimeOut();
+                    displaySeconds = 0;
                 }
             }
         }.start();
+    }
+
+    /**
+     * Method to return number of display seconds remaining on countdown.
+     * @return Integer for seconds remaining.
+     */
+    public int getCountDownTimeRemaining() {
+        return displaySeconds;
     }
     
     public void stopCountDown() {
@@ -97,6 +111,7 @@ public class AlarmPendingView extends LinearLayout {
             countDownTimer.cancel();
             countDownTimer = null;
         }
+        displaySeconds = 0;
     }
     
     public void setListener(@NonNull ViewListener listener) {

@@ -45,6 +45,7 @@ import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ALARM_C
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_BROKER;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_CLIENT_ID;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_COMMAND_TOPIC;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_NOTIFICATIONS;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_PASSWORD;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_PENDING_TIME;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_PORT;
@@ -65,6 +66,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
     private EditTextPreference pendingPreference;
     private EditTextPreference triggerPreference;
     private CheckBoxPreference sslPreference;
+    private CheckBoxPreference notificationsPreference;
     private Configuration configuration;
     private AlertDialog alarmCodeDialog;
     private int defaultCode;
@@ -132,6 +134,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
         pendingPreference = (EditTextPreference) findPreference(PREF_PENDING_TIME);
         triggerPreference = (EditTextPreference) findPreference(PREF_TRIGGER_TIME);
         sslPreference = (CheckBoxPreference) findPreference(PREF_TLS_CONNECTION);
+        notificationsPreference = (CheckBoxPreference) findPreference(PREF_NOTIFICATIONS);
         
         if(isAdded()) {
             configuration = ((BaseActivity) getActivity()).getConfiguration();
@@ -146,6 +149,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
         passwordPreference.setText(configuration.getPassword());
         pendingPreference.setText(String.valueOf(configuration.getPendingTime()));
         sslPreference.setChecked(configuration.getTlsConnection());
+        notificationsPreference.setChecked(configuration.showNotifications());
 
         if(!TextUtils.isEmpty(configuration.getBroker())) {
             brokerPreference.setSummary(configuration.getBroker());
@@ -229,6 +233,10 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
             case PREF_TLS_CONNECTION:
                 boolean checked = sslPreference.isChecked();
                 configuration.setTlsConnection(checked);
+                break;
+            case PREF_NOTIFICATIONS:
+                boolean notify = notificationsPreference.isChecked();
+                configuration.setNotifications(notify);
                 break;
         }
     }

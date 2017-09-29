@@ -15,10 +15,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.SoundUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by michaelritchie on 8/24/17.
- */
-
 abstract class BaseAlarmView extends LinearLayout {
 
     protected static final int MAX_CODE_LENGTH = 4;
@@ -228,7 +224,7 @@ abstract class BaseAlarmView extends LinearLayout {
     abstract void addPinCode(String code);
     abstract void reset();
     
-    public void destroySoundUtils() {
+    public void destroySoundUtils() { 
         if(soundUtils != null) {
             soundUtils.destroyBuzzer();
         }

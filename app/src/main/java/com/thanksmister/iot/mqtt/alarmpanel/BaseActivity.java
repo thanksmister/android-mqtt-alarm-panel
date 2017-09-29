@@ -49,6 +49,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView;
 
 import butterknife.ButterKnife;
 
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
+
 abstract public class BaseActivity extends AppCompatActivity {
 
     public static final long INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 3 min
@@ -57,10 +60,12 @@ abstract public class BaseActivity extends AppCompatActivity {
     private Configuration configuration;
     private AlertDialog progressDialog;
     private AlertDialog dialog;
+    private AlertDialog disableDialog;
     private AlertDialog screenSaverDialog;
     private Handler inactivityHandler = new Handler();
     private View decorView;
     private PowerManager.WakeLock wakeLock;
+    private boolean presenceDetected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +92,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;
+        }
+        if (disableDialog != null && disableDialog.isShowing()) {
+            disableDialog.dismiss();
+            disableDialog = null;
         }
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -125,14 +134,22 @@ abstract public class BaseActivity extends AppCompatActivity {
             decorView.setSystemUiVisibility(visibility);
         }
     }
-
+    
+    public boolean isPresent() {
+        return presenceDetected;
+    }
+ 
     /**
      * Wakes the device when the alarm is triggered or to disarm.
      */
     public void acquireWakeLock() {
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK|PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_WAKE_TAG");
-        wakeLock.acquire();
+        if(wakeLock == null) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_WAKE_TAG");
+        }
+        if (wakeLock != null && !wakeLock.isHeld()) {  // but we don't hold it 
+            wakeLock.acquire();
+        }
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG");
         keyguardLock.disableKeyguard();
@@ -148,7 +165,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         @Override
         public void run() {
             hideDialog();
-            showScreenSaver(false);
+            if(getConfiguration().showScreenSaverModule()) {
+                showScreenSaver();
+            }
+            presenceDetected = false;
         }
     };
 
@@ -168,6 +188,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onUserInteraction(){
+        presenceDetected = true;
         resetInactivityTimer();
     }
 
@@ -197,12 +218,10 @@ abstract public class BaseActivity extends AppCompatActivity {
         if (progressDialog != null) {
             return;
         }
-
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.dialog_progress, null, false);
         TextView progressDialogMessage = (TextView) dialogView.findViewById(R.id.progressDialogMessage);
         progressDialogMessage.setText(message);
-
         progressDialog = new AlertDialog.Builder(this)
                 .setCancelable(modal)
                 .setView(dialogView)
@@ -213,7 +232,6 @@ abstract public class BaseActivity extends AppCompatActivity {
         if (progressDialog != null) {
             return;
         }
-
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.dialog_progress_no_text, null, false);
         progressDialog = new AlertDialog.Builder(this)
@@ -234,6 +252,11 @@ abstract public class BaseActivity extends AppCompatActivity {
             dialog.dismiss();
             dialog = null;
         }
+        if (disableDialog != null && disableDialog.isShowing()) {
+            disableDialog.dismiss();
+            disableDialog = null;
+        }
+        hideProgressDialog();
     }
     
     public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
@@ -287,24 +310,37 @@ abstract public class BaseActivity extends AppCompatActivity {
                 .setView(view)
                 .show();
     }
-    
-    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep) {
-        hideDialog();
+
+    /**
+     * Shows the disable alarm dialog with countdown. It is important that this 
+     * dialog only be shown once and not relaunched when already displayed as
+     * it resets the timer. 
+     * 
+     * @param alarmCodeListener
+     * @param code
+     * @param beep
+     * @param timeRemaining
+     */
+    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, 
+                                       int code, boolean beep, int timeRemaining) {
+        if(disableDialog != null && disableDialog.isShowing()) {
+            return;
+        }
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_alarm_disable, null, false);
         final AlarmDisableView alarmCodeView = view.findViewById(R.id.alarmDisableView);
         alarmCodeView.setListener(alarmCodeListener);
         alarmCodeView.setCode(code);
-        alarmCodeView.startCountDown(configuration.getPendingTime());
+        alarmCodeView.startCountDown(timeRemaining);
         if(beep) {
             alarmCodeView.playContinuousBeep();
         }
-        dialog = new AlertDialog.Builder(BaseActivity.this)
+        disableDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setCancelable(true)
                 .setView(view)
                 .show();
 
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        disableDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 alarmCodeView.destroySoundUtils();
@@ -342,38 +378,39 @@ abstract public class BaseActivity extends AppCompatActivity {
             screenSaverDialog = null;
         }
     }
-    
-    public void showScreenSaver(boolean force) {
-        if(getConfiguration().showScreenSaverModule() && !force) {
-            if (screenSaverDialog != null && screenSaverDialog.isShowing()) return;
-            inactivityHandler.removeCallbacks(inactivityCallback);
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
-            final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
-            screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
-                    getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(),
-                    getConfiguration().getImageRotation());
-            screenSaverView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (screenSaverDialog != null) {
-                        screenSaverDialog.dismiss();
-                        screenSaverDialog = null;
-                        resetInactivityTimer();
-                    }
-                }
-            });
-            screenSaverDialog = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-                    .setCancelable(true)
-                    .setView(view)
-                    .show();
+
+    /**
+     * Show the screen saver only if the alarm isn't triggered.  This shouldn't be an issue
+     * with the alarm disabled because the disable time will be longer than this. 
+     */
+    public void showScreenSaver() {
+        if(getConfiguration().getAlarmMode().equals(PREF_TRIGGERED) 
+                || getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)){
+            return;
         }
-    }
-    
-    private Rect getDisplayRectangle() {
-        Rect displayRectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        return displayRectangle;
+        if (screenSaverDialog != null && screenSaverDialog.isShowing()) {
+            return;
+        }
+        inactivityHandler.removeCallbacks(inactivityCallback);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
+        final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
+        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
+                getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(),
+                getConfiguration().getImageRotation());
+        screenSaverView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (screenSaverDialog != null) {
+                    screenSaverDialog.dismiss();
+                    screenSaverDialog = null;
+                    resetInactivityTimer();
+                }
+            }
+        });
+        screenSaverDialog = new AlertDialog.Builder(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+                .setCancelable(true)
+                .setView(view)
+                .show();
     }
 }

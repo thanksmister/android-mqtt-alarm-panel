@@ -75,8 +75,8 @@ public class BaseFragment extends Fragment {
         return ((BaseActivity) getActivity()).getConfiguration();
     }
     
-    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep) {
-        ((BaseActivity) getActivity()).showAlarmDisableDialog(alarmCodeListener, code, beep);
+    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep, int timeRemaining) {
+        ((BaseActivity) getActivity()).showAlarmDisableDialog(alarmCodeListener, code, beep, timeRemaining);
     }
     
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {

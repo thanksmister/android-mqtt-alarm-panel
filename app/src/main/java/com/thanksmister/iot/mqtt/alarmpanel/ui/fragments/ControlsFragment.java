@@ -53,12 +53,12 @@ import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_HOM
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_HOME_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_DISARM;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 
 public class ControlsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // The loader's unique id. Loader ids are specific to the Activity or
     private static final int DATA_LOADER_ID = 1;
-    private static final String EXTRA_ALARM_STATE = "com.thanksmister.iot.mqtt.alarmpanel.EXTRA_ALARM_STATE";
    
     @Bind(R.id.alarmPendingLayout)
     View alarmPendingLayout;
@@ -77,13 +77,17 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
             showArmOptionsDialog();
         } else {
-            listener.showAlarmDisableDialog(false, false);
+            int countDownTimeRemaining = alarmPendingView.getCountDownTimeRemaining();
+            if(countDownTimeRemaining > 0) {
+                listener.showAlarmDisableDialog(false, countDownTimeRemaining);
+            } else {
+                listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
+            }
         }
     }
     
     private SubscriptionObserver subscriptionObserver;
     private OnControlsFragmentListener listener;
-    private String alarmState;  // store our last alarm state
 
     /**
      * This interface must be implemented by activities that contain this
@@ -94,8 +98,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public interface OnControlsFragmentListener {
         void publishArmedHome();
         void publishArmedAway();
-        void publishDisarmed();
-        void showAlarmDisableDialog(boolean beep, boolean settings);
+        void showAlarmDisableDialog(boolean beep, int timeRemaining);
     }
 
     public ControlsFragment() {
@@ -123,15 +126,11 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
-            alarmState = savedInstanceState.getString(EXTRA_ALARM_STATE);
-        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(EXTRA_ALARM_STATE, alarmState);
     }
 
     @Override
@@ -178,7 +177,6 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     public void onDetach() {
         super.onDetach();
         listener = null;
-        alarmState = null;
         ButterKnife.unbind(this);
     }
 
@@ -205,11 +203,6 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
-        // let's not repeat states
-        if(state.equals(alarmState)) {
-            return;
-        }
-        alarmState = state; // store our alarm state
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
                 hideDialog();
@@ -227,7 +220,8 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                 setDisarmedView();
                 break;
             case AlarmUtils.STATE_PENDING:
-                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
+                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) 
+                        || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
                     if(PREF_ARM_HOME_PENDING.equals(getConfiguration().getAlarmMode())) {
                         alarmText.setText(R.string.text_arm_home);
                         alarmText.setTextColor(getResources().getColor(R.color.yellow));
@@ -237,17 +231,18 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                         alarmText.setTextColor(getResources().getColor(R.color.red));
                         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
                     }
-                } else if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
-                    // handled in main activity
-                }  else {
+                } else if(!getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
+                        && !getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)
+                        && !getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)) {
                     setPendingView(PREF_ARM_PENDING);
-                }
+                } 
                 break;
-            case AlarmUtils.STATE_TRIGGERED:
-                // handled in the main activity
+            case AlarmUtils.STATE_ERROR:
+                hideAlarmPendingView();
+                setDisarmedView();
                 break;
             default:
-                throw new IllegalStateException("Invalid state: " + state);
+                break;
         }
     }
 
@@ -300,6 +295,9 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
     }
     
     private void showAlarmPendingView() {
+        if(alarmPendingLayout.isShown()) {
+            return;
+        }
         alarmPendingLayout.setVisibility(View.VISIBLE);
         alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
             @Override
@@ -314,7 +312,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         alarmPendingLayout.setVisibility(View.GONE);
         alarmPendingView.stopCountDown();
     }
-
+    
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         if(id == DATA_LOADER_ID) {

@@ -120,7 +120,7 @@
 
             <FrameLayout
                     android:id="@+id/button4"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -141,6 +141,7 @@
 
             <FrameLayout
                     android:id="@+id/button5"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -161,7 +162,7 @@
 
             <FrameLayout
                     android:id="@+id/button6"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -192,7 +193,7 @@
 
             <FrameLayout
                     android:id="@+id/button7"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -213,7 +214,7 @@
 
             <FrameLayout
                     android:id="@+id/button8"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -284,7 +285,7 @@
 
             <FrameLayout
                     android:id="@+id/button0"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"

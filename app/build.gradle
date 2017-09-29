@@ -21,12 +21,12 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 def versionMajor = 0
 def versionMinor = 3
-def versionPatch = 5
+def versionPatch = 6
 def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
         minSdkVersion 15
@@ -78,7 +78,7 @@ dependencies {
     compile 'fr.baloomba:viewpagerindicator:2.4.2'
     
     // MQTT
-    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
     // Image

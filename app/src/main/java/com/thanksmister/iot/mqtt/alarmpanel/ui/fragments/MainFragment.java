@@ -18,23 +18,49 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments;
 
-
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
+import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionModel;
+import com.thanksmister.iot.mqtt.alarmpanel.data.provider.ContentProvider;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 
+import java.util.List;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainFragment extends BaseFragment {
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
+
+public class MainFragment extends BaseFragment implements 
+        LoaderManager.LoaderCallbacks<Cursor>  {
+
+    private static final int DATA_LOADER_ID = 1;
+    
+    @Bind(R.id.triggeredView)
+    View triggeredView;
+    
+    @Bind(R.id.mainView)
+    View mainView;
     
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
@@ -42,7 +68,7 @@ public class MainFragment extends BaseFragment {
             Intent intent = SettingsActivity.createStartIntent(getActivity());
             startActivity(intent);
         } else {
-            listener.showAlarmDisableDialog(false, true);
+            listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
         }
     }
 
@@ -54,9 +80,10 @@ public class MainFragment extends BaseFragment {
 
     @OnClick(R.id.buttonSleep)
     void buttonSleep() {
-        listener.showScreenSaver(true);
+        listener.manuallyLaunchScreenSaver();
     }
 
+    private SubscriptionObserver subscriptionObserver;
     private OnMainFragmentListener listener;
 
     /**
@@ -66,9 +93,9 @@ public class MainFragment extends BaseFragment {
      * activity.
      */
     public interface OnMainFragmentListener {
-        void showScreenSaver(boolean force);
+        void manuallyLaunchScreenSaver();
         void publishDisarmed();
-        void showAlarmDisableDialog(boolean beep, boolean settings);
+        void showAlarmDisableDialog(boolean beep, int timeRemaining);
     }
     
     public MainFragment() {
@@ -109,8 +136,121 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        subscriptionObserver = new SubscriptionObserver(new Handler());
+        getActivity().getContentResolver().registerContentObserver(ContentProvider.SUBSCRIPTION_DATA_TABLE_URI, true, subscriptionObserver);
+        getLoaderManager().restartLoader(DATA_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getContentResolver().unregisterContentObserver(subscriptionObserver);
+        getLoaderManager().destroyLoader(DATA_LOADER_ID);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
         ButterKnife.unbind(this);
+    }
+
+    /**
+     * Handles the application state from the state topic payload changes from the subscription.
+     * @param state Payload from the state topic subscription.
+     */
+    @AlarmUtils.AlarmStates
+    private void handleStateChange(String state) {
+        switch (state) {
+            case AlarmUtils.STATE_ARM_AWAY:
+            case AlarmUtils.STATE_ARM_HOME:
+                hideDialog();
+                break;
+            case AlarmUtils.STATE_DISARM:
+                hideTriggeredView();
+                break;
+            case AlarmUtils.STATE_PENDING:
+                if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
+                        || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY) 
+                        || getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)) {
+                    listener.showAlarmDisableDialog(true, getConfiguration().getPendingTime());
+                } 
+                break;
+            case AlarmUtils.STATE_TRIGGERED:
+                showAlarmTriggered();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Control Fragment Listener
+    private void showAlarmTriggered() {
+        if(isAdded()) {
+            int code = getConfiguration().getAlarmCode();
+            final AlarmTriggeredView disarmView = getActivity().findViewById(R.id.alarmTriggeredView);
+            disarmView.setCode(code);
+            disarmView.setListener(new AlarmTriggeredView.ViewListener() {
+                @Override
+                public void onComplete(int code) {
+                    listener.publishDisarmed();
+                }
+                @Override
+                public void onError() {
+                    Toast.makeText(getActivity(), R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onCancel() {
+                }
+            });
+            mainView.setVisibility(View.GONE);
+            triggeredView.setVisibility(View.VISIBLE);
+        }
+    }
+    
+    private void hideTriggeredView() {
+        mainView.setVisibility(View.VISIBLE);
+        triggeredView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        if(id == DATA_LOADER_ID) {
+            return new CursorLoader(getActivity(), ContentProvider.SUBSCRIPTION_DATA_TABLE_URI, SubscriptionModel.COLUMN_NAMES, null, null, null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case DATA_LOADER_ID:
+                List<SubscriptionModel> subscriptionModels = SubscriptionModel.getModelList(cursor);
+                if(subscriptionModels != null && !subscriptionModels.isEmpty()) {
+                    SubscriptionModel subscriptionModel = subscriptionModels.get(subscriptionModels.size() - 1);
+                    if(AlarmUtils.hasSupportedStates(subscriptionModel.payload())) {
+                        handleStateChange(subscriptionModel.payload());
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    private class SubscriptionObserver extends ContentObserver {
+        SubscriptionObserver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            if(selfChange) {
+                getActivity().getSupportLoaderManager().restartLoader(DATA_LOADER_ID, null, MainFragment.this);
+            }
+        }
     }
 }

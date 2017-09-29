@@ -34,43 +34,43 @@ public class Configuration {
     private final DPreference sharedPreferences;
     private final Context context;
     
-    public static final String PREF_FIRST_TIME = "pref_first_time";
-    public static final String PREF_ALARM_MODE = "pref_alarm_mode";
     public static final String PREF_USERNAME = "pref_username";
     public static final String PREF_COMMAND_TOPIC = "pref_command_topic";
     public static final String PREF_STATE_TOPIC = "pref_state_topic";
     public static final String PREF_TLS_CONNECTION = "pref_tls_connection";
     public static final String PREF_ALARM_CODE = "pref_alarm_code";
-    public static final String PREF_ARMED = "pref_armed";
     public static final String PREF_PASSWORD = "pref_password";
     public static final String PREF_PORT = "pref_port";
     public static final String PREF_CLIENT_ID = "pref_client_id";
     public static final String PREF_BROKER = "pref_broker";
     public static final String PREF_PENDING_TIME = "pref_pending_time";
     public static final String PREF_TRIGGER_TIME = "pref_trigger_time";
-
-    public static final String PREF_MODULE_WEATHER = "pref_module_weather";
-    public static final String PREF_WEATHER_UNITS = "pref_weather_units";
-    public static final String PREF_DARK_SKY_KEY = "pref_dark_sky_key";
-    public static final String PREF_LAT = "pref_weather_lat";
-    public static final String PREF_LON = "pref_weather_lon";
-
+    public static final String PREF_NOTIFICATIONS = "pref_notifications";
     public static final String PREF_ARM_HOME = "arm_home";
     public static final String PREF_ARM_HOME_PENDING = "arm_home_pending";
     public static final String PREF_ARM_PENDING = "arm_pending";
-    public static final String PREF_ARM_AWAY = "ARM_AWAY";
+    public static final String PREF_ARM_AWAY = "arm_away";
     public static final String PREF_ARM_AWAY_PENDING = "prefs_arm_away_pending";
-    public static final String PREF_DISARM = "DISARM";
-
+    public static final String PREF_DISARM = "disarm";
+    public static final String PREF_TRIGGERED = "triggered";
+    public static final String PREF_TRIGGERED_PENDING = "triggered_pending";
     public static final String PREF_MODULE_SAVER = "pref_module_saver";
     public static final String PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo";
     public static final String PREF_IMAGE_SOURCE = "pref_image_source";
     public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
 
-    public static final String PREF_MODULE_HASS = "pref_module_hass";
-    public static final String PREF_HASS_WEB_URL = "pref_hass_web_url";
-
+    private static final String PREF_MODULE_WEATHER = "pref_module_weather";
+    private static final String PREF_WEATHER_UNITS = "pref_weather_units";
+    private static final String PREF_DARK_SKY_KEY = "pref_dark_sky_key";
+    private static final String PREF_LAT = "pref_weather_lat";
+    private static final String PREF_LON = "pref_weather_lon";
+    private static final String PREF_MODULE_HASS = "pref_module_hass";
+    private static final String PREF_HASS_WEB_URL = "pref_hass_web_url";
+    private static final String PREF_ARMED = "pref_armed";
+    private static final String PREF_FIRST_TIME = "pref_first_time";
+    private static final String PREF_ALARM_MODE = "pref_alarm_mode";
+    
     private final int ROTATE_TIME_IN_MINUTES = 30; // 30 minutes
 
     public Configuration(Context context, DPreference sharedPreferences) {
@@ -255,6 +255,14 @@ public class Configuration {
         return this.sharedPreferences.getPrefString(PREF_STATE_TOPIC, AlarmUtils.STATE_TOPIC);
     }
 
+    public void setNotifications(boolean value) {
+        this.sharedPreferences.setPrefBoolean(PREF_NOTIFICATIONS, value);
+    }
+
+    public boolean showNotifications() {
+        return this.sharedPreferences.getPrefBoolean(PREF_NOTIFICATIONS, false);
+    }
+
     public void setStateTopic(String value) {
         this.sharedPreferences.setPrefString(PREF_STATE_TOPIC, value);
     }
@@ -284,7 +292,7 @@ public class Configuration {
     }
 
     public String getAlarmMode() {
-        return sharedPreferences.getPrefString(PREF_ALARM_MODE, PREF_DISARM);
+        return sharedPreferences.getPrefString(PREF_ALARM_MODE, PREF_DISARM).toLowerCase();
     }
 
     // TODO guarantee mode is of one of three types
@@ -307,5 +315,6 @@ public class Configuration {
         sharedPreferences.removePreference(PREF_ALARM_MODE);
         sharedPreferences.removePreference(PREF_ARMED);
         sharedPreferences.removePreference(PREF_ALARM_CODE);
+        sharedPreferences.removePreference(PREF_NOTIFICATIONS);
     }
 }
