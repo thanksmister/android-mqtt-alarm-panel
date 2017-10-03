@@ -54,6 +54,9 @@
         <activity android:name=".ui.activities.HomeAssistantActivity"
                   android:screenOrientation="sensorLandscape"/>
 
+        <activity android:name=".ui.activities.LogActivity"
+                  android:screenOrientation="sensorLandscape"/>
+
         <!-- Database Provider -->
         <provider
                 android:name=".data.provider.ContentProvider"
@@ -70,10 +73,12 @@
         
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
-
-        <activity android:name=".ui.activities.LogActivity"
-                  android:screenOrientation="sensorLandscape"/>
-    
+        
+        <!-- Your Crashlytics key here, you also need athe secret in a fabric.properties -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="6aa105ab19b074264f7333064640f494720b90f1"/>
+        
     </application>
 
 </manifest>

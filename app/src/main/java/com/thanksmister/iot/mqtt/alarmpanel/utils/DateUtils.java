@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -60,5 +61,13 @@ public final class DateUtils {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.getDefault());
         return sdf.format(new Date(time));
+    }
+    
+    public static String convertInactivityTime(long inactivityValue) {
+        if(inactivityValue < 60000) {
+            return String.valueOf(TimeUnit.MILLISECONDS.toSeconds(inactivityValue));
+        } else {
+            return String.valueOf(TimeUnit.MILLISECONDS.toMinutes(inactivityValue));
+        }
     }
 }

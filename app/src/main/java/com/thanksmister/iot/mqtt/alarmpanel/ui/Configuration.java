@@ -59,7 +59,8 @@ public class Configuration {
     public static final String PREF_IMAGE_SOURCE = "pref_image_source";
     public static final String PREF_IMAGE_FIT_SIZE = "pref_image_fit";
     public static final String PREF_IMAGE_ROTATION = "pref_image_rotation";
-
+    public static final String PREF_INACTIVITY_TIME = "pref_inactivity_time";
+    
     private static final String PREF_MODULE_WEATHER = "pref_module_weather";
     private static final String PREF_WEATHER_UNITS = "pref_weather_units";
     private static final String PREF_DARK_SKY_KEY = "pref_dark_sky_key";
@@ -70,7 +71,9 @@ public class Configuration {
     private static final String PREF_ARMED = "pref_armed";
     private static final String PREF_FIRST_TIME = "pref_first_time";
     private static final String PREF_ALARM_MODE = "pref_alarm_mode";
-    
+   
+
+    private final long INACTIVITY_TIMEOUT =  5 * 60 * 1000; // 5 min
     private final int ROTATE_TIME_IN_MINUTES = 30; // 30 minutes
 
     public Configuration(Context context, DPreference sharedPreferences) {
@@ -124,6 +127,14 @@ public class Configuration {
 
     public int getImageRotation() {
         return this.sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, ROTATE_TIME_IN_MINUTES);
+    }
+
+    public void setInactivityTime(long value) {
+        this.sharedPreferences.setPrefLong(PREF_INACTIVITY_TIME, value);
+    }
+
+    public long getInactivityTime() {
+        return this.sharedPreferences.getPrefLong(PREF_INACTIVITY_TIME, INACTIVITY_TIMEOUT);
     }
 
     public boolean getImageFitScreen() {

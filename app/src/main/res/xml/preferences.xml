@@ -68,6 +68,7 @@
         <EditTextPreference
                 android:key="pref_password"
                 android:title="@string/preference_title_password"
+                android:inputType="textPassword"
                 android:summary="@string/preference_summary_password"
                 android:password="true"
                 android:negativeButtonText="@android:string/cancel"

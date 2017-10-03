@@ -37,7 +37,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AboutFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AlarmSettingsFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantSettingsFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ScreenSettingsFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.WeatherSettingsFragment;
 
@@ -174,7 +174,7 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
                 case 2:
                     return new ScreenSettingsFragment();
                 case 3:
-                    return new HomeAssistantSettingsFragment();
+                    return new PlatformSettingsFragment();
                 case 4:
                     return new AboutFragment();
                 default:

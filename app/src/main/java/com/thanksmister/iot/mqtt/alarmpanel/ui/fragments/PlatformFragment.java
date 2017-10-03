@@ -33,14 +33,13 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
-public class HomeAssistantFragment extends BaseFragment {
+public class PlatformFragment extends BaseFragment {
     
     @Bind(R.id.webView)
     WebView webView;
     
-    public HomeAssistantFragment() {
+    public PlatformFragment() {
         // Required empty public constructor
     }
 
@@ -48,8 +47,8 @@ public class HomeAssistantFragment extends BaseFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      */
-    public static HomeAssistantFragment newInstance() {
-        return new HomeAssistantFragment();
+    public static PlatformFragment newInstance() {
+        return new PlatformFragment();
     }
 
     @Override
@@ -60,9 +59,6 @@ public class HomeAssistantFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        Timber.d("onViewCreated");
-        Timber.d("onViewCreated Url: " + getConfiguration().getHassUrl());
         
         if(getConfiguration().showHassModule() 
                 && !TextUtils.isEmpty(getConfiguration().getHassUrl()) && webView != null) {

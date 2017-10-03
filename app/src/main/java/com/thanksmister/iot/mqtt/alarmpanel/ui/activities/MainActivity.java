@@ -28,8 +28,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
@@ -40,9 +38,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
 
@@ -94,7 +93,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         }
         if(mqttManager == null) {
             mqttManager = new MqttManager(this);
-        } 
+            makeMqttConnection();
+        }
     }
 
     @Override
@@ -106,9 +106,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     public void onResume() {
         super.onResume();
         resetInactivityTimer();
-        if(mqttManager != null) {
+        /*if(mqttManager != null) {
             makeMqttConnection();
-        }
+        }*/
         setViewPagerState();
     }
 
@@ -134,25 +134,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             releaseWakeHandler.removeCallbacks(releaseWakeLockRunnable);
             releaseWakeHandler = null;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.global, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        } else if (id == R.id.action_settings) {
-            Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
-            startActivity(intent);
-        } 
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -220,12 +201,35 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         }
     }
 
+    @Override
+    public void showSettingsCodeDialog() {
+        showSettingsCodeDialog(getConfiguration().getAlarmCode(), new SettingsCodeView.ViewListener() {
+            @Override
+            public void onComplete(int code) {
+                if (code == getConfiguration().getAlarmCode()) {
+                    Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
+                    startActivity(intent);
+                }
+            }
+            @Override
+            public void onError() {
+                Timber.d("Toast must work!!!");
+                Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onCancel() {
+                hideDialog();
+            }
+        });
+    }
+
     /**
      * Handles the state change and shows triggered view and remove any dialogs or screen savers if 
      * state is triggered. Returns to normal state if disarmed from HASS.
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
+        Timber.d("state: " + state);
         switch (state) {
             case AlarmUtils.STATE_DISARM:
                 awakenDeviceForAction();
@@ -273,7 +277,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     private Runnable releaseWakeLockRunnable = new Runnable() {
         @Override
         public void run() {
-            releaseWakeLock();
+            releaseTemporaryWakeLock();
         }
     };
 
@@ -282,13 +286,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * user needs to disarm the control panel on entry or alarm triggered.
      */
     public void awakenDeviceForAction() {
-        acquireWakeLock();
+        acquireTemporaryWakeLock();
         stopDisconnectTimer(); // stop screen saver mode
         closeScreenSaver(); // close screen saver
         if(viewPager != null && pagerAdapter != null && pagerAdapter.getCount() > 0) {
             hideDialog();
             viewPager.setCurrentItem(0);
         }
+
+        Timber.d("awakenDeviceForAction");
     }
     
     @Override
@@ -360,7 +366,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 case 0:
                     return MainFragment.newInstance();
                 case 1:
-                    return HomeAssistantFragment.newInstance();
+                    return PlatformFragment.newInstance();
                 default:
                     return MainFragment.newInstance();
             }

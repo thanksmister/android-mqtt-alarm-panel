@@ -39,8 +39,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView;
 
-import timber.log.Timber;
-
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ALARM_CODE;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_BROKER;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_CLIENT_ID;
@@ -170,7 +168,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
             userNamePreference.setSummary(configuration.getUserName());
         }
         if(!TextUtils.isEmpty(configuration.getPassword())) {
-            passwordPreference.setSummary(configuration.getPassword());
+            passwordPreference.setSummary(toStars(configuration.getPassword()));
         }
         pendingPreference.setSummary(getString(R.string.preference_summary_pending_time, String.valueOf(configuration.getPendingTime())));
         triggerPreference.setSummary(getString(R.string.preference_summary_trigger_time, String.valueOf(configuration.getTriggerTime())));
@@ -218,7 +216,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
             case PREF_PASSWORD:
                 value = passwordPreference.getText();
                 configuration.setPassword(value);
-                passwordPreference.setSummary(value);
+                passwordPreference.setSummary(toStars(value));
                 break;
             case PREF_PENDING_TIME:
                 value = pendingPreference.getText();
@@ -239,6 +237,15 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
                 configuration.setNotifications(notify);
                 break;
         }
+    }
+
+    private String toStars(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            sb.append('*');
+        }
+        text = sb.toString();
+        return text;
     }
 
     public void hideAlarmCodeDialog() {
@@ -266,10 +273,6 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
         alarmCodeView.setListener(new AlarmCodeView.ViewListener() {
             @Override
             public void onComplete(int code) {
-                Timber.d("Code: " + code);
-                Timber.d("defaultCode: " + defaultCode);
-                Timber.d("tempCode: " + tempCode);
-                
                 if(code == defaultCode) {
                     confirmCode = false;
                     hideAlarmCodeDialog();

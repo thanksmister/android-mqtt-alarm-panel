@@ -32,9 +32,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_hass;
+import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_platform;
 
-public class HomeAssistantSettingsFragment extends PreferenceFragmentCompat 
+public class PlatformSettingsFragment extends PreferenceFragmentCompat 
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     
     private CheckBoxPreference hassModulePreference;
@@ -44,7 +44,7 @@ public class HomeAssistantSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(preferences_hass);
+        addPreferencesFromResource(preferences_platform);
     }
     
     @Override

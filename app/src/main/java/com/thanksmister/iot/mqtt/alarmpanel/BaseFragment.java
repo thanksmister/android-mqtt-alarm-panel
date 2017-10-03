@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
 
 import butterknife.ButterKnife;
@@ -73,10 +72,6 @@ public class BaseFragment extends Fragment {
 
     public Configuration getConfiguration() {
         return ((BaseActivity) getActivity()).getConfiguration();
-    }
-    
-    public void showAlarmDisableDialog(AlarmDisableView.ViewListener alarmCodeListener, int code, boolean beep, int timeRemaining) {
-        ((BaseActivity) getActivity()).showAlarmDisableDialog(alarmCodeListener, code, beep, timeRemaining);
     }
     
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {

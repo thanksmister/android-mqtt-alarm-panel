@@ -20,8 +20,10 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -55,6 +57,9 @@ public class ScreenSaverView extends RelativeLayout {
     @Bind(R.id.screenSaverClock)
     TextView screenSaverClock;
     
+    @Bind(R.id.motionDetectionView)
+    SurfaceView motionDetectionView;
+    
     private InstagramTask task;
     private String userName;
     private boolean fitToScreen;
@@ -65,6 +70,11 @@ public class ScreenSaverView extends RelativeLayout {
     private Context context;
     private String imageUrl;
     private long rotationInterval;
+    protected ViewListener listener;
+    
+    public interface ViewListener {
+        void onMotion();
+    }
 
     public ScreenSaverView(Context context) {
         super(context);
@@ -80,6 +90,7 @@ public class ScreenSaverView extends RelativeLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+        setKeepScreenOn(true);
     }
     
     @Override
@@ -103,6 +114,11 @@ public class ScreenSaverView extends RelativeLayout {
         if(timeHandler != null) {
             timeHandler.removeCallbacks(timeRunnable);
         }
+        setKeepScreenOn(false);
+    }
+
+    public void setListener(@NonNull ScreenSaverView.ViewListener listener) {
+        this.listener = listener;
     }
     
     public void setScreenSaver(Context context, boolean useImageScreenSaver, String userName, boolean fitToScreen, 
@@ -126,6 +142,27 @@ public class ScreenSaverView extends RelativeLayout {
             timeHandler.postDelayed(timeRunnable, 10);
         }
     }
+    
+    /*private void setupMotionDetection() {
+        motionDetector = new MotionDetector(getContext(), motionDetectionView);
+        motionDetector.setMotionDetectorCallback(new MotionDetectorCallback() {
+            @Override
+            public void onMotionDetected() {
+                if(listener != null) {
+                    Timber.d("Motion detected");
+                    listener.onMotion();
+                }
+            }
+            @Override
+            public void onTooDark() {
+                Timber.d("Too dark here");
+            }
+        });
+        motionDetector.setCheckInterval(1000);
+        motionDetector.setLeniency(25);
+        motionDetector.setMinLuma(1500);
+        motionDetector.onResume();
+    }*/
     
     private void startScreenSavor() {
         if(itemList == null || itemList.isEmpty()) {
@@ -196,13 +233,9 @@ public class ScreenSaverView extends RelativeLayout {
             });
             task.setOnCompleteListener(new InstagramTask.OnCompleteListener<Response<InstagramResponse>>() {
                 public void onComplete(Response<InstagramResponse> response) {
-                    Timber.d("Response: " + response);
-                    Timber.d("Response: " + response.code());
                     InstagramResponse instagramResponse = response.body();
-                    Timber.d("InstagramResponse: " + instagramResponse);
                     if (instagramResponse != null) {
                         itemList = instagramResponse.getItems();
-                        Timber.d("itemList: " + itemList.size());
                         startImageRotation();
                     }
                 }

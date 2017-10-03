@@ -25,7 +25,7 @@ import android.os.Bundle;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.HomeAssistantFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment;
 
 public class HomeAssistantActivity extends BaseActivity {
 
@@ -42,7 +42,7 @@ public class HomeAssistantActivity extends BaseActivity {
         setContentView(R.layout.activity_hass);
 
         if(savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentFrame, HomeAssistantFragment.newInstance(), HASS_FRAGMENT).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentFrame, PlatformFragment.newInstance(), HASS_FRAGMENT).commit();
         }
     }
 

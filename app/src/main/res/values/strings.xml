@@ -77,15 +77,18 @@
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
-    <string name="preference_title_hass_settings">Home Assistant Settings</string>
-    <string name="preference_summary_hass_settings">Allows you to load Home Assistant into a web page to access other controls.</string>
-    <string name="preference_title_hass">Home Assistant</string>
-    <string name="preference_summary_hass">Displays the Home Assistant web page by swiping main screen.</string>
-    <string name="preference_title_hass_url">Home Assistant Address</string>
-    <string name="preference_summary_hass_url">Enter the IP address of Home Assistant (http://ipaddress:8123).</string>
+    <string name="preference_title_hass_settings">Home Automation Settings</string>
+    <string name="preference_summary_hass_settings">Allows you to load external web page to access other your home automation platform interface.</string>
+    <string name="preference_title_hass">Home Automation Platform</string>
+    <string name="preference_summary_hass">Displays your home automation web page by swiping main screen.</string>
+    <string name="preference_title_hass_url">Platform Address</string>
+    <string name="preference_summary_hass_url">Enter the IP address of your home automation web page (http://ipaddress:8123).</string>
 
     <string name="preference_title_notification">Notifications</string>
     <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
+
+    <string name="preference_title_inactivity">Sleep</string>
+    <string name="preference_summary_inactivity">After %1$s minutes of inactivity.</string>
    
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
@@ -149,6 +152,7 @@
     <string name="text_notification_entry_description">An entry has been detected, take the necessary action.</string>
     <string name="text_notification_trigger_title">Alarm Triggered</string>
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
+    <string name="text_settings_code_title">To access this area, please enter your code.</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>
@@ -157,5 +161,27 @@
         <item>@string/preference_title_hass_settings</item>
         <item>@string/text_about</item>
     </string-array>
-
+    
+    <string-array name="inactivity_times">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+    </string-array>
+    
+    <string-array name="inactivity_values">
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>180000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
+    </string-array>
+    
 </resources>

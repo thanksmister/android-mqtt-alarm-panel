@@ -38,7 +38,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionMode
 import com.thanksmister.iot.mqtt.alarmpanel.data.provider.ContentProvider;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 
@@ -64,12 +63,7 @@ public class MainFragment extends BaseFragment implements
     
     @OnClick(R.id.buttonSettings)
     void buttonSettingsClicked() {
-        if(!getConfiguration().isArmed()) {
-            Intent intent = SettingsActivity.createStartIntent(getActivity());
-            startActivity(intent);
-        } else {
-            listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
-        }
+        listener.showSettingsCodeDialog();
     }
 
     @OnClick(R.id.buttonLogs)
@@ -95,6 +89,7 @@ public class MainFragment extends BaseFragment implements
     public interface OnMainFragmentListener {
         void manuallyLaunchScreenSaver();
         void publishDisarmed();
+        void showSettingsCodeDialog();
         void showAlarmDisableDialog(boolean beep, int timeRemaining);
     }
     

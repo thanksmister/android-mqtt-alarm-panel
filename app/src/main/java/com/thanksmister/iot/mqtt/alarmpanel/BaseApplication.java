@@ -21,9 +21,12 @@ package com.thanksmister.iot.mqtt.alarmpanel;
 import android.app.Application;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.CrashlyticsTree;
 
 import dpreference.DPreference;
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class BaseApplication extends Application {
@@ -33,6 +36,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
@@ -40,10 +44,16 @@ public class BaseApplication extends Application {
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build());
-        } 
+        } else {
+            Fabric.with(this, new Crashlytics());
+            Timber.plant(new CrashlyticsTree());
+        }
 
         // store instance
         instance = this;
+        
+        // lifecycle events
+        registerActivityLifecycleCallbacks(new LifecycleHandler());
     }
 
     @NonNull

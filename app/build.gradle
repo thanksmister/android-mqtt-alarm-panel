@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 /*
  * <!--
  *   ~ Copyright (c) 2017. ThanksMister LLC
@@ -17,12 +26,18 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'com.neenbedankt.android-apt'
 
 def versionMajor = 0
 def versionMinor = 3
-def versionPatch = 6
-def versionBuild = 1 // bump for dog food builds, public betas, etc.
+def versionPatch = 7
+def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 android {
     compileSdkVersion 26
@@ -104,4 +119,7 @@ dependencies {
     compile 'joda-time:joda-time:2.9.9'
 
     testCompile 'junit:junit:4.12'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
 }
