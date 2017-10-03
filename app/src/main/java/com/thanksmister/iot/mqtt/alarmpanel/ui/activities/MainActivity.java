@@ -72,7 +72,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
         ButterKnife.bind(this);
+        
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -91,6 +93,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if(notificationUtils == null) {
             notificationUtils = new NotificationUtils(MainActivity.this);
         }
+        
         if(mqttManager == null) {
             mqttManager = new MqttManager(this);
             makeMqttConnection();
@@ -105,10 +108,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onResume() {
         super.onResume();
-        resetInactivityTimer();
-        /*if(mqttManager != null) {
+        if(mqttManager == null) {
+            mqttManager = new MqttManager(this);
             makeMqttConnection();
-        }*/
+        }
+        resetInactivityTimer();
         setViewPagerState();
     }
 
@@ -151,9 +155,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     private void makeMqttConnection() {
-        mqttManager.makeMqttConnection(MainActivity.this, getConfiguration().getTlsConnection(),
-                getConfiguration().getBroker(), getConfiguration().getPort(), getConfiguration().getClientId(),
-                getConfiguration().getStateTopic(), getConfiguration().getUserName(), getConfiguration().getPassword());
+        if(mqttManager != null && !TextUtils.isEmpty(getConfiguration().getBroker())
+                && !TextUtils.isEmpty(getConfiguration().getStateTopic())) {
+            mqttManager.makeMqttConnection(MainActivity.this, getConfiguration().getTlsConnection(),
+                    getConfiguration().getBroker(), getConfiguration().getPort(), getConfiguration().getClientId(),
+                    getConfiguration().getStateTopic(), getConfiguration().getUserName(), getConfiguration().getPassword());
+        }
     }
 
     public void publishArmedHome() {
@@ -168,6 +175,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     public void publishArmedAway() {
         String topic = AlarmUtils.COMMAND_TOPIC;
         String message = AlarmUtils.COMMAND_ARM_AWAY;
+        if(mqttManager != null) {
+            mqttManager.publishMessage(topic, message);
+        }
+    }
+
+    @Override
+    public void publishDisarmed() {
+        String topic = AlarmUtils.COMMAND_TOPIC;
+        String message = AlarmUtils.COMMAND_DISARM;
         if(mqttManager != null) {
             mqttManager.publishMessage(topic, message);
         }
@@ -190,15 +206,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 hideDialog();
             }
         }, getConfiguration().getAlarmCode(), beep, timeRemaining);
-    }
-
-    @Override
-    public void publishDisarmed() {
-        String topic = AlarmUtils.COMMAND_TOPIC;
-        String message = AlarmUtils.COMMAND_DISARM;
-        if(mqttManager != null) {
-            mqttManager.publishMessage(topic, message);
-        }
     }
 
     @Override
@@ -229,7 +236,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
-        Timber.d("state: " + state);
         switch (state) {
             case AlarmUtils.STATE_DISARM:
                 awakenDeviceForAction();
@@ -335,7 +341,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     public void handleMqttDisconnected() {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 showAlertDialog(getString(R.string.error_mqtt_connection), new DialogInterface.OnClickListener() {
