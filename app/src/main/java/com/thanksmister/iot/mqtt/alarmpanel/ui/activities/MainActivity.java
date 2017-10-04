@@ -74,6 +74,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setContentView(R.layout.activity_main);
         
         ButterKnife.bind(this);
+
+        //getConfiguration().reset();
+        /*getConfiguration().setUserName("homeassistant");
+        getConfiguration().setPassword("3355");
+        getConfiguration().setBroker("192.168.86.228");
+        getConfiguration().setPort(1883);
+        getConfiguration().setAlarmCode(3355);
+        getConfiguration().setFirstTime(false);
+        getConfiguration().setAlarmCode(1234);*/
         
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
@@ -85,15 +94,16 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 }
             });
         }
-        
+
         pagerAdapter = new MainSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setPagingEnabled(false);
+        
         if(notificationUtils == null) {
             notificationUtils = new NotificationUtils(MainActivity.this);
         }
-        
+
         if(mqttManager == null) {
             mqttManager = new MqttManager(this);
             makeMqttConnection();
@@ -108,12 +118,14 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onResume() {
         super.onResume();
+        resetInactivityTimer();
+        setViewPagerState();
         if(mqttManager == null) {
             mqttManager = new MqttManager(this);
             makeMqttConnection();
+        } else if (getConfiguration().reconnectNeeded()) {
+            makeMqttConnection();
         }
-        resetInactivityTimer();
-        setViewPagerState();
     }
 
     private void setViewPagerState() {
@@ -155,8 +167,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     private void makeMqttConnection() {
-        if(mqttManager != null && !TextUtils.isEmpty(getConfiguration().getBroker())
-                && !TextUtils.isEmpty(getConfiguration().getStateTopic())) {
+        if(mqttManager != null && getConfiguration().hasConnectionCriteria()) {
             mqttManager.makeMqttConnection(MainActivity.this, getConfiguration().getTlsConnection(),
                     getConfiguration().getBroker(), getConfiguration().getPort(), getConfiguration().getClientId(),
                     getConfiguration().getStateTopic(), getConfiguration().getUserName(), getConfiguration().getPassword());
@@ -164,28 +175,22 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     public void publishArmedHome() {
-        String topic = AlarmUtils.COMMAND_TOPIC;
-        String message = AlarmUtils.COMMAND_ARM_HOME;
         if(mqttManager != null) {
-            mqttManager.publishMessage(topic, message);
+            mqttManager.publishArmedHome();
         }
     }
 
     @Override
     public void publishArmedAway() {
-        String topic = AlarmUtils.COMMAND_TOPIC;
-        String message = AlarmUtils.COMMAND_ARM_AWAY;
         if(mqttManager != null) {
-            mqttManager.publishMessage(topic, message);
+            mqttManager.publishArmedAway();
         }
     }
 
     @Override
     public void publishDisarmed() {
-        String topic = AlarmUtils.COMMAND_TOPIC;
-        String message = AlarmUtils.COMMAND_DISARM;
         if(mqttManager != null) {
-            mqttManager.publishMessage(topic, message);
+            mqttManager.publishDisarmed();
         }
     }
 
@@ -299,8 +304,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             hideDialog();
             viewPager.setCurrentItem(0);
         }
-
-        Timber.d("awakenDeviceForAction");
     }
     
     @Override
@@ -334,7 +337,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showAlertDialog(errorMessage);
+                if(!getConfiguration().isFirstTime() && getConfiguration().hasConnectionCriteria()) {
+                    showAlertDialog(errorMessage);
+                }
             }
         });
     }

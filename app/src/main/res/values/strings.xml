@@ -37,9 +37,9 @@
     <string name="preference_summary_command_topic">Set the command topic value.</string>
     <string name="preference_summary_state_topic">Set the state topic value.</string>
     <string name="preference_title_username">Username</string>
-    <string name="preference_summary_username">Set the service username (optional).</string>
+    <string name="preference_summary_username">Set the service username (if needed).</string>
     <string name="preference_title_password">Password</string>
-    <string name="preference_summary_password">Set the service password (optional).</string>
+    <string name="preference_summary_password">Set the service password (if needed).</string>
     <string name="preference_title_alarm">Alarm Settings</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
     <string name="preference_title_pending_time">Pending Time</string>
@@ -153,6 +153,7 @@
     <string name="text_notification_trigger_title">Alarm Triggered</string>
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
+    <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

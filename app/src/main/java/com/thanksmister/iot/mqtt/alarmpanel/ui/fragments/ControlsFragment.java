@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.data.database.model.SubscriptionModel;
@@ -74,14 +75,20 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
  
     @OnClick(R.id.alarmView)
     public void armButtonClick() {
-        if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
-            showArmOptionsDialog();
-        } else {
-            int countDownTimeRemaining = alarmPendingView.getCountDownTimeRemaining();
-            if(countDownTimeRemaining > 0) {
-                listener.showAlarmDisableDialog(false, countDownTimeRemaining);
+        if(getConfiguration().hasConnectionCriteria()) {
+            if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
+                showArmOptionsDialog();
             } else {
-                listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
+                int countDownTimeRemaining = alarmPendingView.getCountDownTimeRemaining();
+                if(countDownTimeRemaining > 0) {
+                    listener.showAlarmDisableDialog(false, countDownTimeRemaining);
+                } else {
+                    listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
+                }
+            }
+        } else {
+            if(isAdded()) {
+                ((BaseActivity) getActivity()).showAlertDialog(getString(R.string.text_error_no_alarm_setup));
             }
         }
     }

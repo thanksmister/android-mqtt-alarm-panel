@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
@@ -71,6 +72,7 @@ public class Configuration {
     private static final String PREF_ARMED = "pref_armed";
     private static final String PREF_FIRST_TIME = "pref_first_time";
     private static final String PREF_ALARM_MODE = "pref_alarm_mode";
+    private static final String IS_DIRTY = "pref_is_dirty";
    
 
     private final long INACTIVITY_TIMEOUT =  5 * 60 * 1000; // 5 min
@@ -80,7 +82,21 @@ public class Configuration {
         this.sharedPreferences = sharedPreferences;
         this.context = context;
     }
+    
+    public boolean hasConnectionCriteria() {
+        return (!TextUtils.isEmpty(getBroker()) && !TextUtils.isEmpty(getStateTopic()));
+    }
+    
+    public boolean reconnectNeeded() {
+        boolean isDirty = this.sharedPreferences.getPrefBoolean(IS_DIRTY, false);
+        setIsDirty(false);
+        return isDirty;
+    }
 
+    public void setIsDirty(boolean value) {
+        this.sharedPreferences.setPrefBoolean(IS_DIRTY, value);
+    }
+    
     public boolean showHassModule(){
         return sharedPreferences.getPrefBoolean(PREF_MODULE_HASS, false);
     }
@@ -204,6 +220,7 @@ public class Configuration {
 
     public void setUserName(String value) {
         this.sharedPreferences.setPrefString(PREF_USERNAME, value);
+        setIsDirty(true);
     }
 
     public String getPassword() {
@@ -212,6 +229,7 @@ public class Configuration {
 
     public void setPassword(String value) {
         this.sharedPreferences.setPrefString(PREF_PASSWORD, value);
+        setIsDirty(true);
     }
 
     public String getClientId() {
@@ -220,6 +238,7 @@ public class Configuration {
 
     public void setClientId(String value) {
         this.sharedPreferences.setPrefString(PREF_CLIENT_ID, value);
+        setIsDirty(true);
     }
 
     public int getPort() {
@@ -228,6 +247,7 @@ public class Configuration {
 
     public void setPort(int value) {
         this.sharedPreferences.setPrefInt(PREF_PORT, value);
+        setIsDirty(true);
     }
 
     public String getBroker() {
@@ -236,6 +256,7 @@ public class Configuration {
 
     public void setBroker(String value) {
         this.sharedPreferences.setPrefString(PREF_BROKER, value);
+        setIsDirty(true);
     }
 
     public int getPendingTime() {
@@ -260,6 +281,7 @@ public class Configuration {
 
     public void setCommandTopic(String value) {
         this.sharedPreferences.setPrefString(PREF_COMMAND_TOPIC, value);
+        setIsDirty(true);
     }
 
     public String getStateTopic() {
@@ -276,6 +298,7 @@ public class Configuration {
 
     public void setStateTopic(String value) {
         this.sharedPreferences.setPrefString(PREF_STATE_TOPIC, value);
+        setIsDirty(true);
     }
 
     public boolean getTlsConnection() {
@@ -327,5 +350,6 @@ public class Configuration {
         sharedPreferences.removePreference(PREF_ARMED);
         sharedPreferences.removePreference(PREF_ALARM_CODE);
         sharedPreferences.removePreference(PREF_NOTIFICATIONS);
+        sharedPreferences.removePreference(PREF_FIRST_TIME);
     }
 }

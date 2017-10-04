@@ -101,7 +101,8 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        if(TextUtils.isEmpty(configuration.getLongitude()) || TextUtils.isEmpty(configuration.getLatitude()) ) {
+        if( (TextUtils.isEmpty(configuration.getLongitude()) || TextUtils.isEmpty(configuration.getLatitude()))  
+                && configuration.showPhotoScreenSaver()) {
             checkLocationEnabled(); // check that we have location permissions 
         }
     }
@@ -201,13 +202,12 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         switch (key) {
             case "pref_weather":
                 boolean checked = weatherModulePreference.isChecked();
-                Timber.d("checked: " + checked);
                 configuration.setShowWeatherModule(checked);
                 weatherApiKeyPreference.setEnabled(checked);
                 weatherLatitude.setEnabled(checked);
                 weatherLongitude.setEnabled(checked);
                 unitsPreference.setEnabled(checked);
-                setUpLocationMonitoring();
+                checkLocationEnabled(); // check that we have location permissions
                 break;
             case "pref_units":
                 boolean useCelsius = unitsPreference.isChecked();

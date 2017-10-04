@@ -241,10 +241,6 @@ abstract public class BaseActivity extends AppCompatActivity {
             disableDialog.dismiss();
             disableDialog = null;
         }
-        if (alertDialog != null && alertDialog.isShowing()) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
         if (screenSaverDialog != null && screenSaverDialog.isShowing()) {
             screenSaverDialog.dismiss();
             screenSaverDialog = null;
