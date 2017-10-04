@@ -154,6 +154,7 @@
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
+    <string name="text_error_pending_time_low">The pending time is the time you allow yourself to disarm the alarm or to exit before the alarm is set.  Please reconsider using a higher pending time.</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

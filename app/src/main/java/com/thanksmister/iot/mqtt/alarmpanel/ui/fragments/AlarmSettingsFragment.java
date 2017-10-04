@@ -146,6 +146,7 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
         userNamePreference.setText(configuration.getUserName());
         passwordPreference.setText(configuration.getPassword());
         pendingPreference.setText(String.valueOf(configuration.getPendingTime()));
+        triggerPreference.setText(String.valueOf(configuration.getTriggerTime()));
         sslPreference.setChecked(configuration.getTlsConnection());
         notificationsPreference.setChecked(configuration.showNotifications());
 
@@ -195,8 +196,12 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
                 break;
             case PREF_PORT:
                 value = portPreference.getText();
-                configuration.setPort(Integer.valueOf(value));
-                portPreference.setSummary(String.valueOf(value));
+                if (!TextUtils.isEmpty(value)) {
+                    configuration.setPort(Integer.valueOf(value));
+                    portPreference.setSummary(String.valueOf(value));
+                } else {
+                    portPreference.setText(String.valueOf(configuration.getPort()));
+                }
                 break;
             case PREF_COMMAND_TOPIC:
                 value = commandTopicPreference.getText();
@@ -220,13 +225,27 @@ public class AlarmSettingsFragment extends PreferenceFragmentCompat implements S
                 break;
             case PREF_PENDING_TIME:
                 value = pendingPreference.getText();
-                configuration.setPendingTime(Integer.parseInt(value));
-                pendingPreference.setSummary(getString(R.string.preference_summary_pending_time, String.valueOf(configuration.getPendingTime())));
+                if (!TextUtils.isEmpty(value)) {
+                    int pendingTime = Integer.parseInt(value);
+                    configuration.setPendingTime(pendingTime);
+                    pendingPreference.setSummary(getString(R.string.preference_summary_pending_time, String.valueOf(configuration.getPendingTime())));
+                    if(pendingTime < 10) {
+                        if(isAdded()) {
+                            ((BaseActivity) getActivity()).showAlertDialog(getString(R.string.text_error_pending_time_low));
+                        }
+                    }
+                } else {
+                    pendingPreference.setText(String.valueOf(configuration.getPendingTime()));
+                }
                 break;
             case PREF_TRIGGER_TIME:
                 value = triggerPreference.getText();
-                configuration.setTriggerTime(Integer.parseInt(value));
-                triggerPreference.setSummary(getString(R.string.preference_summary_trigger_time, String.valueOf(configuration.getTriggerTime())));
+                if (!TextUtils.isEmpty(value)) {
+                    configuration.setTriggerTime(Integer.parseInt(value));
+                    triggerPreference.setSummary(getString(R.string.preference_summary_trigger_time, String.valueOf(configuration.getTriggerTime())));
+                } else {
+                    triggerPreference.setText(String.valueOf(configuration.getTriggerTime()));
+                }
                 break;
             case PREF_TLS_CONNECTION:
                 boolean checked = sslPreference.isChecked();

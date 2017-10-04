@@ -24,12 +24,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -160,10 +162,15 @@ abstract public class BaseActivity extends AppCompatActivity {
         if (wakeLock != null && !wakeLock.isHeld()) {  // but we don't hold it
             wakeLock.acquire();
         }
-        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG");
-        keyguardLock.disableKeyguard();
-        
+
+        // Some Amazon devices are not seeing this permission so we are trying to check
+        String permission = "android.permission.DISABLE_KEYGUARD";
+        int checkSelfPermission = ContextCompat.checkSelfPermission(BaseActivity.this, permission);
+        if(checkSelfPermission == PackageManager.PERMISSION_GRANTED) {
+            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+            KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG");
+            keyguardLock.disableKeyguard();
+        }
         if(!LifecycleHandler.isApplicationInForeground()) {
             Intent it = new Intent("intent.my.action");
             it.setComponent(new ComponentName(BaseActivity.this.getPackageName(), MainActivity.class.getName()));

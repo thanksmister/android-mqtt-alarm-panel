@@ -21,7 +21,7 @@ import timber.log.Timber;
 
 public class MqttManager {
 
-    final private MqttManagerListener listener;
+    private MqttManagerListener listener;
     private MqttAndroidClient mqttAndroidClient;
 
     public MqttManager(MqttManagerListener listener) {
@@ -36,9 +36,7 @@ public class MqttManager {
      */
     public interface MqttManagerListener {
         void subscriptionMessage(String topic, String payload, String id);
-
         void handleMqttException(String errorMessage);
-
         void handleMqttDisconnected();
     }
 
@@ -58,6 +56,21 @@ public class MqttManager {
         String topic = AlarmUtils.COMMAND_TOPIC;
         String message = AlarmUtils.COMMAND_DISARM;
         publishMessage(topic, message);
+    }
+
+    /**
+     * Destroyed the client and the listener. Must be reinitialized and reconnected again. 
+     */
+    public void destroyMqttConnection() {
+        listener = null;
+        if(mqttAndroidClient != null &&  mqttAndroidClient.isConnected()) {
+            try {
+                mqttAndroidClient.disconnect();
+                mqttAndroidClient = null;
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void makeMqttConnection(final Context context, final boolean tlsConnection, final String broker, final int port,
@@ -123,12 +136,16 @@ public class MqttManager {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Timber.e("Failed to connect to: " + serverUri + " exception: " + exception);
-                    listener.handleMqttException("Failed to connect using the following broker and port: " + serverUri);
+                    if(listener != null) {
+                        listener.handleMqttException("Failed to connect using the following broker and port: " + serverUri);
+                    }
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
-            listener.handleMqttException(e.getMessage());
+            if(listener != null) {
+                listener.handleMqttException(e.getMessage());
+            }
         }
     }
 
@@ -139,13 +156,17 @@ public class MqttManager {
                     @Override
                     public void messageArrived(final String topic, final MqttMessage message) throws Exception {
                         Timber.i("Subscribe Message message : " + topic + " : " + new String(message.getPayload()));
-                        listener.subscriptionMessage(topic, new String(message.getPayload()), String.valueOf(message.getId()));
+                        if(listener != null) {
+                            listener.subscriptionMessage(topic, new String(message.getPayload()), String.valueOf(message.getId()));
+                        }
                     }
                 });
             } catch (MqttException e) {
                 Timber.e("Exception while subscribing");
                 e.printStackTrace();
-                listener.handleMqttException(e.getMessage());
+                if(listener != null) {
+                    listener.handleMqttException(e.getMessage());
+                }
             }
         }
     }
@@ -157,14 +178,16 @@ public class MqttManager {
                 message.setPayload(publishMessage.getBytes());
                 mqttAndroidClient.publish(publishTopic, message);
                 Timber.d("Message Published: " + publishTopic);
-                if (!mqttAndroidClient.isConnected()) {
+                if (!mqttAndroidClient.isConnected() && listener != null) {
                     listener.handleMqttDisconnected();
                     Timber.d("Unable to connect client.");
                 }
             } catch (MqttException e) {
                 Timber.e("Error Publishing: " + e.getMessage());
                 e.printStackTrace();
-                listener.handleMqttException(e.getMessage());
+                if(listener != null) {
+                    listener.handleMqttException(e.getMessage());
+                }
             }
         }
     }

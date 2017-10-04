@@ -59,11 +59,7 @@ public class AlarmPendingView extends LinearLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-        }
-        displaySeconds = 0;
+        stopCountDown();
     }
 
     /**
@@ -71,6 +67,16 @@ public class AlarmPendingView extends LinearLayout {
      * @param pendingTime seconds
      */
     public void startCountDown(int pendingTime) {
+        
+        if(pendingTime <= 0) {
+            stopCountDown();
+            if(listener != null) {
+                listener.onTimeOut();
+                displaySeconds = 0;
+            }
+            return;
+        }
+        
         if(countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;

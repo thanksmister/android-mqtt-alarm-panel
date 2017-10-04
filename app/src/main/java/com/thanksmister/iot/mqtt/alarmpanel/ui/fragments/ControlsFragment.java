@@ -83,7 +83,9 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                 if(countDownTimeRemaining > 0) {
                     listener.showAlarmDisableDialog(false, countDownTimeRemaining);
                 } else {
-                    listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
+                    if(getConfiguration().getPendingTime() == 0) {
+                        listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
+                    }
                 }
             }
         } else {
@@ -305,14 +307,16 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
         if(alarmPendingLayout.isShown()) {
             return;
         }
-        alarmPendingLayout.setVisibility(View.VISIBLE);
-        alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
-            @Override
-            public void onTimeOut() {
-                hideAlarmPendingView();
-            }
-        });
-        alarmPendingView.startCountDown(getConfiguration().getPendingTime());
+        if(getConfiguration().getPendingTime() > 0) {
+            alarmPendingLayout.setVisibility(View.VISIBLE);
+            alarmPendingView.setListener(new AlarmPendingView.ViewListener() {
+                @Override
+                public void onTimeOut() {
+                    hideAlarmPendingView();
+                }
+            });
+            alarmPendingView.startCountDown(getConfiguration().getPendingTime()); 
+        }
     }
     
     private void hideAlarmPendingView() {

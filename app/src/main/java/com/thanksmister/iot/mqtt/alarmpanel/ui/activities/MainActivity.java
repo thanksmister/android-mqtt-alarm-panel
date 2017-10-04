@@ -74,15 +74,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setContentView(R.layout.activity_main);
         
         ButterKnife.bind(this);
-
-        //getConfiguration().reset();
-        /*getConfiguration().setUserName("homeassistant");
-        getConfiguration().setPassword("3355");
-        getConfiguration().setBroker("192.168.86.228");
-        getConfiguration().setPort(1883);
-        getConfiguration().setAlarmCode(3355);
-        getConfiguration().setFirstTime(false);
-        getConfiguration().setAlarmCode(1234);*/
         
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
@@ -149,6 +140,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if(releaseWakeHandler != null) {
             releaseWakeHandler.removeCallbacks(releaseWakeLockRunnable);
             releaseWakeHandler = null;
+        }
+        if(mqttManager != null) {
+            mqttManager.destroyMqttConnection();
+            mqttManager = null;
         }
     }
 
@@ -334,7 +329,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     public void handleMqttException(final String errorMessage) {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(!getConfiguration().isFirstTime() && getConfiguration().hasConnectionCriteria()) {
