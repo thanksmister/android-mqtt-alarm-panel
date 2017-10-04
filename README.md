@@ -15,6 +15,7 @@ Here are the Command and Publish topics used:
 - Publish topic: home/alarm
 - Publish payloads: disarmed, armed_away, armed_home, pending, triggered.
 
+Screen Shots:
 
 ![alarm_home](https://user-images.githubusercontent.com/142340/29889460-9f615642-8d9a-11e7-99a6-1a49529dd580.png)
 
