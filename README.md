@@ -1,10 +1,19 @@
 # Android Alarm Panel for Home Assistant
 
-This project is a MQTT Alarm Control Panel for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. This project was built for a Android Tablets but there is also a version available for Android Things and Raspbery Pi 3: https://github.com/thanksmister/androidthings-mqtt-alarm-panel.
+This project is a MQTT Alarm Control Panel for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel whould work with any home automation platform that supprts MQTT messaging. 
+
+This project was built for a Android devices but there is also a version available for Android Things and Raspbery Pi 3: https://github.com/thanksmister/androidthings-mqtt-alarm-panel.
 
 The alarm panel acts as an interface for Home Assistant's manual alarm control panel component. You can set the alarm state to away or home, or disarm the alarm using a code. In addition it has some nice features such as weather forecast and screen saver mode.
 
-MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, Home Assistant is responsible for triggering the alarm through automation and sensor states.
+MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
+
+Here are the Command and Publish topics used:
+
+Command topic:  home/alarm/set
+Command payloads: ARM_HOME, ARM_AWAY, DISARM
+Publish topic: home/alarm
+Publish payloads: disarmed, armed_away, armed_home, pending, triggered.
 
 
 ![alarm_home](https://user-images.githubusercontent.com/142340/29889460-9f615642-8d9a-11e7-99a6-1a49529dd580.png)
