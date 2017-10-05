@@ -332,11 +332,11 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void showSettingsCodeDialog(final int code, final SettingsCodeView.ViewListener listener) {
+        hideDialog();
         if(getConfiguration().isFirstTime()) {
             Intent intent = SettingsActivity.createStartIntent(BaseActivity.this);
             startActivity(intent);
         } else {
-            hideDialog();
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.dialog_settings_code, null, false);
             final SettingsCodeView settingsCodeView = view.findViewById(R.id.settingsCodeView);

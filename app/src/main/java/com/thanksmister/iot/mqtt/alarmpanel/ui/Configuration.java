@@ -93,7 +93,7 @@ public class Configuration {
         return isDirty;
     }
 
-    public void setIsDirty(boolean value) {
+    private void setIsDirty(boolean value) {
         this.sharedPreferences.setPrefBoolean(IS_DIRTY, value);
     }
     

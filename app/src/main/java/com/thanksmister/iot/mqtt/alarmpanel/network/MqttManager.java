@@ -112,7 +112,7 @@ public class MqttManager {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Timber.i("Sent Message : " + topic + " : " + new String(message.getPayload()));
+                Timber.i("Received Message : " + topic + " : " + new String(message.getPayload()));
             }
 
             @Override

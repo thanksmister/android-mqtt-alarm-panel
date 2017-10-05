@@ -74,7 +74,7 @@
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
         
-        <!-- Your Crashlytics key here, you also need athe secret in a fabric.properties -->
+        <!-- Your Crashlytics key here, you also need the secret in a fabric.properties -->
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="6aa105ab19b074264f7333064640f494720b90f1"/>
