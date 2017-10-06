@@ -233,7 +233,12 @@ public class Configuration {
     }
 
     public String getClientId() {
-        return this.sharedPreferences.getPrefString(PREF_CLIENT_ID, DeviceUtils.getDeviceIdHash(context));
+        String uuid  = this.sharedPreferences.getPrefString(PREF_CLIENT_ID, null);
+        if(TextUtils.isEmpty(uuid)) {
+            uuid = DeviceUtils.getUuIdHash();
+            setClientId(uuid);
+        }
+        return uuid;
     }
 
     public void setClientId(String value) {

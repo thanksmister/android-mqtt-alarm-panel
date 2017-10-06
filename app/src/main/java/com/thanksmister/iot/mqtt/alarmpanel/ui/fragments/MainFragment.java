@@ -184,6 +184,8 @@ public class MainFragment extends BaseFragment implements
     // Control Fragment Listener
     private void showAlarmTriggered() {
         if(isAdded()) {
+            mainView.setVisibility(View.GONE);
+            triggeredView.setVisibility(View.VISIBLE);
             int code = getConfiguration().getAlarmCode();
             final AlarmTriggeredView disarmView = getActivity().findViewById(R.id.alarmTriggeredView);
             disarmView.setCode(code);
@@ -200,8 +202,6 @@ public class MainFragment extends BaseFragment implements
                 public void onCancel() {
                 }
             });
-            mainView.setVisibility(View.GONE);
-            triggeredView.setVisibility(View.VISIBLE);
         }
     }
     

@@ -94,6 +94,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if(notificationUtils == null) {
             notificationUtils = new NotificationUtils(MainActivity.this);
         }
+
+        if(mqttManager == null) {
+            mqttManager = new MqttManager(this);
+            makeMqttConnection();
+        }
     }
 
     @Override

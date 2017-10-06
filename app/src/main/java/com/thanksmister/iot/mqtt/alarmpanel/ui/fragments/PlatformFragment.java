@@ -20,6 +20,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +34,12 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class PlatformFragment extends BaseFragment {
+    
+    @Bind(R.id.swipeRefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
     
     @Bind(R.id.webView)
     WebView webView;
@@ -59,16 +64,7 @@ public class PlatformFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        
-        if(getConfiguration().showHassModule() 
-                && !TextUtils.isEmpty(getConfiguration().getHassUrl()) && webView != null) {
-            webView.setWebChromeClient(new WebChromeClient());
-            WebSettings settings = webView.getSettings();
-            settings.setJavaScriptEnabled(true);
-            webView.loadUrl(getConfiguration().getHassUrl());
-        } else if (webView != null) {
-            webView.loadUrl("about:blank");
-        }
+        loadWebPage();
     }
 
     @Override
@@ -79,16 +75,50 @@ public class PlatformFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Timber.i("onRefresh called from SwipeRefreshLayout");
+                        loadWebPage();
+                    }
+                }
+        );
+    }
+    
+    private void loadWebPage(){
+        if(getConfiguration().showHassModule()
+                && !TextUtils.isEmpty(getConfiguration().getHassUrl()) && webView != null) {
+            webView.setWebChromeClient(new WebChromeClient() {
+                public void onProgressChanged(WebView view, int newProgress){
+                    if(newProgress == 100){
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            });
+            WebSettings settings = webView.getSettings();
+            settings.setJavaScriptEnabled(true);
+            webView.loadUrl(getConfiguration().getHassUrl());
+        } else if (webView != null) {
+            webView.loadUrl("about:blank");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_hass, container, false);
+        return inflater.inflate(R.layout.fragment_platform, container, false);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
+    }
+
+    public class PlatformWebChromeClient extends WebChromeClient {
+
+        public void onPageFinished(WebView view, String url) {
+            // do your stuff here
+        }
     }
 }

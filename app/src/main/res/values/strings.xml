@@ -78,11 +78,11 @@
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
     <string name="preference_title_hass_settings">Home Automation Settings</string>
-    <string name="preference_summary_hass_settings">Allows you to load external web page to access other your home automation platform interface.</string>
+    <string name="preference_summary_hass_settings">Allows you to load external web page to access your automation platform interface.</string>
     <string name="preference_title_hass">Home Automation Platform</string>
-    <string name="preference_summary_hass">Displays your home automation web page by swiping main screen.</string>
+    <string name="preference_summary_hass">Displays a web page by swiping the main screen.</string>
     <string name="preference_title_hass_url">Platform Address</string>
-    <string name="preference_summary_hass_url">Enter the IP address of your home automation web page (http://ipaddress:8123).</string>
+    <string name="preference_summary_hass_url">Enter the IP address and prefix of your home automation web page and port (http://your_ip_address:8123).</string>
 
     <string name="preference_title_notification">Notifications</string>
     <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
@@ -155,6 +155,7 @@
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
     <string name="text_error_pending_time_low">The pending time is the time you allow yourself to disarm the alarm or to exit before the alarm is set.  Please reconsider using a higher pending time.</string>
+    <string name="progress_location">Acquiring location…</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

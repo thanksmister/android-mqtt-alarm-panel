@@ -119,6 +119,9 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         if(locationHandler != null) {
             locationHandler.removeCallbacks(locationRunnable);
         }
+        if(locationManager != null) {
+            locationManager.removeUpdates(locationListener);
+        }
         ButterKnife.unbind(this);
     }
 
@@ -207,7 +210,9 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
                 weatherLatitude.setEnabled(checked);
                 weatherLongitude.setEnabled(checked);
                 unitsPreference.setEnabled(checked);
-                checkLocationEnabled(); // check that we have location permissions
+                if(checked) {
+                    checkLocationEnabled(); // check that we have location permissions
+                }
                 break;
             case "pref_units":
                 boolean useCelsius = unitsPreference.isChecked();
@@ -242,56 +247,66 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
                 break;
         }
     }
+
+    final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                if(isAdded()) {
+                    ((BaseActivity) getActivity()).hideProgressDialog();
+                    String latitude = String.valueOf(location.getLatitude());
+                    String longitude = String.valueOf(location.getLongitude());
+                    if (LocationUtils.coordinatesValid(latitude, longitude)) {
+                        Timber.d("setUpLocationMonitoring complete");
+                        configuration.setLat(String.valueOf(location.getLatitude()));
+                        configuration.setLon(String.valueOf(location.getLongitude()));
+                        weatherLatitude.setSummary(String.valueOf(configuration.getLatitude()));
+                        weatherLongitude.setSummary(configuration.getLongitude());
+                    } else {
+                        Toast.makeText(getActivity(), R.string.toast_invalid_coordinates, Toast.LENGTH_SHORT).show();
+                    }
+                    locationManager.removeUpdates(this);
+                }
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Timber.d("onStatusChanged: " + status);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Timber.d("onProviderEnabled");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Timber.d("onProviderDisabled");
+            locationHandler = new Handler();
+            locationHandler.postDelayed(locationRunnable, 500);
+        }
+    };
     
     private void setUpLocationMonitoring() {
-        
         Timber.d("setUpLocationMonitoring");
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-        
-        try {
-            final LocationListener locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    if (location != null) {
-                        String latitude = String.valueOf(location.getLatitude());
-                        String longitude = String.valueOf(location.getLongitude());
-                        if(LocationUtils.coordinatesValid(latitude, longitude)){
-                            Timber.d("setUpLocationMonitoring complete");
-                            configuration.setLat(String.valueOf(location.getLatitude()));
-                            configuration.setLon(String.valueOf(location.getLongitude()));
-                            weatherLatitude.setSummary(String.valueOf(configuration.getLatitude()));
-                            weatherLongitude.setSummary(configuration.getLongitude());
-                        } else {
-                            Toast.makeText(getActivity(), R.string.toast_invalid_coordinates, Toast.LENGTH_SHORT).show();
-                        }
-                        
-                        locationManager.removeUpdates(this);
-                    }
+        if(isAdded()) {
+            ((BaseActivity) getActivity()).showProgressDialog(getString(R.string.progress_location), false);
+            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            try {
+                if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HOUR_MILLIS, METERS_MIN, locationListener);
                 }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    Timber.d("onStatusChanged: " + status);
+                if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, HOUR_MILLIS, METERS_MIN, locationListener);
                 }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    Timber.d("onProviderEnabled");
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    Timber.d("onProviderDisabled");
-                    locationHandler = new Handler();
-                    locationHandler.postDelayed(locationRunnable, 500);
-                }
-            };
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HOUR_MILLIS, 0, locationListener);
-        } catch (SecurityException e) {
-            Timber.e("Location manager could not use network provider", e);
-            Toast.makeText(getActivity(), R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show();
+            } catch (SecurityException e) {
+                Timber.e("Location manager could not use network provider", e);
+                ((BaseActivity) getActivity()).hideProgressDialog();
+                Toast.makeText(getActivity(), R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show();
+            }
         }
     }
     
@@ -299,6 +314,7 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         @Override
         public void run() {
             if (isAdded()) { // Without this in certain cases application will show ANR
+                ((BaseActivity) getActivity()).hideProgressDialog();
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage(R.string.string_location_services_disabled).setCancelable(false).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

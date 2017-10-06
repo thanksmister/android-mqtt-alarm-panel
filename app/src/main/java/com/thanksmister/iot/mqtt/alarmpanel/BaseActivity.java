@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,13 +34,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
@@ -50,9 +48,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -238,6 +236,42 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
         return configuration;
     }
+
+    public void showProgressDialog(String message, boolean modal) {
+        if (progressDialog != null) {
+            return;
+        }
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = inflater.inflate(R.layout.dialog_progress, null, false);
+        TextView progressDialogMessage = (TextView) dialogView.findViewById(R.id.progressDialogMessage);
+        progressDialogMessage.setText(message);
+
+        progressDialog = new AlertDialog.Builder(this)
+                .setCancelable(modal)
+                .setView(dialogView)
+                .show();
+    }
+
+    public void showProgressDialog() {
+        if (progressDialog != null) {
+            return;
+        }
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = inflater.inflate(R.layout.dialog_progress_no_text, null, false);
+        progressDialog = new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setView(dialogView)
+                .show();
+    }
+
+    public void hideProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
     
     public void hideDialog() {
         if (dialog != null && dialog.isShowing()) {
@@ -282,25 +316,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     
     public void showArmOptionsDialog(ArmOptionsView.ViewListener armListener) {
         hideDialog();
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_alarm_options, null, false);
-        Rect displayRectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        int density= getResources().getDisplayMetrics().densityDpi;
-        if(density == DisplayMetrics.DENSITY_TV ) {
-            view.setMinimumWidth((int) (displayRectangle.width() * 0.6f));
-            view.setMinimumHeight((int) (displayRectangle.height() * 0.7f));
-        } else if (density == DisplayMetrics.DENSITY_MEDIUM) {
-            view.setMinimumWidth((int) (displayRectangle.width() * 0.5f));
-            view.setMinimumHeight((int) (displayRectangle.height() * 0.6f));
-        } else {
-            view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
-            view.setMinimumHeight((int)(displayRectangle.height() * 0.8f));
-        }
-        final ArmOptionsView optionsView = view.findViewById(R.id.armOptionsView);
-        optionsView.setListener(armListener);
-        dialog = buildImmersiveDialog(true, view, false);
+        dialog = DialogUtils.showArmOptionsDialog(BaseActivity.this, armListener);
     }
 
     /**
@@ -313,22 +329,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         if(disableDialog != null && disableDialog.isShowing()) {
             return;
         }
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_alarm_disable, null, false);
-        final AlarmDisableView alarmCodeView = view.findViewById(R.id.alarmDisableView);
-        alarmCodeView.setListener(alarmCodeListener);
-        alarmCodeView.setCode(code);
-        alarmCodeView.startCountDown(timeRemaining);
-        if(beep) {
-            alarmCodeView.playContinuousBeep();
-        }
-        disableDialog = buildImmersiveDialog(true, view, false);
-        disableDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                alarmCodeView.destroySoundUtils();
-            }
-        });
+        disableDialog = DialogUtils.showAlarmDisableDialog(BaseActivity.this, alarmCodeListener, code, beep, timeRemaining);
     }
 
     public void showSettingsCodeDialog(final int code, final SettingsCodeView.ViewListener listener) {
@@ -337,32 +338,13 @@ abstract public class BaseActivity extends AppCompatActivity {
             Intent intent = SettingsActivity.createStartIntent(BaseActivity.this);
             startActivity(intent);
         } else {
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.dialog_settings_code, null, false);
-            final SettingsCodeView settingsCodeView = view.findViewById(R.id.settingsCodeView);
-            settingsCodeView.setCode(code);
-            settingsCodeView.setListener(listener);
-            dialog = buildImmersiveDialog(true, view, false);
+            dialog = DialogUtils.showSettingsCodeDialog(BaseActivity.this, code, listener);
         }
     }
 
     public void showExtendedForecastDialog(Daily daily) {
         hideDialog();
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_extended_forecast, null, false);
-        Rect displayRectangle = new Rect();
-        Window window = getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        view.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
-        int density= getResources().getDisplayMetrics().densityDpi;
-        if (density == DisplayMetrics.DENSITY_MEDIUM) {
-            view.setMinimumHeight((int) (displayRectangle.height() * 0.6f));
-        } else {
-            view.setMinimumHeight((int)(displayRectangle.height() * 0.8f));
-        }
-        final ExtendedForecastView  extendedForecastView = view.findViewById(R.id.extendedForecastView);
-        extendedForecastView.setExtendedForecast(daily, getConfiguration().getWeatherUnits());
-        dialog = buildImmersiveDialog(true, view, false);
+        dialog = DialogUtils.showExtendedForecastDialog(BaseActivity.this, daily, getConfiguration().getWeatherUnits());
     }
     
     public void closeScreenSaver() {
@@ -382,53 +364,26 @@ abstract public class BaseActivity extends AppCompatActivity {
             return;
         }
         inactivityHandler.removeCallbacks(inactivityCallback);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
-        final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
-        screenSaverView.setScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
+        screenSaverDialog = DialogUtils.showScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
                 getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(),
-                getConfiguration().getImageRotation());
-        screenSaverView.setListener(new ScreenSaverView.ViewListener() {
-            @Override
-            public void onMotion() {
-                if (screenSaverDialog != null) {
-                    screenSaverDialog.dismiss();
-                    screenSaverDialog = null;
-                    resetInactivityTimer();
-                }
-            }
-        });
-        screenSaverView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (screenSaverDialog != null) {
-                    screenSaverDialog.dismiss();
-                    screenSaverDialog = null;
-                    resetInactivityTimer();
-                }
-            }
-        });
-        screenSaverDialog = buildImmersiveDialog(true, screenSaverView, true);
-    }
-
-    // immersive dialogs without navigation 
-    // https://stackoverflow.com/questions/22794049/how-do-i-maintain-the-immersive-mode-in-dialogs
-    private Dialog buildImmersiveDialog(boolean cancelable, View view, boolean fullscreen) {
-        Dialog dialog;
-        if(fullscreen) {
-            dialog = new Dialog(BaseActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        } else {
-            dialog = new Dialog(BaseActivity.this);
-        }
-        dialog.setCancelable(cancelable);
-        dialog.setContentView(view);
-        //Set the dialog to not focusable (makes navigation ignore us adding the window)			
-        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        dialog.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
-        dialog.show();
-        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        wm.updateViewLayout(getWindow().getDecorView(), getWindow().getAttributes());
-        return dialog;
+                getConfiguration().getImageRotation(), new ScreenSaverView.ViewListener() {
+                    @Override
+                    public void onMotion() {
+                        if (screenSaverDialog != null) {
+                            screenSaverDialog.dismiss();
+                            screenSaverDialog = null;
+                            resetInactivityTimer();
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (screenSaverDialog != null) {
+                            screenSaverDialog.dismiss();
+                            screenSaverDialog = null;
+                            resetInactivityTimer();
+                        }
+                    }
+                });
     }
 }
