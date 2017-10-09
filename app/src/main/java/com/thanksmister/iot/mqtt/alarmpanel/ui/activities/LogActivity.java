@@ -63,6 +63,8 @@ public class LogActivity extends BaseActivity {
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.contentFrame, LogFragment.newInstance(), LOGS_FRAGMENT).commit();
         }
+
+        resetInactivityTimer();
     }
 
     @Override
@@ -73,5 +75,14 @@ public class LogActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * We should close this view if we have no more user activity.
+     */
+    @Override
+    public void showScreenSaver() {
+        super.showScreenSaver();
+        this.finish();
     }
 }

@@ -25,13 +25,13 @@
     <string name="preference_title_mqtt_server">MQTT Setup</string>
     <string name="preference_summary_mqtt_server">Set the values for the MQTT service</string>
     <string name="preference_title_broker">MQTT Broker</string>
-    <string name="preference_summary_broker">Set MQTT broker service address.</string>
+    <string name="preference_summary_broker">Set MQTT broker service address. For tcp/ssl exclude the prefix (192.168.1.1). For others, include the prefix (http://192.168.1.1).</string>
     <string name="preference_client_id">Client Id</string>
     <string name="preference_summary_client_id">Set the client Id if required by service.</string>
     <string name="preference_tls_connection">SSL/TLS Connection</string>
     <string name="preference_summary_tls_connection">Listen to broker on port 8883 with SSL/TLS.</string>
     <string name="preference_title_port">Service Port</string>
-    <string name="preference_summary_port">Set the service port value.</string>
+    <string name="preference_summary_port">Set the service port value, usually 8123 unless secure.</string>
     <string name="preference_title_command_topic">Command Topic</string>
     <string name="preference_title_state_topic">State Topic</string>
     <string name="preference_summary_command_topic">Set the command topic value.</string>
@@ -154,8 +154,11 @@
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
-    <string name="text_error_pending_time_low">The pending time is the time you allow yourself to disarm the alarm or to exit before the alarm is set.  Please reconsider using a higher pending time.</string>
+    <string name="text_error_pending_time_low">The time in seconds of the pending time before arming the alarm or the alarm triggers. Please allow enough time to arm or disarm the alarm system while entering or exiting.</string>
+    <string name="text_error_trigger_time_low">The trigger time in seconds that the alarm is firing before the alarm is reset. A low trigger time may have unintended behavior.</string>
     <string name="progress_location">Acquiring location…</string>
+    <string name="text_error_only_numbers">Be sure the value only contains numbers and is not blank.</string>
+    <string name="text_error_blank_entry">The value should not blank, please enter a valid value</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

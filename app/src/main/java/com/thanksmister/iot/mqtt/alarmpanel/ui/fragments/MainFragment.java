@@ -170,10 +170,14 @@ public class MainFragment extends BaseFragment implements
                 if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
                         || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY) 
                         || getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)) {
-                    listener.showAlarmDisableDialog(true, getConfiguration().getPendingTime());
+                    // we need a pending time greater than zero to show the dialog, or its just going to go to trigger
+                    if(getConfiguration().getPendingTime() > 0) {
+                        listener.showAlarmDisableDialog(true, getConfiguration().getPendingTime());
+                    }
                 } 
                 break;
             case AlarmUtils.STATE_TRIGGERED:
+                hideDialog();
                 showAlarmTriggered();
                 break;
             default:

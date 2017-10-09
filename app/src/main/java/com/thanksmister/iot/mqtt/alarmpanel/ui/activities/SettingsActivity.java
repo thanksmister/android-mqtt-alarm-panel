@@ -93,6 +93,7 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
         viewPager.addOnPageChangeListener(this);
 
         setPageViewController();
+        resetInactivityTimer();
     }
 
     @Override
@@ -115,6 +116,15 @@ public class SettingsActivity extends BaseActivity implements ViewPager.OnPageCh
             // Otherwise, select the previous step.
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
+    }
+
+    /**
+     * We should close this view if we have no more user activity.
+     */
+    @Override
+    public void showScreenSaver() {
+        super.showScreenSaver();
+        this.finish();
     }
 
     private void setPageViewController() {

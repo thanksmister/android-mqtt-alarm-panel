@@ -79,12 +79,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
                 showArmOptionsDialog();
             } else {
-                int countDownTimeRemaining = alarmPendingView.getCountDownTimeRemaining();
-                if(countDownTimeRemaining > 0) {
-                    listener.showAlarmDisableDialog(false, countDownTimeRemaining);
-                } else {
-                    listener.showAlarmDisableDialog(false, getConfiguration().getPendingTime());
-                }
+                listener.showAlarmDisableDialog(false, Configuration.PREF_DISABLE_DIALOG_TIME);
             }
         } else {
             if(isAdded()) {

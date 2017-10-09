@@ -94,11 +94,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if(notificationUtils == null) {
             notificationUtils = new NotificationUtils(MainActivity.this);
         }
-
-        if(mqttManager == null) {
-            mqttManager = new MqttManager(this);
-            makeMqttConnection();
-        }
     }
 
     @Override
@@ -113,10 +108,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setViewPagerState();
         if(mqttManager == null) {
             mqttManager = new MqttManager(this);
-            makeMqttConnection();
-        } else if (getConfiguration().reconnectNeeded()) {
-            makeMqttConnection();
         }
+        makeMqttConnection();
     }
 
     private void setViewPagerState() {
@@ -166,7 +159,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             mqttManager.makeMqttConnection(MainActivity.this, getConfiguration().getTlsConnection(),
                     getConfiguration().getBroker(), getConfiguration().getPort(), getConfiguration().getClientId(),
                     getConfiguration().getStateTopic(), getConfiguration().getUserName(), getConfiguration().getPassword());
-        }
+        } 
     }
 
     public void publishArmedHome() {

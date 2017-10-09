@@ -274,22 +274,25 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
     
     public void hideDialog() {
-        if (dialog != null && dialog.isShowing()) {
+        if (dialog != null) {
             dialog.dismiss();
             dialog = null;
         }
-        if (disableDialog != null && disableDialog.isShowing()) {
+        if (disableDialog != null) {
             disableDialog.dismiss();
             disableDialog = null;
         }
-        if (screenSaverDialog != null && screenSaverDialog.isShowing()) {
+        if (screenSaverDialog != null) {
             screenSaverDialog.dismiss();
             screenSaverDialog = null;
         }
     }
     
     public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
-        hideDialog();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, onClickListener)
@@ -297,7 +300,10 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String message) {
-        hideDialog();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, null)

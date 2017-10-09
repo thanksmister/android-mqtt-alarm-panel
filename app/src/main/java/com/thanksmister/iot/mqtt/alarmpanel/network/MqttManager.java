@@ -63,14 +63,6 @@ public class MqttManager {
      */
     public void destroyMqttConnection() {
         listener = null;
-       /* try {
-            if(mqttAndroidClient != null) {
-                mqttAndroidClient.disconnect();
-                mqttAndroidClient = null;
-            }
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public void makeMqttConnection(final Context context, final boolean tlsConnection, final String broker, final int port,
@@ -89,8 +81,7 @@ public class MqttManager {
 
         MqttConnectOptions mqttConnectOptions;
         if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)){
-            //mqttConnectOptions = MqttUtils.getMqttConnectOptions(username, password);
-            mqttConnectOptions = MqttUtils.getMqttConnectOptions();
+            mqttConnectOptions = MqttUtils.getMqttConnectOptions(username, password);
         } else {
             mqttConnectOptions = MqttUtils.getMqttConnectOptions();
         }
@@ -130,7 +121,9 @@ public class MqttManager {
                     disconnectedBufferOptions.setBufferSize(100);
                     disconnectedBufferOptions.setPersistBuffer(false);
                     disconnectedBufferOptions.setDeleteOldestMessages(false);
-                    mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                    if(mqttAndroidClient != null) {
+                        mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                    }
                     subscribeToTopic(topic);
                 }
 
@@ -138,14 +131,14 @@ public class MqttManager {
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Timber.e("Failed to connect to: " + serverUri + " exception: " + exception);
                     if(listener != null) {
-                        listener.handleMqttException("Failed to connect using the following broker and port: " + serverUri);
+                        listener.handleMqttException("Error connecting to the broker and port: " + serverUri);
                     }
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
             if(listener != null) {
-                listener.handleMqttException(e.getMessage());
+                listener.handleMqttException("Error while connecting: " + e.getMessage());
             }
         }
     }
@@ -166,7 +159,7 @@ public class MqttManager {
                 Timber.e("Exception while subscribing");
                 e.printStackTrace();
                 if(listener != null) {
-                    listener.handleMqttException(e.getMessage());
+                    listener.handleMqttException("Exception while subscribing: " + e.getMessage());
                 }
             }
         }
@@ -187,7 +180,7 @@ public class MqttManager {
                 Timber.e("Error Sending Command: " + e.getMessage());
                 e.printStackTrace();
                 if(listener != null) {
-                    listener.handleMqttException(e.getMessage());
+                    listener.handleMqttException("Error Sending Command: " + e.getMessage());
                 }
             }
         }

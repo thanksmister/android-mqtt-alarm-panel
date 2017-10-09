@@ -24,7 +24,9 @@ import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
@@ -145,9 +147,14 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
                 configuration.setImageFitScreen(fitScreen);
                 break;
             case PREF_IMAGE_ROTATION:
-                int rotation = Integer.valueOf(rotationPreference.getText());
-                configuration.setImageRotation(rotation);
-                rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(rotation)));
+                if (value.matches("[0-9]+") && !TextUtils.isEmpty(value)) {
+                    int rotation = Integer.valueOf(rotationPreference.getText());
+                    configuration.setImageRotation(rotation);
+                    rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(rotation)));
+                } else if (isAdded()) {
+                    Toast.makeText(getActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show();
+                    rotationPreference.setText(String.valueOf(configuration.getImageRotation()));
+                }
                 break;
             case PREF_INACTIVITY_TIME:
                 long inactivity = Long.valueOf(inactivityPreference.getValue());
