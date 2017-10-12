@@ -41,7 +41,7 @@ public class ConfigurationTest {
     public void setUp() throws Exception {
         this.appContext = InstrumentationRegistry.getTargetContext();
         preference = new DPreference(appContext, "test");
-        configuration = new Configuration(appContext, preference);
+        configuration = new Configuration(preference);
         configuration.reset();
     }
 

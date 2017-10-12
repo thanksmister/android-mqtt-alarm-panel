@@ -52,7 +52,9 @@ public class AlarmDisableView extends BaseAlarmView {
         super.onFinishInflate();
     }
 
+    @Override
     public void onCancel(){
+        destroySoundUtils();
         codeComplete = false;
         enteredCode = "";
         showFilledPins(0);
@@ -80,7 +82,6 @@ public class AlarmDisableView extends BaseAlarmView {
                     countDownProgressWheel.setText(String.valueOf(displaySeconds));
                     countDownProgressWheel.setProgress(displaySeconds * divideBy);
                 }
-
                 @Override
                 public void onFinish() {
                     if(listener != null) {

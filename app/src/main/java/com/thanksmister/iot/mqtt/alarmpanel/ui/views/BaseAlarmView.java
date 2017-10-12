@@ -224,7 +224,7 @@ abstract class BaseAlarmView extends LinearLayout {
     abstract void addPinCode(String code);
     abstract void reset();
     
-    public void destroySoundUtils() { 
+    public void destroySoundUtils() {
         if(soundUtils != null) {
             soundUtils.destroyBuzzer();
         }

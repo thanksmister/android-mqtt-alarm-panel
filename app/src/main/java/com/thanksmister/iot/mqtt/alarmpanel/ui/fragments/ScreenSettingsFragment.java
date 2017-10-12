@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
+import com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils;
 
@@ -37,9 +38,9 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_screen_saver;
-import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_FIT_SIZE;
-import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_ROTATION;
-import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_IMAGE_SOURCE;
+import static com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions.PREF_IMAGE_FIT_SIZE;
+import static com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions.PREF_IMAGE_ROTATION;
+import static com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions.PREF_IMAGE_SOURCE;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_INACTIVITY_TIME;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_MODULE_PHOTO_SAVER;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_MODULE_SAVER;
@@ -56,6 +57,7 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
     private EditTextPreference rotationPreference;
     private ListPreference inactivityPreference;
     private Configuration configuration;
+    private InstagramOptions imageOptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,12 +102,13 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
         
         if(isAdded()) {
             configuration = ((BaseActivity) getActivity()).getConfiguration();
+            imageOptions = ((BaseActivity) getActivity()).readImageOptions();
         }
 
-        urlPreference.setText(configuration.getImageSource());
-        rotationPreference.setText(String.valueOf(configuration.getImageRotation()));
-        rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(configuration.getImageRotation())));
-        urlPreference.setSummary(getString(R.string.preference_summary_image_source, configuration.getImageSource()));
+        urlPreference.setText(imageOptions.getImageSource());
+        rotationPreference.setText(String.valueOf(imageOptions.getImageRotation()));
+        rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(imageOptions.getImageRotation())));
+        urlPreference.setSummary(getString(R.string.preference_summary_image_source, imageOptions.getImageSource()));
         
         inactivityPreference.setDefaultValue(String.valueOf(configuration.getInactivityTime()));
         inactivityPreference.setSummary(getString(R.string.preference_summary_inactivity, 
@@ -114,7 +117,7 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
         modulePreference.setChecked(configuration.showScreenSaverModule());
         photoSaverPreference.setEnabled(configuration.showScreenSaverModule());
         photoSaverPreference.setChecked(configuration.showPhotoScreenSaver());
-        imageFitPreference.setChecked(configuration.getImageFitScreen());
+        imageFitPreference.setChecked(imageOptions.getImageFitScreen());
         urlPreference.setEnabled(configuration.showPhotoScreenSaver());
         imageFitPreference.setEnabled(configuration.showPhotoScreenSaver());
         rotationPreference.setEnabled(configuration.showPhotoScreenSaver());
@@ -139,21 +142,21 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
                 break;
             case PREF_IMAGE_SOURCE:
                 value = urlPreference.getText();
-                configuration.setImageSource(value);
+                imageOptions.setImageSource(value);
                 urlPreference.setSummary(getString(R.string.preference_summary_image_source, value));
                 break;
             case PREF_IMAGE_FIT_SIZE:
                 boolean fitScreen = imageFitPreference.isChecked();
-                configuration.setImageFitScreen(fitScreen);
+                imageOptions.setImageFitScreen(fitScreen);
                 break;
             case PREF_IMAGE_ROTATION:
                 if (value.matches("[0-9]+") && !TextUtils.isEmpty(value)) {
                     int rotation = Integer.valueOf(rotationPreference.getText());
-                    configuration.setImageRotation(rotation);
+                    imageOptions.setImageRotation(rotation);
                     rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(rotation)));
                 } else if (isAdded()) {
                     Toast.makeText(getActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show();
-                    rotationPreference.setText(String.valueOf(configuration.getImageRotation()));
+                    rotationPreference.setText(String.valueOf(imageOptions.getImageRotation()));
                 }
                 break;
             case PREF_INACTIVITY_TIME:

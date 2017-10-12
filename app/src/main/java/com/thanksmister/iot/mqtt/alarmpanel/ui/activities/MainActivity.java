@@ -18,6 +18,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,31 +32,36 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
+import com.thanksmister.iot.mqtt.alarmpanel.LifecycleHandler;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
-import com.thanksmister.iot.mqtt.alarmpanel.network.MqttManager;
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_AWAY_TRIGGERED_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_HOME_TRIGGERED_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 
 public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, 
         MainFragment.OnMainFragmentListener, ControlsFragment.OnControlsFragmentListener, 
-        MqttManager.MqttManagerListener  {
+        MQTTService.MqttManagerListener  {
 
     private final int NUM_PAGES = 2;
     
@@ -64,7 +70,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     private SubscriptionDataTask subscriptionDataTask;
     private PagerAdapter pagerAdapter;
-    private MqttManager mqttManager;
+    private MQTTService mqttService;
     private Handler releaseWakeHandler;
     private NotificationUtils notificationUtils;
     
@@ -74,7 +80,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setContentView(R.layout.activity_main);
         
         ButterKnife.bind(this);
-        
+
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -104,12 +110,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onResume() {
         super.onResume();
+        initializeMqttService();
         resetInactivityTimer();
         setViewPagerState();
-        if(mqttManager == null) {
-            mqttManager = new MqttManager(this);
-        }
-        makeMqttConnection();
     }
 
     private void setViewPagerState() {
@@ -126,6 +129,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Timber.d("onDestroy");
         if (subscriptionDataTask != null) {
             subscriptionDataTask.cancel(true);
             subscriptionDataTask = null;
@@ -134,10 +138,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             releaseWakeHandler.removeCallbacks(releaseWakeLockRunnable);
             releaseWakeHandler = null;
         }
-        if(mqttManager != null) {
-            mqttManager.destroyMqttConnection();
-            mqttManager = null;
-        }
+        clearMqttService();
     }
 
     @Override
@@ -154,31 +155,59 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         }
     }
 
-    private void makeMqttConnection() {
-        if(mqttManager != null && getConfiguration().hasConnectionCriteria()) {
-            mqttManager.makeMqttConnection(MainActivity.this, getConfiguration().getTlsConnection(),
-                    getConfiguration().getBroker(), getConfiguration().getPort(), getConfiguration().getClientId(),
-                    getConfiguration().getStateTopic(), getConfiguration().getUserName(), getConfiguration().getPassword());
-        } 
+    /**
+     * We need to initialize or reset the MQTT service if our setup changes or
+     * the activity is destroyed.  
+     */
+    private void initializeMqttService() {
+        Timber.d("initializeMqttService");
+        if (mqttService == null) {
+            try {
+                mqttService = new MQTTService(getApplicationContext(), readMqttOptions(), this);
+            } catch (Throwable t) {
+                // TODO should we loop back and try again? 
+                Timber.e("Could not create MQTTPublisher" + t.getMessage());
+            }
+        } else if (readMqttOptions().hasUpdates()) {
+            Timber.d("readMqttOptions().hasUpdates(): " + readMqttOptions().hasUpdates());
+            try {
+                mqttService.reconfigure(readMqttOptions());
+            } catch (Throwable t) {
+                // TODO should we loop back and try again? 
+                Timber.e("Could not create MQTTPublisher" + t.getMessage());
+            }
+        }
     }
-
+    
+    private void clearMqttService() {
+        Timber.d("clearMqttService");
+        if(mqttService != null) {
+            try {
+                mqttService.close();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+            mqttService = null;
+        }
+    }
+    
     public void publishArmedHome() {
-        if(mqttManager != null) {
-            mqttManager.publishArmedHome();
+        if(mqttService != null) {
+            mqttService.publish(AlarmUtils.COMMAND_ARM_HOME);
         }
     }
 
     @Override
     public void publishArmedAway() {
-        if(mqttManager != null) {
-            mqttManager.publishArmedAway();
+        if(mqttService != null) {
+            mqttService.publish(AlarmUtils.COMMAND_ARM_AWAY);
         }
     }
 
     @Override
     public void publishDisarmed() {
-        if(mqttManager != null) {
-            mqttManager.publishDisarmed();
+        if(mqttService != null) {
+            mqttService.publish(AlarmUtils.COMMAND_DISARM);
         }
     }
 
@@ -188,7 +217,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             @Override
             public void onComplete(int pin) {
                 publishDisarmed();
-                hideDialog();
+                hideDisableDialog();
             }
             @Override
             public void onError() {
@@ -196,7 +225,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             }
             @Override
             public void onCancel() {
-                hideDialog();
+                hideDisableDialog();
             }
         }, getConfiguration().getAlarmCode(), beep, timeRemaining);
     }
@@ -229,6 +258,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
+        Timber.d("state: " + state);
+        Timber.d("mode: " + getConfiguration().getAlarmMode());
         switch (state) {
             case AlarmUtils.STATE_DISARM:
                 awakenDeviceForAction();
@@ -248,7 +279,13 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                             && getConfiguration().showNotifications()) {
                         notificationUtils.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description));
                     }
-                    getConfiguration().setAlarmMode(PREF_TRIGGERED_PENDING);
+                    if (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME)){
+                        getConfiguration().setAlarmMode(PREF_HOME_TRIGGERED_PENDING);
+                    } else if(getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
+                        getConfiguration().setAlarmMode(PREF_AWAY_TRIGGERED_PENDING);
+                    } else {
+                        getConfiguration().setAlarmMode(PREF_TRIGGERED_PENDING);
+                    }
                     awakenDeviceForAction();
                 } else {
                     awakenDeviceForAction();
@@ -292,6 +329,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             hideDialog();
             viewPager.setCurrentItem(0);
         }
+        if(!LifecycleHandler.isApplicationInForeground()) {
+            Intent intent = new Intent("intent.alarm.action");
+            intent.setComponent(new ComponentName(MainActivity.this.getPackageName(), MainActivity.class.getName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
     }
     
     @Override
@@ -311,6 +354,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // we don't want to save duplicates when the application is brought to the foreground if the mode is the same
+                Timber.d("topic: " + topic);
+                Timber.d("payload: " + payload);
                 if(AlarmUtils.hasSupportedStates(payload)) {
                     subscriptionDataTask = getUpdateMqttDataTask();
                     subscriptionDataTask.execute(new SubscriptionData(topic, payload, id));
@@ -325,7 +371,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!getConfiguration().isFirstTime() && getConfiguration().hasConnectionCriteria()) {
+                if(!getConfiguration().isFirstTime() && readMqttOptions().isValid()) {
                     showAlertDialog(errorMessage);
                 }
             }
@@ -341,8 +387,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         subscriptionDataTask = getUpdateMqttDataTask();
-                        subscriptionDataTask.execute(new SubscriptionData(getConfiguration().getStateTopic(), AlarmUtils.STATE_ERROR, "0"));
-                        makeMqttConnection();
+                        subscriptionDataTask.execute(new SubscriptionData(readMqttOptions().getStateTopic(), AlarmUtils.STATE_ERROR, "0"));
+                        initializeMqttService();
                     }
                 });
                 Timber.d("Unable to connect client.");

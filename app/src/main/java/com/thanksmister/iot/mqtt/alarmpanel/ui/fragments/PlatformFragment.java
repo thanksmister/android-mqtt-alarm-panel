@@ -20,7 +20,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +33,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class PlatformFragment extends BaseFragment {
     
-    @Bind(R.id.swipeRefresh)
-    SwipeRefreshLayout swipeRefreshLayout;
+    /*@Bind(R.id.swipeRefresh)
+    SwipeRefreshLayout swipeRefreshLayout;*/
     
     @Bind(R.id.webView)
     WebView webView;
@@ -75,7 +73,7 @@ public class PlatformFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        swipeRefreshLayout.setOnRefreshListener(
+        /*swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -84,15 +82,38 @@ public class PlatformFragment extends BaseFragment {
                     }
                 }
         );
+        
+        swipeRefreshLayout.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (webView.getScrollY() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+
+        // Only enable swipeToRefresh if mainWebView is scrolled to the top.
+        webView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (webView.getScrollY() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
+            }
+        });*/
     }
-    
+
     private void loadWebPage(){
         if(getConfiguration().showHassModule()
                 && !TextUtils.isEmpty(getConfiguration().getHassUrl()) && webView != null) {
             webView.setWebChromeClient(new WebChromeClient() {
                 public void onProgressChanged(WebView view, int newProgress){
                     if(newProgress == 100){
-                        swipeRefreshLayout.setRefreshing(false);
+                        //swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             });
@@ -113,12 +134,5 @@ public class PlatformFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         ButterKnife.unbind(this);
-    }
-
-    public class PlatformWebChromeClient extends WebChromeClient {
-
-        public void onPageFinished(WebView view, String url) {
-            // do your stuff here
-        }
     }
 }

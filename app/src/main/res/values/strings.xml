@@ -154,8 +154,8 @@
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
-    <string name="text_error_pending_time_low">The time in seconds of the pending time before arming the alarm or the alarm triggers. Please allow enough time to arm or disarm the alarm system while entering or exiting.</string>
-    <string name="text_error_trigger_time_low">The trigger time in seconds that the alarm is firing before the alarm is reset. A low trigger time may have unintended behavior.</string>
+    <string name="text_error_pending_time_low">The pending time is time before arming the alarm or the alarm triggers. Please allow enough time to arm or disarm the alarm system while entering or exiting.</string>
+    <string name="text_error_trigger_time_low">The trigger time that the alarm is firing before the alarm is reset. A low trigger time may have unintended behavior.</string>
     <string name="progress_location">Acquiring location…</string>
     <string name="text_error_only_numbers">Be sure the value only contains numbers and is not blank.</string>
     <string name="text_error_blank_entry">The value should not blank, please enter a valid value</string>

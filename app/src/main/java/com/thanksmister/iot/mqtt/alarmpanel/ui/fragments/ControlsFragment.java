@@ -47,13 +47,16 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_HOME;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_HOME_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_AWAY_TRIGGERED_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_DISARM;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_HOME_TRIGGERED_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 
 public class ControlsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -75,7 +78,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
  
     @OnClick(R.id.alarmView)
     public void armButtonClick() {
-        if(getConfiguration().hasConnectionCriteria()) {
+        if(readMqttOptions().isValid()) {
             if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
                 showArmOptionsDialog();
             } else {
@@ -205,6 +208,8 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
+        Timber.d("state: " + state);
+        Timber.d("mode: " + getConfiguration().getAlarmMode());
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
                 hideDialog();
@@ -223,12 +228,16 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
                 break;
             case AlarmUtils.STATE_PENDING:
                 if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_AWAY_PENDING) 
-                        || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)) {
-                    if(PREF_ARM_HOME_PENDING.equals(getConfiguration().getAlarmMode())) {
+                        || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)
+                        || getConfiguration().getAlarmMode().equals(PREF_AWAY_TRIGGERED_PENDING)
+                        || getConfiguration().getAlarmMode().equals(PREF_HOME_TRIGGERED_PENDING)) {
+                    if (PREF_ARM_HOME_PENDING.equals(getConfiguration().getAlarmMode())
+                            || PREF_HOME_TRIGGERED_PENDING.equals(getConfiguration().getAlarmMode())) {
                         alarmText.setText(R.string.text_arm_home);
                         alarmText.setTextColor(getResources().getColor(R.color.yellow));
                         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_yellow));
-                    } else if (PREF_ARM_AWAY_PENDING.equals(getConfiguration().getAlarmMode())) {
+                    } else if (PREF_ARM_AWAY_PENDING.equals(getConfiguration().getAlarmMode())
+                            || PREF_AWAY_TRIGGERED_PENDING.equals(getConfiguration().getAlarmMode())) {
                         alarmText.setText(R.string.text_arm_away);
                         alarmText.setTextColor(getResources().getColor(R.color.red));
                         alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_red));
@@ -284,7 +293,7 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
             alarmText.setText(R.string.text_alarm_pending);
             alarmText.setTextColor(getResources().getColor(R.color.gray));
             alarmButtonBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_round_gray));
-        }
+        } 
         showAlarmPendingView();
     }
 

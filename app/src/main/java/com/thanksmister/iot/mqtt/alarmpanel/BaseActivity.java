@@ -20,7 +20,6 @@ package com.thanksmister.iot.mqtt.alarmpanel;
 
 import android.app.Dialog;
 import android.app.KeyguardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,9 +41,11 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
+import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
+import com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions;
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
@@ -53,6 +54,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
 import butterknife.ButterKnife;
+import dpreference.DPreference;
 import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED;
@@ -169,12 +171,6 @@ abstract public class BaseActivity extends AppCompatActivity {
             KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG");
             keyguardLock.disableKeyguard();
         }
-        if(!LifecycleHandler.isApplicationInForeground()) {
-            Intent it = new Intent("intent.my.action");
-            it.setComponent(new ComponentName(BaseActivity.this.getPackageName(), MainActivity.class.getName()));
-            it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            BaseActivity.this.getApplicationContext().startActivity(it);
-        }
     }
     
     /**
@@ -232,9 +228,26 @@ abstract public class BaseActivity extends AppCompatActivity {
     public Configuration getConfiguration() {
         if (configuration == null) {
             BaseApplication baseApplication = BaseApplication.getInstance();
-            configuration = new Configuration(getApplicationContext(), baseApplication.getAppSharedPreferences());
+            configuration = new Configuration(baseApplication.getAppSharedPreferences());
         }
         return configuration;
+    }
+
+    public DPreference getSharedPreferences() {
+        BaseApplication baseApplication = BaseApplication.getInstance();
+        return baseApplication.getAppSharedPreferences();
+    }
+
+    public MQTTOptions readMqttOptions() {
+        return MQTTOptions.from(getSharedPreferences());
+    }
+
+    public DarkSkyOptions readWeatherOptions() {
+        return DarkSkyOptions.from(getSharedPreferences());
+    }
+
+    public InstagramOptions readImageOptions() {
+        return InstagramOptions.from(getSharedPreferences());
     }
 
     public void showProgressDialog(String message, boolean modal) {
@@ -278,20 +291,29 @@ abstract public class BaseActivity extends AppCompatActivity {
             dialog.dismiss();
             dialog = null;
         }
-        if (disableDialog != null) {
-            disableDialog.dismiss();
-            disableDialog = null;
-        }
         if (screenSaverDialog != null) {
             screenSaverDialog.dismiss();
             screenSaverDialog = null;
         }
     }
     
-    public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
-        if(alertDialog != null) {
+    public void hideDisableDialog() {
+        if (disableDialog != null) {
+            disableDialog.dismiss();
+            disableDialog = null;
+        }
+    }
+
+    public void hideAlertDialog() {
+        if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
+        }
+    }
+    
+    public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
+        if(alertDialog != null && alertDialog.isShowing()) {
+            return;
         }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
@@ -300,9 +322,8 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     public void showAlertDialog(String message) {
-        if(alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
+        if(alertDialog != null && alertDialog.isShowing()) {
+            return;
         }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
@@ -335,6 +356,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         if(disableDialog != null && disableDialog.isShowing()) {
             return;
         }
+        Timber.d("showAlarmDisableDialog");
         disableDialog = DialogUtils.showAlarmDisableDialog(BaseActivity.this, alarmCodeListener, code, beep, timeRemaining);
     }
 
@@ -350,7 +372,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showExtendedForecastDialog(Daily daily) {
         hideDialog();
-        dialog = DialogUtils.showExtendedForecastDialog(BaseActivity.this, daily, getConfiguration().getWeatherUnits());
+        dialog = DialogUtils.showExtendedForecastDialog(BaseActivity.this, daily, readWeatherOptions().getWeatherUnits());
     }
     
     public void closeScreenSaver() {
@@ -371,8 +393,8 @@ abstract public class BaseActivity extends AppCompatActivity {
         }
         inactivityHandler.removeCallbacks(inactivityCallback);
         screenSaverDialog = DialogUtils.showScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
-                getConfiguration().getImageSource(), getConfiguration().getImageFitScreen(),
-                getConfiguration().getImageRotation(), new ScreenSaverView.ViewListener() {
+                readImageOptions().getImageSource(), readImageOptions().getImageFitScreen(),
+                readImageOptions().getImageRotation(), new ScreenSaverView.ViewListener() {
                     @Override
                     public void onMotion() {
                         if (screenSaverDialog != null) {

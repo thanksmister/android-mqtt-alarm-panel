@@ -46,8 +46,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_AWAY_TRIGGERED_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_HOME_TRIGGERED_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 
 public class MainFragment extends BaseFragment implements 
@@ -158,17 +161,25 @@ public class MainFragment extends BaseFragment implements
      */
     @AlarmUtils.AlarmStates
     private void handleStateChange(String state) {
+        Timber.d("state: " + state);
+        Timber.d("mode: " + getConfiguration().getAlarmMode());
         switch (state) {
             case AlarmUtils.STATE_ARM_AWAY:
             case AlarmUtils.STATE_ARM_HOME:
                 hideDialog();
+                hideDisableDialog();
                 break;
             case AlarmUtils.STATE_DISARM:
+                hideDisableDialog();
                 hideTriggeredView();
                 break;
             case AlarmUtils.STATE_PENDING:
+                hideDialog();
+                hideProgressDialog();
                 if(getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME) 
                         || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY) 
+                        || getConfiguration().getAlarmMode().equals(PREF_HOME_TRIGGERED_PENDING) 
+                        || getConfiguration().getAlarmMode().equals(PREF_AWAY_TRIGGERED_PENDING) 
                         || getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)) {
                     // we need a pending time greater than zero to show the dialog, or its just going to go to trigger
                     if(getConfiguration().getPendingTime() > 0) {
@@ -178,6 +189,8 @@ public class MainFragment extends BaseFragment implements
                 break;
             case AlarmUtils.STATE_TRIGGERED:
                 hideDialog();
+                hideDisableDialog();
+                hideProgressDialog();
                 showAlarmTriggered();
                 break;
             default:

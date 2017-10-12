@@ -22,7 +22,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,13 +42,18 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static android.os.Looper.getMainLooper;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_AWAY_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_ARM_HOME_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_PENDING_TIME;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 import static java.lang.Math.round;
 
 public class InformationFragment extends BaseFragment {
 
-    public static final long DATE_INTERVAL = 3600000; // 1 hour
+    public static final long WEATHER_DELAY_INTERVAL = 900000; // 1 hour
 
     @Bind(R.id.temperatureText)
     TextView temperatureText;
@@ -106,7 +110,6 @@ public class InformationFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        weatherHandler = new Handler(getMainLooper());
         timeHandler = new Handler(getMainLooper());
         timeHandler.postDelayed(timeRunnable, 1000);
     }
@@ -121,14 +124,21 @@ public class InformationFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // this picks up changes made in the settings and connects weather if needed
-        if(getConfiguration().showWeatherModule() && !TextUtils.isEmpty(getConfiguration().getDarkSkyKey())
-                && !TextUtils.isEmpty(getConfiguration().getLatitude()) && !TextUtils.isEmpty(getConfiguration().getLongitude())) {
-            if(weatherHandler != null) {
-                weatherHandler.removeCallbacks(weatherRunnable);
+        Timber.d("onResume");
+        if(getConfiguration().showWeatherModule()
+                && readWeatherOptions().isValid()) {
+            weatherLayout.setVisibility(View.VISIBLE);
+            if(weatherModule == null) {
+                weatherModule = new WeatherModule();
             }
-            connectWeatherModule();
-        } else {
+            checkAndDelayWeatherByMode();
+        } else if(readWeatherOptions().hasUpdates()
+                && getConfiguration().showWeatherModule()
+                && readWeatherOptions().isValid()) {
+            weatherLayout.setVisibility(View.VISIBLE);
+            checkAndDelayWeatherByMode();
+        } else if (!getConfiguration().showWeatherModule()
+                || !readWeatherOptions().isValid()) {
             disconnectWeatherModule();
             weatherLayout.setVisibility(View.INVISIBLE);
         }
@@ -137,11 +147,26 @@ public class InformationFragment extends BaseFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Timber.d("onDetach");
         disconnectWeatherModule();
         if(timeHandler != null) {
             timeHandler.removeCallbacks(timeRunnable);
+            timeHandler = null;
+        }
+        if(weatherHandler != null) {
+            weatherHandler.removeCallbacks(weatherRunnable);
+            weatherHandler = null;
         }
     }
+    
+    private Runnable weatherRunnable = new Runnable() {
+        @Override
+        public void run() {
+            connectWeatherModule();
+            weatherHandler.removeCallbacks(weatherRunnable);
+            weatherHandler = null;
+        }
+    };
 
     private Runnable timeRunnable = new Runnable() {
         @Override
@@ -155,58 +180,58 @@ public class InformationFragment extends BaseFragment {
             }
         }
     };
-
-    private Runnable weatherRunnable = new Runnable() {
-        @Override
-        public void run() {
-            weatherHandler.postDelayed(weatherRunnable, DATE_INTERVAL);
-        }
-    };
     
     private void disconnectWeatherModule() {
-        if(weatherHandler != null) {
-            weatherHandler.removeCallbacks(weatherRunnable);
-        }
         if(weatherModule != null) {
             weatherModule.cancelDarkSkyHourlyForecast();
+            weatherModule = null;
+        }
+    }
+
+    /**
+     * We want to delay making a network call if we have a pending mode.
+     */
+    private void checkAndDelayWeatherByMode() {
+        if(getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)
+                || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY_PENDING)
+                || getConfiguration().getAlarmMode().equals(PREF_ARM_HOME_PENDING)
+                || getConfiguration().getAlarmMode().equals(PREF_PENDING_TIME) ) {
+            if(weatherHandler != null) {
+                weatherHandler = new Handler();
+                weatherHandler.postDelayed(weatherRunnable, WEATHER_DELAY_INTERVAL);
+            }
+        } else {
+            connectWeatherModule();
         }
     }
     
     private void connectWeatherModule() {
-        if(weatherModule == null) {
-            weatherModule = new WeatherModule();
+        if(weatherModule != null) {
+            final String apiKey = readWeatherOptions().getDarkSkyKey();
+            final String units = readWeatherOptions().getWeatherUnits();
+            final String lat = readWeatherOptions().getLatitude();
+            final String lon = readWeatherOptions().getLongitude();
+            weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
+                @Override
+                public void onWeatherToday(String icon, double temperature, String summary) {
+                    Timber.d("onWeatherToday icon: " + icon);
+                    weatherLayout.setVisibility(View.VISIBLE);
+                    outlookText.setText(summary);
+                    String displayUnits = (units.equals(DarkSkyRequest.UNITS_US) ? getString(R.string.text_f) : getString(R.string.text_c));
+                    temperatureText.setText(getString(R.string.text_temperature, String.valueOf(round(temperature)), displayUnits));
+                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
+                }
+                @Override
+                public void onExtendedDaily(Daily daily) {
+                    extendedDaily = daily;
+                }
+                @Override
+                public void onShouldTakeUmbrella(boolean takeUmbrella) {
+                    if (takeUmbrella) {
+                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_rain_umbrella, getActivity().getTheme()));
+                    }
+                }
+            });
         }
-
-        final String apiKey = getConfiguration().getDarkSkyKey();
-        final String units = getConfiguration().getWeatherUnits();
-        final String lat = getConfiguration().getLatitude();
-        final String lon = getConfiguration().getLongitude();
-        weatherModule.getDarkSkyHourlyForecast(apiKey, units, lat, lon, new WeatherModule.ForecastListener() {
-            @Override
-            public void onWeatherToday(String icon, double temperature, String summary) {
-                weatherLayout.setVisibility(View.VISIBLE);
-                outlookText.setText(summary);
-                String displayUnits = (units.equals( DarkSkyRequest.UNITS_US)? getString(R.string.text_f): getString(R.string.text_c));
-                temperatureText.setText(getString(R.string.text_temperature, String.valueOf(round(temperature)), displayUnits));
-                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), WeatherUtils.getIconForWeatherCondition(icon), getActivity().getTheme()));
-
-                // start the clock
-                if(weatherHandler != null) {
-                    weatherHandler.postDelayed(weatherRunnable, DATE_INTERVAL);
-                }
-            }
-
-            @Override
-            public void onExtendedDaily(Daily daily) {
-                extendedDaily = daily;
-            }
-
-            @Override
-            public void onShouldTakeUmbrella(boolean takeUmbrella) {
-                if(takeUmbrella) {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_rain_umbrella, getActivity().getTheme()));
-                }
-            }
-        });
     }
 }
