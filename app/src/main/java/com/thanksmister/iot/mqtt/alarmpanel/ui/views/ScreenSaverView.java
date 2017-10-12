@@ -23,7 +23,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -57,9 +56,6 @@ public class ScreenSaverView extends RelativeLayout {
     @Bind(R.id.screenSaverClock)
     TextView screenSaverClock;
     
-    @Bind(R.id.motionDetectionView)
-    SurfaceView motionDetectionView;
-    
     private InstagramTask task;
     private String userName;
     private boolean fitToScreen;
@@ -73,7 +69,7 @@ public class ScreenSaverView extends RelativeLayout {
     protected ViewListener listener;
     
     public interface ViewListener {
-        void onMotion();
+       
     }
 
     public ScreenSaverView(Context context) {
@@ -142,27 +138,6 @@ public class ScreenSaverView extends RelativeLayout {
             timeHandler.postDelayed(timeRunnable, 10);
         }
     }
-    
-    /*private void setupMotionDetection() {
-        motionDetector = new MotionDetector(getContext(), motionDetectionView);
-        motionDetector.setMotionDetectorCallback(new MotionDetectorCallback() {
-            @Override
-            public void onMotionDetected() {
-                if(listener != null) {
-                    Timber.d("Motion detected");
-                    listener.onMotion();
-                }
-            }
-            @Override
-            public void onTooDark() {
-                Timber.d("Too dark here");
-            }
-        });
-        motionDetector.setCheckInterval(1000);
-        motionDetector.setLeniency(25);
-        motionDetector.setMinLuma(1500);
-        motionDetector.onResume();
-    }*/
     
     private void startScreenSavor() {
         if(itemList == null || itemList.isEmpty()) {

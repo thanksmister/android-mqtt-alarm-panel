@@ -49,7 +49,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
@@ -394,16 +393,7 @@ abstract public class BaseActivity extends AppCompatActivity {
         inactivityHandler.removeCallbacks(inactivityCallback);
         screenSaverDialog = DialogUtils.showScreenSaver(BaseActivity.this, getConfiguration().showPhotoScreenSaver(),
                 readImageOptions().getImageSource(), readImageOptions().getImageFitScreen(),
-                readImageOptions().getImageRotation(), new ScreenSaverView.ViewListener() {
-                    @Override
-                    public void onMotion() {
-                        if (screenSaverDialog != null) {
-                            screenSaverDialog.dismiss();
-                            screenSaverDialog = null;
-                            resetInactivityTimer();
-                        }
-                    }
-                }, new View.OnClickListener() {
+                readImageOptions().getImageRotation(), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (screenSaverDialog != null) {

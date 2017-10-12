@@ -46,10 +46,5 @@
                 android:layout_centerInParent="true"
                 tools:visibility="visible"
                 android:visibility="visible"/>
-
-        <SurfaceView
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:id="@+id/motionDetectionView" />
         
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView>

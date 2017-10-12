@@ -147,12 +147,11 @@ public final class DialogUtils {
      */
     public static Dialog showScreenSaver(AppCompatActivity activity, boolean showPhotoScreenSaver, 
                                        String imageSource, boolean fitToScreen, int rotation,
-                                       ScreenSaverView.ViewListener listener, View.OnClickListener onClickListener) {
+                                       View.OnClickListener onClickListener) {
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_screen_saver, null, false);
         final ScreenSaverView screenSaverView = view.findViewById(R.id.screenSaverView);
         screenSaverView.setScreenSaver(activity, showPhotoScreenSaver, imageSource, fitToScreen,rotation);
-        screenSaverView.setListener(listener);
         screenSaverView.setOnClickListener(onClickListener);
         return buildImmersiveDialog(activity, true, screenSaverView, true);
     }
