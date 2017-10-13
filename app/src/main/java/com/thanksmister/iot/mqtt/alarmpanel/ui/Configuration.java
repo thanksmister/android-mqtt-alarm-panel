@@ -41,10 +41,8 @@ public class Configuration {
     public static final String PREF_DISARM = "disarm";
     public static final String PREF_TRIGGERED = "triggered";
     public static final String PREF_TRIGGERED_PENDING = "triggered_pending";
-    
     public static final String PREF_AWAY_TRIGGERED_PENDING = "triggered_away_pending";
     public static final String PREF_HOME_TRIGGERED_PENDING = "triggered_home_pending";
-    
     public static final String PREF_MODULE_SAVER = "pref_module_saver";
     public static final String PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo";
     public static final String PREF_INACTIVITY_TIME = "pref_inactivity_time";

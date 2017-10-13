@@ -36,20 +36,25 @@ public class MQTTService implements MQTTServiceInterface {
     // Use mqttQos=1 (at least once delivery), mqttQos=0 (at most once delivery) also supported.
     private static final int MQTT_QOS = 0;
 
-    private final Context context;
+    private Context context;
     private MqttAndroidClient mqttClient;
     private MQTTOptions mqttOptions;
     private AtomicBoolean mReady = new AtomicBoolean(false);
     private MqttManagerListener listener;
 
-    public MQTTService(@NonNull Context context, @NonNull MQTTOptions options, MqttManagerListener listener) {
+    public MQTTService(@NonNull Context context, 
+                       @NonNull MQTTOptions options, 
+                       MqttManagerListener listener) {
         this.listener = listener;
         this.context = context;
         initialize(options);
     }
     
-    public void reconfigure(@NonNull MQTTOptions newOptions) {
-        Timber.d("reconfigure");
+    public void reconfigure(@NonNull Context context, 
+                            @NonNull MQTTOptions newOptions, 
+                            MqttManagerListener listener) {
+        this.listener = listener;
+        this.context = context;
         if (newOptions.equals(mqttOptions)) {
             return;
         }
@@ -204,8 +209,8 @@ public class MQTTService implements MQTTServiceInterface {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Timber.e("Failed to connect to: " + mqttOptions.getBrokerUrl() + " exception: " + exception);
-                    if(listener != null) {
+                    if(listener != null && mqttOptions != null) {
+                        Timber.e("Failed to connect to: " + mqttOptions.getBrokerUrl() + " exception: " + exception);
                         listener.handleMqttException("Error connecting to the broker and port: " + mqttOptions.getBrokerUrl());
                     }
                 }

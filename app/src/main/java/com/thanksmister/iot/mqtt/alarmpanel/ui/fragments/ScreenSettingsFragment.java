@@ -32,7 +32,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity;
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 import com.thanksmister.iot.mqtt.alarmpanel.network.InstagramOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils;
 
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -110,9 +109,18 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
         rotationPreference.setSummary(getString(R.string.preference_summary_image_rotation, String.valueOf(imageOptions.getImageRotation())));
         urlPreference.setSummary(getString(R.string.preference_summary_image_source, imageOptions.getImageSource()));
         
-        inactivityPreference.setDefaultValue(String.valueOf(configuration.getInactivityTime()));
-        inactivityPreference.setSummary(getString(R.string.preference_summary_inactivity, 
-                DateUtils.convertInactivityTime(configuration.getInactivityTime())));
+        String [] inactivityTimes = getResources().getStringArray(R.array.inactivity_times);
+        String [] inactivityValues = getResources().getStringArray(R.array.inactivity_values);
+        String intervalValue = String.valueOf(configuration.getInactivityTime());
+        int position = 0;
+        for (String value: inactivityValues) {
+            if(value.equals(intervalValue)) {
+                break;
+            }
+            position++;
+        }
+        inactivityPreference.setDefaultValue(intervalValue); 
+        inactivityPreference.setSummary(getString(R.string.preference_summary_inactivity, inactivityTimes[position]));
         
         modulePreference.setChecked(configuration.showScreenSaverModule());
         photoSaverPreference.setEnabled(configuration.showScreenSaverModule());
@@ -132,6 +140,7 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
                 boolean checked = modulePreference.isChecked();
                 configuration.setScreenSaverModule(checked);
                 photoSaverPreference.setEnabled(checked);
+                inactivityPreference.setEnabled(checked);
                 break;
             case PREF_MODULE_PHOTO_SAVER:
                 boolean usePhotos = photoSaverPreference.isChecked();
@@ -161,9 +170,11 @@ public class ScreenSettingsFragment extends PreferenceFragmentCompat
                 break;
             case PREF_INACTIVITY_TIME:
                 long inactivity = Long.valueOf(inactivityPreference.getValue());
+                String label = inactivityPreference.getEntry().toString();
                 Timber.d("Inactivity time: " + inactivity);
                 configuration.setInactivityTime(inactivity);
-                inactivityPreference.setSummary(getString(R.string.preference_summary_inactivity, DateUtils.convertInactivityTime(inactivity)));
+                String interval = getString(R.string.text_minutes);
+                inactivityPreference.setSummary(getString(R.string.preference_summary_inactivity, label));
                 break;
         }
     }

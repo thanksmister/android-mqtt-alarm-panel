@@ -107,4 +107,12 @@ public class BaseFragment extends Fragment {
     public void hideProgressDialog() {
         ((BaseActivity) getActivity()).hideProgressDialog();
     }
+
+    public boolean hasNetworkConnectivity() {
+        return ((BaseActivity) getActivity()).hasNetworkConnectivity();
+    }
+
+    public void handleNetworkDisconnect() {
+        ((BaseActivity) getActivity()).handleNetworkDisconnect();
+    }
 }

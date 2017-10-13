@@ -18,9 +18,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -45,7 +50,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils;
-import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NetworkUtils;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -72,7 +77,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     private PagerAdapter pagerAdapter;
     private MQTTService mqttService;
     private Handler releaseWakeHandler;
-    private NotificationUtils notificationUtils;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setContentView(R.layout.activity_main);
         
         ButterKnife.bind(this);
-
+        
         if(getConfiguration().isFirstTime()) {
             showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
                 @Override
@@ -96,40 +100,30 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setPagingEnabled(false);
-        
-        if(notificationUtils == null) {
-            notificationUtils = new NotificationUtils(MainActivity.this);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
     
     @Override
     public void onResume() {
         super.onResume();
+        registerReceiver(connReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeMqttService();
         resetInactivityTimer();
         setViewPagerState();
     }
 
-    private void setViewPagerState() {
-        if(viewPager != null) {
-            if (getConfiguration().showHassModule()
-                    && !TextUtils.isEmpty(getConfiguration().getHassUrl())) {
-                viewPager.setPagingEnabled(true);
-            } else {
-                viewPager.setPagingEnabled(false);
-            }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(connReceiver);
+        } catch (IllegalArgumentException e) {
+            Timber.e(e.getMessage());
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Timber.d("onDestroy");
         if (subscriptionDataTask != null) {
             subscriptionDataTask.cancel(true);
             subscriptionDataTask = null;
@@ -155,6 +149,17 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         }
     }
 
+    private void setViewPagerState() {
+        if(viewPager != null) {
+            if (getConfiguration().showHassModule()
+                    && !TextUtils.isEmpty(getConfiguration().getHassUrl())) {
+                viewPager.setPagingEnabled(true);
+            } else {
+                viewPager.setPagingEnabled(false);
+            }
+        }
+    }
+
     /**
      * We need to initialize or reset the MQTT service if our setup changes or
      * the activity is destroyed.  
@@ -171,7 +176,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         } else if (readMqttOptions().hasUpdates()) {
             Timber.d("readMqttOptions().hasUpdates(): " + readMqttOptions().hasUpdates());
             try {
-                mqttService.reconfigure(readMqttOptions());
+                mqttService.reconfigure(getApplicationContext(), readMqttOptions(), this);
             } catch (Throwable t) {
                 // TODO should we loop back and try again? 
                 Timber.e("Could not create MQTTPublisher" + t.getMessage());
@@ -265,7 +270,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 awakenDeviceForAction();
                 releaseWakeHandler = new Handler();
                 releaseWakeHandler.postDelayed(releaseWakeLockRunnable, 10000);
-                notificationUtils.clearNotification();
+                getNotifications().clearNotification();
                 resetInactivityTimer();
                 break;
             case AlarmUtils.STATE_ARM_AWAY:
@@ -275,10 +280,13 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             case AlarmUtils.STATE_PENDING:
                 if (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME)
                         || getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
-                    if (!PREF_TRIGGERED_PENDING.equals(getConfiguration().getAlarmMode()) 
-                            && getConfiguration().showNotifications()) {
-                        notificationUtils.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description));
+                    
+                    // show notification if we have a pending trigger event
+                    if (getConfiguration().showNotifications()) {
+                        getNotifications().createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description));
                     }
+                    
+                    // TODO thinking we should not set the mode from main activity but rather the alarm control view only
                     if (getConfiguration().getAlarmMode().equals(Configuration.PREF_ARM_HOME)){
                         getConfiguration().setAlarmMode(PREF_HOME_TRIGGERED_PENDING);
                     } else if(getConfiguration().getAlarmMode().equals(PREF_ARM_AWAY)) {
@@ -296,7 +304,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             case AlarmUtils.STATE_TRIGGERED:
                 if (!PREF_TRIGGERED.equals(getConfiguration().getAlarmMode()) 
                         && getConfiguration().showNotifications()) {
-                    notificationUtils.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description));
+                    getNotifications().createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description));
                 }
                 getConfiguration().setAlarmMode(PREF_TRIGGERED);
                 awakenDeviceForAction();
@@ -329,6 +337,14 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             hideDialog();
             viewPager.setCurrentItem(0);
         }
+        bringApplicationToForegroundIfNeeded();
+    }
+    
+    /**
+     * Method to gently bring the application to the foreground if 
+     * we detect it is in the background running.
+     */
+    private void bringApplicationToForegroundIfNeeded() {
         if(!LifecycleHandler.isApplicationInForeground()) {
             Intent intent = new Intent("intent.alarm.action");
             intent.setComponent(new ComponentName(MainActivity.this.getPackageName(), MainActivity.class.getName()));
@@ -371,7 +387,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!getConfiguration().isFirstTime() && readMqttOptions().isValid()) {
+                // We don't want to display every notification because some happen due
+                // to incorrect setup and others for network connectivity. 
+                if(!getConfiguration().isFirstTime() 
+                        && readMqttOptions().isValid() 
+                        && NetworkUtils.hasInternetAccess(MainActivity.this)) {
                     showAlertDialog(errorMessage);
                 }
             }
@@ -438,4 +458,28 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         });
         return dataTask;
     }
+
+    /**
+     * Network connectivity receiver to notify client of the network disconnect issues and
+     * to clear any network notifications when reconnected. It is easy for network connectivity
+     * to run amok that is why we only notify the user once for network disconnect with 
+     * a boolean flag. 
+     */
+    private BroadcastReceiver connReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+            NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            if (currentNetworkInfo != null 
+                    && currentNetworkInfo.isConnected()) {
+                Timber.d("Network Connected");
+                hasNetwork.set(true);
+                handleNetworkConnect();
+            } else if (hasNetwork.get()) {
+                Timber.d("Network Disconnected");
+                hasNetwork.set(false);
+                handleNetworkDisconnect();
+                bringApplicationToForegroundIfNeeded();
+            }
+        }
+    };
 }

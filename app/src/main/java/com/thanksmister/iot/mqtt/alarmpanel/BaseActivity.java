@@ -51,11 +51,16 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView;
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.ButterKnife;
 import dpreference.DPreference;
 import timber.log.Timber;
 
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_AWAY_TRIGGERED_PENDING;
+import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_HOME_TRIGGERED_PENDING;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED;
 import static com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.PREF_TRIGGERED_PENDING;
 
@@ -71,7 +76,9 @@ abstract public class BaseActivity extends AppCompatActivity {
     private Handler inactivityHandler = new Handler();
     private View decorView;
     private PowerManager.WakeLock wakeLock;
-
+    protected AtomicBoolean hasNetwork = new AtomicBoolean(true);
+    private NotificationUtils notificationUtils;
+    
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,6 +256,13 @@ abstract public class BaseActivity extends AppCompatActivity {
         return InstagramOptions.from(getSharedPreferences());
     }
 
+    public NotificationUtils getNotifications() {
+        if(notificationUtils == null) {
+            notificationUtils = new NotificationUtils(BaseActivity.this);
+        }
+        return notificationUtils;
+    }
+    
     public void showProgressDialog(String message, boolean modal) {
         if (progressDialog != null) {
             return;
@@ -261,19 +275,6 @@ abstract public class BaseActivity extends AppCompatActivity {
 
         progressDialog = new AlertDialog.Builder(this)
                 .setCancelable(modal)
-                .setView(dialogView)
-                .show();
-    }
-
-    public void showProgressDialog() {
-        if (progressDialog != null) {
-            return;
-        }
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogView = inflater.inflate(R.layout.dialog_progress_no_text, null, false);
-        progressDialog = new AlertDialog.Builder(this)
-                .setCancelable(false)
                 .setView(dialogView)
                 .show();
     }
@@ -317,6 +318,17 @@ abstract public class BaseActivity extends AppCompatActivity {
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, onClickListener)
+                .show();
+    }
+
+    public void showAlertDialog(String title, String message) {
+        if(alertDialog != null && alertDialog.isShowing()) {
+            return;
+        }
+        alertDialog = new AlertDialog.Builder(BaseActivity.this)
+                .setTitle(title)
+                .setMessage(Html.fromHtml(message))
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 
@@ -373,9 +385,14 @@ abstract public class BaseActivity extends AppCompatActivity {
         hideDialog();
         dialog = DialogUtils.showExtendedForecastDialog(BaseActivity.this, daily, readWeatherOptions().getWeatherUnits());
     }
-    
+
+    /**
+     * Close the screen saver. 
+     */
     public void closeScreenSaver() {
-        // Override to handle screen saver close call
+        if (screenSaverDialog != null && screenSaverDialog.isShowing()) {
+            screenSaverDialog.dismiss();
+        }
     }
 
     /**
@@ -383,7 +400,9 @@ abstract public class BaseActivity extends AppCompatActivity {
      * with the alarm disabled because the disable time will be longer than this. 
      */
     public void showScreenSaver() {
-        if(getConfiguration().getAlarmMode().equals(PREF_TRIGGERED) 
+        if(getConfiguration().getAlarmMode().equals(PREF_TRIGGERED)
+                || getConfiguration().getAlarmMode().equals(PREF_HOME_TRIGGERED_PENDING)
+                || getConfiguration().getAlarmMode().equals(PREF_AWAY_TRIGGERED_PENDING)
                 || getConfiguration().getAlarmMode().equals(PREF_TRIGGERED_PENDING)) {
             return;
         }
@@ -403,5 +422,36 @@ abstract public class BaseActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * On network disconnect show notification or alert message, clear the 
+     * screen saver and awake the screen. Override this method in activity 
+     * to for extra network disconnect handling such as bring application
+     * into foreground.
+     */
+    public void handleNetworkDisconnect() {
+        if (getConfiguration().showNotifications()) {
+            getNotifications().createAlarmNotification(getString(R.string.text_notification_network_title),
+                    getString(R.string.text_notification_network_description));
+        } else {
+            closeScreenSaver();
+            acquireTemporaryWakeLock();
+            showAlertDialog(getString(R.string.text_notification_network_title),
+                    getString(R.string.text_notification_network_description));
+        }
+    }
+
+    /**
+     * On network connect hide any alert dialogs generated by
+     * the network disconnect and clear any notifications.
+     */
+    public void handleNetworkConnect() {
+        hideAlertDialog();
+        getNotifications().clearNotification();
+    }
+    
+    public boolean hasNetworkConnectivity() {
+        return hasNetwork.get();
     }
 }

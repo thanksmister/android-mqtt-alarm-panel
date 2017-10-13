@@ -88,7 +88,7 @@
     <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
 
     <string name="preference_title_inactivity">Sleep</string>
-    <string name="preference_summary_inactivity">After %1$s minutes of inactivity.</string>
+    <string name="preference_summary_inactivity">After %1$s of inactivity.</string>
    
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
@@ -152,6 +152,8 @@
     <string name="text_notification_entry_description">An entry has been detected, take the necessary action.</string>
     <string name="text_notification_trigger_title">Alarm Triggered</string>
     <string name="text_notification_trigger_description">The alarm has been triggered, take the necessary action.</string>
+    <string name="text_notification_network_title">Alarm Disconnected</string>
+    <string name="text_notification_network_description">The network connection is unavailable, a connection is needed for the alarm to work properly.</string>
     <string name="text_settings_code_title">To access this area, please enter your code.</string>
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
     <string name="text_error_pending_time_low">The pending time is time before arming the alarm or the alarm triggers. Please allow enough time to arm or disarm the alarm system while entering or exiting.</string>
@@ -159,6 +161,8 @@
     <string name="progress_location">Acquiring location…</string>
     <string name="text_error_only_numbers">Be sure the value only contains numbers and is not blank.</string>
     <string name="text_error_blank_entry">The value should not blank, please enter a valid value</string>
+    <string name="text_minutes">minutes</string>
+    <string name="text_seconds">seconds</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

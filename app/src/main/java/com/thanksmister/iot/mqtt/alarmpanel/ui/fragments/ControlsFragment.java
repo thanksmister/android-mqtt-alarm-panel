@@ -78,7 +78,10 @@ public class ControlsFragment extends BaseFragment implements LoaderManager.Load
  
     @OnClick(R.id.alarmView)
     public void armButtonClick() {
-        if(readMqttOptions().isValid()) {
+        if(!hasNetworkConnectivity()) {
+            // we can't change the alarm state without network connection.
+            handleNetworkDisconnect();
+        } else if(readMqttOptions().isValid()) {
             if(getConfiguration().getAlarmMode().equals(Configuration.PREF_DISARM)){
                 showArmOptionsDialog();
             } else {
