@@ -8,6 +8,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils;
 import java.util.Locale;
 
 import dpreference.DPreference;
+import timber.log.Timber;
 
 /**
  * For original implementation see https://github.com/androidthings/sensorhub-cloud-iot.
@@ -199,15 +200,13 @@ public class MQTTOptions {
         setOptionsUpdated(true);
     }
 
-    private void setOptionsUpdated(boolean value) {
+    public void setOptionsUpdated(boolean value) {
         this.sharedPreferences.setPrefBoolean(MQTT_OPTIONS_UPDATED, value);
     }
     
     public boolean hasUpdates() {
         boolean updates = sharedPreferences.getPrefBoolean(MQTT_OPTIONS_UPDATED, false);
-        if(updates) {
-            setOptionsUpdated(false);
-        }
+        Timber.d("Updates: " + updates);
         return updates;
     }
 

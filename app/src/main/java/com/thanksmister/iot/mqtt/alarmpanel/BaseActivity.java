@@ -70,7 +70,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     private Configuration configuration;
     private Dialog progressDialog;
     private Dialog dialog;
-    private AlertDialog alertDialog;
+    public AlertDialog alertDialog;
     private Dialog disableDialog;
     private Dialog screenSaverDialog;
     private Handler inactivityHandler = new Handler();
@@ -313,7 +313,7 @@ abstract public class BaseActivity extends AppCompatActivity {
     
     public void showAlertDialog(String message, DialogInterface.OnClickListener onClickListener) {
         if(alertDialog != null && alertDialog.isShowing()) {
-            return;
+            alertDialog.dismiss();
         }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))
@@ -323,7 +323,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showAlertDialog(String title, String message) {
         if(alertDialog != null && alertDialog.isShowing()) {
-            return;
+            alertDialog.dismiss();
         }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setTitle(title)
@@ -334,7 +334,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     public void showAlertDialog(String message) {
         if(alertDialog != null && alertDialog.isShowing()) {
-            return;
+            alertDialog.dismiss();
         }
         alertDialog = new AlertDialog.Builder(BaseActivity.this)
                 .setMessage(Html.fromHtml(message))

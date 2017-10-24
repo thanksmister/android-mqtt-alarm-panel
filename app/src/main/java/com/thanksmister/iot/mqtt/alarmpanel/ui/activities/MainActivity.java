@@ -33,6 +33,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -86,14 +88,17 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         ButterKnife.bind(this);
         
         if(getConfiguration().isFirstTime()) {
-            showAlertDialog(getString(R.string.dialog_first_time), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    getConfiguration().setAlarmCode(1234); // set default code
-                    Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
-                    startActivity(intent);
-                }
-            });
+            new AlertDialog.Builder(MainActivity.this)
+                    .setMessage(Html.fromHtml(getString(R.string.dialog_first_time)))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            getConfiguration().setAlarmCode(1234); // set default code
+                            Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
         }
 
         pagerAdapter = new MainSlidePagerAdapter(getSupportFragmentManager());
@@ -177,6 +182,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             Timber.d("readMqttOptions().hasUpdates(): " + readMqttOptions().hasUpdates());
             try {
                 mqttService.reconfigure(getApplicationContext(), readMqttOptions(), this);
+                readMqttOptions().setOptionsUpdated(false);
             } catch (Throwable t) {
                 // TODO should we loop back and try again? 
                 Timber.e("Could not create MQTTPublisher" + t.getMessage());
@@ -244,10 +250,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     Intent intent = SettingsActivity.createStartIntent(MainActivity.this);
                     startActivity(intent);
                 }
+                hideDialog();
             }
             @Override
             public void onError() {
-                Timber.d("Toast must work!!!");
                 Toast.makeText(MainActivity.this, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show();
             }
             @Override

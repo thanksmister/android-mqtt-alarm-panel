@@ -53,8 +53,6 @@ public class MQTTService implements MQTTServiceInterface {
     public void reconfigure(@NonNull Context context, 
                             @NonNull MQTTOptions newOptions, 
                             MqttManagerListener listener) {
-        this.listener = listener;
-        this.context = context;
         if (newOptions.equals(mqttOptions)) {
             return;
         }
@@ -63,6 +61,8 @@ public class MQTTService implements MQTTServiceInterface {
         } catch (MqttException e) {
             // empty
         }
+        this.listener = listener;
+        this.context = context;
         initialize(newOptions);
     }
     
@@ -130,7 +130,7 @@ public class MQTTService implements MQTTServiceInterface {
             Timber.i("Password: " + mqttOptions.getPassword());
             Timber.i("TslConnect: " + mqttOptions.getTlsConnection());
             Timber.i("MQTT Configuration:");
-            Timber.i("Broker: " + mqttOptions.getBrokerUrl() + ":" + mqttOptions.getPort());
+            Timber.i("Broker: " + mqttOptions.getBrokerUrl());
             Timber.i("Publishing to topic: "+ mqttOptions.getStateTopic());
             Timber.i("Subscribing to topic: "+ mqttOptions.getCommandTopic());
             if(mqttOptions.isValid()) {
@@ -248,6 +248,7 @@ public class MQTTService implements MQTTServiceInterface {
                     @Override
                     public void messageArrived(final String topic, final MqttMessage message) throws Exception {
                         Timber.i("Subscribe Topic: " + topic + "  Payload: " + new String(message.getPayload()));
+                        Timber.i("Subscribe Topic Listener: " + listener);
                         if(listener != null) {
                             listener.subscriptionMessage(topic, new String(message.getPayload()), String.valueOf(message.getId()));
                         }
