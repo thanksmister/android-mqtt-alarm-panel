@@ -45,9 +45,6 @@ public class AlarmTriggeredView extends BaseAlarmView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(handler != null) {
-            handler.removeCallbacks(delayRunnable);
-        }
     }
     
     @Override
@@ -65,18 +62,9 @@ public class AlarmTriggeredView extends BaseAlarmView {
         
         if (enteredCode.length() == MAX_CODE_LENGTH) {
             codeComplete = true;
-            handler = new Handler();
-            handler.postDelayed(delayRunnable, 500);
-        }
-    }
-
-    private Runnable delayRunnable = new Runnable() {
-        @Override
-        public void run() {
-            handler.removeCallbacks(delayRunnable);
             validateCode(enteredCode);
         }
-    };
+    }
 
     @Override
     protected void removePinCode() {
@@ -89,7 +77,7 @@ public class AlarmTriggeredView extends BaseAlarmView {
         }
     }
     
-    private void validateCode(String validateCode) {
+    private void validateCode(final String validateCode) {
         int codeInt = Integer.parseInt(validateCode);
         if(codeInt == code) {
             if(listener != null) {

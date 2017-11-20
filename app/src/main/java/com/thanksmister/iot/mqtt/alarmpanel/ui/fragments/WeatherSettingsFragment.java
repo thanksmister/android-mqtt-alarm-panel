@@ -176,7 +176,7 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS);
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSIONS);
                     return;
                 }
             }
@@ -265,10 +265,12 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
                     String longitude = String.valueOf(location.getLongitude());
                     if (LocationUtils.coordinatesValid(latitude, longitude)) {
                         Timber.d("setUpLocationMonitoring complete");
+                        Timber.d("setUpLocationMonitoring latitude: " + latitude);
+                        Timber.d("setUpLocationMonitoring longitude: " + longitude);
                         weatherOptions.setLat(String.valueOf(location.getLatitude()));
                         weatherOptions.setLon(String.valueOf(location.getLongitude()));
-                        weatherLatitude.setSummary(String.valueOf(weatherOptions.getLatitude()));
-                        weatherLongitude.setSummary(weatherOptions.getLongitude());
+                        weatherLatitude.setSummary(String.valueOf(location.getLatitude()));
+                        weatherLongitude.setSummary(String.valueOf(location.getLongitude()));
                     } else {
                         Toast.makeText(getActivity(), R.string.toast_invalid_coordinates, Toast.LENGTH_SHORT).show();
                     }
@@ -300,18 +302,21 @@ public class WeatherSettingsFragment extends PreferenceFragmentCompat
         if(isAdded()) {
             ((BaseActivity) getActivity()).showProgressDialog(getString(R.string.progress_location), false);
             locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            try {
-                if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HOUR_MILLIS, METERS_MIN, locationListener);
+            if(locationManager != null) {
+                boolean gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                boolean network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                try {
+                    if (network_enabled) {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    } else if (gps_enabled) {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, HOUR_MILLIS, METERS_MIN, locationListener);
+                    }
+                } catch (SecurityException e) {
+                    Timber.e("Location manager could not use network provider: " + e.getMessage());
+                    ((BaseActivity) getActivity()).hideProgressDialog();
+                    Toast.makeText(getActivity(), R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show();
                 }
-                if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, HOUR_MILLIS, METERS_MIN, locationListener);
-                }
-            } catch (SecurityException e) {
-                Timber.e("Location manager could not use network provider", e);
-                ((BaseActivity) getActivity()).hideProgressDialog();
+            } else {
                 Toast.makeText(getActivity(), R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show();
             }
         }
