@@ -119,6 +119,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         }
 
         rotatePreference!!.setDefaultValue(configuration.getCameraRotate())
+        rotatePreference!!.value = configuration.getCameraRotate().toString()
         descriptionPreference!!.isEnabled = configuration.hasCamera()
         rotatePreference!!.isEnabled = configuration.hasCamera()
     }
