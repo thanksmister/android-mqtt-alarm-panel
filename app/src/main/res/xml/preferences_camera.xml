@@ -1,0 +1,84 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/preferenceView">
+
+    <PreferenceCategory android:title="@string/preference_camera">
+
+        <CheckBoxPreference
+            android:key="pref_module_camera"
+            android:summary="@string/preference_camera_summary"
+            android:title="@string/preference_camera_title" />
+
+        <ListPreference
+            android:key="pref_camera_rotate"
+            android:enabled="false"
+            android:title="@string/preference_camera_flip_title"
+            android:summary="@string/preference_camera_flip_summary"
+            android:entries="@array/flip_directions"
+            android:entryValues="@array/flip_values"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preference_mail_title">
+
+    <EditTextPreference
+        android:enabled="false"
+        android:key="pref_mail_from"
+        android:negativeButtonText="@android:string/cancel"
+        android:positiveButtonText="@android:string/ok"
+        android:title="@string/preference_mail_from"
+        android:text="mister@thanksmister.com"
+        android:summary="@string/preference_mail_from_summary"/>
+
+    <EditTextPreference
+        android:enabled="false"
+        android:key="pref_mail_to"
+        android:negativeButtonText="@android:string/cancel"
+        android:positiveButtonText="@android:string/ok"
+        android:title="@string/preference_mail_to"
+        android:text="mister@thanksmister.com"
+        android:summary="@string/preference_mail_to_summary"/>
+
+    <EditTextPreference
+        android:enabled="false"
+        android:key="pref_mail_url"
+        android:negativeButtonText="@android:string/cancel"
+        android:positiveButtonText="@android:string/ok"
+        android:title="@string/preference_mail_domain"
+        android:summary="@string/preference_mail_domain_summary"/>
+
+    <EditTextPreference
+        android:enabled="false"
+        android:key="pref_mail_api_key"
+        android:negativeButtonText="@android:string/cancel"
+        android:positiveButtonText="@android:string/ok"
+        android:title="@string/preference_mail_key"
+        android:summary="@string/preference_mail_key_summary"/>
+
+    <Preference
+        android:key="pref_mail_description"
+        android:selectable="false"
+        android:enabled="false"
+        android:summary="@string/preference_mail_description" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

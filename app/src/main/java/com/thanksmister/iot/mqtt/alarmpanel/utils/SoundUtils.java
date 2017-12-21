@@ -2,11 +2,12 @@ package com.thanksmister.iot.mqtt.alarmpanel.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import com.thanksmister.iot.mqtt.alarmpanel.R;
 
-public class SoundUtils extends ContextWrapper{
+public class SoundUtils extends ContextWrapper {
     
     private MediaPlayer speaker;
     private boolean playing; 
@@ -32,6 +33,7 @@ public class SoundUtils extends ContextWrapper{
     }
     
     public void playBuzzerOnButtonPress() {
+
         // stop the buzzer if repeating
         if(repeating) {
             stopBuzzerRepeat(); 

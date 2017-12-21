@@ -16,96 +16,127 @@
   ~   
   -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:id="@+id/preferenceView">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/preferenceView">
 
     <PreferenceCategory
-            android:title="@string/preference_title_alarm">
+        android:summary="@string/preference_summary_mqtt_server"
+        android:title="@string/preference_title_mqtt_server">
 
-        <Preference
-                android:title="@string/preference_title_security_code"
-                android:summary="@string/preference_summary_security_code"
-                android:key="pref_alarm_code"/>
+        <EditTextPreference
+            android:key="pref_broker"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_broker"
+            android:title="@string/preference_title_broker" />
 
         <CheckBoxPreference
-                android:key="pref_notifications"
-                android:title="@string/preference_title_notification"
-                android:summary="@string/preference_summary_notification"/>
+            android:key="pref_tls_connection"
+            android:summary="@string/preference_summary_tls_connection"
+            android:title="@string/preference_tls_connection" />
+
+        <EditTextPreference
+            android:digits="0123456789"
+            android:inputType="number"
+            android:key="pref_port"
+            android:negativeButtonText="@android:string/cancel"
+            android:numeric="integer"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_port"
+            android:title="@string/preference_title_port" />
+
+        <EditTextPreference
+            android:key="pref_username"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_username"
+            android:title="@string/preference_title_username" />
+
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="pref_password"
+            android:negativeButtonText="@android:string/cancel"
+            android:password="true"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_password"
+            android:title="@string/preference_title_password" />
+
+        <EditTextPreference
+            android:key="pref_client_id"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_client_id"
+            android:title="@string/preference_client_id" />
+
+        <EditTextPreference
+            android:key="pref_command_topic"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_command_topic"
+            android:title="@string/preference_title_command_topic" />
+
+        <EditTextPreference
+            android:key="pref_alarm_topic"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_state_topic"
+            android:title="@string/preference_title_state_topic" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-            android:title="@string/preference_title_mqtt_server"
-            android:summary="@string/preference_summary_mqtt_server">
+    <PreferenceCategory android:title="@string/preference_title_alarm">
+
+        <Preference
+            android:key="pref_alarm_code"
+            android:summary="@string/preference_summary_security_code"
+            android:title="@string/preference_title_security_code" />
 
         <EditTextPreference
-                android:key="pref_broker"
-                android:title="@string/preference_title_broker"
-                android:summary="@string/preference_summary_broker"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-
-        <CheckBoxPreference
-                android:key="pref_tls_connection"
-                android:title="@string/preference_tls_connection"
-                android:summary="@string/preference_summary_tls_connection"/>
+            android:key="pref_pending_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/preference_summary_pending_time"
+            android:title="@string/preference_title_pending_time"/>
 
         <EditTextPreference
-                android:key="pref_port"
-                android:title="@string/preference_title_port"
-                android:inputType="number"
-                android:numeric="integer"
-                android:digits="0123456789"
-                android:summary="@string/preference_summary_port"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:key="pref_delay_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/pref_delay_summary"
+            android:title="@string/pref_delay_title"/>
 
         <EditTextPreference
-                android:key="pref_username"
-                android:title="@string/preference_title_username"
-                android:summary="@string/preference_summary_username"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:key="pref_home_pending_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/pref_home_pending_summary"
+            android:title="@string/pref_home_pending_title"/>
 
         <EditTextPreference
-                android:key="pref_password"
-                android:title="@string/preference_title_password"
-                android:inputType="textPassword"
-                android:summary="@string/preference_summary_password"
-                android:password="true"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:key="pref_away_pending_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/pref_away_pending_summary"
+            android:title="@string/pref_away_pending_title"/>
 
         <EditTextPreference
-                android:key="pref_client_id"
-                android:title="@string/preference_client_id"
-                android:summary="@string/preference_summary_client_id"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:key="pref_home_delay_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/pref_home_delay_summary"
+            android:title="@string/pref_home_delay_title"/>
 
         <EditTextPreference
-                android:key="pref_command_topic"
-                android:title="@string/preference_title_command_topic"
-                android:summary="@string/preference_summary_command_topic"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:key="pref_away_delay_time"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="@string/pref_away_delay_summary"
+            android:title="@string/pref_away_delay_title"/>
 
-        <EditTextPreference
-                android:key="pref_state_topic"
-                android:title="@string/preference_title_state_topic"
-                android:summary="@string/preference_summary_state_topic"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-
-        <EditTextPreference
-                android:key="pref_pending_time"
-                android:inputType="number"
-                android:numeric="integer"
-                android:digits="0123456789"
-                android:title="@string/preference_title_pending_time"
-                android:summary="@string/preference_summary_pending_time"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+        <Preference
+            android:key="pref_description"
+            android:selectable="false"
+            android:summary="@string/pref_pending_times_description" />
 
     </PreferenceCategory>
 

@@ -44,7 +44,7 @@
             android:layout_weight="3">
 
         <TextView
-                android:id="@+id/codeTitle"
+                android:id="@+id/settings_code_title"
                 style="@style/WizardPageTitle"
                 android:textSize="18sp"
                 android:textAllCaps="true"

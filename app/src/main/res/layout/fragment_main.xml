@@ -57,6 +57,21 @@
                 android:orientation="horizontal">
 
             <ImageButton
+                android:id="@+id/platformButton"
+                style="@style/BorderlessButtonStyle"
+                android:padding="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:tint="@color/dark_gray"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_home_black"
+                tools:ignore="ContentDescription"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="24dp"/>
+
+            <ImageButton
                     android:id="@+id/buttonSleep"
                     style="@style/BorderlessButtonStyle"
                     android:padding="8dp"

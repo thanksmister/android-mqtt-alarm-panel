@@ -20,7 +20,7 @@
     <string name="text_renter_alarm_code_title">Please enter the new code again to verify</string>
 
     <!-- Preferences -->
-    <string name="preference_summary_security_code">Set the alarm system code.</string>
+    <string name="preference_summary_security_code">Set the alarm system code (default is 1234).</string>
     <string name="preference_title_security_code">Security Code</string>
     <string name="preference_title_mqtt_server">MQTT Setup</string>
     <string name="preference_summary_mqtt_server">Set the values for the MQTT service</string>
@@ -32,10 +32,10 @@
     <string name="preference_summary_tls_connection">Listen to broker on port 8883 with SSL/TLS.</string>
     <string name="preference_title_port">Service Port</string>
     <string name="preference_summary_port">Set the service port value, usually 8123 unless secure.</string>
-    <string name="preference_title_command_topic">Command Topic</string>
-    <string name="preference_title_state_topic">State Topic</string>
-    <string name="preference_summary_command_topic">Set the command topic value.</string>
-    <string name="preference_summary_state_topic">Set the state topic value.</string>
+    <string name="preference_title_command_topic">Alarm Command</string>
+    <string name="preference_title_state_topic">Alarm Topic</string>
+    <string name="preference_summary_command_topic">Set the command topic value to send commands to the MQTT service.</string>
+    <string name="preference_summary_state_topic">Set the state topic value to receive messages from the MQTT service.</string>
     <string name="preference_title_username">Username</string>
     <string name="preference_summary_username">Set the service username (if needed).</string>
     <string name="preference_title_password">Password</string>
@@ -43,11 +43,11 @@
     <string name="preference_title_alarm">Alarm Settings</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
     <string name="preference_title_pending_time">Pending Time</string>
-    <string name="preference_summary_pending_time">The time in seconds before arming the alarm. Currently %1$s seconds.</string>
+    <string name="preference_summary_pending_time">The time in seconds of the pending time before the alarm is armed away or home). Currently %1$s seconds. Note: This will be the time for all alarms unless overwritten by the pending home and away times below.</string>
     <string name="preference_title_trigger_time">Trigger Time</string>
     <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
 
-    <string name="preference_title_weather_settings">Weather Settings</string>
+    <string name="preference_title_weather_settings">Weather</string>
     <string name="preference_summary_weather_settings">Once activated, the weather settings will appear on the main screen.</string>
     <string name="preference_title_darksky">DarkSky</string>
     <string name="preference_summary_darksky">Activate the weather module using the DarkSky service.</string>
@@ -59,37 +59,80 @@
     <string name="preference_summary_longitude_summary">Edit the location longitude.</string>
     <string name="preference_title_units">Use Celsius (°C)</string>
     <string name="preference_summary_units">Use celsius for temperature values.</string>
-    
+
+    <string name="preference_title_screen_saver_title">Screen Saver</string>
     <string name="preference_title_screen_saver_settings">Screen Saver Settings</string>
     <string name="preference_summary_screen_saver_settings">When active, uses a built-in clock screen saver.</string>
-    <string name="preference_title_screen_saver">Use Screen Saver</string>
-    
+    <string name="preference_title_screen_saver">Clock Screen Saver</string>
+    <string name="pref_title_image_client_id">Imgur Client Id</string>
+    <string name="preference_summary_image_client_id">Enter the client id of the Imgur account from https://api.imgur.com.</string>
+
     <string name="preference_title_screen_saver_photo_settings">Photo Screen Saver Settings</string>
-    <string name="preference_summary_screen_saver_photo_settings">When active, uses Instagram images for the screen saver.</string>
+    <string name="preference_summary_screen_saver_photo_settings">When active, uses rotating Imgur images for the screen saver.</string>
     <string name="preference_title_screen_saver_photo">Image Screen Saver</string>
-    
+
     <string name="preference_summary_screen_saver">Use rotating images from Instagram as screen saver.</string>
-    
-    <string name="preference_title_image_source">Instagram Username</string>
-    <string name="preference_summary_image_source">Enter the username of the Instagram account to use for images. Currently %1$s.</string>
+
+    <string name="preference_title_image_source">Imgur Tag</string>
+    <string name="preference_summary_image_source">Enter an Imgur tag to use for images (example: space, architecture, flowers, or landscape).</string>
     <string name="preference_title_image_fit">Crop Images</string>
     <string name="preference_summary_image_fit">Crop the images to fit the screen size.</string>
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
-    <string name="preference_title_hass_settings">Home Automation Settings</string>
-    <string name="preference_summary_hass_settings">Allows you to load external web page to access your automation platform interface.</string>
-    <string name="preference_title_hass">Home Automation Platform</string>
-    <string name="preference_summary_hass">Displays a web page by swiping the main screen.</string>
-    <string name="preference_title_hass_url">Platform Address</string>
-    <string name="preference_summary_hass_url">Enter the IP address and prefix of your home automation web page and port (http://your_ip_address:8123).</string>
+    <string name="preference_title_web_settings">Home Automation</string>
+    <string name="preference_summary_web_settings">Allows you to load external web page to access your home automation platform interface.</string>
+    <string name="preference_title_web">Home Automation Page</string>
+    <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
+    <string name="preference_title_web_url">Platform Address</string>
+    <string name="preference_summary_web_url">Enter the IP address of your home automation web page with prefix and port if needed (example: http://ipaddress:8123).</string>
+    <string name="preference_web_description">This is an experimental feature. The web page is rendered with Android\'s version of the Chrome Browser and may render differently depending on your Android SDK and WebView versions.</string>
 
     <string name="preference_title_notification">Notifications</string>
     <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
 
-    <string name="preference_title_inactivity">Sleep</string>
-    <string name="preference_summary_inactivity">After %1$s of inactivity.</string>
-   
+    <string name="preference_title_inactivity">Start screen saver after…</string>
+    <string name="preference_summary_inactivity_seconds">After %1$s seconds of inactivity screen dims.</string>
+    <string name="preference_summary_inactivity_minutes">After %1$s minute(s) of inactivity screen dims.</string>
+
+
+    <string name="preference_title_notifications">Notifications</string>
+    <string name="preference_title_mqtt_notifications">MQTT Notifications</string>
+    <string name="preference_summary_mqtt_notifications">Display or speak notifications from MQTT messages.</string>
+
+    <string name="preference_title_alert">Alert Notifications</string>
+    <string name="preference_summary_alert">Use an alert dialog to show the notification content.</string>
+
+    <string name="preference_tts_voice">TTS Voice</string>
+    <string name="preference_tts">TTS Notifications</string>
+    <string name="preference_summary_tts">Use Google Text-To-Speech to speak the alarmState value of an MQTT message. (Note: Requires Android Lollipop or above.)</string>
+
+    <string name="preference_tts_topic">TTS Topic</string>
+    <string name="preference_tts_topic_title">Set Topic Value</string>
+    <string name="preference_tts_topic_summary">Example format for the message topic and alarmState to be spoken (note that externally powered speakers are required for TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+
+
+    <string name="preference_camera">Camera Capture</string>
+    <string name="preference_camera_title">Camera Capture</string>
+    <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled. (Note: Requires Android Lollipop or above.)</string>
+
+    <string name="preference_camera_flip_title">Rotate Camera</string>
+    <string name="preference_camera_flip_summary">Depending on your camera, you may need to rotate or flip the camera. Currently %1$s.</string>
+
+    <string name="preference_mail_domain">Domain</string>
+    <string name="preference_mail_domain_summary">Enter your MailGun domain value (example: sandboxd83b1e242f934c73a471c518392df0.mailgun.org).</string>
+    <string name="preference_mail_key">Api Key</string>
+    <string name="preference_mail_key_summary">Enter your MailGun api key value (example: key-5d021926d65dc12we8ec04d7f9d0fd2c).</string>
+
+    <string name="preference_mail_from">Mail From</string>
+    <string name="preference_mail_from_summary">Enter an email address the email will be from (example: mister@thankmister.com).</string>
+
+    <string name="preference_mail_to">Mail To</string>
+    <string name="preference_mail_to_summary">Enter an email address to receive the image. You can use a comma to send to multiple addresses.((example: "mister@thankmister.com" or "mister@thankmister.com, me@thankmister.com")</string>
+
+    <string name="preference_mail_title">Mail Gun Settings</string>
+    <string name="preference_mail_description">To email captured images you need to setup a MailGun (mailgun.com) account and provide the domain name and api key, also enter the email address of the receipient.</string>
+
     <string name="text_title_system">SYSTEM</string>
     <string name="text_titled_disarmed">DISARMED</string>
     <string name="text_titled_armed_away">ARMED AWAY</string>
@@ -106,7 +149,7 @@
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">DISARMED</string>
     <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
-    <string name="dialog_first_time">Since this is your first time, please setup your MQTT and Alarm information. The default alarm code is 1234.</string>
+    <string name="dialog_first_time">Since this is your first time, please setup your device, MQTT server, and alarm information (the default alarm code is 1234).</string>
     <string name="text_alarm_pending">ALARM PENDING</string>
     <string name="text_f">°F</string>
     <string name="text_c">°C</string>
@@ -140,8 +183,10 @@
     <string name="thanks_mister_title">Thanks, Mister!</string>
     <string name="designer_developer_text">Design and development</string>
     <string name="company_url_text">thanksmister.com</string>
+    <string name="company_email">mister@thanksmister.com</string>
     <string name="text_feedback">Feedback</string>
     <string name="text_rate_application">Rate application</string>
+    <string name="text_reddit">Reddit group</string>
     <string name="text_license_information">License information</string>
     <string name="text_github_code">GitHub code</string>
     <string name="text_about">About</string>
@@ -158,20 +203,61 @@
     <string name="text_error_no_alarm_setup">You are attempting to set the alarm but you haven\'t completed the MQTT setup.</string>
     <string name="text_error_pending_time_low">The pending time is time before arming the alarm or the alarm triggers. Please allow enough time to arm or disarm the alarm system while entering or exiting.</string>
     <string name="text_error_trigger_time_low">The trigger time that the alarm is firing before the alarm is reset. A low trigger time may have unintended behavior.</string>
+    <string name="text_error_mqtt_connection">Failed to connect using the following broker and port: %1$s</string>
     <string name="progress_location">Acquiring location…</string>
     <string name="text_error_only_numbers">Be sure the value only contains numbers and is not blank.</string>
     <string name="text_error_blank_entry">The value should not blank, please enter a valid value</string>
-    <string name="text_minutes">minutes</string>
-    <string name="text_seconds">seconds</string>
+    <string name="text_alarm_disabled_email">Your home alarm has been disabled, here is an image taken at that moment.</string>
+    <string name="text_alarm_disabled_email_subject">Alarm Deactivated</string>
+    <string name="text_camera_failed_configuration">Failed to configure camera, do you have a camera?</string>
+    <string name="text_camera_failed_session">Capture session failed, do you have a camera?</string>
+    <string name="text_error_camera_device">Camera error, couldn\'t open the device.</string>
+    <string name="text_camera_image_subject">Alarm Panel &lt;%1$s&gt;</string>
+    <string name="pref_mqtt_settings_category">MQTT Settings</string>
+    <string name="dialog_loading">Loading…</string>
+    <string name="pref_time_update_title">Update Time</string>
+    <string name="pref_time_title">Time Settings</string>
+    <string name="pref_automatic_time_zone_title">Automatic time zone</string>
+    <string name="pref_automatic_time_zone_summary">Use network-provided time zone</string>
+    <string name="pref_time_summary">Update the device time.</string>
+    <string name="pref_time_format_title">Use 24-hour format</string>
+    <string name="text_dialog_select_time">Select Time</string>
+    <string name="pref_density_summary">Change the screen density. Currently %1$s dpi.</string>
+    <string name="pref_device_brightness_summary">Set the screen brightness between 0 and 255. Currently %1$s.</string>
+    <string name="pref_device_density_title">Screen Density</string>
+    <string name="pref_device_brightness_title">Screen Brightness</string>
+    <string name="pref_reset_category">Reset</string>
+    <string name="pref_reset_title">Clear settings</string>
+    <string name="pref_reset_summary">Clears all settings and returns device to default settings.</string>
+
+    <string name="pref_device_timeout_minutes_summary">After %1$s minute(s) the screen turns off.</string>
+    <string name="pref_device_timeout_seconds_summary">After %1$s second(s) the screen turns off.</string>
+    <string name="pref_device_timeout_hours_summary">After %1$s hour(s) the screen turns off.</string>
+
+    <string name="pref_device_timeout_title">Screen Timeout</string>
+    <string name="text_update_available">There is a new update available, would you like to install it now?</string>
+    <string name="pref_home_pending_title">Arm Home Pending Time</string>
+    <string name="pref_home_pending_summary">The time in seconds before the alarm is set to home mode. Currently %1$s seconds.</string>
+    <string name="pref_delay_title">Disarm Delay Time</string>
+    <string name="pref_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered unless overriden by the home or away delay times. Currently %1$s seconds.</string>
+    <string name="pref_away_pending_title">Arm Away Pending Time</string>
+    <string name="pref_away_pending_summary">The time in seconds before the alarm is set to away mode. Currently %1$s seconds.</string>
+    <string name="pref_pending_times_description">These times should match those set in your home automation platform. If you do not want to use delay, pending home, pending away times, just set them all to be the same as your pending time. For Home Assistant, review the MQTT manual alarm control panel documentation at https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
+    <string name="pref_home_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered in alarm home mode. Currently %1$s seconds.</string>
+    <string name="pref_home_delay_title">Disarm Home Delay Time</string>
+    <string name="pref_away_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered in alarm away mode. Currently %1$s seconds.</string>
+    <string name="pref_away_delay_title">Disarm Away Delay Time</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>
+        <item>@string/preference_title_notification</item>
+        <item>@string/preference_camera_title</item>
+        <item>@string/preference_title_screen_saver_title</item>
         <item>@string/preference_title_weather_settings</item>
-        <item>@string/preference_title_screen_saver_settings</item>
-        <item>@string/preference_title_hass_settings</item>
+        <item>@string/preference_title_web_settings</item>
         <item>@string/text_about</item>
     </string-array>
-    
+
     <string-array name="inactivity_times">
         <item>15 seconds</item>
         <item>30 seconds</item>
@@ -182,7 +268,7 @@
         <item>10 minutes</item>
         <item>30 minutes</item>
     </string-array>
-    
+
     <string-array name="inactivity_values">
         <item>15000</item>
         <item>30000</item>
@@ -193,5 +279,54 @@
         <item>600000</item>
         <item>1800000</item>
     </string-array>
-    
+
+    <string-array name="timeout_times">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>24 hours</item>
+    </string-array>
+
+    <string-array name="timeout_values">
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>180000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>10800000</item>
+        <item>21600000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>None</item>
+        <item>Rotate Left</item>
+        <item>Rotate Right</item>
+        <item>Flip Vertical</item>
+    </string-array>
+
+    <string-array name="flip_values">
+        <item>0F</item>
+        <item>-90f</item>
+        <item>90f</item>
+        <item>180f</item>
+    </string-array>
+
 </resources>

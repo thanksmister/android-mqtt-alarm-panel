@@ -18,7 +18,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.tasks;
 
-import com.thanksmister.iot.mqtt.alarmpanel.data.stores.StoreManager;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.SubscriptionData;
 
 public class SubscriptionDataTask extends NetworkTask<SubscriptionData, Void, Boolean> {
@@ -34,7 +34,7 @@ public class SubscriptionDataTask extends NetworkTask<SubscriptionData, Void, Bo
             throw new Exception("Wrong number of params, expected 1, received " + params.length);
         }
         SubscriptionData mqttData = params[0];
-        storeManager.insertMqttData(mqttData.getTopic(), mqttData.getPayload(), mqttData.getMessageId());
+        //storeManager.insertMqttData(mqttData.getTopic(), mqttData.getPayload(), mqttData.getMessageId());
         return true;
     }
 }

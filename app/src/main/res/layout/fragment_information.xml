@@ -81,31 +81,31 @@
         </LinearLayout>
 
     </FrameLayout>
-    
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:layout_gravity="end"
-        android:layout_weight="1"
-        android:orientation="vertical">
-        
-        <TextView
-            android:id="@+id/timeText"
-            style="@style/TextAppearance.TextLarge"
-            android:textSize="22sp"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="12:55 PM"/>
+            android:gravity="end"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
         <TextView
-            android:id="@+id/dateText"
-            style="@style/TextAppearance.TextLarge"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Monday, June 6th"/>
+                android:id="@+id/timeText"
+                style="@style/TextAppearance.TextLarge"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12:55 PM"/>
+
+        <TextView
+                android:id="@+id/dateText"
+                style="@style/TextAppearance.TextLarge"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Monday, June 6th"/>
 
     </LinearLayout>
 
