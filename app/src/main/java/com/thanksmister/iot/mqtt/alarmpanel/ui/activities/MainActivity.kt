@@ -82,24 +82,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     })
                     .show()
         }
-
-        configuration.alarmCode = 3355
-        configuration.setShowWeatherModule(true)
-        readWeatherOptions().darkSkyKey = "8ca564f444db7c03b24f96542d00b780"
-        readWeatherOptions().setLat("-34.5707737")
-        readWeatherOptions().setLon("-58.4471991")
-        readWeatherOptions().setIsCelsius(true)
-        readMqttOptions().setBroker("192.168.86.228")
-        configuration.setHasCamera(true)
-        configuration.setWebModule(true)
-        configuration.setHasNotifications(true)
-        configuration.webUrl = "http://192.168.86.228:8123/kiosk"
-        configuration.setMailFrom("mister@thanksmister.com")
-        configuration.setMailGunApiKey("key-64dbc2adb48eb9ccf8b7f1ae63271a52")
-        configuration.setMailTo("mister@thanksmister.com")
-        configuration.setMailGunUrl("sandboxd83b1e232f934c75a471c51000485df0.mailgun.org")
-        readImageOptions().setClientId("7dab6bd3675c61b")
-        readImageOptions().setTag("space") // Imgur tags
     }
 
     public override fun onStart() {
