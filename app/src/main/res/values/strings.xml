@@ -43,7 +43,7 @@
     <string name="preference_title_alarm">Alarm Settings</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
     <string name="preference_title_pending_time">Pending Time</string>
-    <string name="preference_summary_pending_time">The time in seconds of the pending time before the alarm is armed away or home). Currently %1$s seconds. Note: This will be the time for all alarms unless overwritten by the pending home and away times below.</string>
+    <string name="preference_summary_pending_time">The time in seconds of the pending time before the alarm is armed away or home). Currently %1$s seconds.</string>
     <string name="preference_title_trigger_time">Trigger Time</string>
     <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
 
