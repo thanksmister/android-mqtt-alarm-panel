@@ -47,6 +47,7 @@ Clone the repository and compile the APK using Andoid Studio, then side load the
 # Alarm Setup
 
 - Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
+
 - Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel. Here is an example of the setup I use in Home Assistant's configuration.yaml file.  
 
 ```
@@ -65,9 +66,14 @@ alarm_control_panel:
       pending_time: 60
       delay_time: 30
 ```
-If I set the the alarm mode home, the alarm will immediately be on without any pending time.  If the alarm is triggered, there will be no pending time before the siren sounds.   If the alarm mode is away, I have 60 seconds to leave before the alar is active and 30 seconds to disarm the alarm when entering.   Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the pending_time and delay_time are used for all alarm modes unless otherwise changed.
+If I set the the alarm mode home, the alarm will immediately be on without any pending time.  If the alarm is triggered, there will be no pending time before the siren sounds.   If the alarm mode is away, I have 60 seconds to leave before the alar is active and 30 seconds to disarm the alarm when entering.   
+
+Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it stops and it doesn't reset after its triggerd. 
+
+Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
 - If you choose to get weather updates, enter your [DarkSky API key](https://darksky.net/dev) and location (lat/lon which you can get from maps.google.com) in the weather setting screen.
+
 - To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur](https://apidocs.imgur.com/)
 
 # Notes
