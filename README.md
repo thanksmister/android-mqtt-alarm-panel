@@ -66,11 +66,12 @@ alarm_control_panel:
       pending_time: 60
       delay_time: 30
 ```
-    If I set the the alarm mode home, the alarm will immediately be on without any pending time.  If the alarm is triggered,       there will be no pending time before the siren sounds.   If the alarm mode is away, I have 60 seconds to leave before the     alarm is active and 30 seconds to disarm the alarm when entering.   
 
-    Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it     stops and it doesn't reset after its triggerd. 
+-- If I set the the alarm mode home, the alarm will immediately be on without any pending time.  If the alarm is triggered,      there will be no pending time before the siren sounds.   If the alarm mode is away, I have 60 seconds to leave before the      alarm is active and 30 seconds to disarm the alarm when entering.   
 
-    Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the               pending_time and delay_time are used for all alarm modes unless otherwise changed.
+-- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it    stops and it doesn't reset after its triggerd. 
+
+-- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
 - If you choose to get weather updates, enter your [DarkSky API key](https://darksky.net/dev) and location (lat/lon which you can get from maps.google.com) in the weather setting screen.
 
