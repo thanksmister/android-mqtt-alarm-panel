@@ -167,6 +167,18 @@ android {
             buildConfigField "String", BASE_ENVIRONMENT, '"PROD_ENVIRONMENT"'
             applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+            buildConfigField 'Integer', 'ALARM_CODE', '1234'
+            buildConfigField 'String', 'DARK_SKY_KEY', '""'
+            buildConfigField 'String', 'MAIL_GUN_KEY', '""'
+            buildConfigField 'String', 'MAIL_GUN_URL','""'
+            buildConfigField 'String', 'IMGUR_CLIENT_ID', '""'
+            buildConfigField 'String', 'LATITUDE', '""'
+            buildConfigField 'String', 'LONGITUDE', '""'
+            buildConfigField 'String', 'MAIL_FROM', '""'
+            buildConfigField 'String', 'MAIL_TO', '""'
+            buildConfigField 'String', 'HASS_URL', '""'
+            buildConfigField 'String', 'BROKER', '""'
+            buildConfigField 'String', 'IMGUR_TAG', '""'
         }
     }
 }
