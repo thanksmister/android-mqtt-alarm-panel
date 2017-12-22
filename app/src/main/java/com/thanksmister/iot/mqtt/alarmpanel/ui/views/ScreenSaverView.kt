@@ -166,6 +166,8 @@ class ScreenSaverView : RelativeLayout {
                 } else {
                     picasso!!.load(imageUrl)
                             .placeholder(R.color.black)
+                            .resize(screenSaverImage.width, screenSaverImage.height)
+                            .centerInside()
                             .error(R.color.black)
                             .into(screenSaverImage)
                 }

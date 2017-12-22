@@ -191,6 +191,7 @@
     <string name="text_github_code">GitHub code</string>
     <string name="text_about">About</string>
     <string name="text_alarm_settings">Alarm Settings</string>
+    <string name="text_mqtt_settings">MQTT Settings</string>
     <string name="notification_channel_name">Entry Detection / Alarm Triggered</string>
     <string name="text_channel_description">Alarm Panel Notifications</string>
     <string name="text_notification_entry_title">Entry Detected</string>
@@ -247,9 +248,12 @@
     <string name="pref_home_delay_title">Disarm Home Delay Time</string>
     <string name="pref_away_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered in alarm away mode. Currently %1$s seconds.</string>
     <string name="pref_away_delay_title">Disarm Away Delay Time</string>
+    <string name="dialog_no_camera_permissions">This feature requires the camera permissions. Go to the device settings, then turn on permissions for this application.</string>
+    <string name="dialog_no_location_permissions">This feature requires the location permissions. Go to the device settings, then turn on permissions for this application.</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>
+        <item>@string/text_mqtt_settings</item>
         <item>@string/preference_title_notification</item>
         <item>@string/preference_camera_title</item>
         <item>@string/preference_title_screen_saver_title</item>

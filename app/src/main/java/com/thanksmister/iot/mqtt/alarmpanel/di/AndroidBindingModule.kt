@@ -88,4 +88,7 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun cameraSettingsFragment(): CameraSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun mqttSettingsFragment(): MqttSettingsFragment
 }

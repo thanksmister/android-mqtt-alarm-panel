@@ -33,7 +33,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -136,17 +135,18 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> AlarmSettingsFragment()
-                1 -> NotificationsSettingsFragment()
-                2 -> CameraSettingsFragment()
-                3 -> ScreenSettingsFragment()
-                4 -> WeatherSettingsFragment()
-                5 -> PlatformSettingsFragment()
-                6 -> AboutFragment()
+                1 -> MqttSettingsFragment()
+                2 -> NotificationsSettingsFragment()
+                3 -> CameraSettingsFragment()
+                4 -> ScreenSettingsFragment()
+                5 -> WeatherSettingsFragment()
+                6 -> PlatformSettingsFragment()
+                7 -> AboutFragment()
                 else -> AboutFragment()
             }
         }
         override fun getCount(): Int {
-            return 7
+            return 8
         }
     }
 

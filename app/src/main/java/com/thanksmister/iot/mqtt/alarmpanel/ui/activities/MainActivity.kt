@@ -18,7 +18,9 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +28,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.support.annotation.LayoutRes
 import android.support.annotation.RequiresApi
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -72,6 +75,29 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         view_pager.adapter = pagerAdapter
         view_pager.addOnPageChangeListener(this)
         view_pager.setPagingEnabled(false)
+
+        if(BuildConfig.DEBUG) {
+            configuration.alarmCode = BuildConfig.ALARM_CODE
+            readWeatherOptions().darkSkyKey = BuildConfig.DARK_SKY_KEY
+            readWeatherOptions().setLat(BuildConfig.LATITUDE)
+            readWeatherOptions().setLon(BuildConfig.LONGITUDE)
+            readMqttOptions().setBroker(BuildConfig.BROKER)
+            configuration.webUrl = BuildConfig.HASS_URL
+            configuration.setMailFrom(BuildConfig.MAIL_FROM)
+            configuration.setMailGunApiKey(BuildConfig.MAIL_GUN_KEY)
+            configuration.setMailTo(BuildConfig.MAIL_TO)
+            configuration.setMailGunUrl(BuildConfig.MAIL_GUN_URL)
+            readImageOptions().setClientId(BuildConfig.IMGUR_CLIENT_ID)
+            readImageOptions().setTag(BuildConfig.IMGUR_TAG) // Imgur tags
+            readWeatherOptions().setIsCelsius(true)
+            configuration.isFirstTime = false
+            configuration.setHasNotifications(true)
+            configuration.setPhotoScreenSaver(true)
+            configuration.setHasCamera(true)
+            configuration.setWebModule(true)
+            configuration.setShowWeatherModule(true)
+            configuration.setTssModule(true)
+        }
 
         if (configuration.isFirstTime) {
             alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)

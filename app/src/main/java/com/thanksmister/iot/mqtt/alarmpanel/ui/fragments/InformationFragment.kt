@@ -18,7 +18,10 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
@@ -38,6 +41,7 @@ import java.text.DateFormat
 import javax.inject.Inject
 
 import android.os.Looper.getMainLooper
+import android.support.v4.app.ActivityCompat
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.fragment_information.*
@@ -96,9 +100,7 @@ class InformationFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        // this picks up changes made in the settings and connects weather if needed
-        if (configuration.showWeatherModule() && readWeatherOptions().darkSkyKey != null
-                && readWeatherOptions().latitude != null && readWeatherOptions().longitude != null) {
+        if (configuration.showWeatherModule() && readWeatherOptions().isValid) {
             if (weatherHandler != null) {
                 weatherHandler!!.removeCallbacks(weatherRunnable)
             }

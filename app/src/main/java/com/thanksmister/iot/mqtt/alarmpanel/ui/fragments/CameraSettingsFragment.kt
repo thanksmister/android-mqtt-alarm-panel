@@ -18,10 +18,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.ListPreference
@@ -34,12 +37,15 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var dialogUtils: DialogUtils
 
     private var tolPreference: EditTextPreference? = null
     private var fromPreference: EditTextPreference? = null
@@ -87,10 +93,24 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         fromPreference = findPreference(Configuration.PREF_MAIL_FROM) as EditTextPreference
         domainPreference = findPreference(Configuration.PREF_MAIL_URL) as EditTextPreference
         keyPreference = findPreference(Configuration.PREF_MAIL_API_KEY) as EditTextPreference
-
         activePreference = findPreference(Configuration.PREF_MODULE_CAMERA) as CheckBoxPreference
         rotatePreference = findPreference(Configuration.PREF_CAMERA_ROTATE) as ListPreference
         descriptionPreference = findPreference("pref_mail_description")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                tolPreference!!.isEnabled = false
+                fromPreference!!.isEnabled = false
+                domainPreference!!.isEnabled = false
+                activePreference!!.isEnabled = false
+                keyPreference!!.isEnabled = false
+                rotatePreference!!.isEnabled = false
+                descriptionPreference!!.isEnabled = false
+                configuration.setHasCamera(false)
+                dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.dialog_no_camera_permissions))
+                return
+            }
+        }
 
         activePreference!!.isChecked = configuration.hasCamera()
 

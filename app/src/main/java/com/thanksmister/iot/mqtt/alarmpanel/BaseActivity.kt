@@ -18,6 +18,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel
 
+import android.Manifest
 import android.app.KeyguardManager
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -28,6 +29,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.PowerManager
+import android.support.annotation.NonNull
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
@@ -49,6 +52,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
+
+    private val REQUEST_PERMISSIONS = 88
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var preferences: DPreference
@@ -113,6 +118,35 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         }
     }
 
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA), REQUEST_PERMISSIONS)
+                return
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_PERMISSIONS -> {
+                if (grantResults.isNotEmpty()) {
+                    var permissionsDenied = false
+                    for (permission in grantResults) {
+                        if (permission != PackageManager.PERMISSION_GRANTED) {
+                            permissionsDenied = true
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
         if (inactivityHandler != null) {
@@ -147,6 +181,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     public override fun onResume() {
         super.onResume()
         registerReceiver(connReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        checkPermissions()
     }
 
     override fun onPause() {

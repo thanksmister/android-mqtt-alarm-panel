@@ -42,6 +42,78 @@ def versionMinor = 6
 def versionPatch = 1
 def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
+def ALARM_CODE() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("alarmCode");
+}
+
+def DARK_SKY_KEY() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("darkSkyKey");
+}
+
+def MAIL_GUN_KEY() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("mailGunApiKey");
+}
+
+def MAIL_GUN_URL() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("mailGunUr");
+}
+
+def IMGUR_CLIENT_ID() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("clientId");
+}
+
+def LATITUDE() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("lat");
+}
+
+def LONGITUDE() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("lon");
+}
+
+def MAIL_FROM() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("mailFrom");
+}
+
+def MAIL_TO() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("mailTo");
+}
+
+def HASS_URL() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("hassUrl");
+}
+
+def BROKER() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("broker");
+}
+
+def IMGUR_TAG() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("tag");
+}
+
 android {
     kapt {
         generateStubs = true
@@ -71,6 +143,18 @@ android {
             buildConfigField "String", BASE_ENVIRONMENT, '"DEV_ENVIRONMENT"'
             applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}-DEV"
+            buildConfigField 'Integer', 'ALARM_CODE', ALARM_CODE()
+            buildConfigField 'String', 'DARK_SKY_KEY', "\"" + DARK_SKY_KEY() +"\""
+            buildConfigField 'String', 'MAIL_GUN_KEY', "\"" + MAIL_GUN_KEY() +"\""
+            buildConfigField 'String', 'MAIL_GUN_URL', "\"" + MAIL_GUN_URL() +"\""
+            buildConfigField 'String', 'IMGUR_CLIENT_ID', "\"" + IMGUR_CLIENT_ID() +"\""
+            buildConfigField 'String', 'LATITUDE', "\"" + LATITUDE() +"\""
+            buildConfigField 'String', 'LONGITUDE', "\"" + LONGITUDE() +"\""
+            buildConfigField 'String', 'MAIL_FROM', "\"" + MAIL_FROM() +"\""
+            buildConfigField 'String', 'MAIL_TO', "\"" + MAIL_TO() +"\""
+            buildConfigField 'String', 'HASS_URL', "\"" + HASS_URL() +"\""
+            buildConfigField 'String', 'BROKER', "\"" + BROKER() +"\""
+            buildConfigField 'String', 'IMGUR_TAG', "\"" + IMGUR_TAG() +"\""
         }
         qa {
             dimension "default"

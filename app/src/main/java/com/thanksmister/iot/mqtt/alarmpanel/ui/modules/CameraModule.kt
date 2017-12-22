@@ -85,7 +85,6 @@ class CameraModule(base: Context?, private var backgroundHandler: Handler, priva
 
     fun takePicture(rotation: Float) {
         this.rotation = rotation
-        Timber.d("takePicture mCameraDevice" + mCameraDevice)
         if(hasCamera) {
             mCameraDevice?.createCaptureSession(
                     arrayListOf(mImageReader?.surface),

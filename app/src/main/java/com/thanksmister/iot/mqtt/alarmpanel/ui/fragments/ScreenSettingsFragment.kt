@@ -96,6 +96,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         rotationPreference!!.text = imageOptions!!.imageRotation.toString()
         rotationPreference!!.summary = getString(R.string.preference_summary_image_rotation, imageOptions!!.imageRotation.toString())
+        rotationPreference!!.setDefaultValue(imageOptions!!.imageRotation.toString())
 
         urlPreference!!.text = imageOptions!!.getTag()
         urlPreference!!.summary = getString(R.string.preference_summary_image_source)
@@ -104,6 +105,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         clientIdPreference!!.summary = getString(R.string.preference_summary_image_client_id)
 
         inactivityPreference!!.setDefaultValue(configuration.inactivityTime)
+        inactivityPreference!!.value = configuration.inactivityTime.toString()
+
         if (configuration.inactivityTime <= SECONDS_VALUE) {
             inactivityPreference!!.summary = getString(R.string.preference_summary_inactivity_seconds,
                     DateUtils.convertInactivityTime(configuration.inactivityTime))
@@ -111,6 +114,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             inactivityPreference!!.summary = getString(R.string.preference_summary_inactivity_minutes,
                     DateUtils.convertInactivityTime(configuration.inactivityTime))
         }
+
         imageFitPreference!!.isChecked = imageOptions!!.imageFitScreen
 
         if(configuration.showPhotoScreenSaver() && configuration.showClockScreenSaverModule()) {

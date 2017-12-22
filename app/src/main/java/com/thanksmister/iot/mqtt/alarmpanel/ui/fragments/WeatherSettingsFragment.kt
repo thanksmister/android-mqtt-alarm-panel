@@ -18,10 +18,12 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
@@ -29,6 +31,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
@@ -72,7 +75,6 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                     val latitude = location.latitude.toString()
                     val longitude = location.longitude.toString()
                     if (LocationUtils.coordinatesValid(latitude, longitude)) {
-                        Timber.d("setUpLocationMonitoring complete")
                         weatherOptions!!.setLat(location.latitude.toString())
                         weatherOptions!!.setLon(location.longitude.toString())
                         weatherLatitude!!.summary = weatherOptions!!.latitude.toString()
@@ -155,6 +157,20 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
         weatherApiKeyPreference = findPreference("pref_weather_api_key") as EditTextPreference
         weatherLongitude = findPreference("pref_longitude") as EditTextPreference
         weatherLatitude = findPreference("pref_latitude") as EditTextPreference
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                weatherModulePreference!!.isEnabled = false
+                unitsPreference!!.isEnabled = false
+                weatherApiKeyPreference!!.isEnabled = false
+                weatherLongitude!!.isEnabled = false
+                weatherLatitude!!.isEnabled = false
+                configuration.setShowWeatherModule(false)
+                dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.dialog_no_location_permissions))
+                return
+            }
+        }
 
         if (isAdded && activity != null) {
             weatherOptions = (activity as BaseActivity).readWeatherOptions()
