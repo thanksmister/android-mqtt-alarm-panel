@@ -161,6 +161,7 @@ class ControlsFragment : BaseFragment() {
                             AlarmUtils.STATE_DISARM -> {
                                 dialogUtils.clearDialogs()
                                 hideAlarmPendingView()
+                                viewModel.setAlarmMode(MODE_DISARM)
                                 setDisarmedView()
                             }
                             AlarmUtils.STATE_PENDING ->

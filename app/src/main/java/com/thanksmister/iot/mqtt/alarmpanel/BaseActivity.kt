@@ -250,6 +250,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     open fun showScreenSaver() {
+        Timber.d("viewModel.isAlarmTriggeredMode() " + viewModel.isAlarmTriggeredMode())
+        Timber.d("viewModel.hasScreenSaver() " + viewModel.hasScreenSaver())
         dialogUtils.clearDialogs()
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
             inactivityHandler!!.removeCallbacks(inactivityCallback)

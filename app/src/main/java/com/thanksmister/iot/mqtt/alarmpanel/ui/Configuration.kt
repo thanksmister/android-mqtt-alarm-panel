@@ -20,6 +20,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui
 
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
 
 import dpreference.DPreference
 import javax.inject.Inject
@@ -33,6 +34,10 @@ constructor(private val sharedPreferences: DPreference) {
     var webUrl: String?
         get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
+
+    var alarmMode: String
+        get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
+        set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
     var inactivityTime: Long
         get() = this.sharedPreferences.getPrefLong(PREF_INACTIVITY_TIME, 300000)
@@ -211,6 +216,11 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_DEVICE_TIME_SERVER)
         sharedPreferences.removePreference(PREF_DEVICE_SCREEN_BRIGHTNESS)
         sharedPreferences.removePreference(PREF_DEVICE_SCREEN_TIMEOUT)
+        sharedPreferences.removePreference(PREF_AWAY_DELAY_TIME)
+        sharedPreferences.removePreference(PREF_HOME_DELAY_TIME)
+        sharedPreferences.removePreference(PREF_DELAY_TIME)
+        sharedPreferences.removePreference(PREF_AWAY_PENDING_TIME)
+        sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
     }
 
     companion object {
@@ -221,6 +231,7 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
         @JvmField val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
 
+        @JvmField val PREF_ALARM_MODE = "pref_alarm_mode"
         @JvmField val PREF_ALARM_CODE = "pref_alarm_code"
         @JvmField val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
         @JvmField val PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo"

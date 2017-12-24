@@ -44,8 +44,6 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     private var mailSubscription: Disposable? = null
 
     private var armed: Boolean = false
-    private var mode: String = MODE_DISARM
-    private val notificationMessage = MutableLiveData<String>()
 
     @AlarmUtils.AlarmStates
     private fun setAlarmModeFromState(state: String) {
@@ -89,16 +87,8 @@ constructor(application: Application, private val dataSource: MessageDao, privat
         return configuration.hasAlertsModule()
     }
 
-    fun getNotificationMessage(): LiveData<String> {
-        return notificationMessage
-    }
-
-    fun setNotificationMessage(value: String) {
-        notificationMessage.value = value
-    }
-
     fun setAlarmMode(value: String) {
-        mode = value
+        configuration.alarmMode = value;
     }
 
     fun getAlarmDelayTime(): Int {
@@ -115,7 +105,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     }
 
     fun getAlarmMode(): String {
-        return mode
+        return configuration.alarmMode
     }
 
     fun isAlarmTriggeredMode(): Boolean {
