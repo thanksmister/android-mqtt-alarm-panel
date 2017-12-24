@@ -50,7 +50,7 @@ class AboutFragment : BaseFragment() {
 
         try {
             val packageInfo = activity!!.packageManager.getPackageInfo(activity!!.packageName, 0)
-            val versionName = activity!!.findViewById<TextView>(R.id.versionName)
+           // val versionName = activity!!.findViewById<View>(R.id.versionName)
             versionNumber = " v" + packageInfo.versionName
             versionName.text = versionNumber
         } catch (e: PackageManager.NameNotFoundException) {

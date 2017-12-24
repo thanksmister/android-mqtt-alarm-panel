@@ -32,10 +32,18 @@ import timber.log.Timber
 import java.util.*
 import android.speech.tts.UtteranceProgressListener
 import android.support.annotation.RequiresApi
+import android.content.Intent
+import android.support.v4.content.ContextCompat.startActivity
+import android.icu.util.ULocale.getLanguage
+
+
+
+
 
 /**
  * Module to use Google Text-to-Speech to speak the payload of MQTT messages.
  */
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class TextToSpeechModule( base: Context?, private val configuration: Configuration) : ContextWrapper(base),
         TextToSpeech.OnInitListener, LifecycleObserver {
 
@@ -53,11 +61,10 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
+            val sdkVersion = Build.VERSION.SDK_INT
             textToSpeech!!.language = Locale.getDefault()
-            textToSpeech!!.voice = textToSpeech!!.defaultVoice
             textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onError(p0: String?) {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -56,10 +56,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var rotatePreference: ListPreference? = null
 
     override fun onAttach(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Perform injection here for M (API 23) due to deprecation of onAttach(Activity).
-            AndroidSupportInjection.inject(this)
-        }
+        AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
 

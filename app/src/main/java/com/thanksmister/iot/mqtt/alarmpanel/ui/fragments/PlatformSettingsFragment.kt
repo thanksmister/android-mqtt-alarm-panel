@@ -39,6 +39,14 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     private var webModulePreference: CheckBoxPreference? = null
     private var webUrlPreference: EditTextPreference? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            // Perform injection here for M (API 23) due to deprecation of onAttach(Activity).
+            AndroidSupportInjection.inject(this)
+        }
+    }
+
     override fun onAttach(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Perform injection here for M (API 23) due to deprecation of onAttach(Activity).
