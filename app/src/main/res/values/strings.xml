@@ -89,7 +89,7 @@
     <string name="preference_web_description">This is an experimental feature. The web page is rendered with Android\'s version of the Chrome Browser and may render differently depending on your Android SDK and WebView versions.</string>
 
     <string name="preference_title_notification">Notifications</string>
-    <string name="preference_summary_notification">Show a notification if the alarm is triggered.</string>
+    <string name="preference_summary_notification">Show a system notification if the alarm is triggered or entry detected.</string>
 
     <string name="preference_title_inactivity">Start screen saver after…</string>
     <string name="preference_summary_inactivity_seconds">After %1$s seconds of inactivity screen dims.</string>
@@ -101,6 +101,7 @@
     <string name="preference_summary_mqtt_notifications">Display or speak notifications from MQTT messages.</string>
 
     <string name="preference_title_alert">Alert Notifications</string>
+    <string name="preference_title_system_notifications">System Notifications</string>
     <string name="preference_summary_alert">Use an alert dialog to show the notification content.</string>
 
     <string name="preference_tts_voice">TTS Voice</string>
@@ -214,7 +215,7 @@
     <string name="text_camera_failed_session">Capture session failed, do you have a camera?</string>
     <string name="text_error_camera_device">Camera error, couldn\'t open the device.</string>
     <string name="text_camera_image_subject">Alarm Panel &lt;%1$s&gt;</string>
-    <string name="pref_mqtt_settings_category">MQTT Settings</string>
+    <string name="pref_mqtt_settings_category">MQTT Notifications</string>
     <string name="dialog_loading">Loading…</string>
     <string name="pref_time_update_title">Update Time</string>
     <string name="pref_time_title">Time Settings</string>

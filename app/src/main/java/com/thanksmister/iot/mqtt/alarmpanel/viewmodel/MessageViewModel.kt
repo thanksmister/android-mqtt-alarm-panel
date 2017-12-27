@@ -108,6 +108,18 @@ constructor(application: Application, private val dataSource: MessageDao, privat
         return configuration.alarmMode
     }
 
+    fun hasSystemAlerts(): Boolean {
+        return configuration.hasSystemAlerts()
+    }
+
+    fun showSystemTriggeredAlert(): Boolean {
+        return (getAlarmMode() == AlarmUtils.MODE_TRIGGERED) && hasSystemAlerts()
+    }
+
+    fun showSystemPendingAlert(): Boolean {
+        return (getAlarmMode() == AlarmUtils.MODE_ARM_HOME || getAlarmMode() == AlarmUtils.MODE_ARM_AWAY) && hasSystemAlerts()
+    }
+
     fun isAlarmTriggeredMode(): Boolean {
         return getAlarmMode() == MODE_TRIGGERED
                 || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING

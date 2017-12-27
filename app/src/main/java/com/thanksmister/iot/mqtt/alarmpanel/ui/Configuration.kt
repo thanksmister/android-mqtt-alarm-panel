@@ -39,6 +39,10 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
+    var systemAlerts: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, value)
+
     var inactivityTime: Long
         get() = this.sharedPreferences.getPrefLong(PREF_INACTIVITY_TIME, 300000)
         set(value) = this.sharedPreferences.setPrefLong(PREF_INACTIVITY_TIME, value)
@@ -97,6 +101,10 @@ constructor(private val sharedPreferences: DPreference) {
 
     fun hasAlertsModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_ALERTS, false)
+    }
+
+    fun hasSystemAlerts(): Boolean {
+        return sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
     }
 
     fun setAlertsModule(value: Boolean) {
@@ -221,6 +229,7 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_DELAY_TIME)
         sharedPreferences.removePreference(PREF_AWAY_PENDING_TIME)
         sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
+        sharedPreferences.removePreference(PREF_SYSTEM_NOTIFICATIONS)
     }
 
     companion object {
@@ -242,6 +251,7 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_INACTIVITY_TIME = "pref_inactivity_time"
         @JvmField val PREF_MODULE_NOTIFICATION = "pref_module_notification"
         @JvmField val PREF_MODULE_TSS = "pref_module_tss"
+        @JvmField val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
         @JvmField val PREF_MODULE_ALERTS = "pref_module_alerts"
         @JvmField val PREF_MAIL_TO = "pref_mail_to"
         @JvmField val PREF_MAIL_FROM = "pref_mail_from"

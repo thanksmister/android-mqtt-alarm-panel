@@ -49,6 +49,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.LocationUtils
 import timber.log.Timber
 
 import com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -248,7 +249,7 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
     private fun setUpLocationMonitoring() {
         Timber.d("setUpLocationMonitoring")
         if (isAdded) {
-            dialogUtils.showProgressDialog(getString(R.string.progress_location), false)
+            Toast.makeText(activity as BaseActivity, getString(R.string.progress_location), Toast.LENGTH_SHORT).show()
             locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_COARSE
@@ -261,7 +262,6 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                 }
             } catch (e: SecurityException) {
                 Timber.e("Location manager could not use network provider", e)
-                dialogUtils.hideProgressDialog()
                 Toast.makeText(activity, R.string.toast_invalid_provider, Toast.LENGTH_SHORT).show()
             }
         }

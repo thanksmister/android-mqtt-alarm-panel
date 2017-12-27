@@ -125,10 +125,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     this@MainActivity.runOnUiThread({
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
-                                //TODO CLEAR NOTIFICATIONS
                                 resetInactivityTimer()
-                                val notifications = NotificationUtils(this@MainActivity)
-                                notifications.clearNotification()
+                                if(viewModel.hasSystemAlerts()) {
+                                    val notifications = NotificationUtils(this@MainActivity)
+                                    notifications.clearNotification()
+                                }
                             }
                             AlarmUtils.STATE_ARM_AWAY,
                             AlarmUtils.STATE_ARM_HOME -> {
@@ -137,16 +138,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             AlarmUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction()
                                 stopDisconnectTimer()
-                                if(viewModel.getAlarmMode() == AlarmUtils.MODE_TRIGGERED){
-                                    // TODO alarm notification
+                                if(viewModel.showSystemTriggeredAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
                                 }
                             }
                             AlarmUtils.STATE_PENDING -> {
                                 awakenDeviceForAction()
-                                if(viewModel.getAlarmMode() == AlarmUtils.MODE_ARM_HOME || viewModel.getAlarmMode() == AlarmUtils.MODE_ARM_AWAY){
-                                    // TODO alarm notification
+                                if(viewModel.showSystemPendingAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
                                 }

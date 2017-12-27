@@ -104,9 +104,9 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         }
     }
 
-    fun showProgressDialog(message: String, modal: Boolean) {
+    fun showProgressDialog(activity: AppCompatActivity, message: String, modal: Boolean) {
         if (progressDialog == null) {
-            progressDialog = ProgressDialog(this)
+            progressDialog = ProgressDialog(activity)
             progressDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
             progressDialog?.setMessage(message)
             progressDialog?.setCancelable(modal)

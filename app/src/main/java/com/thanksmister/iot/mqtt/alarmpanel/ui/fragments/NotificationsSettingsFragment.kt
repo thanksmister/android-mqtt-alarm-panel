@@ -20,13 +20,11 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.preference.PreferenceScreen
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
@@ -45,6 +43,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
     @Inject lateinit var configuration: Configuration
     
     private var topicPreference: EditTextPreference? = null
+    private var systemPreference: CheckBoxPreference? = null
     private var notificationsPreference: CheckBoxPreference? = null
     private var tssPreference: CheckBoxPreference? = null
     private var alertsPreference: CheckBoxPreference? = null
@@ -90,11 +89,13 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
         notificationsPreference = findPreference(Configuration.PREF_MODULE_NOTIFICATION) as CheckBoxPreference
         tssPreference = findPreference(Configuration.PREF_MODULE_TSS) as CheckBoxPreference
         alertsPreference = findPreference(Configuration.PREF_MODULE_ALERTS) as CheckBoxPreference
+        systemPreference = findPreference(Configuration.PREF_SYSTEM_NOTIFICATIONS) as CheckBoxPreference
         descriptionPreference = findPreference("pref_description")
 
         notificationsPreference!!.isChecked = configuration.hasNotifications()
         tssPreference!!.isChecked = configuration.hasTssModule()
         alertsPreference!!.isChecked = configuration.hasAlertsModule()
+        systemPreference!!.isChecked = configuration.hasSystemAlerts()
 
         if (!TextUtils.isEmpty(mqttOptions!!.getNotificationTopic())) {
             topicPreference!!.text = mqttOptions!!.getNotificationTopic()
@@ -134,6 +135,10 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
             Configuration.PREF_MODULE_ALERTS -> {
                 val alerts = alertsPreference!!.isChecked
                 configuration.setAlertsModule(alerts)
+            }
+            Configuration.PREF_SYSTEM_NOTIFICATIONS -> {
+                val checked = systemPreference!!.isChecked
+                configuration.systemAlerts = checked
             }
         }
     }
