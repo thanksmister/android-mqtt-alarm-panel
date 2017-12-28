@@ -19,7 +19,6 @@
 package com.thanksmister.iot.mqtt.alarmpanel.utils
 
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
@@ -57,7 +56,6 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
     private var dialog: Dialog? = null
     private var disableDialog: Dialog? = null
     private var screenSaverDialog: Dialog? = null
-    private var progressDialog: ProgressDialog? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun clearDialogs() {
@@ -72,10 +70,6 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         if (alertDialog != null && alertDialog!!.isShowing) {
             alertDialog!!.dismiss()
             alertDialog = null
-        }
-        if (progressDialog != null && progressDialog!!.isShowing) {
-            progressDialog!!.dismiss()
-            progressDialog = null
         }
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             screenSaverDialog!!.dismiss()
@@ -94,31 +88,6 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         if (alertDialog != null && alertDialog!!.isShowing) {
             alertDialog!!.dismiss()
             alertDialog = null
-        }
-    }
-
-    fun hideProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog!!.dismiss()
-            progressDialog = null
-        }
-    }
-
-    fun showProgressDialog(activity: AppCompatActivity, message: String, modal: Boolean) {
-        if (progressDialog == null) {
-            progressDialog = ProgressDialog(activity)
-            progressDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-            progressDialog?.setMessage(message)
-            progressDialog?.setCancelable(modal)
-            progressDialog?.show()
-            /*val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val dialogView = inflater.inflate(R.layout.dialog_progress, null, false)
-            val progressDialogMessage = dialogView.findViewById<View>(R.id.progressDialogMessage) as TextView
-            progressDialogMessage.text = message
-            progressDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
-                    .setCancelable(modal)
-                    .setView(dialogView)
-                    .show()*/
         }
     }
 

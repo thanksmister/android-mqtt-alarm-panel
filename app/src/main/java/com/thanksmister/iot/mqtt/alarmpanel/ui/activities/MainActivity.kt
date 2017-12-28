@@ -18,17 +18,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-import android.Manifest
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.annotation.LayoutRes
-import android.support.annotation.RequiresApi
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -45,8 +41,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import io.reactivex.android.schedulers.AndroidSchedulers

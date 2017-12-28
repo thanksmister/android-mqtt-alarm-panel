@@ -271,5 +271,10 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
         @JvmField val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_brightness"
         @JvmField val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
+        @JvmField val PREF_WEATHER_WEATHER = "pref_weather_module"
+        @JvmField val PREF_WEATHER_UNITS = "pref_weather_units"
+        @JvmField val PREF_WEATHER_API_KEY = "pref_weather_api_key"
+        @JvmField val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
+        @JvmField val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
     }
 }

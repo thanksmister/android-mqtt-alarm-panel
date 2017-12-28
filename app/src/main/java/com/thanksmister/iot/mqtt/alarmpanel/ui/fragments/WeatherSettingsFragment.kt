@@ -49,6 +49,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.LocationUtils
 import timber.log.Timber
 
 import com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_API_KEY
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LATITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LONGITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_UNITS
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_WEATHER
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
@@ -72,7 +77,6 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
         override fun onLocationChanged(location: Location?) {
             if (location != null) {
                 if (isAdded) {
-                    dialogUtils.hideProgressDialog()
                     val latitude = location.latitude.toString()
                     val longitude = location.longitude.toString()
                     if (LocationUtils.coordinatesValid(latitude, longitude)) {
@@ -150,11 +154,11 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
         super.onViewCreated(view, savedInstanceState)
 
-        weatherModulePreference = findPreference("pref_weather") as CheckBoxPreference
-        unitsPreference = findPreference("pref_units") as CheckBoxPreference
-        weatherApiKeyPreference = findPreference("pref_weather_api_key") as EditTextPreference
-        weatherLongitude = findPreference("pref_longitude") as EditTextPreference
-        weatherLatitude = findPreference("pref_latitude") as EditTextPreference
+        weatherModulePreference = findPreference(PREF_WEATHER_WEATHER) as CheckBoxPreference
+        unitsPreference = findPreference(PREF_WEATHER_UNITS) as CheckBoxPreference
+        weatherApiKeyPreference = findPreference(PREF_WEATHER_API_KEY) as EditTextPreference
+        weatherLongitude = findPreference(PREF_WEATHER_LONGITUDE) as EditTextPreference
+        weatherLatitude = findPreference(PREF_WEATHER_LATITUDE) as EditTextPreference
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -198,10 +202,9 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
         weatherLongitude!!.isEnabled = configuration.showWeatherModule()
     }
 
-    // TODO (make these all constants in the configuration)
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            "pref_weather" -> {
+            PREF_WEATHER_WEATHER -> {
                 val checked = weatherModulePreference!!.isChecked
                 configuration.setShowWeatherModule(checked)
                 weatherApiKeyPreference!!.isEnabled = checked
@@ -212,16 +215,16 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                     setUpLocationMonitoring()
                 }
             }
-            "pref_units" -> {
+            PREF_WEATHER_UNITS -> {
                 val useCelsius = unitsPreference!!.isChecked
                 weatherOptions!!.setIsCelsius(useCelsius)
             }
-            "pref_weather_api_key" -> {
+            PREF_WEATHER_API_KEY -> {
                 val value = weatherApiKeyPreference!!.text
                 weatherOptions!!.darkSkyKey = value
                 weatherApiKeyPreference!!.summary = value
             }
-            "pref_longitude" -> {
+            PREF_WEATHER_LONGITUDE -> {
                 val value = weatherLongitude!!.text
                 if (LocationUtils.longitudeValid(value)) {
                     weatherOptions!!.setLon(value)
@@ -232,7 +235,7 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                     weatherLongitude!!.summary = ""
                 }
             }
-            "pref_latitude" -> {
+            PREF_WEATHER_LATITUDE -> {
                 val value = weatherLatitude!!.text
                 if (LocationUtils.longitudeValid(value)) {
                     weatherOptions!!.setLat(value)

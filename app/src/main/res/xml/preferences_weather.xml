@@ -27,7 +27,7 @@
         <CheckBoxPreference
                 android:title="@string/preference_title_darksky"
                 android:summary="@string/preference_summary_darksky"
-                android:key="pref_weather"/>
+                android:key="pref_weather_module"/>
 
         <EditTextPreference
                 android:key="pref_weather_api_key"
@@ -38,7 +38,7 @@
                 android:positiveButtonText="@android:string/ok"/>
         
         <EditTextPreference
-                android:key="pref_latitude"
+                android:key="pref_weather_latitude"
                 android:enabled="false"
                 android:title="@string/preference_title_latitude"
                 android:summary="@string/preference_summary_latitude_summary"
@@ -47,7 +47,7 @@
                 android:positiveButtonText="@android:string/ok"/>
 
         <EditTextPreference
-                android:key="pref_longitude"
+                android:key="pref_weather_longitude"
                 android:enabled="false"
                 android:title="@string/preference_title_longitude"
                 android:summary="@string/preference_summary_longitude_summary"
@@ -59,7 +59,7 @@
                 android:enabled="false"
                 android:title="@string/preference_title_units"
                 android:summary="@string/preference_summary_units"
-                android:key="pref_units"/>
+                android:key="pref_weather_units"/>
 
     </PreferenceCategory>
  
