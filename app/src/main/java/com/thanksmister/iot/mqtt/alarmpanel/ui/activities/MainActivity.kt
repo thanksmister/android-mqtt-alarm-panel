@@ -89,7 +89,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             readWeatherOptions().setIsCelsius(true)
             configuration.isFirstTime = false
             configuration.setHasNotifications(true)
-            configuration.setPhotoScreenSaver(true)
+
+            configuration.setClockScreenSaverModule(true)
+            configuration.setPhotoScreenSaver(false)
             configuration.setHasCamera(true)
             configuration.setWebModule(true)
             configuration.setShowWeatherModule(true)
@@ -220,20 +222,23 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private val initializeOnBackground = Runnable {
-
         if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             textToSpeechModule = TextToSpeechModule(this@MainActivity, configuration)
-            lifecycle.addObserver(textToSpeechModule!!)
+            runOnUiThread({
+                lifecycle.addObserver(textToSpeechModule!!)
+            })
         }
-
         if (mqttModule == null && readMqttOptions().isValid) {
             mqttModule = MQTTModule(this@MainActivity.applicationContext, readMqttOptions(),this@MainActivity)
-            lifecycle.addObserver(mqttModule!!)
+            runOnUiThread({
+                lifecycle.addObserver(mqttModule!!)
+            })
         }
-
         if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!,this@MainActivity)
-            lifecycle.addObserver(cameraModule!!)
+            runOnUiThread({
+                lifecycle.addObserver(cameraModule!!)
+            })
         }
     }
 
@@ -267,8 +272,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 if (viewModel.hasAlerts()) {
                     dialogUtils.showAlertDialog(this@MainActivity, payload)
                 }
-                if (textToSpeechModule != null && viewModel.hasTss()) {
-                    textToSpeechModule!!.speakText(payload)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    if (textToSpeechModule != null && viewModel.hasTss()) {
+                        textToSpeechModule!!.speakText(payload)
+                    }
                 }
             })
         }
