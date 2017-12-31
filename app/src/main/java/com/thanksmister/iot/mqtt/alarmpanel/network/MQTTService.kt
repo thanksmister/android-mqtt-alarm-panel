@@ -59,7 +59,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             // TODO IllegalArgumentException: Invalid ClientHandle and no dialog showing sound stuck
             mqttClient?.setCallback(null)
             if (mqttClient!!.isConnected) {
-                mqttClient!!.disconnect()
+                mqttClient!!.disconnect(0)
             }
             mqttClient = null
             listener = null
