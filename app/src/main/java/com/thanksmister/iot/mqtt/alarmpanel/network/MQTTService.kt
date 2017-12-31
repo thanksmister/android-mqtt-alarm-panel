@@ -15,8 +15,7 @@ import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MQTTService(private var context: Context?,
-                  options: MQTTOptions,
+class MQTTService(private var context: Context, options: MQTTOptions,
                   private var listener: MqttManagerListener?) : MQTTServiceInterface {
 
     private var mqttClient: MqttAndroidClient? = null
@@ -56,14 +55,15 @@ class MQTTService(private var context: Context?,
 
     @Throws(MqttException::class)
     override fun close() {
-        listener = null
-        mqttOptions = null
         if (mqttClient != null) {
             // TODO IllegalArgumentException: Invalid ClientHandle and no dialog showing sound stuck
+            mqttClient?.setCallback(null)
             if (mqttClient!!.isConnected) {
                 mqttClient!!.disconnect()
             }
             mqttClient = null
+            listener = null
+            mqttOptions = null
         }
         mReady.set(false)
     }
@@ -111,6 +111,8 @@ class MQTTService(private var context: Context?,
      */
     private fun initialize(options: MQTTOptions) {
         Timber.d("initialize")
+        if(options == null) return;
+
         try {
             mqttOptions = options
             Timber.i("Service Configuration:")
@@ -150,76 +152,73 @@ class MQTTService(private var context: Context?,
         Timber.d("initializeMqttClient")
         try {
             mqttClient = MqttAndroidClient(context, mqttOptions?.brokerUrl, mqttOptions!!.getClientId())
-
             val options = MqttConnectOptions()
             if (!TextUtils.isEmpty(mqttOptions!!.getUsername()) && !TextUtils.isEmpty(mqttOptions!!.getPassword())) {
                 options.userName = mqttOptions!!.getUsername()
                 options.password = mqttOptions!!.getPassword()!!.toCharArray()
             }
-            val broker = mqttOptions?.brokerUrl;
-            val clientId = mqttOptions?.getClientId();
-            if(context != null  && !TextUtils.isEmpty(broker) && !TextUtils.isEmpty(clientId) ){
-                mqttClient = MqttUtils.getMqttAndroidClient(context!!, broker!!, clientId!!, object : MqttCallbackExtended {
-                    override fun connectComplete(reconnect: Boolean, serverURI: String) {
-                        if (reconnect) {
-                            Timber.d("Reconnected to : " + serverURI)
-                            // Because Clean Session is true, we need to re-subscribe
-                            subscribeToTopics(mqttOptions!!.stateTopics)
-                        } else {
-                            Timber.d("Connected to: " + serverURI)
-                        }
-                    }
 
-                    override fun connectionLost(cause: Throwable) {
-                        Timber.e(cause, "The Connection was lost.")
-                    }
-
-                    @Throws(Exception::class)
-                    override fun messageArrived(topic: String, message: MqttMessage) {
-                        Timber.i("Received Message : " + topic + " : " + String(message.payload))
-                    }
-
-                    override fun deliveryComplete(token: IMqttDeliveryToken) {}
-                })
-
-                options.isAutomaticReconnect = true
-                options.isCleanSession = false
-
-                try {
-                    mqttClient!!.connect(options, null, object : IMqttActionListener {
-                        override fun onSuccess(asyncActionToken: IMqttToken) {
-                            val disconnectedBufferOptions = DisconnectedBufferOptions()
-                            disconnectedBufferOptions.isBufferEnabled = true
-                            disconnectedBufferOptions.bufferSize = 100
-                            disconnectedBufferOptions.isPersistBuffer = false
-                            disconnectedBufferOptions.isDeleteOldestMessages = false
-                            if (mqttClient != null) {
-                                mqttClient!!.setBufferOpts(disconnectedBufferOptions)
-                            }
-                            if (mqttOptions != null) {
-                                subscribeToTopics(mqttOptions!!.stateTopics)
-                            }
-                        }
-
-                        override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
-                            if (listener != null && mqttOptions != null) {
-                                Timber.e("Failed to connect to: " + mqttOptions!!.brokerUrl + " exception: " + exception)
-                                listener!!.handleMqttException("Error connecting to the broker and port: " + mqttOptions!!.brokerUrl)
-                            }
-                        }
-                    })
-                } catch (e: MqttException) {
-                    Timber.e(e, "MqttException")
-                    if (listener != null) {
-                        listener?.handleMqttException("Error while connecting: " + e.message)
+            mqttClient = MqttUtils.getMqttAndroidClient(context, mqttOptions?.brokerUrl!!, mqttOptions?.getClientId()!!, object : MqttCallbackExtended {
+                override fun connectComplete(reconnect: Boolean, serverURI: String) {
+                    if (reconnect) {
+                        Timber.d("Reconnected to : " + serverURI)
+                        // Because Clean Session is true, we need to re-subscribe
+                        subscribeToTopics(mqttOptions!!.stateTopics)
+                    } else {
+                        Timber.d("Connected to: " + serverURI)
                     }
                 }
 
-                mReady.set(true)
-            } else {
-                listener?.handleMqttException("Error while connecting, empty values, be sure to setup all values for your MQTT service.")
+                @Throws(IllegalArgumentException::class)
+                override fun connectionLost(cause: Throwable) {
+                    Timber.d("The Connection was lost.")
+                }
+
+                @Throws(Exception::class)
+                override fun messageArrived(topic: String, message: MqttMessage) {
+                    Timber.i("Received Message : " + topic + " : " + String(message.payload))
+                }
+
+                override fun deliveryComplete(token: IMqttDeliveryToken) {}
+            })
+
+            options.isAutomaticReconnect = true
+            options.isCleanSession = false
+
+            try {
+                mqttClient!!.connect(options, null, object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken) {
+                        val disconnectedBufferOptions = DisconnectedBufferOptions()
+                        disconnectedBufferOptions.isBufferEnabled = true
+                        disconnectedBufferOptions.bufferSize = 100
+                        disconnectedBufferOptions.isPersistBuffer = false
+                        disconnectedBufferOptions.isDeleteOldestMessages = false
+                        if (mqttClient != null) {
+                            mqttClient!!.setBufferOpts(disconnectedBufferOptions)
+                        }
+                        if (mqttOptions != null) {
+                            subscribeToTopics(mqttOptions!!.stateTopics)
+                        }
+                    }
+
+                    override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
+                        if (listener != null && mqttOptions != null) {
+                            Timber.e("Failed to connect to: " + mqttOptions!!.brokerUrl + " exception: " + exception)
+                            listener!!.handleMqttException("Error connecting to the broker and port: " + mqttOptions!!.brokerUrl)
+                        }
+                    }
+                })
+            } catch (e: MqttException) {
+                Timber.e(e, "MqttException")
+                if (listener != null) {
+                    listener?.handleMqttException("Error while connecting: " + e.message)
+                }
             }
 
+            mReady.set(true)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            Timber.e(e, "Error disconnecting MQTT service")
         } catch (e: Exception) {
             e.printStackTrace()
             if (listener != null) {
