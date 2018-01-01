@@ -215,6 +215,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun publishDisarmed() {
+        Timber.d("publishDisarmed")
         if (mqttModule != null) {
             mqttModule?.publish(AlarmUtils.COMMAND_DISARM)
         }

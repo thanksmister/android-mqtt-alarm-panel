@@ -121,10 +121,10 @@ class AlarmDisableView : BaseAlarmView {
 
     private fun validateCode(validateCode: String) {
         val codeInt = Integer.parseInt(validateCode)
-        if (codeInt == code) {
+        if (codeInt == currentCode) {
             countDownTimer?.cancel()
             countDownTimer = null
-            alarmListener?.onComplete(code)
+            alarmListener?.onComplete(currentCode)
         } else {
             codeComplete = false
             enteredCode = ""

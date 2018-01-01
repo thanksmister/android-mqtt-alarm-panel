@@ -13,24 +13,24 @@ import kotlinx.android.synthetic.main.view_keypad.view.*
 
 abstract class BaseAlarmView : LinearLayout {
 
-    var code: Int = 0
+    var currentCode: Int = 0
     var codeComplete = false
     var enteredCode = ""
 
     private var soundUtils: SoundUtils? = null
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context) {
+        // let's play the sound as loud as we can
+        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0)
+    }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
 
     override fun onFinishInflate() {
 
         super.onFinishInflate()
-
-        // let's play the sound as loud as we can
-        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0)
 
         button0.setOnClickListener {
             playButtonPress()
@@ -103,6 +103,10 @@ abstract class BaseAlarmView : LinearLayout {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         destroySoundUtils()
+    }
+
+    fun setCode(code: Int) {
+        currentCode = code
     }
 
     abstract fun onCancel()

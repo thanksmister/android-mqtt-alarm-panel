@@ -110,8 +110,8 @@ class MainFragment : BaseFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
-                    Timber.e("Alarm state: " + state)
-                    Timber.e("Alarm mode: " + viewModel.getAlarmMode())
+                    Timber.d("Alarm state: " + state)
+                    Timber.d("Alarm mode: " + viewModel.getAlarmMode())
                     activity?.runOnUiThread(java.lang.Runnable {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
@@ -183,19 +183,18 @@ class MainFragment : BaseFragment() {
 
     private fun showAlarmTriggered() {
         if (isAdded) {
-            mainView!!.visibility = View.GONE
-            triggeredView!!.visibility = View.VISIBLE
+            mainView.visibility = View.GONE
+            triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode
             val disarmView = activity!!.findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
-            disarmView.code = (code)
+            disarmView.setCode(code)
             disarmView.listener = object : AlarmTriggeredView.ViewListener {
-                override fun onComplete(code: Int) {
+                override fun onComplete() {
                     listener!!.publishDisarmed()
                 }
                 override fun onError() {
                     Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                 }
-                override fun onCancel() {}
             }
         }
     }

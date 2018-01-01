@@ -161,7 +161,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
         val alarmCodeView = view.findViewById<AlarmDisableView>(R.id.alarmDisableView)
         alarmCodeView.setListener(alarmCodeListener)
-        alarmCodeView.code = code
+        alarmCodeView.setCode(code)
         alarmCodeView.startCountDown(timeRemaining)
         if (beep) {
             alarmCodeView.playContinuousBeep()
@@ -175,7 +175,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_settings_code, null, false)
         val settingsCodeView = view.findViewById<SettingsCodeView>(R.id.settingsCodeView)
-        settingsCodeView.code = code
+        settingsCodeView.setCode(code)
         settingsCodeView.setListener(listener)
         dialog = buildImmersiveDialog(activity, true, view, false)
     }

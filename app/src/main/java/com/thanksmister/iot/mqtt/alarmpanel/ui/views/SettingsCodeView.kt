@@ -92,9 +92,9 @@ class SettingsCodeView : BaseAlarmView {
 
     private fun validateCode(validateCode: String) {
         val codeInt = Integer.parseInt(validateCode)
-        if (codeInt == code) {
+        if (codeInt == currentCode) {
             if (settingsListener != null) {
-                settingsListener!!.onComplete(code)
+                settingsListener!!.onComplete(currentCode)
             }
         } else {
             codeComplete = false

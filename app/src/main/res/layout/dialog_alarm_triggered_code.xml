@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="25"
-                android:orientation="horizontal">
+                android:orientation="horizontal" android:baselineAligned="false">
 
             <FrameLayout
                     android:id="@+id/button1"
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="25"
-                android:orientation="horizontal">
+                android:orientation="horizontal" android:baselineAligned="false">
 
             <FrameLayout
                     android:id="@+id/button4"
@@ -189,7 +189,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="25"
-                android:orientation="horizontal">
+                android:orientation="horizontal" android:baselineAligned="false">
 
             <FrameLayout
                     android:id="@+id/button7"
@@ -323,7 +323,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:tint="@color/white"
-                            android:src="@drawable/ic_backspace_black_32dp"/>
+                            android:src="@drawable/ic_backspace_black_32dp"
+                            tools:ignore="ContentDescription" />
 
                 </FrameLayout>
 

@@ -27,41 +27,23 @@ class AlarmTriggeredView : BaseAlarmView {
 
     var listener: ViewListener? = null
 
-    private val delayRunnable = object : Runnable {
-        override fun run() {
-            handler.removeCallbacks(this)
-            validateCode(enteredCode)
-        }
-    }
 
     interface ViewListener {
-        fun onComplete(code: Int)
+        fun onComplete()
         fun onError()
-        fun onCancel()
     }
 
     constructor(context: Context) : super(context) {}
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-    }
-
-    override fun onCancel() {
-        // do nothing, can't cancel
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        if (handler != null) {
-            handler.removeCallbacks(delayRunnable)
-        }
-    }
-
     override fun reset() {
         codeComplete = false
         enteredCode = ""
+    }
+
+    override fun onCancel() {
+        // na-da
     }
 
     override fun addPinCode(code: String) {
@@ -72,7 +54,7 @@ class AlarmTriggeredView : BaseAlarmView {
 
         if (enteredCode.length == MAX_CODE_LENGTH) {
             codeComplete = true
-            handler.postDelayed(delayRunnable, 500)
+            validateCode(enteredCode)
         }
     }
 
@@ -87,16 +69,16 @@ class AlarmTriggeredView : BaseAlarmView {
     }
 
     private fun validateCode(validateCode: String) {
-        val codeInt = Integer.parseInt(validateCode)
-        if (codeInt == code) {
+        val codeInt = validateCode.toInt()
+        if (codeInt == currentCode) {
             if (listener != null) {
-                listener!!.onComplete(code)
+                listener!!.onComplete()
             }
         } else {
-            reset()
             if (listener != null) {
                 listener!!.onError()
             }
         }
+        reset()
     }
 }
