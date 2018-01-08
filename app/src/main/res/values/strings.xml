@@ -251,6 +251,7 @@
     <string name="pref_away_delay_title">Disarm Away Delay Time</string>
     <string name="dialog_no_camera_permissions">This feature requires the camera permissions. Go to the device settings, then turn on permissions for this application.</string>
     <string name="dialog_no_location_permissions">This feature requires the location permissions. Go to the device settings, then turn on permissions for this application.</string>
+    <string name="toast_screen_timeout">Screen timed out...</string>
 
     <string-array name="settings_titles">
         <item>@string/text_alarm_settings</item>

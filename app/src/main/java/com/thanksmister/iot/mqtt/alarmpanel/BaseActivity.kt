@@ -62,7 +62,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MessageViewModel
 
-    private var inactivityHandler: Handler? = Handler()
+    private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
     val disposable = CompositeDisposable()
     private var wakeLock: PowerManager.WakeLock? = null
@@ -149,23 +149,20 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (inactivityHandler != null) {
-            inactivityHandler!!.removeCallbacks(inactivityCallback)
-            inactivityHandler = null
-        }
+        inactivityHandler.removeCallbacks(inactivityCallback)
         disposable.dispose()
     }
 
     fun resetInactivityTimer() {
         Timber.d("resetInactivityTimer")
         dialogUtils.hideScreenSaverDialog()
-        inactivityHandler?.removeCallbacks(inactivityCallback)
-        inactivityHandler?.postDelayed(inactivityCallback, configuration.inactivityTime)
+        inactivityHandler.removeCallbacks(inactivityCallback)
+        inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
     }
 
     fun stopDisconnectTimer() {
         dialogUtils.hideScreenSaverDialog()
-        inactivityHandler!!.removeCallbacks(inactivityCallback)
+        inactivityHandler.removeCallbacks(inactivityCallback)
     }
 
     override fun onUserInteraction() {
@@ -252,9 +249,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     open fun showScreenSaver() {
         Timber.d("viewModel.isAlarmTriggeredMode() " + viewModel.isAlarmTriggeredMode())
         Timber.d("viewModel.hasScreenSaver() " + viewModel.hasScreenSaver())
-        dialogUtils.clearDialogs()
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
-            inactivityHandler!!.removeCallbacks(inactivityCallback)
+            // dialogUtils.clearDialogs()
+            inactivityHandler.removeCallbacks(inactivityCallback)
             dialogUtils.showScreenSaver(this@BaseActivity,
                     configuration.showPhotoScreenSaver(), configuration.showClockScreenSaverModule(),
                     readImageOptions(), object : ScreenSaverView.ViewListener {
