@@ -43,6 +43,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
 import dagger.android.support.DaggerAppCompatActivity
 import dpreference.DPreference
@@ -146,7 +147,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         inactivityHandler.removeCallbacks(inactivityCallback)
@@ -177,6 +177,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
+        releaseTemporaryWakeLock()
         registerReceiver(connReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         checkPermissions()
     }
@@ -273,9 +274,15 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * into foreground.
      */
     fun handleNetworkDisconnect() {
-        dialogUtils.hideScreenSaverDialog()
-        dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
+        if(configuration.hasNotifications()) {
+            val notifications = NotificationUtils(this@BaseActivity)
+            notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
+        } else {
+            acquireTemporaryWakeLock()
+            dialogUtils.hideScreenSaverDialog()
+            dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                     getString(R.string.text_notification_network_description))
+        }
     }
 
     /**
@@ -284,6 +291,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      */
     fun handleNetworkConnect() {
         dialogUtils.hideAlertDialog()
+        val notifications = NotificationUtils(this@BaseActivity)
+        notifications.clearNotification()
     }
 
     fun hasNetworkConnectivity(): Boolean {

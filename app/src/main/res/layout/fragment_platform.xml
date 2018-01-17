@@ -42,6 +42,17 @@
         android:paddingEnd="16dp"
         android:orientation="horizontal">
 
+        <CheckBox
+            android:id="@+id/checkbox_hide"
+            android:padding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/button_hide_text" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="24dp"/>
+
         <ImageButton
             android:id="@+id/button_alarm"
             style="@style/BorderlessButtonStyle"

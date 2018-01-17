@@ -35,6 +35,11 @@
                 android:negativeButtonText="@android:string/cancel"
                 android:positiveButtonText="@android:string/ok"/>
 
+        <CheckBoxPreference
+            android:title="@string/pref_title_platform_bar"
+            android:summary="@string/pref_description_show_platform_bar"
+            android:key="pref_platform_bar"/>
+
     </PreferenceCategory>
 
     <Preference

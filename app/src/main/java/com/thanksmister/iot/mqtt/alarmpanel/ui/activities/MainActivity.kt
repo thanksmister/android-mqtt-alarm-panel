@@ -60,6 +60,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     private var mBackgroundHandler: Handler? = null
     private var cameraModule: CameraModule? = null
     private var alertDialog: AlertDialog? = null
+    private var releaseWakeHandler:Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +120,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     this@MainActivity.runOnUiThread({
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
+                                awakenDeviceForAction()
+                                releaseWakeHandler = Handler();
+                                releaseWakeHandler?.postDelayed(releaseWakeLockRunnable, 10000)
                                 resetInactivityTimer()
                                 if(viewModel.hasSystemAlerts()) {
                                     val notifications = NotificationUtils(this@MainActivity)
@@ -142,6 +146,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                                 if(viewModel.showSystemPendingAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
+                                } else {
+                                    releaseWakeHandler = Handler();
+                                    releaseWakeHandler?.postDelayed(releaseWakeLockRunnable, 10000)
                                 }
                             }
                         }
@@ -168,6 +175,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         if(alertDialog != null) {
             alertDialog?.dismiss()
             alertDialog = null
+        }
+        if(releaseWakeHandler != null) {
+            releaseWakeHandler?.removeCallbacks(releaseWakeLockRunnable)
+            releaseWakeHandler = null
         }
     }
 
@@ -221,7 +232,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private val initializeOnBackground = Runnable {
-        if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewModel.hasTss()) {
             textToSpeechModule = TextToSpeechModule(this@MainActivity, configuration)
             runOnUiThread({
                 lifecycle.addObserver(textToSpeechModule!!)
@@ -247,9 +258,18 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     /**
+     * Temporarily wake the screen so we can notify the user of pending alarm and
+     * then allow the device to sleep again as needed after a set amount of time.
+     */
+    var releaseWakeLockRunnable: Runnable = Runnable {
+        releaseTemporaryWakeLock()
+    }
+
+    /**
      * We need to awaken the device and allow the user to take action.
      */
     private fun awakenDeviceForAction() {
+        acquireTemporaryWakeLock()
         stopDisconnectTimer() // stop screen saver mode
         if (view_pager != null && pagerAdapter.count > 0) {
             dialogUtils.hideAlertDialog()

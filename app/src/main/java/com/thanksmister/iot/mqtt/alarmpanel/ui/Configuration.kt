@@ -83,6 +83,10 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefInt(PREF_ALARM_CODE, 1234)
         set(value) = this.sharedPreferences.setPrefInt(PREF_ALARM_CODE, value)
 
+    var platformBar: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BAR, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BAR, value)
+
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
     }
@@ -230,6 +234,7 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_AWAY_PENDING_TIME)
         sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
         sharedPreferences.removePreference(PREF_SYSTEM_NOTIFICATIONS)
+        sharedPreferences.removePreference(PREF_PLATFORM_BAR)
     }
 
     companion object {
@@ -276,5 +281,6 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_WEATHER_API_KEY = "pref_weather_api_key"
         @JvmField val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
         @JvmField val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
+        @JvmField val PREF_PLATFORM_BAR = "pref_platform_bar"
     }
 }

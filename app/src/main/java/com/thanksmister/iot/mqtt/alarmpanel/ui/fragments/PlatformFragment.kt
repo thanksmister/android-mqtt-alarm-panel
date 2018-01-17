@@ -17,6 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -31,6 +32,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
 import javax.inject.Inject
+import android.widget.Toast
+import android.widget.CheckBox
+
+
 
 class PlatformFragment : BaseFragment(){
 
@@ -54,7 +59,15 @@ class PlatformFragment : BaseFragment(){
 
     override fun onResume() {
         super.onResume()
+        Timber.w("onResume WebView BAD")
         loadWebPage()
+        if (configuration.platformBar) {
+            settingsContainer.visibility = View.VISIBLE;
+            checkbox_hide.isChecked = false
+        } else {
+            settingsContainer.visibility = View.GONE;
+            checkbox_hide.isChecked = true
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,14 +77,23 @@ class PlatformFragment : BaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        button_alarm.setOnClickListener(View.OnClickListener {
+        button_alarm.setOnClickListener({
             if(listener != null) {
                 listener!!.navigateAlarmPanel()
             }
         })
-        button_refresh.setOnClickListener(View.OnClickListener {
+        button_refresh.setOnClickListener({
             loadWebPage()
         })
+
+        checkbox_hide.setOnClickListener { v ->
+            if ((v as CheckBox).isChecked) {
+                settingsContainer.visibility = View.GONE;
+            } else {
+                settingsContainer.visibility = View.VISIBLE;
+            }
+            configuration.platformBar = !v.isChecked
+        }
     }
 
     private fun loadWebPage() {

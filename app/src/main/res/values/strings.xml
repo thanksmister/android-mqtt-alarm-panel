@@ -152,8 +152,7 @@
     <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
     <string name="dialog_first_time">Since this is your first time, please setup your device, MQTT server, and alarm information (the default alarm code is 1234).</string>
     <string name="text_alarm_pending">ALARM PENDING</string>
-    <string name="text_f">°F</string>
-    <string name="text_c">°C</string>
+
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>
     <string name="error_mqtt_connection">The MQTT client connection wasn\'t established or was closed unexpectedly. Will try to reconnect.</string>
@@ -164,22 +163,6 @@
 
     <string name="mail_to_subject_text">MQTT Alarm Panel Feedback</string>
     <string name="mail_subject_text">Send Feedback:</string>
-
-    <string name="license" translatable="false"><![CDATA[
-        <br><b>Copyright 2017 ThanksMister LLC</b><br>
-        <br>
-        This application contains open source libraries under the Apache License, Version 2.0 (the "License");
-        you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at
-        <br>
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
-        <br>
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-    ]]></string>
 
     <string name="thanks_mister_title">Thanks, Mister!</string>
     <string name="designer_developer_text">Design and development</string>
@@ -214,7 +197,7 @@
     <string name="text_camera_failed_configuration">Failed to configure camera, do you have a camera?</string>
     <string name="text_camera_failed_session">Capture session failed, do you have a camera?</string>
     <string name="text_error_camera_device">Camera error, couldn\'t open the device.</string>
-    <string name="text_camera_image_subject">Alarm Panel &lt;%1$s&gt;</string>
+    <string name="text_camera_image_subject">Alarm Panel &lt;%1$s&gt;></string>
     <string name="pref_mqtt_settings_category">MQTT Notifications</string>
     <string name="dialog_loading">Loading…</string>
     <string name="pref_time_update_title">Update Time</string>
@@ -241,7 +224,7 @@
     <string name="pref_home_pending_title">Arm Home Pending Time</string>
     <string name="pref_home_pending_summary">The time in seconds before the alarm is set to home mode. Currently %1$s seconds.</string>
     <string name="pref_delay_title">Disarm Delay Time</string>
-    <string name="pref_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered unless overriden by the home or away delay times. Currently %1$s seconds.</string>
+    <string name="pref_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered unless overridden by the home or away delay times. Currently %1$s seconds.</string>
     <string name="pref_away_pending_title">Arm Away Pending Time</string>
     <string name="pref_away_pending_summary">The time in seconds before the alarm is set to away mode. Currently %1$s seconds.</string>
     <string name="pref_pending_times_description">These times should match those set in your home automation platform. If you do not want to use delay, pending home, pending away times, just set them all to be the same as your pending time. For Home Assistant, review the MQTT manual alarm control panel documentation at https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -251,18 +234,10 @@
     <string name="pref_away_delay_title">Disarm Away Delay Time</string>
     <string name="dialog_no_camera_permissions">This feature requires the camera permissions. Go to the device settings, then turn on permissions for this application.</string>
     <string name="dialog_no_location_permissions">This feature requires the location permissions. Go to the device settings, then turn on permissions for this application.</string>
-    <string name="toast_screen_timeout">Screen timed out...</string>
-
-    <string-array name="settings_titles">
-        <item>@string/text_alarm_settings</item>
-        <item>@string/text_mqtt_settings</item>
-        <item>@string/preference_title_notification</item>
-        <item>@string/preference_camera_title</item>
-        <item>@string/preference_title_screen_saver_title</item>
-        <item>@string/preference_title_weather_settings</item>
-        <item>@string/preference_title_web_settings</item>
-        <item>@string/text_about</item>
-    </string-array>
+    <string name="toast_screen_timeout">Screen timed out…</string>
+    <string name="button_hide_text">Hide</string>
+    <string name="pref_title_platform_bar">Show Bottom Bar</string>
+    <string name="pref_description_show_platform_bar">When checked, displays a bottom navigation buttons on the platform screen.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>
@@ -303,36 +278,11 @@
         <item>24 hours</item>
     </string-array>
 
-    <string-array name="timeout_values">
-        <item>15000</item>
-        <item>30000</item>
-        <item>60000</item>
-        <item>120000</item>
-        <item>180000</item>
-        <item>300000</item>
-        <item>600000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>7200000</item>
-        <item>10800000</item>
-        <item>21600000</item>
-        <item>43200000</item>
-        <item>86400000</item>
-
-    </string-array>
-
     <string-array name="flip_directions">
         <item>None</item>
         <item>Rotate Left</item>
         <item>Rotate Right</item>
         <item>Flip Vertical</item>
-    </string-array>
-
-    <string-array name="flip_values">
-        <item>0F</item>
-        <item>-90f</item>
-        <item>90f</item>
-        <item>180f</item>
     </string-array>
 
 </resources>
