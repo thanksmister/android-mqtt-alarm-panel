@@ -47,6 +47,17 @@
         <item>@string/text_about</item>
     </string-array>
 
+    <string-array name="inactivity_values">
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>180000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
+    </string-array>
+
     <string-array name="timeout_values">
         <item>15000</item>
         <item>30000</item>
