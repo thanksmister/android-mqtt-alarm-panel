@@ -82,25 +82,31 @@ alarm_control_panel:
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
-## Weather Updates
+## Weather Updates (Darksky)
 
 If you would like to get weather updates, create and enter a [Dark Sky API](https://darksky.net/dev/) key and your current latitude and longitude into the weather setting screen. You can get your current location by using maps.google.com in a web browser and copying the lat/lon from the url (they look like -34.6156624,-58.5035102 in the url).
 
 To use a photo screensaver rather than the digital clock, turn this feature on, using the screen saver settings screen. You can load other Instagram images by changing the Instagram profile name in the settings.
 
-## Capture Images
+## Capture Images (Telegram/Mailgun)
 
-If you would like to capture and email images when the alarm is deactivated then you need to setup a [MailGun](https://www.mailgun.com/) account, you will need to enter the domain address and API key to mail yourself images. 
+If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
 
-The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. 
+You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+
+The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
 
 ## Screensaver
 
 To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/)
 
+## Platform Screen
+
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions.  There is also a limitation when saving username/passwords and screen reloading.  The username/passwords are not rememebered, and you will need to login again.   I recommend using this application as on a dedicated tablet rather than your day-to-day device for best results. 
+
 ## Notes
 
-- To use TTS and the Camera you will need Android Lollipop or greater as well as permissions for the camera. 
+- To use TTS and the Camera you will need Android Lollipop SDK or greater as well as camera permissions. Older versions of Android are currently not supported.  The application is locked into the landscape mode for usability.  It is meant to run on dedicated tablets or large screen devices that will be used mainly for an alarm control panel. 
 
 ## Acknowledgements
 
