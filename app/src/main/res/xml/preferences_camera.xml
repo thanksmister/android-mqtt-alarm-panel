@@ -39,46 +39,69 @@
 
     <PreferenceCategory android:title="@string/preference_mail_title">
 
-    <EditTextPreference
-        android:enabled="false"
-        android:key="pref_mail_from"
-        android:negativeButtonText="@android:string/cancel"
-        android:positiveButtonText="@android:string/ok"
-        android:title="@string/preference_mail_from"
-        android:text="mister@thanksmister.com"
-        android:summary="@string/preference_mail_from_summary"/>
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_mail_from"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/preference_mail_from"
+            android:summary="@string/preference_mail_from_summary"/>
 
-    <EditTextPreference
-        android:enabled="false"
-        android:key="pref_mail_to"
-        android:negativeButtonText="@android:string/cancel"
-        android:positiveButtonText="@android:string/ok"
-        android:title="@string/preference_mail_to"
-        android:text="mister@thanksmister.com"
-        android:summary="@string/preference_mail_to_summary"/>
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_mail_to"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/preference_mail_to"
+            android:summary="@string/preference_mail_to_summary"/>
 
-    <EditTextPreference
-        android:enabled="false"
-        android:key="pref_mail_url"
-        android:negativeButtonText="@android:string/cancel"
-        android:positiveButtonText="@android:string/ok"
-        android:title="@string/preference_mail_domain"
-        android:summary="@string/preference_mail_domain_summary"/>
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_mail_url"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/preference_mail_domain"
+            android:summary="@string/preference_mail_domain_summary"/>
 
-    <EditTextPreference
-        android:enabled="false"
-        android:key="pref_mail_api_key"
-        android:negativeButtonText="@android:string/cancel"
-        android:positiveButtonText="@android:string/ok"
-        android:title="@string/preference_mail_key"
-        android:summary="@string/preference_mail_key_summary"/>
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_mail_api_key"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/preference_mail_key"
+            android:summary="@string/preference_mail_key_summary"/>
 
-    <Preference
-        android:key="pref_mail_description"
-        android:selectable="false"
-        android:enabled="false"
-        android:summary="@string/preference_mail_description" />
+        <Preference
+            android:key="pref_mail_description"
+            android:selectable="false"
+            android:enabled="false"
+            android:summary="@string/preference_mail_description" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_telegram_title">
+
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_telegram_chat_id"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/pref_telegram_chat_id_title"
+            android:summary="@string/pref_telegram_chat_id_summary"/>
+
+        <EditTextPreference
+            android:enabled="false"
+            android:key="pref_telegram_token"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:title="@string/pref_telegram_api_title"
+            android:summary="@string/pref_telegram_token_summary"/>
+
+    </PreferenceCategory>
+
+    <Preference
+        android:key="pref_description"
+        android:selectable="false"
+        android:summary="@string/pref_camera_send_image_notes"/>
 
 </PreferenceScreen>

@@ -39,13 +39,25 @@ repositories {
 
 def versionMajor = 0
 def versionMinor = 6
-def versionPatch = 7
+def versionPatch = 8
 def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
     return properties.getProperty("alarmCode");
+}
+
+def TELEGRAM_TOKEN() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("telegramToken");
+}
+
+def TELEGRAM_CHAT_ID() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("telegramChatId");
 }
 
 def DARK_SKY_KEY() {
@@ -155,6 +167,8 @@ android {
             buildConfigField 'String', 'HASS_URL', "\"" + HASS_URL() +"\""
             buildConfigField 'String', 'BROKER', "\"" + BROKER() +"\""
             buildConfigField 'String', 'IMGUR_TAG', "\"" + IMGUR_TAG() +"\""
+            buildConfigField 'String', 'TELEGRAM_TOKEN', "\"" + TELEGRAM_TOKEN() +"\""
+            buildConfigField 'String', 'TELEGRAM_CHAT_ID', "\"" + TELEGRAM_CHAT_ID() +"\""
         }
         qa {
             dimension "default"
@@ -179,6 +193,8 @@ android {
             buildConfigField 'String', 'HASS_URL', '""'
             buildConfigField 'String', 'BROKER', '""'
             buildConfigField 'String', 'IMGUR_TAG', '""'
+            buildConfigField 'String', 'TELEGRAM_TOKEN', '""'
+            buildConfigField 'String', 'TELEGRAM_CHAT_ID', '""'
         }
     }
 }

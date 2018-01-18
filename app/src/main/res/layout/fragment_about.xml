@@ -134,6 +134,32 @@
         <View style="@style/DividerHorizontal"/>
 
         <LinearLayout
+            android:id="@+id/supportButton"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/view_padding"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:tint="@color/gray"
+                android:src="@drawable/ic_help_black"/>
+
+            <TextView
+                style="@style/TextAppearance.TextMedium.SmallAction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:gravity="left|center_vertical"
+                android:text="@string/menu_item_help"/>
+
+        </LinearLayout>
+
+        <View style="@style/DividerHorizontal"/>
+
+        <LinearLayout
                 android:id="@+id/githubButton"
                 style="@style/BorderlessButtonStyle"
                 android:layout_width="match_parent"

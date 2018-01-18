@@ -87,6 +87,18 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BAR, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BAR, value)
 
+    var telegramChatId: String
+        get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_CHAT_ID, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_CHAT_ID, value)
+
+    var telegramToken: String
+        get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_TOKEN, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_TOKEN, value)
+
+    var telegramModule: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_TELEGRAM_MODULE, true)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_TELEGRAM_MODULE, value)
+
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
     }
@@ -184,6 +196,10 @@ constructor(private val sharedPreferences: DPreference) {
                 && !TextUtils.isEmpty(getMailTo()) && !TextUtils.isEmpty(getMailFrom())
     }
 
+    fun hasTelegramCredentials(): Boolean {
+        return !TextUtils.isEmpty(telegramChatId) && !TextUtils.isEmpty(telegramToken)
+    }
+
     fun hasCamera(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_CAMERA, false)
     }
@@ -235,6 +251,9 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
         sharedPreferences.removePreference(PREF_SYSTEM_NOTIFICATIONS)
         sharedPreferences.removePreference(PREF_PLATFORM_BAR)
+        sharedPreferences.removePreference(PREF_TELEGRAM_MODULE)
+        sharedPreferences.removePreference(PREF_TELEGRAM_CHAT_ID)
+        sharedPreferences.removePreference(PREF_TELEGRAM_TOKEN)
     }
 
     companion object {
@@ -282,5 +301,8 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
         @JvmField val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
         @JvmField val PREF_PLATFORM_BAR = "pref_platform_bar"
+        @JvmField val PREF_TELEGRAM_MODULE = "pref_telegram_module"
+        @JvmField val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
+        @JvmField val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
     }
 }

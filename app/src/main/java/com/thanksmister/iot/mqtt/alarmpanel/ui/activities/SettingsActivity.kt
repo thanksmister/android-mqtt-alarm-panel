@@ -21,6 +21,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -29,6 +30,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBar
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -40,6 +42,7 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import timber.log.Timber
 
 class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
+
 
     private var dotsCount: Int = 0
     private var dots: ArrayList<ImageView>? = null
@@ -85,6 +88,8 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         if (id == android.R.id.home) {
             onBackPressed()
             return true
+        } else if (id == R.id.action_help) {
+            support()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -98,6 +103,13 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             // Otherwise, select the previous step.
             viewPager.currentItem = viewPager.getCurrentItem() - 1
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        if (toolbar != null)
+            toolbar.inflateMenu(R.menu.menu_settings)
+
+        return true
     }
 
     override fun onResume() {
@@ -121,6 +133,14 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
      */
     override fun showScreenSaver() {
         //na-da
+    }
+
+    private fun support() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SUPPORT_URL)))
+        } catch (ex: android.content.ActivityNotFoundException) {
+            Timber.e(ex.message)
+        }
     }
 
     private fun setPageViewController() {
@@ -177,6 +197,7 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     companion object {
+        val SUPPORT_URL:String = "https://thanksmister.com/android-mqtt-alarm-panel/"
         fun createStartIntent(context: Context): Intent {
             return Intent(context, SettingsActivity::class.java)
         }

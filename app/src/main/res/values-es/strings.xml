@@ -184,7 +184,7 @@
     <string name="text_notification_trigger_description">La alarma se ha disparado, toma las medidas oportunas.</string>
     <string name="text_notification_network_title">Alarma desconectada</string>
     <string name="text_notification_network_description">No hay una coexión de red disponible, se necesita una para el funcionamiento correcto de la alarma.</string>
-    <string name="text_settings_code_title">Para acceder a este área, introduce tu código, por favor..</string>
+    <string name="text_settings_code_title">Para acceder a este área, introduce tu código, por favor.</string>
     <string name="text_error_no_alarm_setup">Estás intentando configurar la alarma, pero aún no has definido los ajustes MQTT.</string>
     <string name="text_error_pending_time_low">El tiempo de espera es el tiempo hasta que la alarma se activa o ésta se dispara. Por favor, establece un tiempo suficiente para la activación o desactivación de la alarma al entrar o salir.</string>
     <string name="text_error_trigger_time_low">El tiempo que la alarma estará disparada hasta su reinicio. Un valor demasiado bajo puede provocar un comportamiento inadecuado..</string>
@@ -238,6 +238,13 @@
     <string name="button_hide_text">Esconder</string>
     <string name="pref_title_platform_bar">Mostrar navegación</string>
     <string name="pref_description_show_platform_bar">Cuando está marcado, muestra un botón de navegación inferior en la pantalla de la plataforma.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Ingrese su ID de chat de Telegram bot.</string>
+    <string name="pref_telegram_token_summary">Ingrese su token de API de Telegram.</string>
+    <string name="pref_telegram_chat_id_title">Telegram Chat Id</string>
+    <string name="pref_telegram_api_title">Token de API de Telegram</string>
+    <string name="pref_camera_send_image_notes">Puede usar Telegram, Mailgun o ambos para enviar imágenes capturadas.</string>
+    <string name="menu_item_help">Ayuda</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

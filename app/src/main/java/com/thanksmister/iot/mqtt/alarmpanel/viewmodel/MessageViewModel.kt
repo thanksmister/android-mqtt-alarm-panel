@@ -14,6 +14,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MailGunModule
+import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TelegramModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
@@ -42,6 +43,7 @@ class MessageViewModel @Inject
 constructor(application: Application, private val dataSource: MessageDao, private val configuration: Configuration) : AndroidViewModel(application) {
 
     private var mailSubscription: Disposable? = null
+    private var telegramSubscription: Disposable? = null
 
     private var armed: Boolean = false
 
@@ -75,8 +77,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     }
 
     fun hasCamera() : Boolean {
-        return (configuration.hasCamera()
-                && configuration.hasMailGunCredentials())
+        return (configuration.hasCamera() && (configuration.hasMailGunCredentials() || configuration.hasTelegramCredentials()))
     }
 
     fun hasTss() : Boolean {
@@ -196,7 +197,39 @@ constructor(application: Application, private val dataSource: MessageDao, privat
         }
     }
 
-    fun emailImage(bitmap: Bitmap) {
+    fun sendCapturedImage(bitmap: Bitmap) {
+        if(configuration.hasMailGunCredentials()) {
+            emailImage(bitmap)
+        }
+        if(configuration.hasTelegramCredentials()) {
+            sendTelegram(bitmap)
+        }
+    }
+
+    private fun sendTelegram(bitmap: Bitmap) {
+        val token = configuration.telegramToken
+        val chatId = configuration.telegramChatId
+        val observable = Observable.create { emitter: ObservableEmitter<Any> ->
+            val module = TelegramModule(getApplication())
+            module.emailImage(token, chatId, bitmap, object : TelegramModule.CallbackListener {
+                override fun onComplete() {
+                    emitter.onNext(true)  // Pass on the data to subscriber
+                }
+                override fun onException(message: String?) {
+                    emitter.onError(Throwable(message))
+                }
+            })
+        }
+
+        telegramSubscription = observable
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext { Timber.d("Telegram Message posted successfully!"); }
+                .doOnError({ throwable -> Timber.e("Telegram Message error: " + throwable.message); })
+                .subscribe( );
+    }
+
+    private fun emailImage(bitmap: Bitmap) {
 
         val domain = configuration.getMailGunUrl()
         val key = configuration.getMailGunApiKey()

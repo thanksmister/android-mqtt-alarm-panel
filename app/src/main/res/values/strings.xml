@@ -192,7 +192,7 @@
     <string name="progress_location">Acquiring location…</string>
     <string name="text_error_only_numbers">Be sure the value only contains numbers and is not blank.</string>
     <string name="text_error_blank_entry">The value should not blank, please enter a valid value</string>
-    <string name="text_alarm_disabled_email">Your home alarm has been disabled, here is an image taken at that moment.</string>
+    <string name="text_alarm_disabled_email">The alarm has been deactivated, here\'s an image.</string>
     <string name="text_alarm_disabled_email_subject">Alarm Deactivated</string>
     <string name="text_camera_failed_configuration">Failed to configure camera, do you have a camera?</string>
     <string name="text_camera_failed_session">Capture session failed, do you have a camera?</string>
@@ -238,6 +238,13 @@
     <string name="button_hide_text">Hide</string>
     <string name="pref_title_platform_bar">Show Bottom Bar</string>
     <string name="pref_description_show_platform_bar">When checked, displays a bottom navigation buttons on the platform screen.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Enter your Telegram bot chat id.</string>
+    <string name="pref_telegram_token_summary">Enter your Telegram bot API token.</string>
+    <string name="pref_telegram_chat_id_title">Telegram Chat Id</string>
+    <string name="pref_telegram_api_title">Telegram API Token</string>
+    <string name="pref_camera_send_image_notes">You can use Telegram, Mailgun, or both to send captured images.</string>
+    <string name="menu_item_help">Help</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

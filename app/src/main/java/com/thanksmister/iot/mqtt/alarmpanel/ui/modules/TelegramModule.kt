@@ -25,9 +25,12 @@ import android.os.AsyncTask
 import com.thanksmister.iot.mqtt.alarmpanel.R
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.MailGunApi
+import com.thanksmister.iot.mqtt.alarmpanel.network.TelegramApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.MailGunFetcher
+import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.TelegramFetcher
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.MailGunTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
+import com.thanksmister.iot.mqtt.alarmpanel.tasks.TelegramTask
 import org.json.JSONObject
 
 import retrofit2.Response
@@ -37,7 +40,7 @@ import timber.log.Timber
  * We lazily load the hourly forecast and the extended forecast.  We could have done this on a syncadapter or alarm, but
  * we only care that this module runs while we are in the application.
  */
-class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
+class TelegramModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
 
     override fun close() {
         if (task != null) {
@@ -46,11 +49,9 @@ class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
         }
     }
 
-    private var task: MailGunTask? = null
-    private var domain: String? = null
-    private var apiKey: String? = null
-    private var mailTo: String? = null
-    private var mailFrom: String? = null
+    private var task: TelegramTask? = null
+    private var token: String? = null
+    private var chat_id: String? = null
     private var callback: CallbackListener? = null
 
     interface CallbackListener {
@@ -58,28 +59,26 @@ class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
         fun onException(message: String?)
     }
 
-    fun emailImage(domain: String, apiKey: String, from: String, to: String, bitmap: Bitmap, mailGunListener: CallbackListener?) {
-        this.domain = domain
-        this.apiKey = apiKey
-        this.mailTo = to
-        this.mailFrom = from
-        this.callback = mailGunListener
-        startEmailImage(bitmap)
+    fun emailImage(token:String, chat_id:String, bitmap: Bitmap, listener: CallbackListener?) {
+        this.token = token
+        this.chat_id = chat_id
+        this.callback = listener
+        sendMessage(token, chat_id, bitmap)
     }
 
-    private fun startEmailImage(bitmap: Bitmap) {
+    private fun sendMessage(token:String, chat_id: String, bitmap: Bitmap) {
 
         if (task != null && task!!.status == AsyncTask.Status.RUNNING) {
             return  // we have a running task already
         }
 
-        val api = MailGunApi(domain!!, apiKey!!)
-        val fetcher = MailGunFetcher(api)
+        val api = TelegramApi(token, chat_id)
+        val fetcher = TelegramFetcher(api)
 
-        task = MailGunTask(fetcher)
+        task = TelegramTask(fetcher)
         task!!.setOnExceptionListener(object : NetworkTask.OnExceptionListener {
             override fun onException(paramException: Exception) {
-                Timber.e("MailGun Exception: " + paramException.message)
+                Timber.e("Telegram Exception: " + paramException.message)
                 if(callback != null) {
                     callback!!.onException(paramException.message)
                 }
@@ -94,6 +93,6 @@ class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
             }
         })
 
-        task!!.execute(mailFrom, mailTo, getString(R.string.text_alarm_disabled_email_subject), getString(R.string.text_alarm_disabled_email), bitmap)
+        task!!.execute(getString(R.string.text_alarm_disabled_email), bitmap)
     }
 }

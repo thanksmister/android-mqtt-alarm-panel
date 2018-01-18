@@ -54,6 +54,9 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var activePreference: CheckBoxPreference? = null
     private var descriptionPreference: Preference? = null
     private var rotatePreference: ListPreference? = null
+    private var telegramTokenPreference: EditTextPreference? = null
+    private var telegramChatIdPreference: EditTextPreference? = null
+    private var notesPreference: Preference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -86,6 +89,8 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         super.onViewCreated(view, savedInstanceState)
 
+        telegramChatIdPreference = findPreference(Configuration.PREF_TELEGRAM_CHAT_ID) as EditTextPreference
+        telegramTokenPreference = findPreference(Configuration.PREF_TELEGRAM_TOKEN) as EditTextPreference
         tolPreference = findPreference(Configuration.PREF_MAIL_TO) as EditTextPreference
         fromPreference = findPreference(Configuration.PREF_MAIL_FROM) as EditTextPreference
         domainPreference = findPreference(Configuration.PREF_MAIL_URL) as EditTextPreference
@@ -93,9 +98,12 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         activePreference = findPreference(Configuration.PREF_MODULE_CAMERA) as CheckBoxPreference
         rotatePreference = findPreference(Configuration.PREF_CAMERA_ROTATE) as ListPreference
         descriptionPreference = findPreference("pref_mail_description")
+        notesPreference = findPreference("pref_description")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                telegramChatIdPreference!!.isEnabled = false
+                telegramTokenPreference!!.isEnabled = false
                 tolPreference!!.isEnabled = false
                 fromPreference!!.isEnabled = false
                 domainPreference!!.isEnabled = false
@@ -103,7 +111,9 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 keyPreference!!.isEnabled = false
                 rotatePreference!!.isEnabled = false
                 descriptionPreference!!.isEnabled = false
+                notesPreference!!.isEnabled = false
                 configuration.setHasCamera(false)
+
                 dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.dialog_no_camera_permissions))
                 return
             }
@@ -135,9 +145,22 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             keyPreference!!.summary = configuration.getMailGunApiKey()
         }
 
+        telegramChatIdPreference!!.isEnabled = configuration.hasCamera()
+        if (!TextUtils.isEmpty(configuration.telegramChatId)) {
+            telegramChatIdPreference!!.text = configuration.telegramChatId
+            telegramChatIdPreference!!.summary = configuration.telegramChatId
+        }
+
+        telegramTokenPreference!!.isEnabled = configuration.hasCamera()
+        if (!TextUtils.isEmpty(configuration.telegramToken)) {
+            telegramTokenPreference!!.text = configuration.telegramToken
+            telegramTokenPreference!!.summary = configuration.telegramToken
+        }
+
         rotatePreference!!.setDefaultValue(configuration.getCameraRotate())
         rotatePreference!!.value = configuration.getCameraRotate().toString()
         descriptionPreference!!.isEnabled = configuration.hasCamera()
+        notesPreference!!.isEnabled = configuration.hasCamera()
         rotatePreference!!.isEnabled = configuration.hasCamera()
     }
 
@@ -146,39 +169,33 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         when (key) {
             Configuration.PREF_MAIL_TO -> {
                 value = tolPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
-                    configuration.setMailTo(value)
-                    tolPreference!!.summary = value
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                }
+                configuration.setMailTo(value)
+                tolPreference!!.summary = value
             }
             Configuration.PREF_MAIL_FROM -> {
                 value = fromPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
-                    configuration.setMailFrom(value)
-                    fromPreference!!.summary = value
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                }
+                configuration.setMailFrom(value)
+                fromPreference!!.summary = value
             }
             Configuration.PREF_MAIL_URL -> {
                 value = domainPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
-                    configuration.setMailGunUrl(value)
-                    domainPreference!!.summary = value
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                }
+                configuration.setMailGunUrl(value)
+                domainPreference!!.summary = value
             }
             Configuration.PREF_MAIL_API_KEY -> {
                 value = keyPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
-                    configuration.setMailGunApiKey(value)
-                    keyPreference!!.summary = value
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                }
+                configuration.setMailGunApiKey(value)
+                keyPreference!!.summary = value
+            }
+            Configuration.PREF_TELEGRAM_CHAT_ID -> {
+                value = telegramChatIdPreference!!.text
+                configuration.telegramChatId = value
+                telegramChatIdPreference!!.summary = value
+            }
+            Configuration.PREF_TELEGRAM_TOKEN -> {
+                value = telegramTokenPreference!!.text
+                configuration.telegramToken = value
+                telegramTokenPreference!!.summary = value
             }
             Configuration.PREF_MODULE_CAMERA -> {
                 val checked = activePreference!!.isChecked

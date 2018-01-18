@@ -61,6 +61,7 @@ class AboutFragment : BaseFragment() {
         rateApplicationButton.setOnClickListener { rate() }
         licenseButton.setOnClickListener { showLicense() }
         githubButton.setOnClickListener { showGitHub() }
+        supportButton.setOnClickListener { showSupport() }
     }
 
     override fun onDetach() {
@@ -73,6 +74,10 @@ class AboutFragment : BaseFragment() {
         } catch (ex: android.content.ActivityNotFoundException) {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + GOOGLE_PLAY_RATING)))
         }
+    }
+
+    private fun showSupport() {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SUPPORT_URL)))
     }
 
     private fun showGitHub() {
@@ -94,6 +99,7 @@ class AboutFragment : BaseFragment() {
     }
 
     companion object {
+        val SUPPORT_URL:String = "https://thanksmister.com/android-mqtt-alarm-panel/"
         val GOOGLE_PLAY_RATING = "com.thanksmister.iot.mqtt.alarmpanel"
         val GITHUB_URL = "https://github.com/thanksmister/android-mqtt-alarm-panel"
         val EMAIL_ADDRESS = "mister@thanksmister.com"

@@ -23,5 +23,5 @@
 
     <size android:height="12dip" android:width="12dip"/>
 
-    <solid android:color="@color/colorPrimary"/>
+    <solid android:color="@color/blue"/>
 </shape>

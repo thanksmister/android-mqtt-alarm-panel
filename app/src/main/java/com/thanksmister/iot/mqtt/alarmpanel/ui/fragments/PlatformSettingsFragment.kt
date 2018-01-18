@@ -92,8 +92,6 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
         webModulePreference!!.isChecked = configuration.hasPlatformModule()
         platformbarPreference!!.isChecked = configuration.platformBar
 
-        Timber.d("platformBar: " + configuration.platformBar)
-
         webUrlPreference!!.isEnabled = configuration.hasPlatformModule()
         platformbarPreference!!.isEnabled = configuration.hasPlatformModule()
     }
