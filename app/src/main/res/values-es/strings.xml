@@ -197,7 +197,7 @@
     <string name="text_camera_failed_configuration">La configuración de la cámara falló, dispones de cámara?</string>
     <string name="text_camera_failed_session">La captura ha fallado, dispones de cámara?</string>
     <string name="text_error_camera_device">Error de cámara, no se puede acceder al dispositivo.</string>
-    <string name="text_camera_image_subject">Panel de la alarma &lt;%1$s&gt;</string>
+    <string name="text_camera_image_subject">\"Panel de la alarma\" %1$s</string>
     <string name="pref_mqtt_settings_category">Notificaciones MQTT</string>
     <string name="dialog_loading">Cargando…</string>
     <string name="pref_time_update_title">Actualizar la hora</string>
@@ -245,6 +245,7 @@
     <string name="pref_telegram_api_title">Token de API de Telegram</string>
     <string name="pref_camera_send_image_notes">Puede usar Telegram, Mailgun o ambos para enviar imágenes capturadas.</string>
     <string name="menu_item_help">Ayuda</string>
+    <string name="error_mailgun_credentials">Hubo un problema al enviar la imagen por correo, compruebe sus credenciales de Mailgun.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

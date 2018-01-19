@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.graphics.Bitmap
 import android.text.TextUtils
+import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Message
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
@@ -207,6 +208,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     }
 
     private fun sendTelegram(bitmap: Bitmap) {
+        Timber.d("sendTelegram")
         val token = configuration.telegramToken
         val chatId = configuration.telegramChatId
         val observable = Observable.create { emitter: ObservableEmitter<Any> ->
@@ -238,7 +240,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
 
         val observable = Observable.create { emitter: ObservableEmitter<Any> ->
             val mailGunModule = MailGunModule(getApplication())
-            val fromSubject = getApplication<Application>().getString(R.string.text_camera_image_subject, from)
+            val fromSubject = getApplication<Application>().getString(R.string.text_camera_image_subject, "<$from>")
             mailGunModule.emailImage(domain!!, key!!, fromSubject, to!!, bitmap, object : MailGunModule.CallbackListener {
                 override fun onComplete() {
                     emitter.onNext(true)  // Pass on the data to subscriber
@@ -254,6 +256,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { Timber.d("Image posted successfully!"); }
                 .doOnError({ throwable -> Timber.e("Image error: " + throwable.message); })
+                .onErrorReturn { Toast.makeText(getApplication<Application>(), R.string.error_mailgun_credentials, Toast.LENGTH_LONG).show() }
                 .subscribe( );
     }
 

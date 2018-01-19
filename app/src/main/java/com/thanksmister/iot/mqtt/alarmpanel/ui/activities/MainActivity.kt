@@ -113,6 +113,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     public override fun onStart() {
         super.onStart()
 
+        Timber.d("onStart")
         lifecycle.addObserver(dialogUtils)
 
         disposable.add(viewModel.getAlarmState()
@@ -122,7 +123,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     this@MainActivity.runOnUiThread({
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
-                                awakenDeviceForAction()
+                                acquireTemporaryWakeLock()
                                 releaseWakeHandler = Handler();
                                 releaseWakeHandler?.postDelayed(releaseWakeLockRunnable, 10000)
                                 resetInactivityTimer()
@@ -159,6 +160,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onResume() {
+        Timber.d("onResume")
         super.onResume()
         resetInactivityTimer()
         mBackgroundHandler!!.post(initializeOnBackground)
@@ -166,6 +168,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onDestroy() {
+        Timber.d("onDestroy")
         super.onDestroy()
         try {
             if (mBackgroundThread != null) mBackgroundThread!!.quit()
@@ -234,19 +237,23 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private val initializeOnBackground = Runnable {
+        Timber.d("initializeOnBackground")
         if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewModel.hasTss()) {
+            Timber.d("textToSpeechModule")
             textToSpeechModule = TextToSpeechModule(this@MainActivity, configuration)
             runOnUiThread({
                 lifecycle.addObserver(textToSpeechModule!!)
             })
         }
         if (mqttModule == null && readMqttOptions().isValid) {
+            Timber.d("mqttModule")
             mqttModule = MQTTModule(this@MainActivity.applicationContext, readMqttOptions(),this@MainActivity)
             runOnUiThread({
                 lifecycle.addObserver(mqttModule!!)
             })
         }
         if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("cameraModule")
             cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!,this@MainActivity)
             runOnUiThread({
                 lifecycle.addObserver(cameraModule!!)
@@ -330,6 +337,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onCameraComplete(bitmap: Bitmap) {
+        Timber.d("onCameraComplete")
         viewModel.sendCapturedImage(bitmap)
     }
 

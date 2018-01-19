@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.os.AsyncTask
+import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.MailGunApi
@@ -79,7 +80,7 @@ class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
         task = MailGunTask(fetcher)
         task!!.setOnExceptionListener(object : NetworkTask.OnExceptionListener {
             override fun onException(paramException: Exception) {
-                Timber.e("MailGun Exception: " + paramException.message)
+                Timber.e("Mailgun Exception: " + paramException.message)
                 if(callback != null) {
                     callback!!.onException(paramException.message)
                 }
@@ -88,9 +89,12 @@ class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
         task!!.setOnCompleteListener(object : NetworkTask.OnCompleteListener<Response<JSONObject>> {
             override fun onComplete(paramResult: Response<JSONObject>) {
                 Timber.d("Response: " + paramResult.body())
-                if(callback != null) {
+                if (paramResult.body() == null && callback != null) {
+                    callback!!.onException(getString(R.string.error_mailgun_credentials))
+                } else if(callback != null) {
                     callback!!.onComplete()
                 }
+
             }
         })
 

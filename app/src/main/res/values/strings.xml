@@ -197,7 +197,7 @@
     <string name="text_camera_failed_configuration">Failed to configure camera, do you have a camera?</string>
     <string name="text_camera_failed_session">Capture session failed, do you have a camera?</string>
     <string name="text_error_camera_device">Camera error, couldn\'t open the device.</string>
-    <string name="text_camera_image_subject">Alarm Panel &lt;%1$s&gt;></string>
+    <string name="text_camera_image_subject">\"Alarm Panel\" %1$s</string>
     <string name="pref_mqtt_settings_category">MQTT Notifications</string>
     <string name="dialog_loading">Loading…</string>
     <string name="pref_time_update_title">Update Time</string>
@@ -245,6 +245,7 @@
     <string name="pref_telegram_api_title">Telegram API Token</string>
     <string name="pref_camera_send_image_notes">You can use Telegram, Mailgun, or both to send captured images.</string>
     <string name="menu_item_help">Help</string>
+    <string name="error_mailgun_credentials">There was an problem mailing the image, please check your Mailgun credentials.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

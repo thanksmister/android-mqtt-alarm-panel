@@ -20,6 +20,10 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import timber.log.Timber
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+
+
 
 /**
  * Module to take photo and email when alarm is disabled if camera available.
@@ -42,27 +46,16 @@ class CameraModule(base: Context?, private var backgroundHandler: Handler, priva
     @SuppressLint("MissingPermission")
     fun onStart() {
         val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        val camIds: Array<String>
-        try {
-            camIds = manager.cameraIdList
-        } catch (e: CameraAccessException) {
-            Timber.e("Cam access exception getting ids: " + e.message)
-            hasCamera = false
-            return
-        }
-        if (camIds.isEmpty()) {
+        val cameraId = getFrontFacingCameraId(manager)
+        if (cameraId == null) {
             Timber.e("No cameras found")
             hasCamera = false
             return
         }
-
-        val id = camIds[0]
-        mImageReader = ImageReader.newInstance(IMAGE_WIDTH, IMAGE_HEIGHT,
-                ImageFormat.JPEG, MAX_IMAGES)
-
+        mImageReader = ImageReader.newInstance(IMAGE_WIDTH, IMAGE_HEIGHT, ImageFormat.JPEG, MAX_IMAGES)
         mImageReader?.setOnImageAvailableListener(imageAvailableListener, backgroundHandler)
         try {
-            manager.openCamera(id, mStateCallback, backgroundHandler)
+            manager.openCamera(cameraId, mStateCallback, backgroundHandler)
             hasCamera = true;
         } catch (cae: Exception) {
             Timber.d("Camera access exception"  + cae)
@@ -71,6 +64,20 @@ class CameraModule(base: Context?, private var backgroundHandler: Handler, priva
             }
             hasCamera = false;
         }
+    }
+
+    private fun getFrontFacingCameraId(manager: CameraManager): String? {
+        try {
+            val camIds = manager.cameraIdList
+            for (cameraId in camIds) {
+                val characteristics = manager.getCameraCharacteristics(cameraId)
+                val cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING)!!
+                if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) return cameraId
+            }
+        } catch (e: CameraAccessException) {
+            Timber.e("Cam access exception getting ids: " + e.message)
+        }
+        return null
     }
 
     private val imageAvailableListener = ImageReader.OnImageAvailableListener { reader ->

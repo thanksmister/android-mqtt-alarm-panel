@@ -68,11 +68,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     val disposable = CompositeDisposable()
     private var wakeLock: PowerManager.WakeLock? = null
     private var decorView: View? = null
+    private var userPresent: Boolean = false
 
     abstract fun getLayoutId(): Int
 
     private val inactivityCallback = Runnable {
         dialogUtils.hideScreenSaverDialog()
+        userPresent = false
         showScreenSaver()
     }
 
@@ -167,6 +169,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onUserInteraction() {
         Timber.d("onUserInteraction")
+        userPresent = true
         resetInactivityTimer()
     }
 
@@ -300,7 +303,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground()) {
+        if (!LifecycleHandler.isApplicationInForeground() && !userPresent) {
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
