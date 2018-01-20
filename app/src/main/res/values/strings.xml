@@ -85,7 +85,7 @@
     <string name="preference_title_web">Home Automation Page</string>
     <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
     <string name="preference_title_web_url">Platform Address</string>
-    <string name="preference_summary_web_url">Enter the IP address of your home automation web page with prefix and port if needed (example: http://ipaddress:8123).</string>
+    <string name="preference_summary_web_url">Enter the IP address of your home automation web page with prefix and port if needed (example: http://ipaddress:port).</string>
     <string name="preference_web_description">This is an experimental feature. The web page is rendered with Android\'s version of the Chrome Browser and may render differently depending on your Android SDK and WebView versions.</string>
 
     <string name="preference_title_notification">Notifications</string>
@@ -110,7 +110,7 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_tts_topic_title">Set Topic Value</string>
-    <string name="preference_tts_topic_summary">Example format for the message topic and alarmState to be spoken (note that externally powered speakers are required for TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+    <string name="preference_tts_topic_summary">Example format for the message topic and alarmState to be spoken (note that externally powered speakers are required for TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
     <string name="preference_camera">Camera Capture</string>

@@ -61,11 +61,11 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
         }
     }
 
+    // FIXME null pointer line 67 for textToSpeech
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val sdkVersion = Build.VERSION.SDK_INT
-            textToSpeech!!.language = Locale.getDefault()
-            textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+        if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
+            textToSpeech?.language = Locale.getDefault()
+            textToSpeech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onError(p0: String?) {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
@@ -103,7 +103,6 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
         if(textToSpeech != null) {
             textToSpeech?.stop()
             textToSpeech?.shutdown()
-            textToSpeech = null
         }
     }
 }

@@ -159,6 +159,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             }
 
             mqttClient = MqttUtils.getMqttAndroidClient(context, mqttOptions?.brokerUrl!!, mqttOptions?.getClientId()!!, object : MqttCallbackExtended {
+                @Throws(NullPointerException::class)
                 override fun connectComplete(reconnect: Boolean, serverURI: String) {
                     if (reconnect) {
                         Timber.d("Reconnected to : " + serverURI)
@@ -218,7 +219,8 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             mReady.set(true)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
-            Timber.e(e, "Error disconnecting MQTT service")
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
             if (listener != null) {

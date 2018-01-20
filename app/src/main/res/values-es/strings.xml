@@ -110,7 +110,7 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_tts_topic_title">Esteblece el "Topic Value"</string>
-    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
     <string name="preference_camera">Capturas con la cámara</string>
