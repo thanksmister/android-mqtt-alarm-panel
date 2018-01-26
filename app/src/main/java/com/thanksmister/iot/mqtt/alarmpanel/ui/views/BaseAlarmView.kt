@@ -33,7 +33,8 @@ abstract class BaseAlarmView : LinearLayout {
         super.onFinishInflate()
 
         button0.setOnClickListener {
-            playButtonPress()
+            //playButtonPress()
+            playContinuousBeep()
             addPinCode("0")
         }
 
@@ -116,21 +117,23 @@ abstract class BaseAlarmView : LinearLayout {
 
     fun destroySoundUtils() {
         if (soundUtils != null) {
-            soundUtils!!.destroyBuzzer()
+            soundUtils?.destroyBuzzer()
         }
     }
 
-    fun playButtonPress() {
+    private fun playButtonPress() {
         if (soundUtils == null) {
             soundUtils = SoundUtils(context)
+            soundUtils?.init()
         }
-        soundUtils!!.playBuzzerOnButtonPress()
+        soundUtils?.playBuzzerOnButtonPress()
     }
 
     fun playContinuousBeep() {
         if (soundUtils == null) {
             soundUtils = SoundUtils(context)
-            soundUtils!!.playBuzzerRepeat()
+            soundUtils?.init()
+            soundUtils?.playBuzzerRepeat()
         }
     }
 

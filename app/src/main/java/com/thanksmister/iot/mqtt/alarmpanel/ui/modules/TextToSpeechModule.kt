@@ -103,6 +103,7 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
         if(textToSpeech != null) {
             textToSpeech?.stop()
             textToSpeech?.shutdown()
+            textToSpeech = null
         }
     }
 }

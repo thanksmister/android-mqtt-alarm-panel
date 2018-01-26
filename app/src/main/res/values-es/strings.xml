@@ -85,7 +85,7 @@
     <string name="preference_title_web">Página para el sistema de domótica</string>
     <string name="preference_summary_web">Visualiza la página de tu sistema de domótica deslizando la pantalla principal.</string>
     <string name="preference_title_web_url">Dirección del sistema de domótica</string>
-    <string name="preference_summary_web_url">Introduce la dirección Ip de tu sistema de domótica con el prefijo y el puerto si es necesario (ejemplo: http://ipaddress:8123).</string>
+    <string name="preference_summary_web_url">Introduce la dirección Ip de tu sistema de domótica con el prefijo y el puerto si es necesario. (ejemplo: http://ipaddress:8123).</string>
     <string name="preference_web_description">Esta es una prestación experimental. Esa página se renderizará con la versión para Android del navegador Chrome y puede que sea renderizada de diferentes formas, dependiendo de tus versiones del "Android SDK" y "WebView".</string>
 
     <string name="preference_title_notification">Notificaciones</string>
@@ -96,9 +96,9 @@
     <string name="preference_summary_inactivity_minutes">Después de %1$s minuto(s) de inactividad, el brillo de la pantalla disminuye.</string>
 
 
-    <string name="preference_title_notifications">Notificacioness</string>
+    <string name="preference_title_notifications">Notificaciones</string>
     <string name="preference_title_mqtt_notifications">Notificaciones MQTT</string>
-    <string name="preference_summary_mqtt_notifications">Mostrar o hablar las notificacioness MQTT.</string>
+    <string name="preference_summary_mqtt_notifications">Mostrar o hablar las notificaciones MQTT.</string>
 
     <string name="preference_title_alert">Notificaciones de alertas</string>
     <string name="preference_title_system_notifications">Notificaciones del sistema</string>
@@ -106,14 +106,14 @@
 
     <string name="preference_tts_voice"> Voz TTS</string>
     <string name="preference_tts">Notificaciones TTS</string>
-    <string name="preference_summary_tts">Usa el servicio "Google Text-To-Speech" para reproducir el valor de "alarmState" de los mensaje MQTT. (Nota: Requiere Android Lollipop o superior.)</string>
+    <string name="preference_summary_tts">Usa el servicio "Google Text-To-Speech" para reproducir el valor de "alarmState" de los mensajes MQTT. (Nota: Requiere Android Lollipop o superior.)</string>
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_tts_topic_title">Esteblece el "Topic Value"</string>
     <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
-    <string name="preference_camera">Capturas con la cámara</string>
+    <string name="preference_camera"> Cámara</string>
     <string name="preference_camera_title">Capturas con la cámara</string>
     <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma. (Nota: Requiere Android Lollipop o superior.)</string>
 
@@ -132,7 +132,7 @@
     <string name="preference_mail_to_summary">Introduce el email de quien recibirá la imagen. Puedes introducir varios destinatarios separados por comas.(ejemplo: "mister@thankmister.com" or "mister@thankmister.com, me@thankmister.com")</string>
 
     <string name="preference_mail_title">Ajustes de Mail Gun</string>
-    <string name="preference_mail_description">Para enviar imágenes por email, necesitar abrir una cuenta en MailGun (mailgun.com) y proporcionar el nombre de dominio y la "api key", así como la dirección email del buzón.</string>
+    <string name="preference_mail_description">Para enviar imágenes por email, necesitas abrir una cuenta en MailGun (mailgun.com) y proporcionar el nombre de dominio y la "api key", así como la dirección email del buzón.</string>
 
     <string name="text_title_system">ALARMA</string>
     <string name="text_titled_disarmed">INACTIVA</string>
@@ -145,8 +145,8 @@
     <string name="toast_alarm_deactivated">¡Alarma desactivada!</string>
     <string name="activity_logs_title">Logs</string>
 
-    <string name="text_arm_home">ACTIVAR MODO "EN CASA"</string>
-    <string name="text_arm_away">ACTIVAR MODO "FUERA DE CASA"</string>
+    <string name="text_arm_home">MODO "EN CASA"</string>
+    <string name="text_arm_away">MODO "FUERA DE CASA"</string>
     <string name="text_system">ALARMA</string>
     <string name="text_disarmed">INACTIVA</string>
     <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO PARA ANULAR</string>
@@ -165,7 +165,7 @@
     <string name="mail_subject_text">Enviar sugerencias:</string>
 
     <string name="thanks_mister_title">Thanks, Mister!</string>
-    <string name="designer_developer_text">Diseño y desarrollo</string>
+    <string name="designer_developer_text">Diseño y desarrollo:</string>
     <string name="company_url_text">thanksmister.com</string>
     <string name="company_email">mister@thanksmister.com</string>
     <string name="text_feedback">Sugerencias</string>
@@ -192,7 +192,7 @@
     <string name="progress_location">Estableciendo ubicación…</string>
     <string name="text_error_only_numbers">Asegúrate de que el valor solo contiene números y no está en blanco.</string>
     <string name="text_error_blank_entry">El valor no puede estar en blanco. Por favor, introcuce uno válido.</string>
-    <string name="text_alarm_disabled_email">Tu alarma ha sido desactivada, esta una imagen de ese momento.</string>
+    <string name="text_alarm_disabled_email">Tu alarma ha sido desactivada y esta una imagen de quien lo hizo.</string>
     <string name="text_alarm_disabled_email_subject">Alarma desactivada</string>
     <string name="text_camera_failed_configuration">La configuración de la cámara falló, dispones de cámara?</string>
     <string name="text_camera_failed_session">La captura ha fallado, dispones de cámara?</string>
@@ -243,7 +243,7 @@
     <string name="pref_telegram_token_summary">Ingrese su token de API de Telegram.</string>
     <string name="pref_telegram_chat_id_title">Telegram Chat Id</string>
     <string name="pref_telegram_api_title">Token de API de Telegram</string>
-    <string name="pref_camera_send_image_notes">Puede usar Telegram, Mailgun o ambos para enviar imágenes capturadas.</string>
+    <string name="pref_camera_send_image_notes">Puedes usar Telegram, Mailgun o ambos para enviar imágenes capturadas.</string>
     <string name="menu_item_help">Ayuda</string>
     <string name="error_mailgun_credentials">Hubo un problema al enviar la imagen por correo, compruebe sus credenciales de Mailgun.</string>
 

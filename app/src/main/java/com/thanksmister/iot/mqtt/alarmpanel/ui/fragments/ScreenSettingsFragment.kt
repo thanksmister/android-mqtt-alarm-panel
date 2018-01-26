@@ -104,7 +104,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         inactivityPreference!!.setDefaultValue(configuration.inactivityTime)
         inactivityPreference!!.value = configuration.inactivityTime.toString()
 
-        if (configuration.inactivityTime <= SECONDS_VALUE) {
+        if (configuration.inactivityTime < SECONDS_VALUE) {
             inactivityPreference!!.summary = getString(R.string.preference_summary_inactivity_seconds,
                     DateUtils.convertInactivityTime(configuration.inactivityTime))
         } else {
@@ -182,7 +182,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             Configuration.PREF_INACTIVITY_TIME -> {
                 val inactivity = inactivityPreference!!.value!!.toLong()
                 configuration.inactivityTime = inactivity
-                if (inactivity <= SECONDS_VALUE) {
+                if (inactivity < SECONDS_VALUE) {
                     inactivityPreference!!.summary = getString(R.string.preference_summary_inactivity_seconds, DateUtils.convertInactivityTime(inactivity))
                 } else {
                     inactivityPreference!!.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
