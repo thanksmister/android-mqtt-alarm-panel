@@ -33,8 +33,7 @@ abstract class BaseAlarmView : LinearLayout {
         super.onFinishInflate()
 
         button0.setOnClickListener {
-            //playButtonPress()
-            playContinuousBeep()
+            playButtonPress()
             addPinCode("0")
         }
 
