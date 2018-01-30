@@ -1,0 +1,285 @@
+<resources>
+    <string name="app_name">Alarm Panel</string>
+
+    <!-- Menus -->
+    <string name="action_settings">Instellingen</string>
+    <string name="action_publish">Publiceren</string>
+
+    <!-- Buttons -->
+
+    <!-- Toasts, Alerts, Errors -->
+    <string name="toast_code_match">Alarm code komt overeen met de huidige code, voer een andere code in.</string>
+    <string name="toast_code_alarm_set">Alarm is gezet!</string>
+    <string name="toast_code_unchanged">Alarm code onaangepast!</string>
+    <string name="toast_code_changed">Alarm code aangepast!</string>
+    <string name="toast_code_not_match">Code komt niet overeen, probeer het opnieuw.</string>
+    <string name="toast_code_invalid">Code is ongeldig, probeer het opnieuw.</string>
+
+    <!-- Text Content -->
+    <string name="text_enter_alarm_code_title">Voer een nieuwe alarm code in</string>
+    <string name="text_renter_alarm_code_title">Voer de nieuwe code in ter bevestiging</string>
+
+    <!-- Preferences -->
+    <string name="preference_summary_security_code">Zet de alarmcode (standaard is 1234).</string>
+    <string name="preference_title_security_code">Alarmcode</string>
+    <string name="preference_title_mqtt_server">MQTT instellingen</string>
+    <string name="preference_summary_mqtt_server">Stel de waarden voor de MQTT service in</string>
+    <string name="preference_title_broker">MQTT Broker</string>
+    <string name="preference_summary_broker">Zet het MQTT broker service adres. Voor tcp/ssl laat het voorvoegsel weg (192.168.1.1). Voor andere manieren, voeg het voorvoegsel toe (http://192.168.1.1).</string>
+    <string name="preference_client_id">Client Id</string>
+    <string name="preference_summary_client_id">Zet het client Id als die nodig is.</string>
+    <string name="preference_tls_connection">SSL/TLS verbinding</string>
+    <string name="preference_summary_tls_connection">Luister naar broker op poort 8883 met SSL/TLS.</string>
+    <string name="preference_title_port">Service Port</string>
+    <string name="preference_summary_port">Zet de service port waarde, normaal 8123 tenzij beveiligd.</string>
+    <string name="preference_title_command_topic">Alarm commando</string>
+    <string name="preference_title_state_topic">Alarm onderwerp</string>
+    <string name="preference_summary_command_topic">Zet de waarde van het commando onderwerp om commando\'s naar de MQTT service te sturen.</string>
+    <string name="preference_summary_state_topic">Zet de waarde van het status onderwerp om berichten te ontvangen van de MQTT service.</string>
+    <string name="preference_title_username">Gebruikersnaam</string>
+    <string name="preference_summary_username">Stel de service gebruikersnaam in (als dat nodig is).</string>
+    <string name="preference_title_password">Wachtwoord</string>
+    <string name="preference_summary_password">Stel het service wachtwoord in (als dat nodig is).</string>
+    <string name="preference_title_alarm">Alarm instellingen</string>
+    <string name="preference_summary_alarm">Alarmcode instellingen</string>
+    <string name="preference_title_pending_time">Wachttijd</string>
+    <string name="preference_summary_pending_time">De tijd in seconden voordat het alarm ingeschakeld is (Thuis of van huis). Momenteel %1$s seconden.</string>
+    <string name="preference_title_trigger_time">Activatietijd</string>
+    <string name="preference_summary_trigger_time">De tijd in seconden voordat het alarm geactiveerd is. Momenteel %1$s seconden.</string>
+
+    <string name="preference_title_weather_settings">Weer</string>
+    <string name="preference_summary_weather_settings">Eenmaal geactiveerd, zal het weer verschijnen op het hoofdscherm.</string>
+    <string name="preference_title_darksky">DarkSky</string>
+    <string name="preference_summary_darksky">Activeer de weer module, gebruikmakend van de DarkSky service.</string>
+    <string name="preference_title_darksky_api">API geheim</string>
+    <string name="preference_summary_darksky_api">Vul je DarkSky API geheim in.</string>
+    <string name="preference_title_latitude">Breedtegraad</string>
+    <string name="preference_summary_latitude_summary">Pas de breedtegraad aan.</string>
+    <string name="preference_title_longitude">Lengtegraad</string>
+    <string name="preference_summary_longitude_summary">Pas de lengtegraag aan.</string>
+    <string name="preference_title_units">Gebruik Celsius (°C)</string>
+    <string name="preference_summary_units">Gebruik celsius voor de temperatuureenheid.</string>
+
+    <string name="preference_title_screen_saver_title">Screensaver</string>
+    <string name="preference_title_screen_saver_settings">Screensaver instellingen</string>
+    <string name="preference_summary_screen_saver_settings">Wanneer actief, een ingebouwde klok screensaver zal worden gebruikt.</string>
+    <string name="preference_title_screen_saver">Klok screensaver</string>
+    <string name="pref_title_image_client_id">Imgur Client Id</string>
+    <string name="preference_summary_image_client_id">Vul het client id van het Imgur account in van https://api.imgur.com.</string>
+
+    <string name="preference_title_screen_saver_photo_settings">Foto screensaver instellingen</string>
+    <string name="preference_summary_screen_saver_photo_settings">Wanneer actief, een rotatie van Imgur afbeeldingen zal zichtbaar zijn als screensaver.</string>
+    <string name="preference_title_screen_saver_photo">Afbeelding screensaver</string>
+
+    <string name="preference_summary_screen_saver">Gebruik roterende afbeeldingen van Instagram als screensaver.</string>
+
+    <string name="preference_title_image_source">Imgur Tag</string>
+    <string name="preference_summary_image_source">Voer een Imgur tag in voor gebruik van de afbeeldingen (voorbeeld: ruimte, architectuur, bloemen, of landschap).</string>
+    <string name="preference_title_image_fit">Afbeeldingen afsnijden</string>
+    <string name="preference_summary_image_fit">Snijd de afbeeldingen om ze passend op het scherm te maken.</string>
+    <string name="preference_title_image_rotation">Afbeelding rotatie interval</string>
+    <string name="preference_summary_image_rotation">Tijd in minuten tussen rotatie van afbeeldingen. Momenteel %1$s.</string>
+
+    <string name="preference_title_web_settings">Domotica</string>
+    <string name="preference_summary_web_settings">Laat je een externe web pagina laden om je domotica platform weer te geven.</string>
+    <string name="preference_title_web">Domotica pagina</string>
+    <string name="preference_summary_web">Geeft je domotica platform weer door te swipen op het startscherm.</string>
+    <string name="preference_title_web_url">Platform adres</string>
+    <string name="preference_summary_web_url">Vul het IP-adres van je domotica web pagina in met het voorvoegsel en achtervoegsel als dat nodig is (voorbeeld: http://ipaddress:8123).</string>
+    <string name="preference_web_description">Dit is een experimentele functie. De weg pagina wordt geladen met Android\'s versie van de Chrome browser en geeft mogelijk de pagina anders weer, afhankelijk van je Android versie.</string>
+
+    <string name="preference_title_notification">Notificaties</string>
+    <string name="preference_summary_notification">Geeft een notificatie weer als een alarm geactiveerd is.</string>
+
+    <string name="preference_title_inactivity">Start screensaver na…</string>
+    <string name="preference_summary_inactivity_seconds">Na %1$s seconden van inactiviteit dimt het scherm.</string>
+    <string name="preference_summary_inactivity_minutes">Na %1$s minuten van inactiviteit dimt het scherm.</string>
+
+
+    <string name="preference_title_notifications">Notificaties</string>
+    <string name="preference_title_mqtt_notifications">MQTT notificaties</string>
+    <string name="preference_summary_mqtt_notifications">Toon of spreek notificaties van MQTT berichten.</string>
+
+    <string name="preference_title_alert">Alert notificaties</string>
+    <string name="preference_title_system_notifications">Systeem notificaties</string>
+    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen.</string>
+
+    <string name="preference_tts_voice">TTS stem</string>
+    <string name="preference_tts">TTS notificaties</string>
+    <string name="preference_summary_tts">Gebruik een Google Text-To-Speech om de status van een alarm of een MQTT bericht uit te spreken. (Let op: Werkt alleen op Android Lollipop of hoger.)</string>
+
+    <string name="preference_tts_topic">TTS onderwerp</string>
+    <string name="preference_tts_topic_title">Zet onderwerp waarde</string>
+    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+
+
+    <string name="preference_camera">Camera opname</string>
+    <string name="preference_camera_title">Camera opname</string>
+    <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt. Let op: Werkt alleen op Android Lollipop of hoger.)</string>
+
+    <string name="preference_camera_flip_title">Rotate Camera</string>
+    <string name="preference_camera_flip_summary">Afhankelijk van je camera, moet je misschien het beeld draaien. Momenteel %1$s.</string>
+
+    <string name="preference_mail_domain">Domein</string>
+    <string name="preference_mail_domain_summary">Vul je MailGun domein in (voorbeld: sandboxd83b1e242f934c73a471c518392df0.mailgun.org).</string>
+    <string name="preference_mail_key">Api sleutel</string>
+    <string name="preference_mail_key_summary">Vul je MailGun api sleutel in (voorbeeld: key-5d021926d65dc12we8ec04d7f9d0fd2c).</string>
+
+    <string name="preference_mail_from">Mail van</string>
+    <string name="preference_mail_from_summary">Vul een emailadres in waar vanaf verzonden wordt (voorbeeld: mister@thankmister.com).</string>
+
+    <string name="preference_mail_to">Mail naar</string>
+    <string name="preference_mail_to_summary">Vul een emailadres in waar de afbeelding naar wordt verzonden. Je kan een komma gebruiken om naar meerdere adressen te sturen. ((voorbeeld: "mister@thankmister.com" of "mister@thankmister.com, me@thankmister.com")</string>
+
+    <string name="preference_mail_title">Mail Gun instellingen</string>
+    <string name="preference_mail_description">Om foto\'s te mailen moet je een MailGun (mailgun.com) account instellen en het domein en de API sleutel opgeven, en ook het adres van de ontvanger opgeven.</string>
+
+    <string name="text_title_system">SYSTEEM</string>
+    <string name="text_titled_disarmed">GEDEACTIVEERD</string>
+    <string name="text_titled_armed_away">GEACTIVEERD WEG</string>
+    <string name="toast_invalid_coordinates">Ongeldige breedtegraad en lengtegraad waarden.</string>
+    <string name="toast_invalid_latitude">Waarde moet tussen de -90 en 90 zijn.</string>
+    <string name="toast_invalid_longitude">Waarde moet tussen de -180 en 180 zijn.</string>
+    <string name="toast_invalid_provider">Kan locatie niet vinden. Vul lengtegraad en breedtegraad handmatig in.</string>
+    <string name="activity_settings_title">Instellingen</string>
+    <string name="toast_alarm_deactivated">Alarm gedeactiveerd!</string>
+    <string name="activity_logs_title">Data Logs</string>
+
+    <string name="text_arm_home">ACTIVEER THUIS</string>
+    <string name="text_arm_away">ACTIVEER WEG</string>
+    <string name="text_system">SYSTEEM</string>
+    <string name="text_disarmed">GEDEACTIVEERD</string>
+    <string name="dialog_alarm_triggered">VOER CODE IN</string>
+    <string name="dialog_first_time">Gezien dit je eerste keer is, stel je apparaat in, je MQTT server, en alarm informatie (de standaard alarm code is 1234).</string>
+    <string name="text_alarm_pending">ALARM WACHTEND</string>
+
+    <string name="text_temperature">%1$s %2$s</string>
+    <string name="text_temperature_range">H%1$s°  L%2$s°</string>
+    <string name="error_mqtt_connection">De MQTT client verbinding is niet tot stand gebracht of was onverwacht verbroken. Herverbinden…</string>
+    <string name="error_mqtt_subscription">Kan niet aboneren op het MQTT onderwerp, controleer de MQTT broker instellingen, of je verbinding.</string>
+    <string name="text_alarm">ALARM</string>
+    <string name="string_device_location">Apparaat locatie</string>
+    <string name="string_location_services_disabled">Je locatie services zijn uitgeschakeld, wil je deze inschakelen?</string>
+
+    <string name="mail_to_subject_text">MQTT Alarm Panel Feedback</string>
+    <string name="mail_subject_text">Verstuur feedback:</string>
+
+    <string name="thanks_mister_title">Thanks, Mister!</string>
+    <string name="designer_developer_text">Ontwerp en ontwikkeling</string>
+    <string name="company_url_text">thanksmister.com</string>
+    <string name="company_email">mister@thanksmister.com</string>
+    <string name="text_feedback">Feedback</string>
+    <string name="text_rate_application">Beoordeel application</string>
+    <string name="text_reddit">Reddit group</string>
+    <string name="text_license_information">Licentoe informatie</string>
+    <string name="text_github_code">GitHub code</string>
+    <string name="text_about">Over</string>
+    <string name="text_alarm_settings">Alarm instellingen</string>
+    <string name="text_mqtt_settings">MQTT instellingen</string>
+    <string name="notification_channel_name">Inbraak detectie / Alarm geactiveerd</string>
+    <string name="text_channel_description">Alarm paneel notificaties</string>
+    <string name="text_notification_entry_title">Inbraak gedetecteerd</string>
+    <string name="text_notification_entry_description">Een inbraak is gedetecteerd, onderneem de benodigde acties.</string>
+    <string name="text_notification_trigger_title">Alarm geactiveerd</string>
+    <string name="text_notification_trigger_description">Het alarm is geactiveerd, onderneem de benodigde acties.</string>
+    <string name="text_notification_network_title">Alarm ontkoppeld</string>
+    <string name="text_notification_network_description">De netwerkverbinding is niet beschikbaar, een verbinding is nodig voor het alarm om goed te werken.</string>
+    <string name="text_settings_code_title">Om hier te komen moet je je code invullen.</string>
+    <string name="text_error_no_alarm_setup">Je probeert het alarm aan te zetten, maar je hebt de MQTT setup nog niet voltooid.</string>
+    <string name="text_error_pending_time_low">De wachttijd is de tijd voor het alarm geactiveerd wordt. Zorg voor voldoende tijd voor het inschakelen en uitschakelen van het alarm.</string>
+    <string name="text_error_trigger_time_low">De activatietijd is de tijd voor het alarm opnieuw ingesteld is. Een lage tijd kan ongewenste resultaten hebben.</string>
+    <string name="text_error_mqtt_connection">Kon niet verbinden met de volgende broker and port: %1$s</string>
+    <string name="progress_location">Locatie ophalen…</string>
+    <string name="text_error_only_numbers">Controleer of de waarde alleen uit nummers bestaat en niet leeg is.</string>
+    <string name="text_error_blank_entry">De waarde moet niet leeg zijn, gelieve een geldige waarde in te vullen.</string>
+    <string name="text_alarm_disabled_email">Je thuis alarm is gedeactiveerd, hier is een afbeelding genomen op dat moment.</string>
+    <string name="text_alarm_disabled_email_subject">Alarm gedeactiveerd</string>
+    <string name="text_camera_failed_configuration">Camera configureren mislukt, heb je een camera?</string>
+    <string name="text_camera_failed_session">Opname sessie mislukt, heb je een camera?</string>
+    <string name="text_error_camera_device">Camera fout, kon het apparaat niet openen.</string>
+    <string name="text_camera_image_subject">Alarm paneel %1$s</string>
+    <string name="pref_mqtt_settings_category">MQTT notificaties</string>
+    <string name="dialog_loading">Laden…</string>
+    <string name="pref_time_update_title">Tijd bijwerken</string>
+    <string name="pref_time_title">Tijd instellingen</string>
+    <string name="pref_automatic_time_zone_title">Automatische tijdzone</string>
+    <string name="pref_automatic_time_zone_summary">Gebruik de tijdzonde van het netwerk</string>
+    <string name="pref_time_summary">Werk de tijd op het apparaat bij.</string>
+    <string name="pref_time_format_title">Gebruik het 24-uurs formaat</string>
+    <string name="text_dialog_select_time">Selecteer tijd</string>
+    <string name="pref_density_summary">Verander de scherm dichtheid. Momenteel %1$s dpi.</string>
+    <string name="pref_device_brightness_summary">Zet de schermhelderheid tussen de 0 en 255. Momenteel %1$s.</string>
+    <string name="pref_device_density_title">Scherm dichtheid</string>
+    <string name="pref_device_brightness_title">Scherm helderheid</string>
+    <string name="pref_reset_category">Herstellen</string>
+    <string name="pref_reset_title">Wis instellingen</string>
+    <string name="pref_reset_summary">Wis alle instellingen en breng apparaat terug naar standaard instellingen.</string>
+
+    <string name="pref_device_timeout_minutes_summary">Na %1$s minuten schakeld het scherm uit.</string>
+    <string name="pref_device_timeout_seconds_summary">Na %1$s seconde(n) schakeld het scherm uit.</string>
+    <string name="pref_device_timeout_hours_summary">Na %1$s uur schakeld het scherm uit.</string>
+
+    <string name="pref_device_timeout_title">Scherm timeout</string>
+    <string name="text_update_available">Er is een nieuwe update beschikbaar, wil je die nu installeren?</string>
+    <string name="pref_home_pending_title">Activeer thuis wachttijd</string>
+    <string name="pref_home_pending_summary">De tijd in seconden voor het alarm naar thuismodus gaat. Momenteel %1$s seconden.</string>
+    <string name="pref_delay_title">Deactivatie wachttijd</string>
+    <string name="pref_delay_summary">De tijd in seconden voor het dialoog om het alarm te deactiveren toont, tenzij overschreven door de wachttijd. Momenteel %1$s seconden.</string>
+    <string name="pref_away_pending_title">Activeer weg wachttijd</string>
+    <string name="pref_away_pending_summary">De tijd in seconden voor het alarm naar wegmodus gat. Momenteel %1$s seconden.</string>
+    <string name="pref_pending_times_description">Deze tijden moeten overeen komen met die van je domotica platform. Als je geen vertraging wilt gebruiken, wachttijd huis, wachttijd weg, zet ze op dezelfde tijd als de wachttijd. Voor Home Assistant, bekijk de MQTT manual alarm control panel documentatie op https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
+    <string name="pref_home_delay_summary">De tijd in seconden om het dialoog om het alarm te deactiveren te tonen, voor het alarm in huismodus gaat Momenteel %1$s seconden.</string>
+    <string name="pref_home_delay_title">Deactiveer thuis wachttijd</string>
+    <string name="pref_away_delay_summary">De tijd in seconden om het dialoog om het alarm te deactiveren te tonen, voor het alarm in wegmodus gaat Momenteel %1$s seconden.</string>
+    <string name="pref_away_delay_title">Deactiveer weg wachttijd</string>
+    <string name="dialog_no_camera_permissions">Deze optie heeft camera rechten nodig. Ga naar de apparaat instellingen, zet dan de rechten aan voor deze app.</string>
+    <string name="dialog_no_location_permissions">Deze optie heeft locatie rechten nodig. Ga naar de apparaat instellingen, zet dan de rechten aan voor deze app.</string>
+    <string name="toast_screen_timeout">Scherm uitgeschakeld…</string>
+    <string name="button_hide_text">Verbergen</string>
+    <string name="pref_title_platform_bar">Laat de onderste balk zien</string>
+    <string name="pref_description_show_platform_bar">Wanneer ingeschakeld, worden de onderste navigatieknoppen op het platformscherm weergegeven.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Voer je chat-id voor de Telegram bot in.</string>
+    <string name="pref_telegram_token_summary">Voer uw Telegram-bot API-token in.</string>
+    <string name="pref_telegram_chat_id_title">Telegram Chat Id</string>
+    <string name="pref_telegram_api_title">API-token van Telegram</string>
+    <string name="pref_camera_send_image_notes">U kunt Telegram, Mailgun of beide gebruiken om vastgelegde afbeeldingen te verzenden.</string>
+    <string name="menu_item_help">Helpen</string>
+    <string name="error_mailgun_credentials">Er is een probleem opgetreden bij het verzenden van de afbeelding. Controleer uw Mailgun-inloggegevens.</string>
+
+    <string-array name="inactivity_times">
+        <item>15 seconden</item>
+        <item>30 seconden</item>
+        <item>1 minuut</item>
+        <item>2 minuten</item>
+        <item>3 minuten</item>
+        <item>5 minuten</item>
+        <item>10 minuten</item>
+        <item>30 minuten</item>
+    </string-array>
+
+    <string-array name="timeout_times">
+        <item>15 seconden</item>
+        <item>30 seconden</item>
+        <item>1 minuut</item>
+        <item>2 minuten</item>
+        <item>3 minuten</item>
+        <item>5 minuten</item>
+        <item>10 minuten</item>
+        <item>30 minuten</item>
+        <item>1 uur</item>
+        <item>2 uur</item>
+        <item>3 uur</item>
+        <item>6 uur</item>
+        <item>12 uur</item>
+        <item>24 uur</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>Niet</item>
+        <item>Draai links</item>
+        <item>Draai rechts</item>
+        <item>Spiegel verticaal</item>
+    </string-array>
+
+</resources>
