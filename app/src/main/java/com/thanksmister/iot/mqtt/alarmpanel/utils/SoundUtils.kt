@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import timber.log.Timber
+import java.lang.IllegalStateException
 
 class SoundUtils(base: Context) : ContextWrapper(base) {
 
@@ -53,10 +54,6 @@ class SoundUtils(base: Context) : ContextWrapper(base) {
         Timber.d("repeatAudioRunnable")
         if(repeating) {
             speaker = MediaPlayer.create(applicationContext, R.raw.beep_loop)
-            speaker?.setOnCompletionListener { mp ->
-                mp.stop()
-                mp.release()
-            }
             speaker?.isLooping = true
             speaker?.start()
         }
@@ -64,18 +61,18 @@ class SoundUtils(base: Context) : ContextWrapper(base) {
 
     private fun stopBuzzerRepeat() {
         Timber.d("stopBuzzerRepeat")
-        if (speaker != null) {
-            if (speaker!!.isPlaying) {
-                speaker!!.stop()
-            }
-            speaker!!.release()
-        }
         repeating = false
         soundHandler?.removeCallbacks(repeatAudioRunnable);
-    }
-
-    private fun repeatBuzzer() {
-        soundHandler?.postDelayed(repeatAudioRunnable, 2000);
+        try {
+            if(speaker != null) {
+                speaker?.isLooping = true
+                speaker?.stop()
+                speaker?.release()
+            }
+        } catch (e: IllegalStateException) {
+            Timber.e(e.message)
+        }
+        speaker = null
     }
 
     fun playBuzzerRepeat() {
