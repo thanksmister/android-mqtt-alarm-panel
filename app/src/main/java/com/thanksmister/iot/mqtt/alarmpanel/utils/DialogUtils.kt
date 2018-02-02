@@ -54,7 +54,6 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
 
     private var alertDialog: AlertDialog? = null
     private var dialog: Dialog? = null
-    private var disableDialog: Dialog? = null
     private var screenSaverDialog: Dialog? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -63,10 +62,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
             dialog!!.dismiss()
             dialog = null
         }
-        if (disableDialog != null && disableDialog!!.isShowing) {
-            disableDialog!!.dismiss()
-            disableDialog = null
-        }
+
         if (alertDialog != null && alertDialog!!.isShowing) {
             alertDialog!!.dismiss()
             alertDialog = null

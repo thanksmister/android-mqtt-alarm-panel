@@ -28,6 +28,7 @@ class SoundUtils(base: Context) : ContextWrapper(base) {
         Timber.d("destroyBuzzer")
         soundHandler?.post(Runnable { soundHandler?.removeCallbacks(repeatAudioRunnable) })
         soundHandler?.post(Runnable { soundHandler?.removeCallbacks(streamAudioRunnable) })
+        stopBuzzerRepeat()
     }
 
     fun playBuzzerOnButtonPress() {
