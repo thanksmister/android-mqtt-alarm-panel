@@ -75,8 +75,14 @@ class MQTTModule (base: Context?, private val mqttOptions: MQTTOptions, private 
     }
 
     fun restart() {
+        Timber.d("restart")
         stop()
         start()
+    }
+
+    fun pause() {
+        Timber.d("pause")
+        stop()
     }
 
     fun publish(command : String) {

@@ -31,6 +31,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
+import android.view.View
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
@@ -42,6 +43,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NetworkUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -266,6 +268,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         return R.layout.activity_main
     }
 
+    override fun handleNetworkConnect() {
+        super.handleNetworkConnect()
+        if (mqttModule != null) {
+            mqttModule?.restart()
+        }
+    }
+
+    override fun handleNetworkDisconnect() {
+        super.handleNetworkDisconnect()
+        if (mqttModule != null) {
+            mqttModule?.pause()
+        }
+    }
+
     /**
      * Temporarily wake the screen so we can notify the user of pending alarm and
      * then allow the device to sleep again as needed after a set amount of time.
@@ -315,12 +331,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onMQTTException(message: String) {
+        Timber.d("onMQTTException")
         this@MainActivity.runOnUiThread {
             dialogUtils.showAlertDialog(this@MainActivity, message)
         }
     }
 
     override fun onMQTTDisconnect() {
+        Timber.d("onMQTTDisconnect")
         this@MainActivity.runOnUiThread {
             dialogUtils.showAlertDialog(this@MainActivity, getString(R.string.error_mqtt_connection), DialogInterface.OnClickListener { _, _ ->
                 if (mqttModule != null) {

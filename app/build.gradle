@@ -38,9 +38,9 @@ repositories {
 }
 
 def versionMajor = 0
-def versionMinor = 6
-def versionPatch = 9
-def versionBuild = 2 // bump for dog food builds, public betas, etc.
+def versionMinor = 7
+def versionPatch = 0
+def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
