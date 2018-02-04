@@ -35,42 +35,42 @@ class AlarmUtils {
 
     companion object {
 
-        @JvmField val MODE_ARM_HOME = "mode_arm_home"
-        @JvmField val MODE_ARM_HOME_PENDING = "mode_arm_home_pending"
-        @JvmField val MODE_ARM_PENDING = "mode_arm_pending"
-        @JvmField val MODE_ARM_AWAY = "mode_arm_away"
-        @JvmField val MODE_ARM_AWAY_PENDING = "mode_arm_away_pending"
-        @JvmField val MODE_DISARM = "mode_disarm"
-        @JvmField val MODE_TRIGGERED = "mode_triggered"
-        @JvmField val MODE_TRIGGERED_PENDING = "mode_triggered_pending"
-        @JvmField val MODE_AWAY_TRIGGERED_PENDING = "mode_triggered_away_pending"
-        @JvmField val MODE_HOME_TRIGGERED_PENDING = "mode_triggered_home_pending"
+        const val MODE_ARM_HOME = "mode_arm_home"
+        const val MODE_ARM_HOME_PENDING = "mode_arm_home_pending"
+        const val MODE_ARM_PENDING = "mode_arm_pending"
+        const val MODE_ARM_AWAY = "mode_arm_away"
+        const val MODE_ARM_AWAY_PENDING = "mode_arm_away_pending"
+        const val MODE_DISARM = "mode_disarm"
+        const val MODE_TRIGGERED = "mode_triggered"
+        const val MODE_TRIGGERED_PENDING = "mode_triggered_pending"
+        const val MODE_AWAY_TRIGGERED_PENDING = "mode_triggered_away_pending"
+        const val MODE_HOME_TRIGGERED_PENDING = "mode_triggered_home_pending"
 
-        @JvmField val PORT = 1883
+        const val PORT = 1883
 
-        @JvmField val ALARM_TYPE = "ALARM"
+        const val ALARM_TYPE = "ALARM"
 
-        @JvmField val COMMAND_ARM_HOME = "ARM_HOME"
-        @JvmField val COMMAND_ARM_AWAY = "ARM_AWAY"
-        @JvmField val COMMAND_DISARM = "DISARM"
+        const val COMMAND_ARM_HOME = "ARM_HOME"
+        const val COMMAND_ARM_AWAY = "ARM_AWAY"
+        const val COMMAND_DISARM = "DISARM"
 
-        @JvmField val ALARM_COMMAND_TOPIC = "home/alarm/set"
-        @JvmField val ALARM_STATE_TOPIC = "home/alarm"
+        const val ALARM_COMMAND_TOPIC = "home/alarm/set"
+        const val ALARM_STATE_TOPIC = "home/alarm"
 
-        @JvmField val STATE_DISARM = "disarmed"
-        @JvmField val STATE_ARM_AWAY = "armed_away"
-        @JvmField val STATE_ARM_HOME = "armed_home"
-        @JvmField val STATE_PENDING = "pending"
-        @JvmField val STATE_TRIGGERED = "triggered"
-        @JvmField val STATE_ERROR = "error"
+        const val STATE_DISARM = "disarmed"
+        const val STATE_ARM_AWAY = "armed_away"
+        const val STATE_ARM_HOME = "armed_home"
+        const val STATE_PENDING = "pending"
+        const val STATE_TRIGGERED = "triggered"
+        const val STATE_ERROR = "error"
 
-        @JvmField val PENDING_TIME = 60
-        @JvmField val PENDING_HOME_TIME = 60
-        @JvmField val PENDING_AWAY_TIME = 60
-        @JvmField val DELAY_TIME = 30
-        @JvmField val DELAY_HOME_TIME = 30
-        @JvmField val DELAY_AWAY_TIME = 30
-        @JvmField val DISABLE_TIME = 30
+        const val PENDING_TIME = 60
+        const val PENDING_HOME_TIME = 60
+        const val PENDING_AWAY_TIME = 60
+        const val DELAY_TIME = 30
+        const val DELAY_HOME_TIME = 30
+        const val DELAY_AWAY_TIME = 30
+        const val DISABLE_TIME = 30
 
         private val supportedCommands = ArrayList<String>()
         private val supportedStates = ArrayList<String>()

@@ -29,7 +29,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_ST
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
 
-class MQTTModule (base: Context?, private val mqttOptions: MQTTOptions, private val listener: MQTTListener) : ContextWrapper(base),
+class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val listener: MQTTListener) : ContextWrapper(base),
         LifecycleObserver,
         MQTTService.MqttManagerListener {
 
@@ -48,7 +48,6 @@ class MQTTModule (base: Context?, private val mqttOptions: MQTTOptions, private 
                 // TODO should we loop back and try again?
                 Timber.e("Could not create MQTTPublisher: " + t.message)
             }
-
         } else if (mqttOptions.hasUpdates()) {
             Timber.d("readMqttOptions().hasUpdates(): " + mqttOptions.hasUpdates())
             try {
@@ -89,6 +88,20 @@ class MQTTModule (base: Context?, private val mqttOptions: MQTTOptions, private 
         Timber.d("command: " + command)
         if(mqttService != null) {
             mqttService!!.publish(command)
+        }
+    }
+
+    fun resetMQttOptions(mqttOptions: MQTTOptions) {
+        this.mqttOptions = mqttOptions
+        if (mqttService != null && mqttOptions.hasUpdates()) {
+            Timber.d("readMqttOptions().hasUpdates(): " + mqttOptions.hasUpdates())
+            try {
+                mqttService!!.reconfigure(applicationContext, mqttOptions, this)
+                mqttOptions.setOptionsUpdated(false)
+            } catch (t: Throwable) {
+                // TODO should we loop back and try again?
+                Timber.e("Could not create MQTTPublisher: " + t.message)
+            }
         }
     }
 

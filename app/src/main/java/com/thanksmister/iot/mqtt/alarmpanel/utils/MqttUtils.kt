@@ -59,11 +59,7 @@ class MqttUtils {
             return mqttConnectOptions
         }
 
-        fun getMqttAndroidClient(context: Context, serverUri: String, clientId: String): MqttAndroidClient {
-            val mqttAndroidClient = MqttAndroidClient(context, serverUri, clientId)
-            return mqttAndroidClient
-        }
-
+        @Deprecated ("We don't need a callback for the client.")
         fun getMqttAndroidClient(context: Context, serverUri: String, clientId: String,
                                  mqttCallbackExtended: MqttCallbackExtended): MqttAndroidClient {
             val mqttAndroidClient = MqttAndroidClient(context, serverUri, clientId)

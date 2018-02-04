@@ -20,7 +20,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
@@ -31,7 +30,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_ALARM_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BROKER
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_CLIENT_ID
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_COMMAND_TOPIC
@@ -40,7 +39,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_P
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -93,7 +91,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         clientPreference = findPreference(PREF_CLIENT_ID) as EditTextPreference
         portPreference = findPreference(PREF_PORT) as EditTextPreference
         commandTopicPreference = findPreference(PREF_COMMAND_TOPIC) as EditTextPreference
-        stateTopicPreference = findPreference(PREF_ALARM_TOPIC) as EditTextPreference
+        stateTopicPreference = findPreference(PREF_STATE_TOPIC) as EditTextPreference
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
@@ -106,7 +104,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         clientPreference!!.text = mqttOptions!!.getClientId().toString()
         portPreference!!.text = mqttOptions!!.getPort().toString()
         commandTopicPreference!!.text = mqttOptions!!.getCommandTopic()
-        stateTopicPreference!!.text = mqttOptions!!.getAlarmTopic()
+        stateTopicPreference!!.text = mqttOptions!!.getStateTopic()
         userNamePreference!!.text = mqttOptions!!.getUsername()
         passwordPreference!!.text = mqttOptions!!.getPassword()
         sslPreference!!.isChecked = mqttOptions!!.getTlsConnection()
@@ -123,8 +121,8 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         if (!TextUtils.isEmpty(mqttOptions!!.getCommandTopic())) {
             commandTopicPreference!!.summary = mqttOptions!!.getCommandTopic()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getAlarmTopic())) {
-            stateTopicPreference!!.summary = mqttOptions!!.getAlarmTopic()
+        if (!TextUtils.isEmpty(mqttOptions!!.getStateTopic())) {
+            stateTopicPreference!!.summary = mqttOptions!!.getStateTopic()
         }
         if (!TextUtils.isEmpty(mqttOptions!!.getUsername())) {
             userNamePreference!!.summary = mqttOptions!!.getUsername()
@@ -176,14 +174,14 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     commandTopicPreference!!.text = mqttOptions!!.getCommandTopic()
                 }
             }
-            PREF_ALARM_TOPIC -> {
+            PREF_STATE_TOPIC -> {
                 value = stateTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
                     mqttOptions!!.setAlarmTopic(value)
                     stateTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    stateTopicPreference!!.text = mqttOptions!!.getAlarmTopic()
+                    stateTopicPreference!!.text = mqttOptions!!.getStateTopic()
                 }
             }
             PREF_USERNAME -> {

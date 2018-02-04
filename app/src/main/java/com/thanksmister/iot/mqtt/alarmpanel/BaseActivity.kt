@@ -231,7 +231,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun readMqttOptions(): MQTTOptions {
-        return MQTTOptions.from(preferences)
+        return MQTTOptions(preferences)
     }
 
     fun readWeatherOptions(): DarkSkyOptions {
@@ -316,26 +316,4 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             startActivity(intent)
         }
     }
-    /**
-     * Network connectivity receiver to notify client of the network disconnect issues and
-     * to clear any network notifications when reconnected. It is easy for network connectivity
-     * to run amok that is why we only notify the user once for network disconnect with
-     * a boolean flag.
-     */
-    /*private val connReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val currentNetworkInfo = connectivityManager.activeNetworkInfo
-            if (currentNetworkInfo != null && currentNetworkInfo.isConnected) {
-                Timber.d("Network Connected")
-                hasNetwork.set(true)
-                handleNetworkConnect()
-            } else if (hasNetwork.get()) {
-                Timber.d("Network Disconnected")
-                hasNetwork.set(false)
-                handleNetworkDisconnect()
-                bringApplicationToForegroundIfNeeded()
-            }
-        }
-    }*/
 }

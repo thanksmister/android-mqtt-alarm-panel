@@ -43,7 +43,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.NetworkUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -253,7 +252,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             runOnUiThread({
                 lifecycle.addObserver(mqttModule!!)
             })
-        }
+        } /*else if(mqttModule != null  && readMqttOptions().hasUpdates() && readMqttOptions().isValid) {
+            mqttModule!!.resetMQttOptions(readMqttOptions())
+        }*/
         if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Timber.d("cameraModule")
             cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!,this@MainActivity)
@@ -269,24 +270,26 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun handleNetworkConnect() {
-        super.handleNetworkConnect()
-        if (mqttModule != null) {
+        Timber.d("handleNetworkConnect")
+        if (mqttModule != null && !hasNetworkConnectivity()) {
             mqttModule?.restart()
         }
+        super.handleNetworkConnect()
     }
 
     override fun handleNetworkDisconnect() {
-        super.handleNetworkDisconnect()
-        if (mqttModule != null) {
+        Timber.d("handleNetworkDisconnect")
+        if (mqttModule != null && hasNetworkConnectivity()) {
             mqttModule?.pause()
         }
+        super.handleNetworkDisconnect()
     }
 
     /**
      * Temporarily wake the screen so we can notify the user of pending alarm and
      * then allow the device to sleep again as needed after a set amount of time.
      */
-    var releaseWakeLockRunnable: Runnable = Runnable {
+    private var releaseWakeLockRunnable: Runnable = Runnable {
         releaseTemporaryWakeLock()
     }
 
