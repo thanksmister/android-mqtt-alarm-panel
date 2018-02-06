@@ -14,8 +14,6 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
-For HASS integration questions, use the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page. There is lots of information there already you may find uselful. 
-
 ## Features
 - Camera support for capturing and emailing images when alarm disabled (requires Mailgun api key).
 - Google Text-to-Speech support to speak MQTT notification messages.
