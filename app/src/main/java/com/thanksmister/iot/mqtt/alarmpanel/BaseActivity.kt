@@ -41,6 +41,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
+import com.thanksmister.iot.mqtt.alarmpanel.managers.ProximityManager
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
@@ -71,6 +72,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
+    private var proximityManager: ProximityManager? = null
 
     abstract fun getLayoutId(): Int
 
@@ -102,6 +104,15 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 handleNetworkDisconnect()
             }
         })
+        /*proximityManager = ProximityManager(applicationContext, lifecycle, object:ProximityManager.ProximityEventHandler {
+            override fun deviceHasProximitySensor(hasSensor: Boolean) {
+                Timber.d("device has proximity sensor: " + hasSensor)
+            }
+            override fun onProximitySensorValueChanged(value: String) {
+                //Check for the value and awake device
+                Timber.d("proximity value: " + value)
+            }
+        })*/
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -117,13 +128,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                         or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LOW_PROFILE
                         or View.SYSTEM_UI_FLAG_FULLSCREEN)
 
             } else {
-                visibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
                 window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN)
             }

@@ -16,6 +16,17 @@ import kotlin.collections.ArrayList
  */
 class MQTTOptions constructor(private val sharedPreferences: DPreference) {
 
+    val brokerUrl: String
+        get() = if (!TextUtils.isEmpty(getBroker())) {
+            if (getBroker().contains("http://") || getBroker().contains("https://")) {
+                String.format(Locale.getDefault(), HTTP_BROKER_URL_FORMAT, getBroker(), getPort())
+            } else if (getTlsConnection()) {
+                String.format(Locale.getDefault(), SSL_BROKER_URL_FORMAT, getBroker(), getPort())
+            } else {
+                String.format(Locale.getDefault(), TCP_BROKER_URL_FORMAT, getBroker(), getPort())
+            }
+        } else ""
+
     val isValid: Boolean
         get() = if (getTlsConnection()) {
             !TextUtils.isEmpty(getBroker()) &&
@@ -31,17 +42,7 @@ class MQTTOptions constructor(private val sharedPreferences: DPreference) {
                 !TextUtils.isEmpty(getCommandTopic())
 
     fun getBroker(): String {
-        val broker = sharedPreferences.getPrefString(PREF_BROKER, "")
-        if (!TextUtils.isEmpty(broker)) {
-            if (broker!!.contains("http://") || broker.contains("https://")) {
-               return String.format(Locale.getDefault(), HTTP_BROKER_URL_FORMAT, broker, getPort())
-            } else if (getTlsConnection()) {
-                return String.format(Locale.getDefault(), SSL_BROKER_URL_FORMAT, broker, getPort())
-            } else {
-                return String.format(Locale.getDefault(), TCP_BROKER_URL_FORMAT, broker, getPort())
-            }
-        }
-        return ""
+        return sharedPreferences.getPrefString(PREF_BROKER, "")
     }
 
     fun getClientId(): String {

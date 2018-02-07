@@ -117,7 +117,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             Timber.i("Password: " + mqttOptions!!.getPassword())
             Timber.i("TslConnect: " + mqttOptions!!.getTlsConnection())
             Timber.i("MQTT Configuration:")
-            Timber.i("Broker: " + mqttOptions?.getBroker())
+            Timber.i("Broker: " + mqttOptions?.brokerUrl)
             Timber.i("Subscibed to topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
             Timber.i("Publishing to topic: " + mqttOptions!!.getCommandTopic())
             if (mqttOptions!!.isValid) {
@@ -149,7 +149,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
     private fun initializeMqttClient() {
         Timber.d("initializeMqttClient")
         try {
-            mqttClient = MqttAndroidClient(context, mqttOptions?.getBroker(), mqttOptions!!.getClientId())
+            mqttClient = MqttAndroidClient(context, mqttOptions?.brokerUrl, mqttOptions!!.getClientId())
             val options = MqttConnectOptions()
             if (!TextUtils.isEmpty(mqttOptions!!.getUsername()) && !TextUtils.isEmpty(mqttOptions!!.getPassword())) {
                 options.userName = mqttOptions!!.getUsername()
@@ -177,7 +177,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
 
                     override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
                         if (listener != null && mqttOptions != null) {
-                            Timber.e("Failed to connect to: " + mqttOptions!!.getBroker() + " exception: " + exception)
+                            Timber.e("Failed to connect to: " + mqttOptions?.brokerUrl + " exception: " + exception)
                             //listener!!.handleMqttException("Error connecting to the broker and port: " + mqttOptions!!.brokerUrl)
                             listener!!.handleMqttException(context.getString(R.string.error_mqtt_subscription))
                         }
