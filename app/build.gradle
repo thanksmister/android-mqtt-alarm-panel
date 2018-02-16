@@ -39,7 +39,7 @@ repositories {
 
 def versionMajor = 0
 def versionMinor = 7
-def versionPatch = 2
+def versionPatch = 3
 def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
