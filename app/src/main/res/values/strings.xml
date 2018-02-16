@@ -246,6 +246,8 @@
     <string name="pref_camera_send_image_notes">You can use Telegram, Mailgun, or both to send captured images.</string>
     <string name="menu_item_help">Help</string>
     <string name="error_mailgun_credentials">There was an problem mailing the image, please check your Mailgun credentials.</string>
+    <string name="pref_system_sounds_summary">Toggle the sound used for button presses and dialogs.</string>
+    <string name="pref_system_sounds_title">System Sounds</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

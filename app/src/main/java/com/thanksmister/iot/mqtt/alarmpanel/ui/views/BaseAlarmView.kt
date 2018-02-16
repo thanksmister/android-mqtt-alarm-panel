@@ -16,6 +16,7 @@ abstract class BaseAlarmView : LinearLayout {
     var currentCode: Int = 0
     var codeComplete = false
     var enteredCode = ""
+    var useSystemSound: Boolean = true
 
     private var soundUtils: SoundUtils? = null
 
@@ -105,6 +106,10 @@ abstract class BaseAlarmView : LinearLayout {
         destroySoundUtils()
     }
 
+    fun setUseSound(value: Boolean) {
+        useSystemSound = value
+    }
+
     fun setCode(code: Int) {
         currentCode = code
     }
@@ -115,12 +120,18 @@ abstract class BaseAlarmView : LinearLayout {
     abstract fun reset()
 
     fun destroySoundUtils() {
+        if(!useSystemSound)
+            return
+
         if (soundUtils != null) {
             soundUtils?.destroyBuzzer()
         }
     }
 
     private fun playButtonPress() {
+        if(!useSystemSound)
+            return
+
         if (soundUtils == null) {
             soundUtils = SoundUtils(context)
             soundUtils?.init()
@@ -129,6 +140,9 @@ abstract class BaseAlarmView : LinearLayout {
     }
 
     fun playContinuousBeep() {
+        if(!useSystemSound)
+            return
+
         if (soundUtils == null) {
             soundUtils = SoundUtils(context)
             soundUtils?.init()

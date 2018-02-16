@@ -240,7 +240,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             }, DialogInterface.OnCancelListener {
                 confirmCode = false
                 Toast.makeText(activity, R.string.toast_code_unchanged, Toast.LENGTH_SHORT).show()
-            })
+            }, configuration.systemSounds)
         }
     }
 }

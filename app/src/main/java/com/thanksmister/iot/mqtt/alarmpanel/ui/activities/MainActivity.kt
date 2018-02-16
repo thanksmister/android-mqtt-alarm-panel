@@ -336,7 +336,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     override fun onMQTTException(message: String) {
         Timber.d("onMQTTException")
         this@MainActivity.runOnUiThread {
-            dialogUtils.showAlertDialog(this@MainActivity, message)
+            dialogUtils.showAlertDialog(this@MainActivity, message, DialogInterface.OnClickListener { _, _ ->
+                if (mqttModule != null) {
+                    mqttModule!!.restart()
+                }
+            })
         }
     }
 

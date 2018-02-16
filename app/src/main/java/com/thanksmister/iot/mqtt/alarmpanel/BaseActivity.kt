@@ -92,6 +92,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
         decorView = window.decorView
+
+        lifecycle.addObserver(dialogUtils)
     }
 
     override fun onStart(){

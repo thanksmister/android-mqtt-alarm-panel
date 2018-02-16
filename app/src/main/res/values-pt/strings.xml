@@ -1,0 +1,288 @@
+<!-- Portuguese (pt-pt) translation by Jorge Assunção - v0.1 15/02/2018 -->
+
+<resources>
+    <string name="app_name">Painel de Controlo para Alarme MQTT</string>
+
+    <!-- Menus -->
+    <string name="action_settings">Configurações</string>
+    <string name="action_publish">Publicar</string>
+
+    <!-- Buttons -->
+
+    <!-- Toasts, Alerts, Errors -->
+    <string name="toast_code_match">O código do alarme é igual ao actual. Por favor, introduza um código diferente.</string>
+    <string name="toast_code_alarm_set">O código do alarme foi definido!</string>
+    <string name="toast_code_unchanged">O código do alarme não foi alterado!</string>
+    <string name="toast_code_changed">O código do alarme foi alterado com sucesso!</string>
+    <string name="toast_code_not_match">O código do alarme não corresponde! Por favor tente de novo.</string>
+    <string name="toast_code_invalid">O código do alarme é inválido! Por favor tente de novo.</string>
+
+    <!-- Text Content -->
+    <string name="text_enter_alarm_code_title">Introduza o novo código do alarme</string>
+    <string name="text_renter_alarm_code_title">Repita o novo código do alarme</string>
+
+    <!-- Preferences -->
+    <string name="preference_summary_security_code">Configurar o código de segurança do alarme (o código por defeito é 1234).</string>
+    <string name="preference_title_security_code">Código de Segurança</string>
+    <string name="preference_title_mqtt_server">Configuração de MQTT</string>
+    <string name="preference_summary_mqtt_server">Defina os valores para o serviço MQTT</string>
+    <string name="preference_title_broker">Servidor MQTT</string>
+    <string name="preference_summary_broker">Defina o endereço do servidor MQTT. Para endereços com TCP/SSL exclua o prefixo (192.168.1.1). Para os outros, inclua o prefixo (http://192.168.1.1).</string>
+    <string name="preference_client_id">ID do Cliente</string>
+    <string name="preference_summary_client_id">Defina o ID do cliente, se exigido pelo serviço MQTT.</string>
+    <string name="preference_tls_connection">Ligação SSL/TLS</string>
+    <string name="preference_summary_tls_connection">Ligar ao servidor MQTT na porta 8883 com SSL/TLS.</string>
+    <string name="preference_title_port">Porta do Home Assistant</string>
+    <string name="preference_summary_port">Defina o valor da porta de serviço, geralmente 8123, a menos que seja uma ligação segura.</string>
+    <string name="preference_title_command_topic">Comandos MQTT do Alarme</string>
+    <string name="preference_title_state_topic">Tópico do Alarme</string>
+    <string name="preference_summary_command_topic">Defina o tópico para enviar comandos para o servidor MQTT.</string>
+    <string name="preference_summary_state_topic">Defina o tópico para receber comandos para do servidor MQTT.</string>
+    <string name="preference_title_username">Nome de Utilizador</string>
+    <string name="preference_summary_username">Defina o nome de utilizador do servidor MQTT (se necessário).</string>
+    <string name="preference_title_password">Password</string>
+    <string name="preference_summary_password">Defina a password do servidor MQTT (se necessário).</string>
+    <string name="preference_title_alarm">Configurações do Alarme</string>
+    <string name="preference_summary_alarm">Configurações do código de alarme</string>
+    <string name="preference_title_pending_time">Tempo de Espera</string>
+    <string name="preference_summary_pending_time">O tempo, em segundos, antes que o alarme seja armado ("Em Casa" ou "Fora de Casa"). Actualmente, %1$s segundos.</string>
+    <string name="preference_title_trigger_time">Tempo de Disparo</string>
+    <string name="preference_summary_trigger_time">O tempo, em segundos, antes de disparar o alarme. Actualmente, %1$s segundos.</string>
+
+    <string name="preference_title_weather_settings">Meteorologia</string>
+    <string name="preference_summary_weather_settings">Uma vez activadas, as condições meteorologicas aparecerão no ecrã principal.</string>
+    <string name="preference_title_darksky">DarkSky</string>
+    <string name="preference_summary_darksky">Active o módulo de clima usando o serviço DarkSky.</string>
+    <string name="preference_title_darksky_api">Segredo da API</string>
+    <string name="preference_summary_darksky_api">Introduza o seu segredo da API DarkSky.</string>
+    <string name="preference_title_latitude">Latitude</string>
+    <string name="preference_summary_latitude_summary">Defina a latitude da sua localização.</string>
+    <string name="preference_title_longitude">Longitude</string>
+    <string name="preference_summary_longitude_summary">Defina a longitude da sua localização.</string>
+    <string name="preference_title_units">Usar graus Celsius (°C)</string>
+    <string name="preference_summary_units">Utilizar graus celsius nos valores das temperaturas.</string>
+
+    <string name="preference_title_screen_saver_title">Protecção de Ecrã</string>
+    <string name="preference_title_screen_saver_settings">Configurações da Protecção de Ecrã</string>
+    <string name="preference_summary_screen_saver_settings">Quando activo, usa a proteção de ecrã de relógio incorporada.</string>
+    <string name="preference_title_screen_saver">Proteção de Ecrã de Relógio</string>
+    <string name="pref_title_image_client_id">ID de Cliente Imgur</string>
+    <string name="preference_summary_image_client_id">Introduza o ID de Cliente da sua conta Imgur em https://api.imgur.com.</string>
+
+    <string name="preference_title_screen_saver_photo_settings">Configurações da Proteção de Ecrã de Fotografias</string>
+    <string name="preference_summary_screen_saver_photo_settings">Quando activo, usa as imagens da sua conta Imgur como protecção de ecrã.</string>
+    <string name="preference_title_screen_saver_photo">Proteção de Ecrã de Fotografias</string>
+
+    <string name="preference_summary_screen_saver">Usa as imagens da sua conta Instagram como protecção de ecrã.</string>
+
+    <string name="preference_title_image_source">Imgur Tag</string>
+    <string name="preference_summary_image_source">Defina a etiqueta a utilizar na imagens do Imgur (examplo: espaço, arquitectura, flores ou paisagens).</string>
+    <string name="preference_title_image_fit">Cortar Imagens</string>
+    <string name="preference_summary_image_fit">Cortar as imagens para caber no seu ecrã.</string>
+    <string name="preference_title_image_rotation">Tempo de entre cada imagem</string>
+    <string name="preference_summary_image_rotation">O tempo, em minutos, entre cada imagem. Actualmente %1$s.</string>
+
+    <string name="preference_title_web_settings">Automação Doméstica</string>
+    <string name="preference_summary_web_settings">Permite carregar uma página web externa de acesso à plataforma de automação doméstica.</string>
+    <string name="preference_title_web">Página da Automação Doméstica</string>
+    <string name="preference_summary_web">Mostra a página da automação doméstica no ecrã principal.</string>
+    <string name="preference_title_web_url">Endereço da Plataforma</string>
+    <string name="preference_summary_web_url">Introduza o endereço IP da página de automação doméstica incluindo o prefixo e o porto se necessário (exemplo: http://ipaddress:port).</string>
+    <string name="preference_web_description">Esta é uma função experimental. A página é carregada pela versão Android do browser Chrome e pode ser apresentada de maneira diferente dependendo das versões do Android SDK e do WebView.</string>
+
+    <string name="preference_title_notification">Notificação</string>
+    <string name="preference_summary_notification">Mostrar uma notificação de sistema se o alarme disparar ou se for detectada uma entrada.</string>
+
+    <string name="preference_title_inactivity">Iniciar a protacção de ercã após…</string>
+    <string name="preference_summary_inactivity_seconds">Depois de %1$s segundos de inactividade o ecrã reduz o brilho.</string>
+    <string name="preference_summary_inactivity_minutes">Depois de %1$s minuto(s) de inactividade o ecrã reduz o brilho.</string>
+
+    <string name="preference_title_notifications">Notificações</string>
+    <string name="preference_title_mqtt_notifications">Notificações MQTT</string>
+    <string name="preference_summary_mqtt_notifications">Mostrar ou dizer as notificações das mensagens MQTT.</string>
+
+    <string name="preference_title_alert">Notificações de Alertas</string>
+    <string name="preference_title_system_notifications">Notificações de Sistema</string>
+    <string name="preference_summary_alert">Usar um dialogo de alerta com o conteúdo da notificação.</string>
+
+    <string name="preference_tts_voice">Voz TTS</string>
+    <string name="preference_tts">Notificações TTS</string>
+    <string name="preference_summary_tts">Usar o serviço Google Text-To-Speech para dizer o estado do alarme de uma mensagem MQTT. (Nota: Requer Android Lollipop ou superior.)</string>
+
+    <string name="preference_tts_topic">Tópico TTS</string>
+    <string name="preference_tts_topic_title">Configurar o valor do tópico</string>
+    <string name="preference_tts_topic_summary">Exemplo de formato para o tópico da mensagem e do estado do alarme para ser dito (deverão ser usados altofalantes alimentados externamente para o TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
+
+
+    <string name="preference_camera">Captura da Camera</string>
+    <string name="preference_camera_title">Captura da Camera</string>
+    <string name="preference_camera_summary">Utilizar a camara para capturar uma imagem e envia-la por email quando o alarme for desligado. (Nota: Requer Android Lollipop ou superior.)</string>
+
+    <string name="preference_camera_flip_title">Rodar a Camera</string>
+    <string name="preference_camera_flip_summary">Dependendo da camera, poderá ser necessário rodar ou inverter a imagem. Actualmente é %1$s.</string>
+
+    <string name="preference_mail_domain">Domínio</string>
+    <string name="preference_mail_domain_summary">Introduza o domínio do serviço MailGun (exemplo: sandboxd83b1e242f934c73a471c518392df0.mailgun.org).</string>
+    <string name="preference_mail_key">Chave API</string>
+    <string name="preference_mail_key_summary">Introduza a chave API do serviço (exemplo: key-5d021926d65dc12we8ec04d7f9d0fd2c).</string>
+
+    <string name="preference_mail_from">Email de</string>
+    <string name="preference_mail_from_summary">Introduza o endereço de mail de envio (exemplo: mister@thankmister.com).</string>
+
+    <string name="preference_mail_to">Email para</string>
+    <string name="preference_mail_to_summary">Introduza o endereço de mail para onde enviar a imagem. Separe com uma virgula se quiser envia para multiplos endereços de email. (exemplo: "mister@thankmister.com" ou "mister@thankmister.com, me@thankmister.com")</string>
+
+    <string name="preference_mail_title">Configurações MailGun</string>
+    <string name="preference_mail_description">Para enviar as imagens capturadas é necessário configurar o serviço MailGun (mailgun.com) e indicar o domínio e chave API, assim como definir o(s) endereço(s) de email para onde enviar as mesmas.</string>
+
+    <string name="text_title_system">SISTEMA</string>
+    <string name="text_titled_disarmed">DESARMADO</string>
+    <string name="text_titled_armed_away">ARMADO FORA</string>
+    <string name="toast_invalid_coordinates">Valores de latitude e longitude inválidos.</string>
+    <string name="toast_invalid_latitude">Os valores devem estar entre -90 e 90.</string>
+    <string name="toast_invalid_longitude">Os valores devem estar entre -180 e 180.</string>
+    <string name="toast_invalid_provider">Não foi possivél detectar a localização! Por favor introduza a latitude e longitude manualmente.</string>
+    <string name="activity_settings_title">Configurações</string>
+    <string name="toast_alarm_deactivated">Alarme desactivado!</string>
+    <string name="activity_logs_title">Registos de Dados</string>
+
+    <string name="text_arm_home">ARMADO CASA</string>
+    <string name="text_arm_away">ARMADO FORA</string>
+    <string name="text_system">SISTEMA</string>
+    <string name="text_disarmed">DESARMADO</string>
+    <string name="dialog_alarm_triggered">INTRODUZA CÓDIGO PARA SAIR</string>
+    <string name="dialog_first_time">Como esta é a sua primeira vez, por favor configure o seu dispositivo, servidor MQTT e informação do alarme (o código por defeito é 1234).</string>
+    <string name="text_alarm_pending">ALARME PENDENTE</string>
+
+    <string name="text_temperature">%1$s %2$s</string>
+    <string name="text_temperature_range">H%1$s°  L%2$s°</string>
+    <string name="error_mqtt_connection">A ligação com o servidor MQTT não foi estabelecida ou foi fechada inesperadamente. A ligação será tentada de novo.</string>
+    <string name="error_mqtt_subscription">Não foi possível subscrever os tópicos MQTT. Verifique as definições do servidor MQTT ou as ligações.</string>
+    <string name="text_alarm">ALARME</string>
+    <string name="string_device_location">Localização do Dispositivo</string>
+    <string name="string_location_services_disabled">Os seus serviços de localização estão desactivados, deseja activá-los?</string>
+
+    <string name="mail_to_subject_text">Comentários sobre o Painel de Controlo para Alarme MQTT</string>
+    <string name="mail_subject_text">Enviar comentário:</string>
+
+    <string name="thanks_mister_title">Obrigado, Mister!</string>
+    <string name="designer_developer_text">Design e desenvolvimento</string>
+    <string name="company_url_text">thanksmister.com</string>
+    <string name="company_email">mister@thanksmister.com</string>
+    <string name="text_feedback">Comentário</string>
+    <string name="text_rate_application">Avaliar a aplicação</string>
+    <string name="text_reddit">Grupo do Reddit</string>
+    <string name="text_license_information">Informação da Licença</string>
+    <string name="text_github_code">Código no GitHub</string>
+    <string name="text_about">Acerca</string>
+    <string name="text_alarm_settings">Configurações do Alarme</string>
+    <string name="text_mqtt_settings">Configurações MQTT</string>
+    <string name="notification_channel_name">Detecção de Entrada / Alarme Disparado</string>
+    <string name="text_channel_description">Notificações do Painel de Controlo para Alarme MQTT</string>
+    <string name="text_notification_entry_title">Detecção de Entrada</string>
+    <string name="text_notification_entry_description">Foi detectada uma entrada / intrusão, tome as medidas necessárias.</string>
+    <string name="text_notification_trigger_title">Alarme Disparado</string>
+    <string name="text_notification_trigger_description">O alarme foi disparado, tome as medidas necessárias.</string>
+    <string name="text_notification_network_title">Sem Ligação ao Alarme</string>
+    <string name="text_notification_network_description">A ligação de rede com o alarme não está disponível. Esta ligação é necessária para que o alarme funcione.</string>
+    <string name="text_settings_code_title">Para aceder a esta área, introduza o seu código.</string>
+    <string name="text_error_no_alarm_setup">Está a tentar configurar o alarme, mas ainda não efectuou a configuração do servidor MQTT.</string>
+    <string name="text_error_pending_time_low">O tempo de espera é o tempo antes de armar o alarme. Por favor, dê tempo suficiente para armar ou desarmar o alarme quando entra ou sai.</string>
+    <string name="text_error_trigger_time_low">O tempo de disparo é o tempo antes do alarme ser reiniciado. Um tempo baixo poderá ter resultados inesperados.</string>
+    <string name="text_error_mqtt_connection">Falha na ligação utilizando o seguinte servidor e porta: %1$s</string>
+    <string name="progress_location">A adquirir a localização…</string>
+    <string name="text_error_only_numbers">Certifique-se que o valor apenas contém numeros e não está em branco.</string>
+    <string name="text_error_blank_entry">O valor não deve estar em branco, por favor introduza um valor válido</string>
+    <string name="text_alarm_disabled_email">O alarme foi desactivado. Aqui está a imagem.</string>
+    <string name="text_alarm_disabled_email_subject">Alarme Desactivado</string>
+    <string name="text_camera_failed_configuration">Falhou a configuração da camera, de certeza que tem uma camera?</string>
+    <string name="text_camera_failed_session">Captura falhada, de certeza que tem uma camera?</string>
+    <string name="text_error_camera_device">Erro na camera, não foi possivel activar o dispositivo.</string>
+    <string name="text_camera_image_subject">\"APainel de Controlo para Alarme MQTT\" %1$s</string>
+    <string name="pref_mqtt_settings_category">Notificações MQTT</string>
+    <string name="dialog_loading">A carregar…</string>
+    <string name="pref_time_update_title">Tempo de actualização</string>
+    <string name="pref_time_title">Configurações da Hora</string>
+    <string name="pref_automatic_time_zone_title">Fuso horário automático</string>
+    <string name="pref_automatic_time_zone_summary">Utilize o fuso horário fornecido pela rede</string>
+    <string name="pref_time_summary">Actualize a hora do dispositivo.</string>
+    <string name="pref_time_format_title">Usar formato de 24 horas (16h00)</string>
+    <string name="text_dialog_select_time">Seleccione a Hora</string>
+    <string name="pref_density_summary">Altere a densidade do ecrã. Actualmente é %1$s dpi.</string>
+    <string name="pref_device_brightness_summary">Configurar o brilho do ecrã entre 0 e 255. Actualmente é %1$s.</string>
+    <string name="pref_device_density_title">Densidade do Ecrã</string>
+    <string name="pref_device_brightness_title">Brilho do Ecrã</string>
+    <string name="pref_reset_category">Limpar</string>
+    <string name="pref_reset_title">Apagar configurações</string>
+    <string name="pref_reset_summary">Apaga todas as configurações e retorna às configurações de origemClears all settings and returns device to default settings.</string>
+
+    <string name="pref_device_timeout_minutes_summary">Apaga o ecrã depois de %1$s minuto(s).</string>
+    <string name="pref_device_timeout_seconds_summary">Apaga o ecrã depois de %1$s segundo(s).</string>
+    <string name="pref_device_timeout_hours_summary">Apaga o ecrã depois de %1$s hora(s).</string>
+
+    <string name="pref_device_timeout_title">Tempo Limite do Ecrã</string>
+    <string name="text_update_available">Existe uma nova actualização, deseja instalá-la agora?</string>
+    <string name="pref_home_pending_title">Tempo de Espera para Armar Casa</string>
+    <string name="pref_home_pending_summary">O tempo em segundos antes do alarme passar ao modo CASA. Actualmente é %1$s segundos.</string>
+    <string name="pref_delay_title">Tempo de Espera para Desarmar</string>
+    <string name="pref_delay_summary">O tempo em segundos para mostrar a caixa de diálogo de desarme antes que o alarme seja accionado, a menos que sejam atinguidos os tempos de atraso de CASA ou FORA. Actualmente é %1$s segundos.</string>
+    <string name="pref_away_pending_title">Tempo de Espera para Armar Fora</string>
+    <string name="pref_away_pending_summary">O tempo em segundos antes do alarme passar ao modo FORA. Currently %1$s segundos.</string>
+    <string name="pref_pending_times_description">Estes tempos devem corresponder aos definidos na sua plataforma de automação doméstica. Se não deseja utilizar tempos de espera, configure todos estes tempos com o mesmo valor que o seu Tempo de Espera para Armar Casa. Para o Home Assistant, veja a documentação em https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
+    <string name="pref_home_delay_summary">O tempo em segundos para mostrar a caixa de diálogo de desarme antes que o alarme seja accionado no modo CASA. Actualmente é %1$s segundos.</string>
+    <string name="pref_home_delay_title">Tempo de Espera para Desarmar Casa</string>
+    <string name="pref_away_delay_summary">O tempo em segundos para mostrar a caixa de diálogo de desarme antes que o alarme seja accionado no modo FORA. Actualmente é %1$s segundos.</string>
+    <string name="pref_away_delay_title">Tempo de Espera para Desarmar Fora</string>
+    <string name="dialog_no_camera_permissions">Esse recurso requer as permissões para utilizar a camera. Vá às configurações do dispositivo e, em seguida, active as permissões para esta aplicação.</string>
+    <string name="dialog_no_location_permissions">Esse recurso requer as permissões para utilizar a sua localização. Vá às configurações do dispositivo e, em seguida, active as permissões para esta aplicação.</string>
+    <string name="toast_screen_timeout">O tempo de espera do ecrã expirou…</string>
+    <string name="button_hide_text">Esconder</string>
+    <string name="pref_title_platform_bar">Mostrar a Barra de Fundo</string>
+    <string name="pref_description_show_platform_bar">Quando seleccionado, mostra os botões de navegação no ecrã da plataforma.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Introduza o ID do seu bot do Telegram.</string>
+    <string name="pref_telegram_token_summary">Introduza o token da API do seu bot do Telegram.</string>
+    <string name="pref_telegram_chat_id_title">ID do chat do Telegram</string>
+    <string name="pref_telegram_api_title">Token da API do Telegram</string>
+    <string name="pref_camera_send_image_notes">Poderá utilizar o Telegram, o Mailgun, ou ambos para enviar as imagens capturadas.</string>
+    <string name="menu_item_help">Ajuda</string>
+    <string name="error_mailgun_credentials">Ocorreu um problema ao enviar a imagem por email. Por favor, verifique as suas credenciais do Mailgun.</string>
+    <string name="pref_system_sounds_summary">Alternar o som usado para pressionar botões e diálogos.</string>
+    <string name="pref_system_sounds_title">Som do sistema</string>
+
+    <string-array name="inactivity_times">
+        <item>15 segundos</item>
+        <item>30 segundos</item>
+        <item>1 minuto</item>
+        <item>2 minutos</item>
+        <item>3 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>30 minutos</item>
+    </string-array>
+
+    <string-array name="timeout_times">
+        <item>15 segundos</item>
+        <item>30 segundos</item>
+        <item>1 minuto</item>
+        <item>2 minutos</item>
+        <item>3 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+        <item>2 horas</item>
+        <item>3 horas</item>
+        <item>6 horas</item>
+        <item>12 horas</item>
+        <item>24 horas</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>Nenhuma</item>
+        <item>Rodar para a Esquerda</item>
+        <item>Rodar para a Direita</item>
+        <item>Inverter</item>
+    </string-array>
+
+</resources>

@@ -87,6 +87,10 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BAR, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BAR, value)
 
+    var systemSounds: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_SOUNDS, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_SOUNDS, value)
+
     var telegramChatId: String
         get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_CHAT_ID, "")
         set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_CHAT_ID, value)
@@ -274,6 +278,7 @@ constructor(private val sharedPreferences: DPreference) {
         @JvmField val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         @JvmField val PREF_INACTIVITY_TIME = "pref_inactivity_time"
         @JvmField val PREF_MODULE_NOTIFICATION = "pref_module_notification"
+        @JvmField val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         @JvmField val PREF_MODULE_TSS = "pref_module_tss"
         @JvmField val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
         @JvmField val PREF_MODULE_ALERTS = "pref_module_alerts"

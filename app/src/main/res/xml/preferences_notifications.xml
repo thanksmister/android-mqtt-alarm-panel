@@ -20,6 +20,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preferenceView">
 
+    <PreferenceCategory android:title="@string/pref_system_sounds_title">
+
+        <CheckBoxPreference
+            android:key="pref_system_sounds"
+            android:summary="@string/pref_system_sounds_summary"
+            android:title="@string/pref_system_sounds_title"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/preference_title_notifications">
 
         <CheckBoxPreference

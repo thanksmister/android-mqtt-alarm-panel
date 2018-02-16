@@ -151,13 +151,14 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
      * it resets the timer.
      */
     fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
-                               code: Int, beep: Boolean, timeRemaining: Int) {
+                               code: Int, beep: Boolean, timeRemaining: Int, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
         val alarmCodeView = view.findViewById<AlarmDisableView>(R.id.alarmDisableView)
         alarmCodeView.setListener(alarmCodeListener)
         alarmCodeView.setCode(code)
+        alarmCodeView.setUseSound(systemSounds)
         alarmCodeView.startCountDown(timeRemaining)
         if (beep) {
             alarmCodeView.playContinuousBeep()
@@ -166,18 +167,19 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
     }
 
-    fun showSettingsCodeDialog(activity: AppCompatActivity, code: Int, listener: SettingsCodeView.ViewListener) {
+    fun showSettingsCodeDialog(activity: AppCompatActivity, code: Int, listener: SettingsCodeView.ViewListener, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_settings_code, null, false)
         val settingsCodeView = view.findViewById<SettingsCodeView>(R.id.settingsCodeView)
         settingsCodeView.setCode(code)
         settingsCodeView.setListener(listener)
+        settingsCodeView.setUseSound(systemSounds)
         dialog = buildImmersiveDialog(activity, true, view, false)
     }
 
     fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener,
-                       onCancelListener: DialogInterface.OnCancelListener) {
+                       onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_alarm_code_set, null, false)
@@ -187,6 +189,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
             titleTextView.setText(R.string.text_renter_alarm_code_title)
         }
         alarmCodeView.setListener(listener)
+        alarmCodeView.setUseSound(systemSounds)
         dialog = buildImmersiveDialog(activity, true, view, false)
         dialog!!.setOnCancelListener(onCancelListener)
     }

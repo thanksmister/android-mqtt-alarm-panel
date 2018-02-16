@@ -46,6 +46,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
     private var systemPreference: CheckBoxPreference? = null
     private var notificationsPreference: CheckBoxPreference? = null
     private var tssPreference: CheckBoxPreference? = null
+    private var soundPreference: CheckBoxPreference? = null
     private var alertsPreference: CheckBoxPreference? = null
     private var descriptionPreference: Preference? = null
     private var mqttOptions: MQTTOptions? = null
@@ -87,6 +88,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
 
         topicPreference = findPreference(PREF_NOTIFICATION_TOPIC) as EditTextPreference
         notificationsPreference = findPreference(Configuration.PREF_MODULE_NOTIFICATION) as CheckBoxPreference
+        soundPreference = findPreference(Configuration.PREF_SYSTEM_SOUNDS) as CheckBoxPreference
         tssPreference = findPreference(Configuration.PREF_MODULE_TSS) as CheckBoxPreference
         alertsPreference = findPreference(Configuration.PREF_MODULE_ALERTS) as CheckBoxPreference
         systemPreference = findPreference(Configuration.PREF_SYSTEM_NOTIFICATIONS) as CheckBoxPreference
@@ -96,6 +98,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
         tssPreference!!.isChecked = configuration.hasTssModule()
         alertsPreference!!.isChecked = configuration.hasAlertsModule()
         systemPreference!!.isChecked = configuration.hasSystemAlerts()
+        soundPreference!!.isChecked = configuration.systemSounds
 
         if (!TextUtils.isEmpty(mqttOptions!!.getNotificationTopic())) {
             topicPreference!!.text = mqttOptions!!.getNotificationTopic()
@@ -127,6 +130,10 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
                 descriptionPreference!!.isEnabled = checked
                 tssPreference!!.isEnabled = checked
                 alertsPreference!!.isEnabled = checked
+            }
+            Configuration.PREF_SYSTEM_SOUNDS -> {
+                val sounds = soundPreference!!.isChecked
+                configuration.systemSounds = sounds
             }
             Configuration.PREF_MODULE_TSS -> {
                 val tss = tssPreference!!.isChecked

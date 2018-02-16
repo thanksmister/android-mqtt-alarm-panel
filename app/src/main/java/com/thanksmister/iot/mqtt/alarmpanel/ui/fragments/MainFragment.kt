@@ -155,7 +155,7 @@ class MainFragment : BaseFragment() {
                 override fun onCancel() {
                     dialogUtils.clearDialogs()
                 }
-            })
+            }, configuration.systemSounds)
         }
     }
 
@@ -177,7 +177,7 @@ class MainFragment : BaseFragment() {
                 override fun onCancel() {
                     dialogUtils.clearDialogs()
                 }
-            }, configuration.alarmCode, true, delayTime)
+            }, configuration.alarmCode, true, delayTime, configuration.systemSounds)
         }
     }
 
@@ -188,6 +188,7 @@ class MainFragment : BaseFragment() {
             val code = configuration.alarmCode
             val disarmView = activity!!.findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
             disarmView.setCode(code)
+            disarmView.setUseSound(configuration.systemSounds)
             disarmView.listener = object : AlarmTriggeredView.ViewListener {
                 override fun onComplete() {
                     listener!!.publishDisarmed()
