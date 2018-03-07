@@ -200,7 +200,8 @@ android {
 }
 
 ext {
-    archVersion = '1.0.0'
+    archVersion = '1.1.0'
+    archRoomVersion = '1.0.0'
     supporVersion = "27.+"
     dagger = "2.12"
     retrofit = "2.2.0"
@@ -229,13 +230,12 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // Android architecture
-    implementation "android.arch.lifecycle:runtime:${archVersion}"
     implementation "android.arch.lifecycle:extensions:${archVersion}"
     annotationProcessor "android.arch.lifecycle:compiler:${archVersion}"
     implementation "android.arch.lifecycle:reactivestreams:${archVersion}"
-    implementation "android.arch.persistence.room:runtime:${archVersion}"
-    kapt "android.arch.persistence.room:compiler:${archVersion}"
-    implementation "android.arch.persistence.room:rxjava2:${archVersion}"
+    implementation "android.arch.persistence.room:runtime:${archRoomVersion}"
+    kapt "android.arch.persistence.room:compiler:${archRoomVersion}"
+    implementation "android.arch.persistence.room:rxjava2:${archRoomVersion}"
 
     // MQTT
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
