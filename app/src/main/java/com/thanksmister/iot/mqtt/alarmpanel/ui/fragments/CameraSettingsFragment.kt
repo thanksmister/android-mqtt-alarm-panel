@@ -100,7 +100,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         descriptionPreference = findPreference("pref_mail_description")
         notesPreference = findPreference("pref_description")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 telegramChatIdPreference!!.isEnabled = false
                 telegramTokenPreference!!.isEnabled = false
@@ -121,37 +121,31 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         activePreference!!.isChecked = configuration.hasCamera()
 
-        tolPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.getMailTo())) {
             tolPreference!!.text = configuration.getMailTo()
             tolPreference!!.summary = configuration.getMailTo()
         }
 
-        fromPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.getMailFrom())) {
             fromPreference!!.text = configuration.getMailFrom()
             fromPreference!!.summary = configuration.getMailFrom()
         }
 
-        domainPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.getMailGunUrl())) {
             domainPreference!!.text = configuration.getMailGunUrl()
             domainPreference!!.summary = configuration.getMailGunUrl()
         }
 
-        keyPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.getMailGunApiKey())) {
             keyPreference!!.text = configuration.getMailGunApiKey()
             keyPreference!!.summary = configuration.getMailGunApiKey()
         }
 
-        telegramChatIdPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.telegramChatId)) {
             telegramChatIdPreference!!.text = configuration.telegramChatId
             telegramChatIdPreference!!.summary = configuration.telegramChatId
         }
 
-        telegramTokenPreference!!.isEnabled = configuration.hasCamera()
         if (!TextUtils.isEmpty(configuration.telegramToken)) {
             telegramTokenPreference!!.text = configuration.telegramToken
             telegramTokenPreference!!.summary = configuration.telegramToken
@@ -159,9 +153,6 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         rotatePreference!!.setDefaultValue(configuration.getCameraRotate())
         rotatePreference!!.value = configuration.getCameraRotate().toString()
-        descriptionPreference!!.isEnabled = configuration.hasCamera()
-        notesPreference!!.isEnabled = configuration.hasCamera()
-        rotatePreference!!.isEnabled = configuration.hasCamera()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -200,12 +191,6 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             Configuration.PREF_MODULE_CAMERA -> {
                 val checked = activePreference!!.isChecked
                 configuration.setHasCamera(checked)
-                tolPreference!!.isEnabled = checked
-                fromPreference!!.isEnabled = checked
-                domainPreference!!.isEnabled = checked
-                keyPreference!!.isEnabled = checked
-                descriptionPreference!!.isEnabled = checked
-                rotatePreference!!.isEnabled = checked
             }
             Configuration.PREF_CAMERA_ROTATE -> {
                 val valueFloat = rotatePreference!!.value

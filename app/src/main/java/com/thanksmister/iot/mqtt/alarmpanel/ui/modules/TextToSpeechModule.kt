@@ -52,13 +52,14 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
     private var isInitialized = false
 
     init {
+        if(configuration.hasTssModule()) {
+            textToSpeech = TextToSpeech(baseContext, this)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun start() {
-        if(configuration.hasTssModule()) {
-            textToSpeech = TextToSpeech(baseContext, this)
-        }
+
     }
 
     // FIXME null pointer line 67 for textToSpeech

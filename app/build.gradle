@@ -136,6 +136,7 @@ android {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
         minSdkVersion 15
         targetSdkVersion 27
+        multiDexEnabled true
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -201,6 +202,7 @@ android {
 
 ext {
     archVersion = '1.0.0'
+    lifecycle = '1.1.0'
     supporVersion = "27.+"
     dagger = "2.12"
     retrofit = "2.2.0"
@@ -230,9 +232,9 @@ dependencies {
 
     // Android architecture
     implementation "android.arch.lifecycle:runtime:${archVersion}"
-    implementation "android.arch.lifecycle:extensions:${archVersion}"
+    implementation "android.arch.lifecycle:extensions:${lifecycle}"
     annotationProcessor "android.arch.lifecycle:compiler:${archVersion}"
-    implementation "android.arch.lifecycle:reactivestreams:${archVersion}"
+    implementation "android.arch.lifecycle:reactivestreams:${lifecycle}"
     implementation "android.arch.persistence.room:runtime:${archVersion}"
     kapt "android.arch.persistence.room:compiler:${archVersion}"
     implementation "android.arch.persistence.room:rxjava2:${archVersion}"

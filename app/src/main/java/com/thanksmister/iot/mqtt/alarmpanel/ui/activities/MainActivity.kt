@@ -18,13 +18,16 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.annotation.LayoutRes
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -122,9 +125,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({state ->
                     this@MainActivity.runOnUiThread({
+                        Timber.d("onStart state: " + state)
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
-                                acquireTemporaryWakeLock()
                                 releaseWakeHandler = Handler();
                                 releaseWakeHandler?.postDelayed(releaseWakeLockRunnable, 10000)
                                 resetInactivityTimer()
@@ -138,7 +141,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                                 resetInactivityTimer()
                             }
                             AlarmUtils.STATE_TRIGGERED -> {
-                                awakenDeviceForAction()
                                 stopDisconnectTimer()
                                 if(viewModel.showSystemTriggeredAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
@@ -146,7 +148,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                                 }
                             }
                             AlarmUtils.STATE_PENDING -> {
-                                awakenDeviceForAction()
                                 if(viewModel.showSystemPendingAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
@@ -255,12 +256,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         } /*else if(mqttModule != null  && readMqttOptions().hasUpdates() && readMqttOptions().isValid) {
             mqttModule!!.resetMQttOptions(readMqttOptions())
         }*/
+
         if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Timber.d("cameraModule")
-            cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!,this@MainActivity)
-            runOnUiThread({
-                lifecycle.addObserver(cameraModule!!)
-            })
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Timber.d("cameraModule")
+                cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!, this@MainActivity)
+                runOnUiThread({
+                    lifecycle.addObserver(cameraModule!!)
+                })
+            }
         }
     }
 
@@ -270,7 +274,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun handleNetworkConnect() {
-        Timber.d("handleNetworkConnect")
         if (mqttModule != null && !hasNetworkConnectivity()) {
             mqttModule?.restart()
         }
@@ -278,7 +281,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun handleNetworkDisconnect() {
-        Timber.d("handleNetworkDisconnect")
         if (mqttModule != null && hasNetworkConnectivity()) {
             mqttModule?.pause()
         }
@@ -297,6 +299,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
      * We need to awaken the device and allow the user to take action.
      */
     private fun awakenDeviceForAction() {
+        Timber.d("awakenDeviceForAction")
         acquireTemporaryWakeLock()
         stopDisconnectTimer() // stop screen saver mode
         if (view_pager != null && pagerAdapter.count > 0) {
