@@ -4,22 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.fingerprint.FingerprintManager
 import android.media.AudioManager
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
-
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.SoundUtils
 import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint
-
 import kotlinx.android.synthetic.main.dialog_alarm_code_set.view.*
 import kotlinx.android.synthetic.main.view_keypad.view.*
 import timber.log.Timber
-import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.hasEnrolledFingerprints
-import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
-import android.os.Build
-
 
 
 abstract class BaseAlarmView : LinearLayout {
