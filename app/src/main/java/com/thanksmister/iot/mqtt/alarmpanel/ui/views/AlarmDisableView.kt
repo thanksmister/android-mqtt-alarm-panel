@@ -95,6 +95,10 @@ class AlarmDisableView : BaseAlarmView {
 
     override fun reset() {}
 
+    override fun fingerNoMatch() {
+        alarmListener?.onError()
+    }
+
     override fun addPinCode(code: String) {
         if (codeComplete)
             return

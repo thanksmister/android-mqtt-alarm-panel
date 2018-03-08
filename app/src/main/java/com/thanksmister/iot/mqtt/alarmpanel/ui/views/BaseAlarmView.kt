@@ -1,24 +1,36 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.hardware.fingerprint.FingerprintManager
 import android.media.AudioManager
 import android.util.AttributeSet
+import android.view.View
 import android.widget.LinearLayout
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.SoundUtils
+import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
+import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint
 
 import kotlinx.android.synthetic.main.dialog_alarm_code_set.view.*
 import kotlinx.android.synthetic.main.view_keypad.view.*
+import timber.log.Timber
+import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.hasEnrolledFingerprints
+import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
+import android.os.Build
+
+
 
 abstract class BaseAlarmView : LinearLayout {
-
     var currentCode: Int = 0
     var codeComplete = false
     var enteredCode = ""
     var useSystemSound: Boolean = true
 
     private var soundUtils: SoundUtils? = null
+
+    private val fingerPrintIdentity = FingerprintIdentify(context)
 
     constructor(context: Context) : super(context) {
         // let's play the sound as loud as we can
@@ -101,9 +113,57 @@ abstract class BaseAlarmView : LinearLayout {
         }
     }
 
+    @SuppressLint("InlinedApi")
+    override fun onVisibilityChanged(changedView: View?, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        // Fingerprint API only available on from Android 6.0 (M) and we only use it if user has available hardware and fingerprint
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val fingerprintManager = context.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
+            if (fingerprintManager.hasEnrolledFingerprints() && fingerprintManager.isHardwareDetected) {
+                if (!this.isShown){
+                    stopFingerprintIdentity()
+                    return
+                } else {
+                    startFingerprintIdentity()
+                }
+            }
+        }
+    }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         destroySoundUtils()
+        stopFingerprintIdentity()
+    }
+
+    private fun startFingerprintIdentity(){
+        Timber.d("Fingerprint identity start");
+        fingerPrintIdentity.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.FingerprintIdentifyListener{
+            override fun onSucceed(){
+                Timber.d("Fingerprint identity success");
+                codeComplete = false;
+                enteredCode = ""
+                addPinCode(currentCode.toString().padStart(MAX_CODE_LENGTH, '0'))
+            }
+
+            override fun onNotMatch(availableTimes: Int) {
+                Timber.d("Fingerprint identity no match");
+                fingerNoMatch()
+            }
+
+            override fun onFailed(isDeviceLocked: Boolean) {
+                Timber.d("Fingerprint identity failed");
+            }
+
+            override fun onStartFailedByDeviceLocked() {
+                Timber.d("Fingerprint identity failed by device locked");
+            }
+        })
+    }
+
+    private fun stopFingerprintIdentity(){
+        Timber.d("Fingerprint identity stop");
+        fingerPrintIdentity.cancelIdentify()
     }
 
     fun setUseSound(value: Boolean) {
@@ -118,6 +178,7 @@ abstract class BaseAlarmView : LinearLayout {
     abstract fun removePinCode()
     abstract fun addPinCode(code: String)
     abstract fun reset()
+    abstract fun fingerNoMatch()
 
     fun destroySoundUtils() {
         if(!useSystemSound)
@@ -189,5 +250,6 @@ abstract class BaseAlarmView : LinearLayout {
 
     companion object {
         val MAX_CODE_LENGTH = 4
+        val MAX_FINGERPRINT_RETRIES = 5
     }
 }

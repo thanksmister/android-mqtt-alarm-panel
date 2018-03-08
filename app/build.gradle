@@ -136,7 +136,6 @@ android {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
         minSdkVersion 15
         targetSdkVersion 27
-        multiDexEnabled true
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -201,8 +200,8 @@ android {
 }
 
 ext {
-    archVersion = '1.0.0'
-    lifecycle = '1.1.0'
+    archVersion = '1.1.0'
+    archRoomVersion = '1.0.0'
     supporVersion = "27.+"
     dagger = "2.12"
     retrofit = "2.2.0"
@@ -231,13 +230,12 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // Android architecture
-    implementation "android.arch.lifecycle:runtime:${archVersion}"
-    implementation "android.arch.lifecycle:extensions:${lifecycle}"
+    implementation "android.arch.lifecycle:extensions:${archVersion}"
     annotationProcessor "android.arch.lifecycle:compiler:${archVersion}"
-    implementation "android.arch.lifecycle:reactivestreams:${lifecycle}"
-    implementation "android.arch.persistence.room:runtime:${archVersion}"
-    kapt "android.arch.persistence.room:compiler:${archVersion}"
-    implementation "android.arch.persistence.room:rxjava2:${archVersion}"
+    implementation "android.arch.lifecycle:reactivestreams:${archVersion}"
+    implementation "android.arch.persistence.room:runtime:${archRoomVersion}"
+    kapt "android.arch.persistence.room:compiler:${archRoomVersion}"
+    implementation "android.arch.persistence.room:rxjava2:${archRoomVersion}"
 
     // MQTT
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
@@ -274,6 +272,9 @@ dependencies {
     // Parcelling
     compile 'com.github.frankiesardo:auto-parcel:0.3'
     annotationProcessor 'com.github.frankiesardo:auto-parcel-processor:0.3'
+
+    // Fingerprint Identify
+    compile 'com.wei.android.lib:fingerprintidentify:1.2.1'
 
     compile 'joda-time:joda-time:2.9.9'
 

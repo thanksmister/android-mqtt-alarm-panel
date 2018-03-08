@@ -75,6 +75,10 @@ class SettingsCodeView : BaseAlarmView {
 
     override fun reset() {}
 
+    override fun fingerNoMatch() {
+        settingsListener?.onError()
+    }
+
     override fun addPinCode(code: String) {
 
         if (codeComplete)

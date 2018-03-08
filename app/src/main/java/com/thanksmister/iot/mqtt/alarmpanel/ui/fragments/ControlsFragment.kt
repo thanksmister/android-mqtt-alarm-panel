@@ -140,8 +140,8 @@ class ControlsFragment : BaseFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
-                    Timber.e("Alarm state: " + state)
-                    Timber.e("Alarm mode: " + viewModel.getAlarmMode())
+                    Timber.d("Alarm state: " + state)
+                    Timber.d("Alarm mode: " + viewModel.getAlarmMode())
                     activity?.runOnUiThread(java.lang.Runnable {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY -> {

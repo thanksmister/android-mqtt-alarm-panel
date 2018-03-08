@@ -67,7 +67,7 @@ class AlarmCodeView : BaseAlarmView {
             handler.removeCallbacks(delayRunnable)
         }
         if (alarmListener != null) {
-            alarmListener!!.onCancel()
+            alarmListener?.onCancel()
         }
     }
 
@@ -79,6 +79,10 @@ class AlarmCodeView : BaseAlarmView {
     }
 
     override fun reset() {}
+
+    override fun fingerNoMatch() {
+        alarmListener?.onError()
+    }
 
     override fun addPinCode(code: String) {
         if (codeComplete)

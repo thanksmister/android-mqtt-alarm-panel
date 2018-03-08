@@ -46,6 +46,10 @@ class AlarmTriggeredView : BaseAlarmView {
         // na-da
     }
 
+    override fun fingerNoMatch() {
+        // na-da
+    }
+
     override fun addPinCode(code: String) {
         if (codeComplete)
             return
