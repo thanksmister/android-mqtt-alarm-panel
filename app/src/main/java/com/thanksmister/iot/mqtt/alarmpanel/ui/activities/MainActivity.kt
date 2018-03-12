@@ -35,7 +35,9 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.ViewGroup
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
+import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
@@ -194,8 +196,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed()
-        } else {
-            // Otherwise, select the previous step.
+        }
+        else if (!(pagerAdapter as MainSlidePagerAdapter).getCurrentFragment()!!.onBackPressed()){
+            // Otherwise, if back key press is not handled by fragment, select the previous step.
             view_pager.currentItem = view_pager.currentItem - 1
         }
     }
@@ -383,6 +386,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private inner class MainSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+        private var currentFragment : BaseFragment? = null
+
         override fun getItem(position: Int): Fragment {
             when (position) {
                 0 -> return MainFragment.newInstance()
@@ -393,5 +398,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         override fun getCount(): Int {
             return 2
         }
+
+        override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
+            super.setPrimaryItem(container, position, `object`)
+
+            if (currentFragment != `object`){
+                currentFragment = `object` as BaseFragment
+            }
+        }
+
+        fun getCurrentFragment() = currentFragment
     }
 }

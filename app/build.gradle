@@ -276,6 +276,9 @@ dependencies {
     // Fingerprint Identify
     compile 'com.wei.android.lib:fingerprintidentify:1.2.1'
 
+    // Home Assistant WebView
+    compile 'com.github.sjvc:Home-Assistant-WebView:master-SNAPSHOT'
+
     compile 'joda-time:joda-time:2.9.9'
 
     testCompile 'junit:junit:4.12'

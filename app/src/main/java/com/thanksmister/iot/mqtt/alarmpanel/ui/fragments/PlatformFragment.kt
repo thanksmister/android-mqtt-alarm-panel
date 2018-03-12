@@ -34,7 +34,7 @@ import timber.log.Timber
 import javax.inject.Inject
 import android.widget.Toast
 import android.widget.CheckBox
-
+import com.baviux.homeassistant.HassWebView
 
 
 class PlatformFragment : BaseFragment(){
@@ -98,15 +98,21 @@ class PlatformFragment : BaseFragment(){
 
     private fun loadWebPage() {
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
-            val settings = webView.getSettings()
-            settings.setJavaScriptEnabled(true)
             Timber.d("load web url: " + configuration.webUrl)
-            webView.webChromeClient = PlatformWebViewClient()
-            //webView.loadUrl("about:blank")
             webView.loadUrl(configuration.webUrl)
+            webView.setEventHandler { listener!!.navigateAlarmPanel() }
         } else if (webView != null) {
             webView.loadUrl("about:blank")
         }
+    }
+
+    override fun onBackPressed() : Boolean{
+        if (webView == null)
+            return super.onBackPressed()
+
+        webView.goBack()
+
+        return true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -115,15 +121,6 @@ class PlatformFragment : BaseFragment(){
 
     override fun onDetach() {
         super.onDetach()
-    }
-
-    private inner class PlatformWebViewClient : WebChromeClient() {
-        override fun onProgressChanged(view: WebView?, newProgress: Int) {
-            super.onProgressChanged(view, newProgress)
-            if(newProgress == 100 && parentFragment != null) {
-                // na-da
-            }
-        }
     }
 
     companion object {
