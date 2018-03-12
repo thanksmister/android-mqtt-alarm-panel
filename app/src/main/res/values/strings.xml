@@ -248,6 +248,9 @@
     <string name="error_mailgun_credentials">There was an problem mailing the image, please check your Mailgun credentials.</string>
     <string name="pref_system_sounds_summary">Toggle the sound used for button presses and dialogs.</string>
     <string name="pref_system_sounds_title">System Sounds</string>
+    <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
+    <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
+    <string name="pref_fingerprint_title">Fingerprint Unlock</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

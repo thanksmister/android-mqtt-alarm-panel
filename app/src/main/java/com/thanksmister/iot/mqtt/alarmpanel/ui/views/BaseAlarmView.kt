@@ -22,6 +22,7 @@ abstract class BaseAlarmView : LinearLayout {
     var codeComplete = false
     var enteredCode = ""
     var useSystemSound: Boolean = true
+    var useFingerprint: Boolean = false
 
     private var soundUtils: SoundUtils? = null
 
@@ -111,8 +112,9 @@ abstract class BaseAlarmView : LinearLayout {
     @SuppressLint("InlinedApi")
     override fun onVisibilityChanged(changedView: View?, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        // Fingerprint API only available on from Android 6.0 (M) and we only use it if user has available hardware and fingerprint
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // Fingerprint API only available on from Android 6.0 (M) and we only use this code if user had hardware
+        // has setup the fingerprint, and user has activated the settings
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && useFingerprint) {
             val fingerprintManager = context.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
             if (fingerprintManager.hasEnrolledFingerprints() && fingerprintManager.isHardwareDetected) {
                 if (!this.isShown){

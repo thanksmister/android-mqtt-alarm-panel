@@ -248,6 +248,9 @@
     <string name="error_mailgun_credentials">Er is een probleem opgetreden bij het verzenden van de afbeelding. Controleer uw Mailgun-inloggegevens.</string>
     <string name="pref_system_sounds_summary">Schakel het geluid in dat wordt gebruikt voor het indrukken van knoppen en dialogen.</string>
     <string name="pref_system_sounds_title">Systeemgeluiden</string>
+    <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
+    <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
+    <string name="pref_fingerprint_title">Fingerprint Unlock</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

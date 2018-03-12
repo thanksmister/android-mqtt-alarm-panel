@@ -22,11 +22,12 @@ import android.content.Context
 import android.os.Handler
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.View
+import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
 
 class AlarmTriggeredView : BaseAlarmView {
 
     var listener: ViewListener? = null
-
 
     interface ViewListener {
         fun onComplete()
@@ -46,8 +47,17 @@ class AlarmTriggeredView : BaseAlarmView {
         // na-da
     }
 
+    fun setUseFingerPrint(value: Boolean) {
+        useFingerprint = value
+        if(value) {
+            disable_fingerprint_layout.visibility = View.VISIBLE
+        } else {
+            disable_fingerprint_layout.visibility = View.INVISIBLE
+        }
+    }
+
     override fun fingerNoMatch() {
-        // na-da
+        listener?.onError()
     }
 
     override fun addPinCode(code: String) {

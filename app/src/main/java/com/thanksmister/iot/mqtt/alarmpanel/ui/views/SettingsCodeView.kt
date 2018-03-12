@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import android.view.View
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
 import kotlinx.android.synthetic.main.dialog_alarm_triggered_code.view.*
 import kotlinx.android.synthetic.main.dialog_settings_code.view.*
 
@@ -50,12 +51,19 @@ class SettingsCodeView : BaseAlarmView {
     override fun onFinishInflate() {
         super.onFinishInflate()
         settings_code_title.setText(R.string.text_settings_code_title)
-        buttonDel.isEnabled = false
-        buttonDel.visibility = View.INVISIBLE
     }
 
     fun setListener(listener: ViewListener) {
         this.settingsListener = listener
+    }
+
+    fun setUseFingerPrint(value: Boolean) {
+        useFingerprint = value
+        if(value) {
+            settings_fingerprint_layout.visibility = View.VISIBLE
+        } else {
+            settings_fingerprint_layout.visibility = View.INVISIBLE
+        }
     }
 
     override fun onCancel() {

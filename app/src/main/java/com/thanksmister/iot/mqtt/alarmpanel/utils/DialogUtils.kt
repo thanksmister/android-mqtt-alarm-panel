@@ -151,7 +151,8 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
      * it resets the timer.
      */
     fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
-                               code: Int, beep: Boolean, timeRemaining: Int, systemSounds: Boolean) {
+                               code: Int, beep: Boolean, timeRemaining: Int, systemSounds: Boolean,
+                               useFingerprint: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
@@ -159,6 +160,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setListener(alarmCodeListener)
         alarmCodeView.setCode(code)
         alarmCodeView.setUseSound(systemSounds)
+        alarmCodeView.setUseFingerPrint(useFingerprint)
         alarmCodeView.startCountDown(timeRemaining)
         if (beep) {
             alarmCodeView.playContinuousBeep()
@@ -167,7 +169,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
     }
 
-    fun showSettingsCodeDialog(activity: AppCompatActivity, code: Int, listener: SettingsCodeView.ViewListener, systemSounds: Boolean) {
+    fun showSettingsCodeDialog(activity: AppCompatActivity, code: Int, listener: SettingsCodeView.ViewListener, systemSounds: Boolean, useFingerprint: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_settings_code, null, false)
@@ -175,6 +177,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         settingsCodeView.setCode(code)
         settingsCodeView.setListener(listener)
         settingsCodeView.setUseSound(systemSounds)
+        settingsCodeView.setUseFingerPrint(useFingerprint)
         dialog = buildImmersiveDialog(activity, true, view, false)
     }
 

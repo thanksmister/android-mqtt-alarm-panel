@@ -51,6 +51,10 @@ constructor(private val sharedPreferences: DPreference) {
         get() = sharedPreferences.getPrefBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.setPrefBoolean(PREF_FIRST_TIME, value)
 
+    var fingerPrint: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_FINGERPRINT, false)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_FINGERPRINT, value)
+
     var pendingTime: Int
         get() = this.sharedPreferences.getPrefInt(PREF_PENDING_TIME, AlarmUtils.PENDING_TIME)
         set(value) = this.sharedPreferences.setPrefInt(PREF_PENDING_TIME, value)
@@ -261,6 +265,7 @@ constructor(private val sharedPreferences: DPreference) {
     }
 
     companion object {
+        @JvmField val PREF_FINGERPRINT = "pref_fingerprint"
         @JvmField val PREF_PENDING_TIME = "pref_pending_time"
         @JvmField val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
         @JvmField val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"

@@ -22,6 +22,7 @@ import android.content.Context
 import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.View
 import android.view.animation.RotateAnimation
 import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
 
@@ -54,6 +55,15 @@ class AlarmDisableView : BaseAlarmView {
 
     fun setListener(listener: ViewListener) {
         this.alarmListener = listener
+    }
+
+    fun setUseFingerPrint(value: Boolean) {
+        useFingerprint = value
+        if(value) {
+            disable_fingerprint_layout.visibility = View.VISIBLE
+        } else {
+            disable_fingerprint_layout.visibility = View.INVISIBLE
+        }
     }
 
     override fun onCancel() {

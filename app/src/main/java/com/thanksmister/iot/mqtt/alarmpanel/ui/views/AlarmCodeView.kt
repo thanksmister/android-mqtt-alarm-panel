@@ -21,6 +21,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.View
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import kotlinx.android.synthetic.main.dialog_alarm_code_set.view.*
 
@@ -56,6 +57,7 @@ class AlarmCodeView : BaseAlarmView {
     override fun onFinishInflate() {
         super.onFinishInflate()
         codeTitle.setText(R.string.text_enter_alarm_code_title)
+        useFingerprint = false // we don't use fingerprint for this view
     }
 
    override fun onCancel() {
@@ -80,9 +82,7 @@ class AlarmCodeView : BaseAlarmView {
 
     override fun reset() {}
 
-    override fun fingerNoMatch() {
-        alarmListener?.onError()
-    }
+    override fun fingerNoMatch() {}
 
     override fun addPinCode(code: String) {
         if (codeComplete)

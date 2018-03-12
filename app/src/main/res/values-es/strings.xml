@@ -248,6 +248,9 @@
     <string name="error_mailgun_credentials">Hubo un problema al enviar la imagen por correo, compruebe sus credenciales de Mailgun.</string>
     <string name="pref_system_sounds_summary">Alternar el sonido utilizado para presionar botones y diálogos.</string>
     <string name="pref_system_sounds_title">Sonidos del sistema</string>
+    <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
+    <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
+    <string name="pref_fingerprint_title">Fingerprint Unlock</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

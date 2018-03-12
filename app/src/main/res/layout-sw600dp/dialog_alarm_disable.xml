@@ -45,26 +45,43 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/imageLayout"
-            android:gravity="center"
             android:layout_alignParentTop="true"
-            android:padding="36dp">
+            android:gravity="center_horizontal|top"
+            android:layout_above="@+id/disable_fingerprint_layout"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:paddingRight="32dp"
+            android:paddingLeft="32dp">
 
             <com.todddavies.components.progressbar.ProgressWheel
                 android:id="@+id/countDownProgressWheel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal|top"
-                android:layout_gravity="center_horizontal|top"
                 ProgressWheel:barColor="@color/green"
+                ProgressWheel:barWidth="12dp"
                 ProgressWheel:contourColor="@color/gray_color"
                 ProgressWheel:rimColor="@color/gray_color"
-                ProgressWheel:rimWidth="18dp"
-                ProgressWheel:barWidth="18dp"
+                ProgressWheel:rimWidth="12dp"
                 ProgressWheel:textColor="@color/text"
                 ProgressWheel:textSize="32sp" />
 
         </LinearLayout>
+
+        <TextView
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:id="@+id/disable_fingerprint_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imageLayout"
+            android:drawableLeft="@drawable/ic_fingerprint"
+            android:drawableStart="@drawable/ic_fingerprint"
+            android:layout_centerInParent="true"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="4dp"
+            android:paddingEnd="4dp"
+            android:text="@string/pref_fingerprint_title"/>
 
         <LinearLayout
                 android:id="@+id/imageLayout"
@@ -72,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:padding="12dp"
+                android:padding="6dp"
                 android:gravity="center">
 
             <ImageView

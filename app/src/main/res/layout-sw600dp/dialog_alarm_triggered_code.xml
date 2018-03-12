@@ -333,11 +333,12 @@
 
     </LinearLayout>
     
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="360dp"
             android:layout_height="400dp"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
+            android:paddingBottom="8dp"
             android:orientation="vertical">
 
         <TextView
@@ -354,6 +355,7 @@
 
         <TextView
                 android:id="@+id/codeDescription"
+                android:layout_below="@+id/codeTitle"
                 style="@style/TextAppearance.AppCompat.Large.Inverse"
                 android:textSize="24sp"
                 android:textAllCaps="true"
@@ -365,6 +367,32 @@
                 tools:text="Enter code to dismiss"
                 android:text="@string/dialog_alarm_triggered"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:id="@+id/triggered_fingerprint_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_fingerprint"/>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Inverse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pref_fingerprint_title" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>

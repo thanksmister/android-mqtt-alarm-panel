@@ -18,10 +18,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.hardware.fingerprint.FingerprintManager
+import android.os.Build
 import android.os.Bundle
+import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
@@ -34,6 +38,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_AWAY_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_AWAY_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_DELAY_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_FINGERPRINT
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_HOME_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_HOME_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PENDING_TIME
@@ -53,6 +58,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     private var delayPreference: EditTextPreference? = null
     private var delayHomePreference: EditTextPreference? = null
     private var delayAwayPreference: EditTextPreference? = null
+    private var fingerprintPreference: CheckBoxPreference? = null
 
     private var defaultCode: Int = 0
     private var tempCode: Int = 0
@@ -96,6 +102,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             true
         }
 
+        fingerprintPreference = findPreference(PREF_FINGERPRINT) as CheckBoxPreference
         pendingPreference = findPreference(PREF_PENDING_TIME) as EditTextPreference
         pendingHomePreference = findPreference(PREF_HOME_PENDING_TIME) as EditTextPreference
         pendingAwayPreference = findPreference(PREF_AWAY_PENDING_TIME) as EditTextPreference
@@ -103,6 +110,10 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         delayHomePreference = findPreference(PREF_HOME_DELAY_TIME) as EditTextPreference
         delayAwayPreference = findPreference(PREF_AWAY_DELAY_TIME) as EditTextPreference
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fingerprintPreference!!.isVisible = true
+            fingerprintPreference!!.isChecked = configuration.fingerPrint
+        }
 
         pendingPreference!!.text = configuration.pendingTime.toString()
         pendingHomePreference!!.text = configuration.pendingHomeTime.toString()
@@ -124,6 +135,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         }
     }
 
+    @SuppressLint("InlinedApi")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val value: String
         when (key) {
@@ -197,6 +209,19 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
                     pendingAwayPreference!!.text = configuration.pendingTime.toString()
+                }
+            }
+            PREF_FINGERPRINT -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val checked = fingerprintPreference!!.isChecked
+                    val fingerprintManager = context!!.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
+                    if (fingerprintManager.hasEnrolledFingerprints() && fingerprintManager.isHardwareDetected) {
+                        configuration.fingerPrint = checked
+                    } else {
+                        Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
+                        fingerprintPreference!!.isChecked = false
+                        configuration.fingerPrint = false
+                    }
                 }
             }
         }
