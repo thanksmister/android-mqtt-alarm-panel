@@ -110,9 +110,7 @@ class PlatformFragment : BaseFragment(){
         if (webView == null)
             return super.onBackPressed()
 
-        webView.goBack()
-
-        return true
+        return webView.onBackPressed()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
