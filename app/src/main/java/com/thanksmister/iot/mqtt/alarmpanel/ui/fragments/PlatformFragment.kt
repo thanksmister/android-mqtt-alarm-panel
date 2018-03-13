@@ -17,14 +17,11 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
@@ -32,7 +29,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
 import javax.inject.Inject
-import android.widget.Toast
 import android.widget.CheckBox
 import com.baviux.homeassistant.HassWebView
 
@@ -46,6 +42,7 @@ class PlatformFragment : BaseFragment(){
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
+        fun setPagingEnabled(value: Boolean)
     }
 
     override fun onAttach(context: Context?) {
@@ -100,7 +97,15 @@ class PlatformFragment : BaseFragment(){
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
             Timber.d("load web url: " + configuration.webUrl)
             webView.loadUrl(configuration.webUrl)
-            webView.setEventHandler { listener!!.navigateAlarmPanel() }
+            webView.setOnFinishEventHandler { listener!!.navigateAlarmPanel() }
+            webView.setMoreInfoDialogHandler(object : HassWebView.IMoreInfoDialogHandler{
+                override fun onShowMoreInfoDialog() {
+                    listener!!.setPagingEnabled(false)
+                }
+                override fun onHideMoreInfoDialog() {
+                    listener!!.setPagingEnabled(true)
+                }
+            })
         } else if (webView != null) {
             webView.loadUrl("about:blank")
         }
