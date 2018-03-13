@@ -118,4 +118,4 @@ You can load your Home Assistant (or any web page) as alternative view by enteri
 Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) helped make this project possible.  Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations and [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese. 
 
 ## Contributors
-[Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView)component.
+[Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView) component.
