@@ -15,6 +15,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
+- Fingerprint unlock (on supported devices).
 - Camera support for capturing and emailing images when alarm disabled (requires Mailgun api key).
 - Google Text-to-Speech support to speak MQTT notification messages.
 - Optional screensaver mode using clock or Imgur images. 
@@ -115,3 +116,6 @@ You can load your Home Assistant (or any web page) as alternative view by enteri
 ## Acknowledgements
 
 Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) helped make this project possible.  Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations and [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese. 
+
+## Contributors
+[Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView)component.
