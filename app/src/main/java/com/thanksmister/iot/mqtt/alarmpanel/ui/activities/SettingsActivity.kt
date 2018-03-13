@@ -18,7 +18,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -32,24 +31,24 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import kotlinx.android.synthetic.main.activity_settings.*
 import timber.log.Timber
+import android.support.v4.view.ViewCompat.setAlpha
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 
-class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
 
-    private var dotsCount: Int = 0
-    private var dots: ArrayList<ImageView>? = null
+class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, SettingsFragment.SettingsFragmentListener {
+
     private var settingTitles: Array<String>? = null
-
     private var pagerAdapter: PagerAdapter? = null
     private var actionBar: ActionBar? = null
+    private val PAGE_NUM = 9
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
@@ -71,7 +70,7 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             supportActionBar!!.show()
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setDisplayShowHomeEnabled(true)
-            supportActionBar!!.setTitle(R.string.text_alarm_settings)
+            supportActionBar!!.setTitle(R.string.activity_settings_title)
             actionBar = supportActionBar
         }
 
@@ -96,19 +95,24 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     override fun onBackPressed() {
         if (viewPager.currentItem == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed()
         } else {
-            // Otherwise, select the previous step.
-            viewPager.currentItem = viewPager.getCurrentItem() - 1
+            viewPager.currentItem = 0
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (toolbar != null)
+        if (toolbar != null) {
             toolbar.inflateMenu(R.menu.menu_settings)
-
+            val itemLen = menu.size()
+            for (i in 0 until itemLen) {
+                val drawable = menu.getItem(i).icon
+                if (drawable != null) {
+                    drawable.mutate()
+                    drawable.setColorFilter(resources.getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP)
+                }
+            }
+        }
         return true
     }
 
@@ -123,9 +127,14 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     override fun onUserInteraction() {
-        Timber.d("onUserInteraction")
         inactivityHandler.removeCallbacks(inactivityCallback)
         inactivityHandler.postDelayed(inactivityCallback, 300000)
+    }
+
+    override fun navigatePageNumber(page: Int) {
+        if(page in 1..(PAGE_NUM - 1)) {
+            viewPager.currentItem = page
+        }
     }
 
     /**
@@ -144,32 +153,12 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     private fun setPageViewController() {
-        dotsCount = pagerAdapter!!.count
-        dots = ArrayList<ImageView>()
         settingTitles = resources.getStringArray(R.array.settings_titles)
-
-        for (i in 0 until dotsCount) {
-            val image = ImageView(this)
-            image.setImageDrawable(resources.getDrawable(R.drawable.nonselecteditem_dot))
-            dots!!.add(image)
-            val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(4, 0, 4, 0)
-            viewPagerIndicator.addView(dots!![i], params)
-        }
-
-        dots!!.get(0).setImageDrawable(resources.getDrawable(R.drawable.selecteditem_dot))
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
     override fun onPageSelected(position: Int) {
-        for (i in 0 until dotsCount) {
-            dots!![i].setImageDrawable(resources.getDrawable(R.drawable.nonselecteditem_dot))
-        }
-        dots!![position].setImageDrawable(resources.getDrawable(R.drawable.selecteditem_dot))
         if (actionBar != null) {
             actionBar!!.title = settingTitles!![position]
         }
@@ -180,19 +169,19 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> AlarmSettingsFragment()
-                1 -> MqttSettingsFragment()
-                2 -> NotificationsSettingsFragment()
-                3 -> CameraSettingsFragment()
-                4 -> ScreenSettingsFragment()
-                5 -> WeatherSettingsFragment()
-                6 -> PlatformSettingsFragment()
-                7 -> AboutFragment()
-                else -> AboutFragment()
+                1 -> AlarmSettingsFragment()
+                2 -> MqttSettingsFragment()
+                3 -> NotificationsSettingsFragment()
+                4 -> CameraSettingsFragment()
+                5 -> ScreenSettingsFragment()
+                6 -> WeatherSettingsFragment()
+                7 -> PlatformSettingsFragment()
+                8 -> AboutFragment()
+                else -> SettingsFragment()
             }
         }
         override fun getCount(): Int {
-            return 8
+            return PAGE_NUM
         }
     }
 

@@ -20,32 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-    
-    
+
     <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
             android:layout_below="@+id/appBarLayout"
-            android:layout_above="@+id/viewPagerIndicatorLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-    <RelativeLayout
-            android:id="@+id/viewPagerIndicatorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="5dp"
-            android:gravity="center">
-
-        <LinearLayout
-                android:id="@+id/viewPagerIndicator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:orientation="horizontal"/>
-
-    </RelativeLayout>
 
     <android.support.design.widget.AppBarLayout
             android:id="@+id/appBarLayout"

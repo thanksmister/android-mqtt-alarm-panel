@@ -37,6 +37,7 @@
     ]]></string>
 
     <string-array name="settings_titles">
+        <item>@string/action_settings</item>
         <item>@string/text_alarm_settings</item>
         <item>@string/text_mqtt_settings</item>
         <item>@string/preference_title_notification</item>

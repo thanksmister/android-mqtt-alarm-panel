@@ -72,6 +72,9 @@ internal abstract class AndroidBindingModule {
     internal abstract fun logFragment(): LogFragment
 
     @ContributesAndroidInjector
+    internal abstract fun settingsFragment(): SettingsFragment
+
+    @ContributesAndroidInjector
     internal abstract fun alarmSettingsFragment(): AlarmSettingsFragment
 
     @ContributesAndroidInjector
