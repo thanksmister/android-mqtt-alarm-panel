@@ -199,6 +199,10 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 ext {
     archVersion = '1.1.0'
     archRoomVersion = '1.0.0'

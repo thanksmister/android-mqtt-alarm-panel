@@ -208,6 +208,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         view_pager.currentItem = 0
     }
 
+    override fun setPagingEnabled(value: Boolean) {
+        view_pager.setPagingEnabled(value)
+    }
+
     override fun navigatePlatformPanel() {
         view_pager.currentItem = 1
     }
