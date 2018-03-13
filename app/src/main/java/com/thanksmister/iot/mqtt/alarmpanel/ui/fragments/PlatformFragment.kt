@@ -75,6 +75,7 @@ class PlatformFragment : BaseFragment(){
         super.onViewCreated(view, savedInstanceState)
         button_alarm.setOnClickListener({
             if(listener != null) {
+                webView.closeMoreInfoDialog()
                 listener!!.navigateAlarmPanel()
             }
         })
@@ -97,7 +98,7 @@ class PlatformFragment : BaseFragment(){
             webView.loadUrl(configuration.webUrl)
             webView.setAdjustBackKeyBehavior(configuration.adjustBackBehavior)
             webView.setHideAdminMenuItems(configuration.hideAdminMenu)
-            webView.setOnFinishEventHandler { listener!!.navigateAlarmPanel() }
+            webView.setOnFinishEventHandler { button_alarm.callOnClick() }
             webView.setMoreInfoDialogHandler(object : HassWebView.IMoreInfoDialogHandler{
                 override fun onShowMoreInfoDialog() {
                     listener!!.setPagingEnabled(false)
@@ -115,8 +116,15 @@ class PlatformFragment : BaseFragment(){
         if (webView == null) {
             return super.onBackPressed()
         }
-        webView.goBack()
-        return true
+
+        val handled = webView.onBackPressed()
+
+        // If HassWebView doesn't handle it -> ensure no hass dialog is shown and paging is restored
+        if (!handled){
+            webView.closeMoreInfoDialog()
+        }
+
+        return handled;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
