@@ -249,9 +249,15 @@
     <string name="error_mailgun_credentials">Ocorreu um problema ao enviar a imagem por email. Por favor, verifique as suas credenciais do Mailgun.</string>
     <string name="pref_system_sounds_summary">Alternar o som usado para pressionar botões e diálogos.</string>
     <string name="pref_system_sounds_title">Som do sistema</string>
-    <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
-    <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
-    <string name="pref_fingerprint_title">Fingerprint Unlock</string>
+    <string name="pref_fingerprint_summary">Desbloqueio de impressão digital do usuário para o sistema de alarme. O código de alarme será usado como backup.</string>
+    <string name="pref_fingerprint_error">Primeiro, você deve configurar o dispositivo de desbloqueio de impressão digital do dispositivo.</string>
+    <string name="pref_fingerprint_title">Vingerafdruk Ontgrendelen</string>
+    <string name="pref_hass_settings">Home Assistant Configurações</string>
+    <string name="pref_hide_menu_title">Ocultar menu</string>
+    <string name="pref_hide_menu_summary">Oculta os itens do menu do administrador.</string>
+    <string name="pref_back_behavior_title">Substituir o comportamento traseiro</string>
+    <string name="pref_back_behavior_summary">O botão Android se comporta como o botão Voltar do navegador.</string>
+    <string name="text_touch_sensor">Sensor de toque</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

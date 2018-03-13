@@ -17,14 +17,12 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
+import android.widget.CheckBox
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
@@ -32,10 +30,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
 import javax.inject.Inject
-import android.widget.Toast
-import android.widget.CheckBox
-
-
 
 class PlatformFragment : BaseFragment(){
 
@@ -59,7 +53,6 @@ class PlatformFragment : BaseFragment(){
 
     override fun onResume() {
         super.onResume()
-        Timber.w("onResume WebView BAD")
         loadWebPage()
         if (configuration.platformBar) {
             settingsContainer.visibility = View.VISIBLE;
@@ -97,16 +90,23 @@ class PlatformFragment : BaseFragment(){
     }
 
     private fun loadWebPage() {
+        Timber.d("loadWebPage")
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
-            val settings = webView.getSettings()
-            settings.setJavaScriptEnabled(true)
-            Timber.d("load web url: " + configuration.webUrl)
-            webView.webChromeClient = PlatformWebViewClient()
-            //webView.loadUrl("about:blank")
             webView.loadUrl(configuration.webUrl)
+            webView.setEventHandler { listener!!.navigateAlarmPanel() }
+            webView.setAdjustBackKeyBehavior(configuration.adjustBackBehavior)
+            webView.setHideAdminMenuItems(configuration.hideAdminMenu)
         } else if (webView != null) {
             webView.loadUrl("about:blank")
         }
+    }
+
+    override fun onBackPressed() : Boolean{
+        if (webView == null) {
+            return super.onBackPressed()
+        }
+        webView.goBack()
+        return true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -115,15 +115,6 @@ class PlatformFragment : BaseFragment(){
 
     override fun onDetach() {
         super.onDetach()
-    }
-
-    private inner class PlatformWebViewClient : WebChromeClient() {
-        override fun onProgressChanged(view: WebView?, newProgress: Int) {
-            super.onProgressChanged(view, newProgress)
-            if(newProgress == 100 && parentFragment != null) {
-                // na-da
-            }
-        }
     }
 
     companion object {

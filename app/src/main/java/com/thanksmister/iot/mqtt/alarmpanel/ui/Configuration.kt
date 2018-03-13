@@ -35,6 +35,14 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
 
+    var hideAdminMenu: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, value)
+
+    var adjustBackBehavior: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_ADMIN_MENU, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_ADMIN_MENU, value)
+
     var alarmMode: String
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
@@ -262,57 +270,61 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_TELEGRAM_MODULE)
         sharedPreferences.removePreference(PREF_TELEGRAM_CHAT_ID)
         sharedPreferences.removePreference(PREF_TELEGRAM_TOKEN)
+        sharedPreferences.removePreference(PREF_FINGERPRINT)
+        sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
+        sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
     }
 
     companion object {
-        @JvmField val PREF_FINGERPRINT = "pref_fingerprint"
-        @JvmField val PREF_PENDING_TIME = "pref_pending_time"
-        @JvmField val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
-        @JvmField val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
-        @JvmField val PREF_DELAY_TIME = "pref_delay_time"
-        @JvmField val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
-        @JvmField val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
-
-        @JvmField val PREF_ALARM_MODE = "pref_alarm_mode"
-        @JvmField val PREF_ALARM_CODE = "pref_alarm_code"
-        @JvmField val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        @JvmField val PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo"
-        @JvmField val PREF_IMAGE_SOURCE = "pref_image_source"
-        @JvmField val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
-        @JvmField val PREF_IMAGE_ROTATION = "pref_image_rotation"
-        @JvmField val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
-        @JvmField val PREF_INACTIVITY_TIME = "pref_inactivity_time"
-        @JvmField val PREF_MODULE_NOTIFICATION = "pref_module_notification"
-        @JvmField val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
-        @JvmField val PREF_MODULE_TSS = "pref_module_tss"
-        @JvmField val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
-        @JvmField val PREF_MODULE_ALERTS = "pref_module_alerts"
-        @JvmField val PREF_MAIL_TO = "pref_mail_to"
-        @JvmField val PREF_MAIL_FROM = "pref_mail_from"
-        @JvmField val PREF_MAIL_API_KEY = "pref_mail_api_key"
-        @JvmField val PREF_MAIL_URL = "pref_mail_url"
-        @JvmField val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
-        @JvmField val PREF_MODULE_CAMERA = "pref_module_camera"
-        @JvmField val PREF_CAMERA_ROTATE = "pref_camera_rotate"
-        @JvmField  val PREF_MODULE_WEATHER = "pref_module_weather"
-        @JvmField val PREF_MODULE_WEB = "pref_module_web"
-        @JvmField val PREF_WEB_URL = "pref_web_url"
-        private val PREF_FIRST_TIME = "pref_first_time"
-        @JvmField val PREF_DEVICE_TIME_SERVER = "pref_device_time_server"
-        @JvmField val PREF_DEVICE_TIME_FORMAT = "pref_device_time_format"
-        @JvmField val PREF_DEVICE_TIME = "pref_device_time"
-        @JvmField val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
-        @JvmField val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
-        @JvmField val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_brightness"
-        @JvmField val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
-        @JvmField val PREF_WEATHER_WEATHER = "pref_weather_module"
-        @JvmField val PREF_WEATHER_UNITS = "pref_weather_units"
-        @JvmField val PREF_WEATHER_API_KEY = "pref_weather_api_key"
-        @JvmField val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
-        @JvmField val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
-        @JvmField val PREF_PLATFORM_BAR = "pref_platform_bar"
-        @JvmField val PREF_TELEGRAM_MODULE = "pref_telegram_module"
-        @JvmField val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
-        @JvmField val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
+        const val PREF_PLATFORM_BACK_BEHAVIOR = "pref_platform_back_behavior"
+        const val PREF_PLATFORM_ADMIN_MENU = "pref_platform_admin_menu"
+        const val PREF_FINGERPRINT = "pref_fingerprint"
+        const val PREF_PENDING_TIME = "pref_pending_time"
+        const val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
+        const val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
+        const val PREF_DELAY_TIME = "pref_delay_time"
+        const val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
+        const val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
+        const val PREF_ALARM_MODE = "pref_alarm_mode"
+        const val PREF_ALARM_CODE = "pref_alarm_code"
+        const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
+        const val PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo"
+        const val PREF_IMAGE_SOURCE = "pref_image_source"
+        const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
+        const val PREF_IMAGE_ROTATION = "pref_image_rotation"
+        const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
+        const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
+        const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
+        const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
+        const val PREF_MODULE_TSS = "pref_module_tss"
+        const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
+        const val PREF_MODULE_ALERTS = "pref_module_alerts"
+        const val PREF_MAIL_TO = "pref_mail_to"
+        const val PREF_MAIL_FROM = "pref_mail_from"
+        const val PREF_MAIL_API_KEY = "pref_mail_api_key"
+        const val PREF_MAIL_URL = "pref_mail_url"
+        const val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
+        const val PREF_MODULE_CAMERA = "pref_module_camera"
+        const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
+        const val PREF_MODULE_WEATHER = "pref_module_weather"
+        const val PREF_MODULE_WEB = "pref_module_web"
+        const val PREF_WEB_URL = "pref_web_url"
+        const val PREF_FIRST_TIME = "pref_first_time"
+        const val PREF_DEVICE_TIME_SERVER = "pref_device_time_server"
+        const val PREF_DEVICE_TIME_FORMAT = "pref_device_time_format"
+        const val PREF_DEVICE_TIME = "pref_device_time"
+        const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
+        const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
+        const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_brightness"
+        const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
+        const val PREF_WEATHER_WEATHER = "pref_weather_module"
+        const val PREF_WEATHER_UNITS = "pref_weather_units"
+        const val PREF_WEATHER_API_KEY = "pref_weather_api_key"
+        const val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
+        const val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
+        const val PREF_PLATFORM_BAR = "pref_platform_bar"
+        const val PREF_TELEGRAM_MODULE = "pref_telegram_module"
+        const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
+        const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
     }
 }

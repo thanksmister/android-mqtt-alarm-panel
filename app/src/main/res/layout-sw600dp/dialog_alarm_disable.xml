@@ -81,7 +81,7 @@
             android:paddingBottom="8dp"
             android:paddingRight="4dp"
             android:paddingEnd="4dp"
-            android:text="@string/pref_fingerprint_title"/>
+            android:text="@string/text_touch_sensor"/>
 
         <LinearLayout
                 android:id="@+id/imageLayout"

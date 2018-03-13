@@ -63,7 +63,7 @@
             android:drawableLeft="@drawable/ic_fingerprint"
             android:drawableStart="@drawable/ic_fingerprint"
             android:paddingBottom="8dp"
-            android:text="@string/pref_fingerprint_title"/>
+            android:text="@string/text_touch_sensor"/>
 
     </RelativeLayout>
 

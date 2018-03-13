@@ -78,4 +78,8 @@ open class BaseFragment : DaggerFragment() {
     fun handleNetworkDisconnect() {
         (activity as BaseActivity).handleNetworkDisconnect()
     }
+
+    open fun onBackPressed() : Boolean {
+        return false
+    }
 }// Required empty public constructor

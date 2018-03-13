@@ -28,7 +28,6 @@
 
         <EditTextPreference
                 android:key="pref_web_url"
-                android:enabled="false"
                 android:inputType="textWebEmailAddress"
                 android:title="@string/preference_title_web_url"
                 android:summary="@string/preference_summary_web_url"
@@ -42,10 +41,23 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_hass_settings">
+
+        <CheckBoxPreference
+            android:key="pref_platform_admin_menu"
+            android:title="@string/pref_hide_menu_title"
+            android:summary="@string/pref_hide_menu_summary"/>
+
+        <CheckBoxPreference
+            android:key="pref_platform_back_behavior"
+            android:title="@string/pref_back_behavior_title"
+            android:summary="@string/pref_back_behavior_summary"/>
+
+    </PreferenceCategory>
+
     <Preference
         android:key="pref_description"
         android:selectable="false"
         android:summary="@string/preference_web_description" />
-
 
 </PreferenceScreen>

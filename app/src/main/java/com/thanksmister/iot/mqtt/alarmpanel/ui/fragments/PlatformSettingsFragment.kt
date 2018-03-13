@@ -28,10 +28,11 @@ import android.view.View
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_MODULE_WEB
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_BACK_BEHAVIOR
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_ADMIN_MENU
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_BAR
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEB_URL
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import javax.inject.Inject
 
 class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -40,6 +41,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     private var webModulePreference: CheckBoxPreference? = null
     private var platformbarPreference: CheckBoxPreference? = null
+    private var adminMenuPreference: CheckBoxPreference? = null
+    private var backBehaviorPreference: CheckBoxPreference? = null
     private var webUrlPreference: EditTextPreference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +85,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         webModulePreference = findPreference(PREF_MODULE_WEB) as CheckBoxPreference
         platformbarPreference = findPreference(PREF_PLATFORM_BAR) as CheckBoxPreference
+        adminMenuPreference = findPreference(PREF_PLATFORM_BACK_BEHAVIOR) as CheckBoxPreference
+        backBehaviorPreference = findPreference(PREF_PLATFORM_ADMIN_MENU) as CheckBoxPreference
         webUrlPreference = findPreference(PREF_WEB_URL) as EditTextPreference
 
         if (!TextUtils.isEmpty(configuration.webUrl)) {
@@ -91,8 +96,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         webModulePreference!!.isChecked = configuration.hasPlatformModule()
         platformbarPreference!!.isChecked = configuration.platformBar
-
-        webUrlPreference!!.isEnabled = configuration.hasPlatformModule()
+        adminMenuPreference!!.isChecked = configuration.hideAdminMenu
+        backBehaviorPreference!!.isChecked = configuration.adjustBackBehavior
         platformbarPreference!!.isEnabled = configuration.hasPlatformModule()
     }
 
@@ -101,12 +106,19 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
             PREF_MODULE_WEB -> {
                 val checked = webModulePreference!!.isChecked
                 configuration.setWebModule(checked)
-                webUrlPreference!!.isEnabled = checked
                 platformbarPreference!!.isEnabled = checked
             }
             PREF_PLATFORM_BAR -> {
                 val checked = platformbarPreference!!.isChecked
                 configuration.platformBar = checked
+            }
+            PREF_PLATFORM_ADMIN_MENU -> {
+                val checked = adminMenuPreference!!.isChecked
+                configuration.hideAdminMenu = checked
+            }
+            PREF_PLATFORM_BACK_BEHAVIOR -> {
+                val checked = backBehaviorPreference!!.isChecked
+                configuration.adjustBackBehavior = checked
             }
             PREF_WEB_URL -> {
                 val value = webUrlPreference!!.text
