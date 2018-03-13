@@ -254,8 +254,8 @@
     <string name="pref_hass_settings">Home Assistant Configuraciones</string>
     <string name="pref_hide_menu_title">Ocultar el menú</string>
     <string name="pref_hide_menu_summary">Oculta los elementos del menú de administrador.</string>
-    <string name="pref_back_behavior_title">Anular el comportamiento de la espalda</string>
-    <string name="pref_back_behavior_summary">El botón de Android se comporta como el botón de retroceso del navegador.</string>
+    <string name="pref_back_behavior_title">Modificar el comportamiento del botón volver</string>
+    <string name="pref_back_behavior_summary">El botón volver de Android se comporta como el botón de retroceso del navegador.</string>
     <string name="text_touch_sensor">Sensor tactil</string>
 
     <string-array name="inactivity_times">
