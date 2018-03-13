@@ -36,12 +36,12 @@ constructor(private val sharedPreferences: DPreference) {
         set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
 
     var hideAdminMenu: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, value)
-
-    var adjustBackBehavior: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_ADMIN_MENU, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_ADMIN_MENU, value)
+
+    var adjustBackBehavior: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, value)
 
     var alarmMode: String
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)

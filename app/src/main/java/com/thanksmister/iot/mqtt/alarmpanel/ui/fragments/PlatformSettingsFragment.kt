@@ -85,8 +85,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         webModulePreference = findPreference(PREF_MODULE_WEB) as CheckBoxPreference
         platformbarPreference = findPreference(PREF_PLATFORM_BAR) as CheckBoxPreference
-        adminMenuPreference = findPreference(PREF_PLATFORM_BACK_BEHAVIOR) as CheckBoxPreference
-        backBehaviorPreference = findPreference(PREF_PLATFORM_ADMIN_MENU) as CheckBoxPreference
+        adminMenuPreference = findPreference(PREF_PLATFORM_ADMIN_MENU) as CheckBoxPreference
+        backBehaviorPreference = findPreference(PREF_PLATFORM_BACK_BEHAVIOR) as CheckBoxPreference
         webUrlPreference = findPreference(PREF_WEB_URL) as EditTextPreference
 
         if (!TextUtils.isEmpty(configuration.webUrl)) {
