@@ -107,7 +107,7 @@ To use a screen saver other than the digital clock, turn this feature on in the 
 
 ## Platform Screen
 
-You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions.  There is also a limitation when saving username/passwords and screen reloading.  The username/passwords are not rememebered, and you will need to login again.   I recommend using this application as on a dedicated tablet rather than your day-to-day device for best results. 
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
 ## Notes
 
