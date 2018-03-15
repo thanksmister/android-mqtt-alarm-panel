@@ -26,7 +26,7 @@ abstract class BaseAlarmView : LinearLayout {
 
     private var soundUtils: SoundUtils? = null
 
-    private val fingerPrintIdentity = FingerprintIdentify(context)
+    private var fingerPrintIdentity:FingerprintIdentify? = null
 
     constructor(context: Context) : super(context) {
         // let's play the sound as loud as we can
@@ -115,6 +115,7 @@ abstract class BaseAlarmView : LinearLayout {
         // Fingerprint API only available on from Android 6.0 (M) and we only use this code if user had hardware
         // has setup the fingerprint, and user has activated the settings
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && useFingerprint) {
+            fingerPrintIdentity = FingerprintIdentify(context)
             val fingerprintManager = context.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
             if (fingerprintManager.hasEnrolledFingerprints() && fingerprintManager.isHardwareDetected) {
                 if (!this.isShown){
@@ -135,7 +136,7 @@ abstract class BaseAlarmView : LinearLayout {
 
     private fun startFingerprintIdentity(){
         Timber.d("Fingerprint identity start");
-        fingerPrintIdentity.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.FingerprintIdentifyListener{
+        fingerPrintIdentity?.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.FingerprintIdentifyListener{
             override fun onSucceed(){
                 Timber.d("Fingerprint identity success");
                 codeComplete = false;
@@ -160,7 +161,7 @@ abstract class BaseAlarmView : LinearLayout {
 
     private fun stopFingerprintIdentity(){
         Timber.d("Fingerprint identity stop");
-        fingerPrintIdentity.cancelIdentify()
+        fingerPrintIdentity?.cancelIdentify()
     }
 
     fun setUseSound(value: Boolean) {

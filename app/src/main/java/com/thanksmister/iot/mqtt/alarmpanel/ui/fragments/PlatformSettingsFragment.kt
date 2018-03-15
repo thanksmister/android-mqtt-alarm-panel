@@ -47,10 +47,6 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            // Perform injection here for M (API 23) due to deprecation of onAttach(Activity).
-            AndroidSupportInjection.inject(this)
-        }
     }
 
     override fun onAttach(context: Context) {
