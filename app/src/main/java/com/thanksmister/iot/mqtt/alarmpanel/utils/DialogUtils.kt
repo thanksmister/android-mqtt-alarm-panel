@@ -28,11 +28,9 @@ import android.content.DialogInterface
 import android.graphics.Rect
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.text.Html
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 
@@ -163,7 +161,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setUseFingerPrint(useFingerprint)
         alarmCodeView.startCountDown(timeRemaining)
         if (beep) {
-            alarmCodeView.playContinuousBeep()
+            alarmCodeView.playContinuousAlarm()
         }
         dialog = buildImmersiveDialog(activity, true, view, false)
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }

@@ -25,6 +25,7 @@ import android.content.SharedPreferences
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
@@ -46,6 +47,15 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
+import com.samsung.android.sdk.SsdkUnsupportedException
+import com.samsung.android.sdk.pass.Spass
+import com.samsung.android.sdk.SsdkVendorCheck
+import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
+import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
+
+
+
+
 
 class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -113,6 +123,8 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             fingerprintPreference!!.isVisible = true
             fingerprintPreference!!.isChecked = configuration.fingerPrint
+        } else {
+            fingerprintPreference!!.isVisible = false
         }
 
         pendingPreference!!.text = configuration.pendingTime.toString()
@@ -214,8 +226,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             PREF_FINGERPRINT -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val checked = fingerprintPreference!!.isChecked
-                    val fingerprintManager = context!!.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
-                    if (fingerprintManager.hasEnrolledFingerprints() && fingerprintManager.isHardwareDetected) {
+                    if (isFingerprintSupported()) {
                         configuration.fingerPrint = checked
                     } else {
                         Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
@@ -225,6 +236,31 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun isFingerprintSupported(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val fingerprintManager = context!!.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
+            if(SsdkVendorCheck.isSamsungDevice()) {
+                var isFingerprintSupported = fingerprintManager.isHardwareDetected
+                if (!isFingerprintSupported && SsdkVendorCheck.isSamsungDevice()) {
+                    val spass = Spass()
+                    try {
+                        spass.initialize(context)
+                        isFingerprintSupported = spass.isFeatureEnabled(Spass.DEVICE_FINGERPRINT)
+                    } catch (e: SsdkUnsupportedException) {
+                        isFingerprintSupported = false
+                    } catch (e: UnsupportedOperationException) {
+                        isFingerprintSupported = false
+                    }
+                }
+                return isFingerprintSupported
+            } else {
+                return (fingerprintManager.isHardwareDetected && fingerprintManager.hasEnrolledFingerprints())
+            }
+        }
+        return false
     }
 
     private fun showAlarmCodeDialog() {

@@ -100,7 +100,6 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun pause() {
-        stop()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

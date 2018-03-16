@@ -114,6 +114,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     })
                     .show()
         }
+
+        Timber.d("onCreate")
     }
 
     public override fun onStart() {
@@ -261,10 +263,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             runOnUiThread({
                 lifecycle.addObserver(mqttModule!!)
             })
-        } /*else if(mqttModule != null  && readMqttOptions().hasUpdates() && readMqttOptions().isValid) {
-            mqttModule!!.resetMQttOptions(readMqttOptions())
-        }*/
-
+        }
         if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 Timber.d("cameraModule")
@@ -326,13 +325,22 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
         if(NOTIFICATION_STATE_TOPIC == topic) {
             this@MainActivity.runOnUiThread({
-                awakenDeviceForAction()
-                if (viewModel.hasAlerts()) {
-                    dialogUtils.showAlertDialog(this@MainActivity, payload)
+                if(viewModel.hasSystemAlerts()) {
+                    val notifications = NotificationUtils(this@MainActivity)
+                    notifications.createAlarmNotification(getString(R.string.preference_title_system_notifications), payload)
                 }
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    if (textToSpeechModule != null && viewModel.hasTss()) {
-                        textToSpeechModule!!.speakText(payload)
+                if(viewModel.hasAlerts() || viewModel.hasTss()) {
+                    awakenDeviceForAction() // wake device temporarily for alerts
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        if (textToSpeechModule != null && viewModel.hasTss()) {
+                            textToSpeechModule!!.speakText(payload)
+                        }
+                    }
+                    if (viewModel.hasAlerts()) {
+                        alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
+                                .setMessage(payload)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
                     }
                 }
             })

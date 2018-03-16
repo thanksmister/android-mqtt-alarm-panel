@@ -43,6 +43,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ProximityManager
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
@@ -72,7 +73,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
-    private var proximityManager: ProximityManager? = null
 
     abstract fun getLayoutId(): Int
 
@@ -106,15 +106,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 handleNetworkDisconnect()
             }
         })
-        /*proximityManager = ProximityManager(applicationContext, lifecycle, object:ProximityManager.ProximityEventHandler {
-            override fun deviceHasProximitySensor(hasSensor: Boolean) {
-                Timber.d("device has proximity sensor: " + hasSensor)
-            }
-            override fun onProximitySensorValueChanged(value: String) {
-                //Check for the value and awake device
-                Timber.d("proximity value: " + value)
-            }
-        })*/
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -147,8 +138,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA), REQUEST_PERMISSIONS)
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
                 return
             }
         }
@@ -191,13 +184,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onUserInteraction() {
         Timber.d("onUserInteraction")
+        onWindowFocusChanged(true)
         userPresent = true
         resetInactivityTimer()
     }
 
     public override fun onStop() {
         super.onStop()
-        //stopDisconnectTimer()
     }
 
     public override fun onResume() {
@@ -217,7 +210,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         Timber.d("acquireTemporaryWakeLock")
         if (wakeLock == null) {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_TEMPORARY_WAKE_TAG")
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_TEMPORARY_WAKE_TAG")
         }
         if (wakeLock != null && !wakeLock!!.isHeld()) {  // but we don't hold it
             wakeLock!!.acquire(10000)

@@ -39,7 +39,7 @@ class DarkSkyApi {
 
         val base_url = "https://api.darksky.net"
         val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
+        logging.level = HttpLoggingInterceptor.Level.NONE
 
         val httpClient = OkHttpClient.Builder()
                 .addInterceptor(logging)
