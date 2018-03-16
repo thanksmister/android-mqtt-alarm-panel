@@ -206,6 +206,10 @@ abstract class BaseAlarmView : LinearLayout {
         if(!useSystemSound)
             return
 
+        if (soundUtils != null) {
+            soundUtils?.destroyBuzzer()
+        }
+
         if(mediaPlayer != null) {
             mediaPlayer?.stop()
         }
@@ -226,9 +230,17 @@ abstract class BaseAlarmView : LinearLayout {
             mediaPlayer = MediaPlayer.create(context!!, alert)
             mediaPlayer?.start()
         } catch (e: SecurityException) {
-            Timber.e(e.message)
+            playContinuousBeep()
         } catch(e: FileNotFoundException) {
-            Timber.e(e.message)
+            playContinuousBeep()
+        }
+    }
+
+    private fun playContinuousBeep() {
+        if (soundUtils == null) {
+            soundUtils = SoundUtils(context)
+            soundUtils?.init()
+            soundUtils?.playBuzzerRepeat()
         }
     }
 

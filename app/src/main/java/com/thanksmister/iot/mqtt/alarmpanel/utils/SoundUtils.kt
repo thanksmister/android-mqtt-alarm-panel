@@ -31,15 +31,6 @@ class SoundUtils(base: Context) : ContextWrapper(base) {
         stopBuzzerRepeat()
     }
 
-    fun playBuzzerOnButtonPress() {
-        Timber.d("playBuzzerOnButtonPress")
-        if (repeating) {
-            stopBuzzerRepeat()
-            repeating = false
-        }
-        soundHandler?.post(streamAudioRunnable);
-    }
-
     private val streamAudioRunnable = Runnable {
         val speaker = MediaPlayer.create(applicationContext, R.raw.beep)
         speaker.setOnCompletionListener { mp ->
