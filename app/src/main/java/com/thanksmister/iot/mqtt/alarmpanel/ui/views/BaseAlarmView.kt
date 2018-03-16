@@ -55,68 +55,55 @@ abstract class BaseAlarmView : LinearLayout {
         super.onFinishInflate()
 
         button0.setOnClickListener {
-            playButtonPress()
             addPinCode("0")
         }
 
         button1.setOnClickListener {
-            playButtonPress()
             addPinCode("1")
         }
 
         button2.setOnClickListener {
-            playButtonPress()
             addPinCode("2")
         }
 
         button3.setOnClickListener {
-            playButtonPress()
             addPinCode("3")
         }
 
         button4.setOnClickListener {
-            playButtonPress()
             addPinCode("4")
         }
 
         button5.setOnClickListener {
-            playButtonPress()
             addPinCode("5")
         }
 
         button6.setOnClickListener {
-            playButtonPress()
             addPinCode("6")
         }
 
         button7.setOnClickListener {
-            playButtonPress()
             addPinCode("7")
         }
 
         button8.setOnClickListener {
-            playButtonPress()
             addPinCode("8")
         }
 
         button9.setOnClickListener {
-            playButtonPress()
             addPinCode("9")
         }
 
         buttonDel.setOnClickListener {
-            playButtonPress()
             removePinCode()
         }
 
         buttonDel.setOnClickListener {
-            playButtonPress()
             removePinCode()
         }
 
         if (buttonCancel != null) {
             buttonCancel.setOnClickListener {
-                playButtonPress()
                 onCancel()
             }
         }
@@ -219,54 +206,9 @@ abstract class BaseAlarmView : LinearLayout {
         if(!useSystemSound)
             return
 
-        if (soundUtils != null) {
-            soundUtils?.destroyBuzzer()
-        }
-
         if(mediaPlayer != null) {
             mediaPlayer?.stop()
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private fun playButtonPress() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrateEffect()
-        } else  {
-            vibrate()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun vibrateEffect() {
-        if(vibrator == null) {
-            vibrator = context!!.getSystemService(VIBRATOR_SERVICE) as Vibrator;
-        }
-        if(vibrator!!.hasVibrator()) {
-            val effect = VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-            vibrator?.vibrate(effect);
-        } else {
-            playBeep()
-        }
-    }
-
-    private fun vibrate() {
-        if(vibrator == null) {
-            vibrator = context!!.getSystemService(VIBRATOR_SERVICE) as Vibrator;
-        }
-        if(vibrator!!.hasVibrator()) {
-            vibrator?.vibrate(50);
-        } else {
-            playBeep()
-        }
-    }
-
-    private fun playBeep(){
-        if (soundUtils == null) {
-            soundUtils = SoundUtils(context)
-            soundUtils?.init()
-        }
-        soundUtils?.playBuzzerOnButtonPress()
     }
 
     fun playContinuousAlarm() {
@@ -284,17 +226,9 @@ abstract class BaseAlarmView : LinearLayout {
             mediaPlayer = MediaPlayer.create(context!!, alert)
             mediaPlayer?.start()
         } catch (e: SecurityException) {
-            playContinuousBeep()
+            Timber.e(e.message)
         } catch(e: FileNotFoundException) {
-            playContinuousBeep()
-        }
-    }
-
-    fun playContinuousBeep() {
-        if (soundUtils == null) {
-            soundUtils = SoundUtils(context)
-            soundUtils?.init()
-            soundUtils?.playBuzzerRepeat()
+            Timber.e(e.message)
         }
     }
 

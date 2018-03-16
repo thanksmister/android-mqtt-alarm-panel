@@ -246,7 +246,7 @@
     <string name="pref_camera_send_image_notes">Puedes usar Telegram, Mailgun o ambos para enviar imágenes capturadas.</string>
     <string name="menu_item_help">Ayuda</string>
     <string name="error_mailgun_credentials">Hubo un problema al enviar la imagen por correo, compruebe sus credenciales de Mailgun.</string>
-    <string name="pref_system_sounds_summary">Alternar el sonido utilizado para presionar botones y diálogos.</string>
+    <string name="pref_system_sounds_summary">Alternar el sonido de alarma del sistema utilizado para desactivar la alarma de alarma.</string>
     <string name="pref_system_sounds_title">Sonidos del sistema</string>
     <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
     <string name="pref_fingerprint_error">Primero debe configurar la función de desbloqueo de huellas dactilares de su dispositivo.</string>
