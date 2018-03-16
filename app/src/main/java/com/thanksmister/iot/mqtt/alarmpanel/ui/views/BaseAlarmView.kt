@@ -110,8 +110,7 @@ abstract class BaseAlarmView : LinearLayout {
         }
 
         buttonDel.setOnClickListener {
-            //playButtonPress()
-            playContinuousAlarm()
+            playButtonPress()
             removePinCode()
         }
 
