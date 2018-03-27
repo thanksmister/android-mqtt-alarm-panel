@@ -50,11 +50,11 @@ import javax.inject.Inject
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.pass.Spass
 import com.samsung.android.sdk.SsdkVendorCheck
+import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
 import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
 import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
-
-
-
+import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint
+import timber.log.Timber
 
 
 class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -120,7 +120,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         delayHomePreference = findPreference(PREF_HOME_DELAY_TIME) as EditTextPreference
         delayAwayPreference = findPreference(PREF_AWAY_DELAY_TIME) as EditTextPreference
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (isFingerprintSupported()) {
             fingerprintPreference!!.isVisible = true
             fingerprintPreference!!.isChecked = configuration.fingerPrint
         } else {
@@ -224,41 +224,26 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                 }
             }
             PREF_FINGERPRINT -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    val checked = fingerprintPreference!!.isChecked
-                    if (isFingerprintSupported()) {
-                        configuration.fingerPrint = checked
-                    } else {
-                        Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
-                        fingerprintPreference!!.isChecked = false
-                        configuration.fingerPrint = false
-                    }
+                val checked = fingerprintPreference!!.isChecked
+                if (isFingerprintSupported()) {
+                    configuration.fingerPrint = checked
+                } else {
+                    Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
+                    fingerprintPreference!!.isChecked = false
+                    configuration.fingerPrint = false
                 }
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @SuppressLint("InlinedApi")
     private fun isFingerprintSupported(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val fingerprintManager = context!!.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
-            if(SsdkVendorCheck.isSamsungDevice()) {
-                var isFingerprintSupported = fingerprintManager.isHardwareDetected
-                if (!isFingerprintSupported && SsdkVendorCheck.isSamsungDevice()) {
-                    val spass = Spass()
-                    try {
-                        spass.initialize(context)
-                        isFingerprintSupported = spass.isFeatureEnabled(Spass.DEVICE_FINGERPRINT)
-                    } catch (e: SsdkUnsupportedException) {
-                        isFingerprintSupported = false
-                    } catch (e: UnsupportedOperationException) {
-                        isFingerprintSupported = false
-                    }
-                }
-                return isFingerprintSupported
-            } else {
-                return (fingerprintManager.isHardwareDetected && fingerprintManager.hasEnrolledFingerprints())
-            }
+        val fingerPrintIdentity = FingerprintIdentify(context, BaseFingerprint.FingerprintIdentifyExceptionListener {
+            Timber.e("Fingerprint Error: " + it.message)
+        })
+
+        if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
+            return true
         }
         return false
     }

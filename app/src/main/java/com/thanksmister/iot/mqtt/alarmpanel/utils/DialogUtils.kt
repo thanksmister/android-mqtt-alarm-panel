@@ -146,10 +146,10 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
     /**
      * Shows the disable alarm dialog with countdown. It is important that this
      * dialog only be shown once and not relaunched when already displayed as
-     * it resets the timer.
+     * it resets the timer.  Also plays a system sounds (if settings true).
      */
     fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
-                               code: Int, beep: Boolean, timeRemaining: Int, systemSounds: Boolean,
+                               code: Int, timeRemaining: Int, systemSounds: Boolean,
                                useFingerprint: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -160,9 +160,27 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setUseSound(systemSounds)
         alarmCodeView.setUseFingerPrint(useFingerprint)
         alarmCodeView.startCountDown(timeRemaining)
-        if (beep) {
-            alarmCodeView.playContinuousAlarm()
-        }
+        alarmCodeView.playContinuousAlarm()
+        dialog = buildImmersiveDialog(activity, true, view, false)
+        dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
+    }
+
+    /**
+     * Shows the disable alarm dialog with countdown. It is important that this
+     * dialog only be shown once and not relaunched when already displayed as
+     * it resets the timer.
+     */
+    fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
+                               code: Int, timeRemaining: Int, useFingerprint: Boolean) {
+        clearDialogs()
+        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
+        val alarmCodeView = view.findViewById<AlarmDisableView>(R.id.alarmDisableView)
+        alarmCodeView.setListener(alarmCodeListener)
+        alarmCodeView.setCode(code)
+        alarmCodeView.setUseSound(false)
+        alarmCodeView.setUseFingerPrint(useFingerprint)
+        alarmCodeView.startCountDown(timeRemaining)
         dialog = buildImmersiveDialog(activity, true, view, false)
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
     }

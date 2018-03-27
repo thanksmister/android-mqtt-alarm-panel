@@ -177,7 +177,7 @@ class MainFragment : BaseFragment() {
                 override fun onCancel() {
                     dialogUtils.clearDialogs()
                 }
-            }, configuration.alarmCode, true, delayTime, configuration.systemSounds, configuration.fingerPrint)
+            }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
         }
     }
 

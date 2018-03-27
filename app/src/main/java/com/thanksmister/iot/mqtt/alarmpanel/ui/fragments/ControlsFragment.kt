@@ -286,7 +286,7 @@ class ControlsFragment : BaseFragment() {
                 Timber.d("onCancel")
                 dialogUtils.clearDialogs()
             }
-        }, viewModel.getAlarmCode(), false, delayTime, configuration.systemSounds, configuration.fingerPrint)
+        }, viewModel.getAlarmCode(), delayTime, configuration.fingerPrint)
     }
 
     companion object {

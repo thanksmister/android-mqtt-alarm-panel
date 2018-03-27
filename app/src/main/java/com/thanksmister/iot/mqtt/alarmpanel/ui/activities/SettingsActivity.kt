@@ -40,7 +40,7 @@ import timber.log.Timber
 import android.support.v4.view.ViewCompat.setAlpha
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-
+import android.os.BadParcelableException
 
 
 class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, SettingsFragment.SettingsFragmentListener {
@@ -75,6 +75,9 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, Setting
         }
 
         pagerAdapter = ScreenSlidePagerAdapter(supportFragmentManager)
+        // Fix for crash with BadPacelException
+        // https://stackoverflow.com/questions/49228979/badparcelableexceptionclassnotfoundexception-when-unmarshalling-android-suppor
+        viewPager.offscreenPageLimit = 2;
         viewPager.adapter = pagerAdapter
         viewPager.addOnPageChangeListener(this)
 
@@ -97,7 +100,11 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, Setting
         if (viewPager.currentItem == 0) {
             super.onBackPressed()
         } else {
-            viewPager.currentItem = 0
+            try {
+                viewPager.currentItem = 0
+            } catch (e: BadParcelableException) {
+                Timber.e("ViewPager Error: " + e.message)
+            }
         }
     }
 
