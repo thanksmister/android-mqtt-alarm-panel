@@ -1,6 +1,6 @@
-# Android MQTT Alarm Panel for Home Assistant
+# Android MQTT Alarm Panel for Home Automation Platforms
 
-This project is an MQTT Alarm Control Panel for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel whould work with any home automation platform that supprts MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
+This project is an MQTT Alarm Control Panel was originally created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supprts MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ)
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
