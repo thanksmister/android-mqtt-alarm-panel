@@ -43,6 +43,10 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 
 ![alarm_triggered](https://user-images.githubusercontent.com/142340/29889462-9f6422dc-8d9a-11e7-923a-06cfcd6acff7.png)
 
+You can also load your home automation platfgorm website by entering the address with port into the settings.  It slides from the right on the main screen. 
+
+![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
+
 ## Software
 
 - Android Studio with Android SDK 14 or above.
