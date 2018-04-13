@@ -22,6 +22,7 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.DarkSkyResponse
+import io.reactivex.Observable
 
 import java.util.concurrent.TimeUnit
 
@@ -29,6 +30,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class DarkSkyApi {
@@ -53,6 +55,7 @@ class DarkSkyApi {
 
         val retrofit = Retrofit.Builder()
                 .client(httpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl(base_url)
                 .build()
@@ -65,8 +68,12 @@ class DarkSkyApi {
         return service.getHourlyForecast(apiKey, lat, lon, excludes, units, language)
     }
 
-    fun getExtendedForecast(apiKey: String, lat: String, lon: String, excludes: String, extended: String, units: String, language: String): Call<DarkSkyResponse> {
+    /*fun getExtendedForecast(apiKey: String, lat: String, lon: String, excludes: String, extended: String, units: String, language: String): Call<DarkSkyResponse> {
         val service = service
+        return service.getExtendedForecast(apiKey, lat, lon, excludes, extended, units, language)
+    }*/
+
+    fun getExtendedForecast(apiKey: String, lat: String, lon: String, excludes: String, extended: String, units: String, language: String): Observable<DarkSkyResponse> {
         return service.getExtendedForecast(apiKey, lat, lon, excludes, extended, units, language)
     }
 }

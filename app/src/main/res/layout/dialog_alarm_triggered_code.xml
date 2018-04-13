@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~
   ~   ~ Copyright (c) 2017. ThanksMister LLC
   ~   ~
@@ -17,314 +16,356 @@
   ~   
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/red"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/codeTitle"
+        style="@style/TextAppearance.AppCompat.Large.Inverse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/text_alarm"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="64sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/codeDescription"
+        style="@style/TextAppearance.AppCompat.Large.Inverse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/codeTitle"
+        android:gravity="center_horizontal"
+        android:text="@string/dialog_alarm_triggered"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="Enter code to dismiss" />
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@color/red"
-        android:padding="16dp"
-        android:orientation="horizontal">
-
-    <LinearLayout 
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_weight="1"
-                  android:background="@drawable/background_square_border_red"
-                  android:orientation="vertical">
+        android:layout_weight="1"
+        android:background="@drawable/background_square_border_red"
+        android:orientation="vertical">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="25"
-                android:orientation="horizontal" android:baselineAligned="false">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <FrameLayout
-                    android:id="@+id/button1"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_left_top_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:minWidth="56dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="1"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_left_top_border_red"
+                    android:gravity="center"
+                    android:minWidth="56dp"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button2"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_top_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:minWidth="56dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="2"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_top_border_red"
+                    android:gravity="center"
+                    android:minWidth="56dp"
+                    android:text="2"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button3"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_top_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:minWidth="56dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="3"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_top_border_red"
+                    android:gravity="center"
+                    android:minWidth="56dp"
+                    android:text="3"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
         </LinearLayout>
 
-        <View style="@style/DividerHorizontal" android:layout_weight="0"/>
+        <View
+            style="@style/DividerHorizontal"
+            android:layout_weight="0" />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="25"
-                android:orientation="horizontal" android:baselineAligned="false">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <FrameLayout
-                    android:id="@+id/button4"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_left_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="4"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_left_right_border_red"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button5"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="5"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_border_red"
+                    android:gravity="center"
+                    android:text="5"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button6"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="6"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_border_red"
+                    android:gravity="center"
+                    android:text="6"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
         </LinearLayout>
 
-        <View style="@style/DividerHorizontal" android:layout_weight="0"/>
+        <View
+            style="@style/DividerHorizontal"
+            android:layout_weight="0" />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="25"
-                android:orientation="horizontal" android:baselineAligned="false">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <FrameLayout
-                    android:id="@+id/button7"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button7"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_left_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="7"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_left_right_border_red"
+                    android:gravity="center"
+                    android:text="7"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button8"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button8"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="8"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_border_red"
+                    android:gravity="center"
+                    android:text="8"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button9"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button9"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="9"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_border_red"
+                    android:gravity="center"
+                    android:text="9"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
         </LinearLayout>
 
-        <View style="@style/DividerHorizontal" android:layout_weight="0"/>
+        <View
+            style="@style/DividerHorizontal"
+            android:layout_weight="0" />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:layout_weight="25"
-                android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:textSize="16sp"
-                        android:background="@drawable/background_left_bottom_border_red"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_left_bottom_border_red"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/button0"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/button0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <TextView
-                        style="?android:textAppearanceLarge"
-                        android:background="@drawable/background_right_bottom_border_red"
-                        android:textSize="@dimen/text_size_login"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="0"/>
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_bottom_border_red"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_login" />
 
             </FrameLayout>
 
             <FrameLayout
-                    android:id="@+id/buttonDel"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:layout_weight="1">
+                android:id="@+id/buttonDel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
 
                 <FrameLayout
-                        android:background="@drawable/background_right_bottom_border_red"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_right_bottom_border_red">
 
                     <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:tint="@color/white"
-                            android:src="@drawable/ic_backspace_black_32dp"
-                            tools:ignore="ContentDescription" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_backspace_black_32dp"
+                        android:tint="@color/white"
+                        tools:ignore="ContentDescription" />
 
                 </FrameLayout>
 
@@ -334,68 +375,32 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingRight="8dp"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp">
+    <LinearLayout
+        android:id="@+id/triggered_fingerprint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        tools:ignore="UseCompoundDrawables"
+        android:gravity="center"
+        tools:visibility="visible">
 
-        <TextView
-                android:id="@+id/codeTitle"
-                style="@style/TextAppearance.AppCompat.Large.Inverse"
-                android:textSize="64sp"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:gravity="center_horizontal"
-                android:text="@string/text_alarm"/>
-
-        <TextView
-            android:id="@+id/codeDescription"
-            style="@style/TextAppearance.AppCompat.Large.Inverse"
-            android:layout_below="@+id/codeTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/dialog_alarm_triggered"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:text="Enter code to dismiss" />
-
-        <LinearLayout
-            android:visibility="invisible"
-            tools:visibility="visible"
-            android:id="@+id/triggered_fingerprint_layout"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
+            android:layout_marginRight="4dp"
+            android:src="@drawable/ic_fingerprint"
+            android:tint="@color/white" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
-                android:tint="@color/white"
-                android:src="@drawable/ic_fingerprint"/>
+        <TextView
+            style="@style/TextAppearance.AppCompat.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_touch_sensor" />
 
-            <TextView
-                style="@style/TextAppearance.AppCompat.Inverse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_touch_sensor" />
-
-        </LinearLayout>
-
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>

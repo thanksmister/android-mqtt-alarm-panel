@@ -42,6 +42,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ProximityManager
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
@@ -62,6 +63,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var preferences: DPreference
     @Inject lateinit var dialogUtils: DialogUtils
+    @Inject lateinit var darkSkyDataSource: DarkSkyDao
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MessageViewModel
@@ -262,20 +264,17 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     open fun showScreenSaver() {
         Timber.d("viewModel.isAlarmTriggeredMode() " + viewModel.isAlarmTriggeredMode())
         Timber.d("viewModel.hasScreenSaver() " + viewModel.hasScreenSaver())
+        Timber.d("viewModel.hasWeatherModule() " + configuration.showWeatherModule())
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
-            // dialogUtils.clearDialogs()
             inactivityHandler.removeCallbacks(inactivityCallback)
+            val hasWeather = (configuration.showWeatherModule() && readWeatherOptions().isValid)
             dialogUtils.showScreenSaver(this@BaseActivity,
-                    configuration.showPhotoScreenSaver(), configuration.showClockScreenSaverModule(),
-                    readImageOptions(), object : ScreenSaverView.ViewListener {
-                override fun onMotion() {
-                    dialogUtils.hideScreenSaverDialog()
-                    resetInactivityTimer()
-                }
-            }, View.OnClickListener {
-                dialogUtils.hideScreenSaverDialog()
-                resetInactivityTimer()
-            })
+                    configuration.showPhotoScreenSaver(),
+                    readImageOptions(),
+                    View.OnClickListener {
+                        dialogUtils.hideScreenSaverDialog()
+                        resetInactivityTimer()
+                    }, darkSkyDataSource, hasWeather)
         }
     }
 

@@ -24,6 +24,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily
+import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.ForecastCardAdapter
 
 import kotlinx.android.synthetic.main.dialog_extended_forecast.view.*
@@ -38,13 +39,13 @@ class ExtendedForecastView : FrameLayout {
         super.onFinishInflate()
     }
 
-    fun setExtendedForecast(daily: Daily) {
-        if (daily.data != null) {
+    fun setExtendedForecast(data: List<Datum>) {
+        if (data != null) {
             recycleView.setHasFixedSize(true)
             val linearLayoutManager = LinearLayoutManager(context)
             linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
             recycleView.layoutManager = linearLayoutManager
-            val forecastCardAdapter = ForecastCardAdapter(daily.data)
+            val forecastCardAdapter = ForecastCardAdapter(data)
             recycleView.adapter = forecastCardAdapter
         }
     }

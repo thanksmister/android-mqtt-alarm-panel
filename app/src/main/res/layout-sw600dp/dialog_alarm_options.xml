@@ -24,14 +24,13 @@
         android:id="@+id/armOptionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:background="@color/white"
-        android:gravity="center_horizontal"
         android:padding="16dp"
+        android:gravity="center"
         android:orientation="vertical">
 
     <LinearLayout
-            android:layout_width="480dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:orientation="horizontal">
@@ -76,8 +75,7 @@
             android:layout_height="16dp"/>
     
     <LinearLayout
-            android:minWidth="480dp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="320dp"
             android:gravity="center|bottom"
             android:orientation="horizontal">
@@ -85,7 +83,7 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center|bottom"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -121,14 +119,14 @@
         </LinearLayout>
 
         <android.support.v4.widget.Space
-                android:layout_width="16dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"/>
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center|bottom"
+                android:gravity="center"
                 android:orientation="vertical">
 
             <FrameLayout

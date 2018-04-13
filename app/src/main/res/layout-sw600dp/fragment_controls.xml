@@ -32,44 +32,42 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
         <FrameLayout
-                android:id="@+id/alarmButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center">
+            android:id="@+id/alarmButton"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
             <LinearLayout
-                    android:id="@+id/alarmButtonBackground"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginStart="35dp"
-                    android:layout_width="190dp"
-                    android:layout_height="190dp"
-                    android:padding="34dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_round_gray">
+                android:id="@+id/alarmButtonBackground"
+                android:layout_width="190dp"
+                android:layout_height="190dp"
+                android:padding="34dp"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:background="@drawable/button_round_gray">
 
                 <ImageView
-                        android:layout_width="140dp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_lock_large"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_lock_large"/>
 
             </LinearLayout>
 
             <FrameLayout
-                    android:id="@+id/alarmPendingLayout"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
+                android:id="@+id/alarmPendingLayout"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <include
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/pendingView"
-                        layout="@layout/dialog_alarm_countdown"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pendingView"
+                    layout="@layout/dialog_alarm_countdown"/>
 
             </FrameLayout>
 
@@ -84,7 +82,7 @@
             <TextView
                     style="@style/TextAppearance.Title"
                     android:textStyle="bold"
-                    android:layout_gravity="left"
+                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_system"/>
@@ -94,7 +92,8 @@
                     style="@style/TextAppearance.Title"
                     android:textColor="@color/gray_pressed"
                     android:textStyle="bold"
-                    android:layout_width="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="@string/text_alarm_pending"/>
 

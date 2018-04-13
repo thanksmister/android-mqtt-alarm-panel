@@ -99,9 +99,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.isFirstTime = false
             configuration.setHasNotifications(true)
             configuration.setClockScreenSaverModule(true)
+            configuration.setPhotoScreenSaver(false)
             configuration.setHasCamera(true)
             configuration.setWebModule(true)
-            configuration.setShowWeatherModule(true)
+            configuration.setShowWeatherModule(false)
             configuration.setTssModule(true)
         }
 

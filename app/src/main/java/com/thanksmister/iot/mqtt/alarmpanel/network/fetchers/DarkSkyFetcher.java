@@ -23,6 +23,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.model.DarkSkyResponse;
 
 import java.util.Locale;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 
 public class DarkSkyFetcher {
@@ -38,7 +39,13 @@ public class DarkSkyFetcher {
         return networkApi.getHourlyForecast(apiKey, lat, lon, excludes, units, Locale.getDefault().getLanguage());
     }
 
-    public Call<DarkSkyResponse> getExtendedFeedData(final String apiKey, final String units, final String lat, final String lon) {
+    /*public Call<DarkSkyResponse> getExtendedFeedData(final String apiKey, final String units, final String lat, final String lon) {
+        String excludes = "hourly,minutely,flags,alerts";
+        String extended = "daily";
+        return networkApi.getExtendedForecast(apiKey, lat, lon, excludes, extended, units, Locale.getDefault().getLanguage());
+    }
+*/
+    public Observable<DarkSkyResponse> getExtendedFeedData(final String apiKey, final String units, final String lat, final String lon) {
         String excludes = "hourly,minutely,flags,alerts";
         String extended = "daily";
         return networkApi.getExtendedForecast(apiKey, lat, lon, excludes, extended, units, Locale.getDefault().getLanguage());

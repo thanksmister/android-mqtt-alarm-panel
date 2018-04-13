@@ -22,90 +22,84 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/alarmCodeView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:padding="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-    <include layout="@layout/view_keypad"
-             android:layout_width="300dp"
-             android:layout_height="360dp"/>
-    
-    <android.support.v4.widget.Space
-            android:layout_width="8dp"
-            android:layout_height="match_parent"/>
-    
-    <RelativeLayout
-            android:layout_width="320dp"
-            android:paddingTop="16dp"
-            android:layout_height="360dp"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/codeTitle"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:textSize="28sp"
+        android:textAllCaps="true"
+        android:layout_width="wrap_content"
+        android:paddingBottom="16dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:text="Please enter the new alarm code."/>
 
-        <TextView
-                android:id="@+id/codeTitle"
-                style="@style/WizardPageTitle"
-                android:textSize="18sp"
-                android:textAllCaps="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="Please enter the new alarm code."/>
+    <include
+        layout="@layout/view_keypad"
+        android:layout_width="460dp"
+        android:layout_height="460dp"/>
 
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:padding="12dp"
-                android:gravity="center">
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp"/>
 
-            <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode1"
-                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="16dp"
+            android:gravity="center">
 
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+        <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode1"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
-            <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode2"
-                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+        <View
+                android:layout_width="6dp"
+                android:layout_height="match_parent"/>
 
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+        <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode2"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
-            <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode3"
-                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+        <View
+                android:layout_width="6dp"
+                android:layout_height="match_parent"/>
 
-            <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+        <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode3"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
-            <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode4"
-                    android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+        <View
+                android:layout_width="6dp"
+                android:layout_height="match_parent"/>
 
-        </LinearLayout>
+        <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode4"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
 
-    </RelativeLayout>
+    </LinearLayout>
     
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView>

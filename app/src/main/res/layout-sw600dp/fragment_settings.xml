@@ -15,6 +15,7 @@
   ~   ~ limitations under the License.
   ~   
   -->
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/lib/android.support.v7.widget.GridLayout"
     xmlns:grid="http://schemas.android.com/apk/res-auto"
@@ -35,9 +36,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -66,9 +66,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -97,9 +96,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -128,9 +126,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -159,9 +156,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -190,9 +186,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -221,9 +216,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView
@@ -252,9 +246,8 @@
             android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical"
-            android:padding="24dp"
-            grid:layout_gravity="center"
             grid:layout_columnWeight="1"
+            grid:layout_gravity="center"
             grid:layout_rowWeight="1">
 
             <ImageView

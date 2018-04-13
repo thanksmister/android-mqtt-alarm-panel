@@ -23,11 +23,11 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/armOptionsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:background="@color/white"
-        android:padding="8dp"
+        android:padding="16dp"
         android:orientation="vertical">
 
     <LinearLayout
@@ -71,15 +71,14 @@
 
     </LinearLayout>
 
-    <android.support.v4.widget.Space
-            android:layout_width="match_parent"
-            android:layout_weight="2"
-            android:layout_height="8dp"/>
-    
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:paddingBottom="16dp"
             android:gravity="center|bottom"
             android:orientation="horizontal">
 
@@ -123,7 +122,7 @@
         </LinearLayout>
 
         <android.support.v4.widget.Space
-                android:layout_width="1dp"
+                android:layout_width="16dp"
                 android:layout_weight="0"
                 android:layout_height="match_parent"/>
 

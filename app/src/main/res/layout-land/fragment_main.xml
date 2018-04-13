@@ -1,0 +1,133 @@
+<!--
+  ~
+  ~   ~ Copyright (c) 2017. ThanksMister LLC
+  ~   ~
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License. 
+  ~   ~ You may obtain a copy of the License at
+  ~   ~
+  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~
+  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
+  ~   ~ under the License is distributed on an "AS IS" BASIS, 
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  ~   ~ See the License for the specific language governing permissions and 
+  ~   ~ limitations under the License.
+  ~   
+  -->
+
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/mainView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <fragment
+                android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment"
+                android:id="@+id/informationContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_information"/>
+
+        <fragment
+                android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:id="@+id/controlContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:layout="@layout/fragment_controls"/>
+
+        <LinearLayout
+                android:id="@+id/settingsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingBottom="2dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/platformButton"
+                style="@style/BorderlessButtonStyle"
+                android:padding="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:tint="@color/dark_gray"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_home_black"
+                tools:ignore="ContentDescription"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="24dp"/>
+
+            <ImageButton
+                    android:id="@+id/buttonSleep"
+                    style="@style/BorderlessButtonStyle"
+                    android:padding="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:tint="@color/dark_gray"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_sleep_24dp"
+                    tools:ignore="ContentDescription"/>
+
+            <android.support.v4.widget.Space
+                    android:layout_width="16dp"
+                    android:layout_height="24dp"/>
+
+            <ImageButton
+                    android:id="@+id/buttonSettings"
+                    style="@style/BorderlessButtonStyle"
+                    android:padding="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:tint="@color/dark_gray"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_settings_black_24dp"
+                    tools:ignore="ContentDescription"/>
+
+            <android.support.v4.widget.Space
+                    android:layout_width="16dp"
+                    android:layout_height="24dp"/>
+
+            <ImageButton
+                    android:id="@+id/buttonLogs"
+                    style="@style/BorderlessButtonStyle"
+                    android:padding="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:tint="@color/dark_gray"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_log_list_black_24dp"
+                    tools:ignore="ContentDescription"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+            android:id="@+id/triggeredView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/red"
+            tools:visibility="gone"
+            android:visibility="gone">
+
+        <include
+                android:id="@+id/alarmTriggeredView"
+                layout="@layout/dialog_alarm_triggered_code"/>
+
+    </FrameLayout>
+
+</FrameLayout>

@@ -131,7 +131,7 @@ android {
         generateStubs = true
     }
     compileSdkVersion 27
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.thanksmister.iot.mqtt.alarmpanel"
         minSdkVersion 15
@@ -180,7 +180,7 @@ android {
             dimension "default"
             buildConfigField "String", BASE_ENVIRONMENT, '"PROD_ENVIRONMENT"'
             applicationId "com.thanksmister.iot.mqtt.alarmpanel"
-            versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}"
             buildConfigField 'Integer', 'ALARM_CODE', '1234'
             buildConfigField 'String', 'DARK_SKY_KEY', '""'
             buildConfigField 'String', 'MAIL_GUN_KEY', '""'
@@ -252,6 +252,7 @@ dependencies {
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:${retrofit}"
     compile "com.squareup.retrofit2:converter-gson:${retrofit}"
+    compile "com.squareup.retrofit2:adapter-rxjava2:${retrofit}"
 
     // OKHttp
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'

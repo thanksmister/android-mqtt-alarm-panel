@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 
@@ -62,7 +63,7 @@ class SettingsCodeView : BaseAlarmView {
         if(value) {
             settings_fingerprint_layout.visibility = View.VISIBLE
         } else {
-            settings_fingerprint_layout.visibility = View.INVISIBLE
+            settings_fingerprint_layout.visibility = View.GONE
         }
     }
 
@@ -72,6 +73,7 @@ class SettingsCodeView : BaseAlarmView {
         }
         codeComplete = false
         enteredCode = ""
+        showFilledPins(0)
     }
 
     override fun onDetachedFromWindow() {
@@ -93,14 +95,24 @@ class SettingsCodeView : BaseAlarmView {
             return
 
         enteredCode = enteredCode + code
-
+        showFilledPins(enteredCode.length)
         if (enteredCode.length == BaseAlarmView.Companion.MAX_CODE_LENGTH) {
             codeComplete = true
             handler.postDelayed(delayRunnable, 500)
         }
     }
 
-    override fun removePinCode() {}
+    override fun removePinCode() {
+        if (codeComplete) {
+            return
+        }
+
+        if (!TextUtils.isEmpty(enteredCode)) {
+            enteredCode = enteredCode.substring(0, enteredCode.length - 1)
+        }
+
+        showFilledPins(enteredCode.length)
+    }
 
     private fun validateCode(validateCode: String) {
         val codeInt = Integer.parseInt(validateCode)
@@ -111,6 +123,7 @@ class SettingsCodeView : BaseAlarmView {
         } else {
             codeComplete = false
             enteredCode = ""
+            showFilledPins(0)
             if (settingsListener != null) {
                 settingsListener!!.onError()
             }

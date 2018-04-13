@@ -22,49 +22,94 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/settingsCodeView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <include layout="@layout/view_keypad"
-             android:layout_width="300dp"
-             android:layout_height="360dp"/>
+    <TextView
+        android:id="@+id/settings_code_title"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:textSize="28sp"
+        android:textAllCaps="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:gravity="center"
+        tools:text="Please enter the new alarm code."/>
 
-    <android.support.v4.widget.Space
-            android:layout_width="8dp"
-            android:layout_height="match_parent"/>
+    <include
+        layout="@layout/view_keypad"
+        android:layout_width="460dp"
+        android:layout_height="460dp"/>
 
-    <RelativeLayout
-            android:layout_width="320dp"
-            android:paddingTop="16dp"
-            android:layout_height="360dp"
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:padding="16dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
         <TextView
-                android:id="@+id/settings_code_title"
-                style="@style/WizardPageTitle"
-                android:textSize="18sp"
-                android:textAllCaps="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="Please enter the new alarm code."/>
-
-        <TextView
             android:id="@+id/settings_fingerprint_layout"
+            android:textSize="18sp"
             tools:visibility="visible"
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:drawableLeft="@drawable/ic_fingerprint"
             android:drawableStart="@drawable/ic_fingerprint"
+            android:layout_gravity="center_horizontal"
             android:paddingBottom="8dp"
             android:text="@string/text_touch_sensor"/>
 
-    </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/imageLayout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode1"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode2"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode3"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode4"
+                android:src="@drawable/ic_radio_button_unchecked_black_32dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView>

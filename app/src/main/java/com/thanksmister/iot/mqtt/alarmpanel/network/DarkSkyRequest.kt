@@ -19,11 +19,13 @@
 package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.DarkSkyResponse
+import io.reactivex.Observable
 
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+
 
 interface DarkSkyRequest {
 
@@ -35,6 +37,15 @@ interface DarkSkyRequest {
                           @Query("units") units: String,
                           @Query("lang") language: String): Call<DarkSkyResponse>
 
+    /*@GET("/forecast/{apikey}/{lat},{lon}")
+    fun getExtendedForecast(@Path("apikey") apiKey: String,
+                            @Path("lat") lat: String,
+                            @Path("lon") lon: String,
+                            @Query("exclude") exclude: String,
+                            @Query("extended") extended: String,
+                            @Query("units") units: String,
+                            @Query("lang") language: String): Call<DarkSkyResponse>*/
+
     @GET("/forecast/{apikey}/{lat},{lon}")
     fun getExtendedForecast(@Path("apikey") apiKey: String,
                             @Path("lat") lat: String,
@@ -42,7 +53,7 @@ interface DarkSkyRequest {
                             @Query("exclude") exclude: String,
                             @Query("extended") extended: String,
                             @Query("units") units: String,
-                            @Query("lang") language: String): Call<DarkSkyResponse>
+                            @Query("lang") language: String): Observable<DarkSkyResponse>
 
     companion object {
 

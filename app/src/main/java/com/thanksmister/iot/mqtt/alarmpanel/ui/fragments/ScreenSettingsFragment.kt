@@ -114,13 +114,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         imageFitPreference!!.isChecked = imageOptions!!.imageFitScreen
 
-        if(configuration.showPhotoScreenSaver() && configuration.showClockScreenSaverModule()) {
-            setPhotoScreenSaver(false)
-            setClockScreenSaver(false)
-        } else {
-            setPhotoScreenSaver(configuration.showPhotoScreenSaver())
-            setClockScreenSaver(configuration.showClockScreenSaverModule())
-        }
+        setPhotoScreenSaver(configuration.showPhotoScreenSaver())
+        setClockScreenSaver(configuration.showClockScreenSaverModule())
 
         setInactivityPreference(configuration.showClockScreenSaverModule(), configuration.showPhotoScreenSaver() )
     }

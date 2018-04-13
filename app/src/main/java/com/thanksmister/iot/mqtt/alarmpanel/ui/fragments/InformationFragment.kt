@@ -18,44 +18,42 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper.getMainLooper
 import android.support.v4.content.res.ResourcesCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily
+import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.WeatherModule
-import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
-
-import java.text.DateFormat
-
-import javax.inject.Inject
-
-import android.os.Looper.getMainLooper
-import android.support.v4.app.ActivityCompat
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_information.*
-import java.lang.Math.round
+import java.text.DateFormat
 import java.util.*
+import javax.inject.Inject
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
+import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
+import timber.log.Timber
 
 class InformationFragment : BaseFragment() {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
+    @Inject lateinit var weatherViewModel: WeatherViewModel
 
-    private var weatherModule: WeatherModule? = null
-    private var extendedDaily: Daily? = null
-    private var weatherHandler: Handler? = null
+    private var forecastList: List<Datum> = Collections.emptyList()
     private var timeHandler: Handler? = null
 
     private val timeRunnable = object : Runnable {
@@ -70,28 +68,22 @@ class InformationFragment : BaseFragment() {
         }
     }
 
-    private val weatherRunnable = object : Runnable {
-        override fun run() {
-            weatherHandler!!.postDelayed(this, DATE_INTERVAL)
-        }
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        weatherViewModel = ViewModelProviders.of(this, viewModelFactory).get(WeatherViewModel::class.java)
+        observeViewModel(weatherViewModel)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weatherHandler = Handler(getMainLooper())
         timeHandler = Handler(getMainLooper())
         timeHandler!!.postDelayed(timeRunnable, 1000)
-        weatherLayout.setOnClickListener({if (extendedDaily != null) {
-            dialogUtils.showExtendedForecastDialog(activity as BaseActivity, extendedDaily!!)
-        }})
+        weatherLayout.visibility = View.VISIBLE
+        weatherLayout.setOnClickListener({
+            if (!forecastList.isEmpty()) {
+                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, forecastList)
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -101,70 +93,61 @@ class InformationFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         if (configuration.showWeatherModule() && readWeatherOptions().isValid) {
-            if (weatherHandler != null) {
-                weatherHandler!!.removeCallbacks(weatherRunnable)
-            }
             connectWeatherModule()
+            weatherLayout.visibility = View.VISIBLE
         } else {
-            disconnectWeatherModule()
             weatherLayout.visibility = View.GONE
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        disconnectWeatherModule()
         if (timeHandler != null) {
             timeHandler!!.removeCallbacks(timeRunnable)
         }
     }
 
-    private fun disconnectWeatherModule() {
-        if (weatherHandler != null) {
-            weatherHandler!!.removeCallbacks(weatherRunnable)
-        }
-        if (weatherModule != null) {
-            weatherModule!!.cancelDarkSkyHourlyForecast()
-        }
+    private fun observeViewModel(viewModel: WeatherViewModel) {
+        viewModel.getAlertMessage().observe(this, Observer { message ->
+            Timber.d("getAlertMessage")
+            dialogUtils.showAlertDialog(activity as BaseActivity, message!!)
+        })
+        viewModel.getToastMessage().observe(this, Observer { message ->
+            Timber.d("getToastMessage")
+            Toast.makeText(activity as BaseActivity, message, Toast.LENGTH_LONG).show()
+        })
+        disposable.add(
+                viewModel.getLatestItem()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ item ->
+                            if(item != null) {
+                                (activity as BaseActivity).runOnUiThread {
+                                    weatherLayout.visibility = View.VISIBLE
+                                    outlookText.text = item.summary
+                                    val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
+                                    temperatureText.text = getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
+                                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
+                                    forecastList = Gson().fromJson(item.data, object : TypeToken<List<Datum>>(){}.type)
+                                    if (item.umbrella) {
+                                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                    }
+                                }
+                            }
+                        })
+            )
     }
 
     private fun connectWeatherModule() {
-        if (weatherModule == null) {
-            weatherModule = WeatherModule()
-        }
-
+        Timber.d("connectWeatherModule")
         val apiKey = readWeatherOptions().darkSkyKey
         val units = readWeatherOptions().weatherUnits
         val lat = readWeatherOptions().latitude
         val lon = readWeatherOptions().longitude
-        weatherModule!!.getDarkSkyHourlyForecast(apiKey!!, units!!, lat!!, lon!!, object : WeatherModule.ForecastListener {
-            override fun onWeatherToday(icon: String, apparentTemperature: Double, summary: String) {
-                weatherLayout.setVisibility(View.VISIBLE)
-                outlookText.setText(summary)
-                val displayUnits = if (units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
-                temperatureText.setText(getString(R.string.text_temperature, round(apparentTemperature).toString(), displayUnits))
-                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(icon), activity!!.theme))
-
-                // start the clock
-                if (weatherHandler != null) {
-                    weatherHandler!!.postDelayed(weatherRunnable, DATE_INTERVAL)
-                }
-            }
-
-            override fun onExtendedDaily(daily: Daily) {
-                extendedDaily = daily
-            }
-
-            override fun onShouldTakeUmbrella(takeUmbrella: Boolean) {
-                if (takeUmbrella) {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, activity!!.theme))
-                }
-            }
-        })
+        weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units!!, lat!!, lon!!)
     }
 
     companion object {
-        val DATE_INTERVAL: Long = 3600000 // 1 hour
 
         /**
          * Use this factory method to create a new instance of

@@ -33,12 +33,13 @@ import org.json.JSONObject
 
 import retrofit2.Response
 import timber.log.Timber
+import java.io.Closeable
 
 /**
  * We lazily load the hourly forecast and the extended forecast.  We could have done this on a syncadapter or alarm, but
  * we only care that this module runs while we are in the application.
  */
-class MailGunModule(base: Context?) : AutoCloseable, ContextWrapper(base) {
+class MailGunModule(base: Context?) : Closeable, ContextWrapper(base) {
 
     override fun close() {
         if (task != null) {

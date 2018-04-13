@@ -62,7 +62,7 @@ class AlarmDisableView : BaseAlarmView {
         if(value) {
             disable_fingerprint_layout.visibility = View.VISIBLE
         } else {
-            disable_fingerprint_layout.visibility = View.INVISIBLE
+            disable_fingerprint_layout.visibility = View.GONE
         }
     }
 

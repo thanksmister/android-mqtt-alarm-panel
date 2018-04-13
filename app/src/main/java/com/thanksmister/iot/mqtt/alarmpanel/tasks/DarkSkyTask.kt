@@ -20,14 +20,15 @@ package com.thanksmister.iot.mqtt.alarmpanel.tasks
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.DarkSkyFetcher
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.DarkSkyResponse
+import io.reactivex.Observable
 
 import retrofit2.Call
 import retrofit2.Response
 
-class DarkSkyTask(private val fetcher: DarkSkyFetcher) : NetworkTask<String, Void, Response<DarkSkyResponse>>() {
+class DarkSkyTask(private val fetcher: DarkSkyFetcher) : NetworkTask<String, Void, Observable<DarkSkyResponse>>() {
 
     @Throws(Exception::class)
-    override fun doNetworkAction(vararg params: String): Response<DarkSkyResponse> {
+    override fun doNetworkAction(vararg params: String): Observable<DarkSkyResponse> {
         if (params.size != 4) {
             throw Exception("Wrong number of params, expected 4, received " + params.size)
         }
@@ -37,7 +38,6 @@ class DarkSkyTask(private val fetcher: DarkSkyFetcher) : NetworkTask<String, Voi
         val lat = params[2]
         val lon = params[3]
 
-        val call = fetcher.getExtendedFeedData(apiKey, units, lat, lon)
-        return call.execute()
+        return fetcher.getExtendedFeedData(apiKey, units, lat, lon)
     }
 }

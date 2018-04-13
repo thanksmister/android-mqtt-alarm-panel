@@ -19,20 +19,27 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Handler
-import android.text.TextUtils
+import android.support.v4.content.res.ResourcesCompat
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.widget.RelativeLayout
 import com.squareup.picasso.Picasso
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.ImageFetcher
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Item
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
+import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_screen_saver.view.*
 import retrofit2.Response
 import timber.log.Timber
@@ -50,8 +57,10 @@ class ScreenSaverView : RelativeLayout {
     private var rotationInterval: Long = 0
     private var options:ImageOptions? = null
 
-    private var listener: ViewListener? = null
     private var saverContext: Context? = null
+    private var dataSource: DarkSkyDao? = null
+    private var useImageSaver: Boolean = false
+    private var hasWeather: Boolean = false
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -62,16 +71,13 @@ class ScreenSaverView : RelativeLayout {
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(Date())
+            val currentTimeString = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(Date())
+            screenSaverClockSmall.text = currentTimeString
             screenSaverClock.text = currentTimeString
             if (timeHandler != null) {
                 timeHandler!!.postDelayed(this, 1000)
             }
         }
-    }
-
-    interface ViewListener {
-        fun onMotion()
     }
 
     constructor(context: Context) : super(context) {
@@ -80,10 +86,6 @@ class ScreenSaverView : RelativeLayout {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         saverContext = context
-    }
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
     }
 
     override fun onDetachedFromWindow() {
@@ -108,28 +110,80 @@ class ScreenSaverView : RelativeLayout {
         }
     }
 
-    fun setListener(listener: ViewListener) {
-        this.listener = listener
+    fun setDataSource(dataSource: DarkSkyDao) {
+        this.dataSource = dataSource
     }
 
-    fun setScreenSaver(useImageScreenSaver: Boolean, useClockScreenSaver: Boolean, options:ImageOptions) {
+    // setup clock size based on screen and weather settings
+    private fun setWeatherClockViews() {
+        val initialRegular = screenSaverClock.textSize
+        val initialSmall = screenSaverClockSmall.textSize
+        if (!hasWeather) {
+            screenSaverClock.setTextSize(TypedValue.COMPLEX_UNIT_PX, initialRegular + 100)
+            screenSaverClockSmall.setTextSize(TypedValue.COMPLEX_UNIT_PX, initialSmall + 60)
+        }
 
-        this.options = options
-        this.rotationInterval = (options.getRotation() * 60 * 1000).toLong() // convert to milliseconds
-
-        if (useImageScreenSaver && options.isValid) {
-            screenSaverImage.visibility = View.VISIBLE
-            screenSaverClock.visibility = View.GONE
-            if (timeHandler != null) {
-                timeHandler!!.removeCallbacks(timeRunnable)
+        // setup the views
+        if (useImageSaver) {
+            screenSaverImageLayout.visibility = View.VISIBLE
+            screenSaverClockLayout.visibility = View.GONE
+            if(!hasWeather) {
+                screenSaverWeatherSmallLayout.visibility = View.GONE
+            } else {
+                screenSaverWeatherSmallLayout.visibility = View.VISIBLE
             }
             startImageScreenSavor()
-        } else if(useClockScreenSaver) { // use clock
-            screenSaverImage.visibility = View.GONE
-            screenSaverClock.visibility = View.VISIBLE
-            timeHandler = Handler()
-            timeHandler!!.postDelayed(timeRunnable, 10)
+        } else { // use clock
+            screenSaverImageLayout.visibility = View.GONE
+            screenSaverClockLayout.visibility = View.VISIBLE
+            if(!hasWeather) {
+                screenSaverWeatherLayout.visibility = View.GONE
+            } else {
+                screenSaverWeatherLayout.visibility = View.VISIBLE
+            }
         }
+    }
+
+    private fun setWeatherDataOnView() {
+        if(dataSource != null) {
+            dataSource!!.getItems()
+                    .filter { items -> items.isNotEmpty() }
+                    .map { items -> items[items.size - 1] }
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ item ->
+                        if (item != null) {
+                            val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
+                            if (useImageSaver) {
+                                temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
+                                conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                                if (item.umbrella) {
+                                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                }
+                            } else {
+                                temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
+                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                                if (item.umbrella) {
+                                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                }
+                            }
+                        }
+                    })
+        }
+    }
+
+    fun setScreenSaver(useImageScreenSaver: Boolean,  options:ImageOptions, dataSource: DarkSkyDao, hasWeather: Boolean) {
+        this.dataSource = dataSource
+        this.options = options
+        this.rotationInterval = (options.getRotation() * 60 * 1000).toLong() // convert to milliseconds
+        this.hasWeather = hasWeather
+        this.useImageSaver = useImageScreenSaver
+        if(hasWeather) {
+            setWeatherDataOnView()
+        }
+        setWeatherClockViews()
+        timeHandler = Handler()
+        timeHandler!!.postDelayed(timeRunnable, 10)
     }
 
     private fun startImageScreenSavor() {
@@ -181,6 +235,7 @@ class ScreenSaverView : RelativeLayout {
         }
     }
 
+    // TODO move to RxJava
     private fun fetchMediaData() {
         if (task == null || task!!.isCancelled) {
             val api = ImageApi()

@@ -57,7 +57,8 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingLeft="8dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="RtlSymmetry">
 
                 <TextView
                         android:id="@+id/temperatureText"
