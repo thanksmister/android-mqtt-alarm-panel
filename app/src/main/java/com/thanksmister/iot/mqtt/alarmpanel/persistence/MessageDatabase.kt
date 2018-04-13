@@ -24,7 +24,7 @@ import android.content.Context
 /**
  * The Room database that contains the Messages table
  */
-@Database(entities = arrayOf(Message::class), version = 2, exportSchema = false)
+@Database(entities = arrayOf(MessageMqtt::class), version = 2, exportSchema = false)
 abstract class MessageDatabase : RoomDatabase() {
 
     abstract fun messageDao(): MessageDao

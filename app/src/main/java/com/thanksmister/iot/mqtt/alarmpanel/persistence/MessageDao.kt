@@ -34,28 +34,28 @@ interface MessageDao {
      * @return the message from the table with a specific id.
      */
     @Query("SELECT * FROM Messages WHERE messageId = :id")
-    fun getMessageById(id: String): Flowable<Message>
+    fun getMessageById(id: String): Flowable<MessageMqtt>
 
     /**
      * Get all messages
      * @return list of all messages
      */
     @Query("SELECT * FROM Messages")
-    fun getMessages(): Flowable<List<Message>>
+    fun getMessages(): Flowable<List<MessageMqtt>>
 
     /**
      * Get all messages
      * @return list of all messages
      */
     @Query("SELECT * FROM Messages WHERE type = :type")
-    fun getMessages(type: String): Flowable<List<Message>>
+    fun getMessages(type: String): Flowable<List<MessageMqtt>>
 
     /**
      * Insert a message in the database. If the message already exists, replace it.
      * @param user the message to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMessage(message: Message)
+    fun insertMessage(message: MessageMqtt)
 
     /**
      * Delete all messages.

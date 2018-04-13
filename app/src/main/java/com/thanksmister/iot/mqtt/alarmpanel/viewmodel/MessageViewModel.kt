@@ -2,13 +2,11 @@ package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.graphics.Bitmap
 import android.text.TextUtils
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Message
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
@@ -24,7 +22,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
@@ -156,7 +153,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
      * Get the messages.
      * @return a [Flowable] that will emit every time the messages have been updated.
      */
-    fun getMessages():Flowable<List<Message>> {
+    fun getMessages():Flowable<List<MessageMqtt>> {
         return dataSource.getMessages()
                 .filter {messages -> messages.isNotEmpty()}
     }
@@ -188,7 +185,7 @@ constructor(application: Application, private val dataSource: MessageDao, privat
         }
         return Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()
-            val message = Message()
+            val message = MessageMqtt()
             message.type = type
             message.topic = topic
             message.payload = payload

@@ -110,6 +110,9 @@
             <TextView
                     style="@style/TextAppearance.SubTitle"
                     android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:lines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/yellow"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -152,6 +155,9 @@
             <TextView
                     style="@style/TextAppearance.SubTitle"
                     android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:lines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/red"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"

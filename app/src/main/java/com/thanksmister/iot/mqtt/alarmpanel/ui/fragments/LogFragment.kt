@@ -27,7 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Message
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MessageAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -55,7 +55,7 @@ class LogFragment : BaseFragment() {
         if (view is RecyclerView) {
             val context = view.getContext()
             view.layoutManager = LinearLayoutManager(context)
-            view.adapter =  MessageAdapter(ArrayList<Message>())
+            view.adapter =  MessageAdapter(ArrayList<MessageMqtt>())
         }
     }
 

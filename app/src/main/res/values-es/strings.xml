@@ -145,8 +145,8 @@
     <string name="toast_alarm_deactivated">¡Alarma desactivada!</string>
     <string name="activity_logs_title">Logs</string>
 
-    <string name="text_arm_home">MODO "EN CASA"</string>
-    <string name="text_arm_away">MODO "FUERA DE CASA"</string>
+    <string name="text_arm_home">EN CASA</string>
+    <string name="text_arm_away">FUERA DE CASA</string>
     <string name="text_system">ALARMA</string>
     <string name="text_disarmed">INACTIVA</string>
     <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO PARA ANULAR</string>

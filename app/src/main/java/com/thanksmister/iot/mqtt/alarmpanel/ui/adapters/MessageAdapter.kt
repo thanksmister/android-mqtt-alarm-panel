@@ -21,11 +21,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Message
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import kotlinx.android.synthetic.main.adapter_data_row.view.*
 
-class MessageAdapter(private val items: List<Message>?) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(private val items: List<MessageMqtt>?) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.adapter_data_row, parent, false)
@@ -42,7 +42,7 @@ class MessageAdapter(private val items: List<Message>?) : RecyclerView.Adapter<M
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(item: Message) {
+        fun bindItems(item: MessageMqtt) {
             itemView.typeText.text = item.type
             itemView.topicText.text = item.topic
             itemView.messageText.text = item.payload
