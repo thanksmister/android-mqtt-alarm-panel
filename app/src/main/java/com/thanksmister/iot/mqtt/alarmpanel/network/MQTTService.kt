@@ -93,6 +93,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                 Timber.d("Command Topic: " + mqttOptions?.getCommandTopic())
                 val mqttMessage = MqttMessage()
                 mqttMessage.payload = payload.toByteArray()
+                mqttMessage.isRetained = true // we want to remember last state
                 sendMessage(mqttOptions?.getCommandTopic(), mqttMessage)
             }
         } catch (e: MqttException) {
