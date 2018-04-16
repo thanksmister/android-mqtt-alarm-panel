@@ -22,7 +22,7 @@
     <!-- Preferences -->
     <string name="preference_summary_security_code">Establece el código por defecto para la alarma (el preestablecido es 1234).</string>
     <string name="preference_title_security_code">Código de seguridad</string>
-    <string name="preference_title_mqtt_server">Ajustes de MQTT</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
     <string name="preference_summary_mqtt_server">Ajuste de los valores para el servicio MQTT</string>
     <string name="preference_title_broker">MQTT Broker</string>
     <string name="preference_summary_broker">Especifica la dirrección del servidor "MQTT broker". Para tcp/ssl, no incluyas el prefijo (192.168.1.1). De lo contrario, inclúyelo (http://192.168.1.1).</string>
@@ -40,7 +40,7 @@
     <string name="preference_summary_username">Especifica el usuario para el servicio, si es necesario.</string>
     <string name="preference_title_password">Contraseña</string>
     <string name="preference_summary_password">Especifica la contraseña para el servicio, si es necesaria.</string>
-    <string name="preference_title_alarm">Ajustes de la alarma</string>
+    <string name="preference_title_alarm">Alarma</string>
     <string name="preference_summary_alarm">Ajustes del código de la alrma</string>
     <string name="preference_title_pending_time">Tiempo de espera</string>
     <string name="preference_summary_pending_time">El tiempo espera en segundos antes de que la alarma se active en los mdos "En casa" o "Fuera de casa". Actualmente es de %1$s segundos.</string>
@@ -80,7 +80,7 @@
     <string name="preference_title_image_rotation">Intervalo de la rotación de imágenes</string>
     <string name="preference_summary_image_rotation">Tiempo en minutos para la actualización de las imágenes. Actualmete es de %1$s.</string>
 
-    <string name="preference_title_web_settings">Domótica</string>
+    <string name="preference_title_web_settings">HASS</string>
     <string name="preference_summary_web_settings">Te permite introducir una dirección para el acceso a tu sistema de domótica.</string>
     <string name="preference_title_web">Página para el sistema de domótica</string>
     <string name="preference_summary_web">Visualiza la página de tu sistema de domótica deslizando la pantalla principal.</string>
@@ -113,7 +113,7 @@
     <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
-    <string name="preference_camera"> Cámara</string>
+    <string name="preference_camera">Cámara</string>
     <string name="preference_camera_title">Capturas con la cámara</string>
     <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma. (Nota: Requiere Android Lollipop o superior.)</string>
 

@@ -22,7 +22,7 @@
     <!-- Preferences -->
     <string name="preference_summary_security_code">Set the alarm system code (default is 1234).</string>
     <string name="preference_title_security_code">Security Code</string>
-    <string name="preference_title_mqtt_server">MQTT Setup</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
     <string name="preference_summary_mqtt_server">Set the values for the MQTT service</string>
     <string name="preference_title_broker">MQTT Broker</string>
     <string name="preference_summary_broker">Set MQTT broker service address. For tcp/ssl exclude the prefix (192.168.1.1). For others, include the prefix (http://192.168.1.1).</string>
@@ -40,7 +40,7 @@
     <string name="preference_summary_username">Set the service username (if needed).</string>
     <string name="preference_title_password">Password</string>
     <string name="preference_summary_password">Set the service password (if needed).</string>
-    <string name="preference_title_alarm">Alarm Settings</string>
+    <string name="preference_title_alarm">Alarm</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
     <string name="preference_title_pending_time">Pending Time</string>
     <string name="preference_summary_pending_time">The time in seconds of the pending time before the alarm is armed away or home). Currently %1$s seconds.</string>
@@ -60,8 +60,8 @@
     <string name="preference_title_units">Use Celsius (°C)</string>
     <string name="preference_summary_units">Use celsius for temperature values.</string>
 
-    <string name="preference_title_screen_saver_title">Screen Saver</string>
-    <string name="preference_title_screen_saver_settings">Screen Saver Settings</string>
+    <string name="preference_title_screen_saver_title">Screensaver</string>
+    <string name="preference_title_screen_saver_settings">Screensaver Settings</string>
     <string name="preference_summary_screen_saver_settings">When active, uses a built-in clock screen saver.</string>
     <string name="preference_title_screen_saver">Clock Screen Saver</string>
     <string name="pref_title_image_client_id">Imgur Client Id</string>
@@ -80,7 +80,7 @@
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
-    <string name="preference_title_web_settings">Home Automation</string>
+    <string name="preference_title_web_settings">HASS</string>
     <string name="preference_summary_web_settings">Allows you to load external web page to access your home automation platform interface.</string>
     <string name="preference_title_web">Home Automation Page</string>
     <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
@@ -113,7 +113,7 @@
     <string name="preference_tts_topic_summary">Example format for the message topic and alarmState to be spoken (note that externally powered speakers are required for TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
-    <string name="preference_camera">Camera Capture</string>
+    <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera Capture</string>
     <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled. (Note: Requires Android Lollipop or above.)</string>
 

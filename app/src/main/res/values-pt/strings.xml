@@ -24,7 +24,7 @@
     <!-- Preferences -->
     <string name="preference_summary_security_code">Configurar o código de segurança do alarme (o código por defeito é 1234).</string>
     <string name="preference_title_security_code">Código de Segurança</string>
-    <string name="preference_title_mqtt_server">Configuração de MQTT</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
     <string name="preference_summary_mqtt_server">Defina os valores para o serviço MQTT</string>
     <string name="preference_title_broker">Servidor MQTT</string>
     <string name="preference_summary_broker">Defina o endereço do servidor MQTT. Para endereços com TCP/SSL exclua o prefixo (192.168.1.1). Para os outros, inclua o prefixo (http://192.168.1.1).</string>
@@ -42,7 +42,7 @@
     <string name="preference_summary_username">Defina o nome de utilizador do servidor MQTT (se necessário).</string>
     <string name="preference_title_password">Password</string>
     <string name="preference_summary_password">Defina a password do servidor MQTT (se necessário).</string>
-    <string name="preference_title_alarm">Configurações do Alarme</string>
+    <string name="preference_title_alarm">Alarme</string>
     <string name="preference_summary_alarm">Configurações do código de alarme</string>
     <string name="preference_title_pending_time">Tempo de Espera</string>
     <string name="preference_summary_pending_time">O tempo, em segundos, antes que o alarme seja armado ("Em Casa" ou "Fora de Casa"). Actualmente, %1$s segundos.</string>
@@ -62,7 +62,7 @@
     <string name="preference_title_units">Usar graus Celsius (°C)</string>
     <string name="preference_summary_units">Utilizar graus celsius nos valores das temperaturas.</string>
 
-    <string name="preference_title_screen_saver_title">Protecção de Ecrã</string>
+    <string name="preference_title_screen_saver_title">Ecrã</string>
     <string name="preference_title_screen_saver_settings">Configurações da Protecção de Ecrã</string>
     <string name="preference_summary_screen_saver_settings">Quando activo, usa a proteção de ecrã de relógio incorporada.</string>
     <string name="preference_title_screen_saver">Proteção de Ecrã de Relógio</string>
@@ -82,7 +82,7 @@
     <string name="preference_title_image_rotation">Tempo de entre cada imagem</string>
     <string name="preference_summary_image_rotation">O tempo, em minutos, entre cada imagem. Actualmente %1$s.</string>
 
-    <string name="preference_title_web_settings">Automação Doméstica</string>
+    <string name="preference_title_web_settings">HASS</string>
     <string name="preference_summary_web_settings">Permite carregar uma página web externa de acesso à plataforma de automação doméstica.</string>
     <string name="preference_title_web">Página da Automação Doméstica</string>
     <string name="preference_summary_web">Mostra a página da automação doméstica no ecrã principal.</string>
@@ -114,7 +114,7 @@
     <string name="preference_tts_topic_summary">Exemplo de formato para o tópico da mensagem e do estado do alarme para ser dito (deverão ser usados altofalantes alimentados externamente para o TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
-    <string name="preference_camera">Captura da Camera</string>
+    <string name="preference_camera">Câmera</string>
     <string name="preference_camera_title">Captura da Camera</string>
     <string name="preference_camera_summary">Utilizar a camara para capturar uma imagem e envia-la por email quando o alarme for desligado. (Nota: Requer Android Lollipop ou superior.)</string>
 

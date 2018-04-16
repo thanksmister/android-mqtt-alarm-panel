@@ -22,7 +22,7 @@
     <!-- Preferences -->
     <string name="preference_summary_security_code">Zet de alarmcode (standaard is 1234).</string>
     <string name="preference_title_security_code">Alarmcode</string>
-    <string name="preference_title_mqtt_server">MQTT instellingen</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
     <string name="preference_summary_mqtt_server">Stel de waarden voor de MQTT service in</string>
     <string name="preference_title_broker">MQTT Broker</string>
     <string name="preference_summary_broker">Zet het MQTT broker service adres. Voor tcp/ssl laat het voorvoegsel weg (192.168.1.1). Voor andere manieren, voeg het voorvoegsel toe (http://192.168.1.1).</string>
@@ -40,7 +40,7 @@
     <string name="preference_summary_username">Stel de service gebruikersnaam in (als dat nodig is).</string>
     <string name="preference_title_password">Wachtwoord</string>
     <string name="preference_summary_password">Stel het service wachtwoord in (als dat nodig is).</string>
-    <string name="preference_title_alarm">Alarm instellingen</string>
+    <string name="preference_title_alarm">Alarm</string>
     <string name="preference_summary_alarm">Alarmcode instellingen</string>
     <string name="preference_title_pending_time">Wachttijd</string>
     <string name="preference_summary_pending_time">De tijd in seconden voordat het alarm ingeschakeld is (Thuis of van huis). Momenteel %1$s seconden.</string>
@@ -80,7 +80,7 @@
     <string name="preference_title_image_rotation">Afbeelding rotatie interval</string>
     <string name="preference_summary_image_rotation">Tijd in minuten tussen rotatie van afbeeldingen. Momenteel %1$s.</string>
 
-    <string name="preference_title_web_settings">Domotica</string>
+    <string name="preference_title_web_settings">HASS</string>
     <string name="preference_summary_web_settings">Laat je een externe web pagina laden om je domotica platform weer te geven.</string>
     <string name="preference_title_web">Domotica pagina</string>
     <string name="preference_summary_web">Geeft je domotica platform weer door te swipen op het startscherm.</string>
@@ -113,7 +113,7 @@
     <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
 
 
-    <string name="preference_camera">Camera opname</string>
+    <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera opname</string>
     <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt. Let op: Werkt alleen op Android Lollipop of hoger.)</string>
 
