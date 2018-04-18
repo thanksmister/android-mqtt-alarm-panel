@@ -40,7 +40,7 @@ abstract class DarkSkyDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context) =
                 Room.databaseBuilder(context.applicationContext,
-                        DarkSkyDatabase::class.java, "alarm_panel.db")
+                        DarkSkyDatabase::class.java, "weather.db")
                         .fallbackToDestructiveMigration()
                         .build()
     }

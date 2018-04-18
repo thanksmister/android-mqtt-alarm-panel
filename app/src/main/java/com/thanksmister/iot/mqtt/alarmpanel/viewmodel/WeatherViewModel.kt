@@ -136,7 +136,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
         Timber.d("getDarkSkyHourlyForecast")
         val api = DarkSkyApi()
         val fetcher = DarkSkyFetcher(api)
-        Observable.interval(LOAD_INTERVAL, TimeUnit.MINUTES)
+        disposable.add(Observable.interval(LOAD_INTERVAL, TimeUnit.MINUTES)
                  .startWith(0L)
                   .subscribeOn(Schedulers.io())
                  .flatMap { n -> fetcher.getExtendedFeedData(key, units, lat, lon) }
@@ -182,7 +182,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
                              }
                  }
                  .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe()
+                 .subscribe())
 
 
        /* disposable.add(fetcher.getExtendedFeedData(key, units, lat, lon)
