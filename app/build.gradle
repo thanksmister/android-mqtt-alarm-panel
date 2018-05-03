@@ -39,8 +39,8 @@ repositories {
 
 def versionMajor = 0
 def versionMinor = 7
-def versionPatch = 7
-def versionBuild = 2 // bump for dog food builds, public betas, etc.
+def versionPatch = 8
+def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -129,6 +129,7 @@ def IMGUR_TAG() {
 android {
     kapt {
         generateStubs = true
+        correctErrorTypes = true
     }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"

@@ -26,6 +26,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.widget.RelativeLayout
+import android.widget.Toast
 import com.squareup.picasso.Picasso
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
@@ -149,6 +150,9 @@ class ScreenSaverView : RelativeLayout {
             dataSource!!.getItems()
                     .filter { items -> items.isNotEmpty() }
                     .map { items -> items[items.size - 1] }
+                    .doOnError { error ->
+                        Timber.e(error.message)
+                    }
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ item ->
@@ -156,15 +160,27 @@ class ScreenSaverView : RelativeLayout {
                             val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
                             if (useImageSaver) {
                                 temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
-                                if (item.umbrella) {
-                                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                try {
+                                    if (item.umbrella) {
+                                        conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                    } else {
+                                        conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                                    }
+                                } catch (e : Exception) {
+                                    Timber.e(e.message)
+                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                                 }
                             } else {
                                 temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
-                                if (item.umbrella) {
-                                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                try {
+                                    if (item.umbrella) {
+                                         conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                                    } else {
+                                         conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                                    }
+                                } catch (e : Exception) {
+                                    Timber.e(e.message)
+                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                                 }
                             }
                         }

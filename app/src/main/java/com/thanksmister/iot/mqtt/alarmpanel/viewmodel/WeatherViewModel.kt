@@ -119,6 +119,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
     }
 
     public override fun onCleared() {
+        Timber.d("onCleared")
         //prevents memory leaks by disposing pending observable objects
         if ( !disposable.isDisposed) {
             disposable.clear()
@@ -130,107 +131,62 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
      * @param units SI or US
      * @param lat Location latitude
      * @param lon Location longitude
-     * @param callback A nice little listener to wrap up the response
      */
     fun getDarkSkyHourlyForecast(key: String, units: String, lat: String, lon: String) {
+        if(disposable.size() > 0) {
+            return
+        }
         Timber.d("getDarkSkyHourlyForecast")
         val api = DarkSkyApi()
         val fetcher = DarkSkyFetcher(api)
         disposable.add(Observable.interval(LOAD_INTERVAL, TimeUnit.MINUTES)
-                 .startWith(0L)
-                  .subscribeOn(Schedulers.io())
-                 .flatMap { n -> fetcher.getExtendedFeedData(key, units, lat, lon) }
-                 .doOnNext({ darkSkyResponse ->
-                     Timber.d("response received")
-                     var umbrella = false
-                     var icon = ""
-                     var temperature = ""
-                     var precipitation = ""
-                     var summary = ""
-                     var data = ""
-                     // current weather
-                     if (darkSkyResponse.currently != null) {
-                         icon = darkSkyResponse.currently.icon
-                         temperature = round(darkSkyResponse.currently.apparentTemperature).toString()
-                         precipitation = darkSkyResponse.currently.precipProbability.toString()
-                         summary = darkSkyResponse.currently.summary
-                     }
-                     // should we take an umbrella today?
-                     if (darkSkyResponse.currently != null && darkSkyResponse.currently.precipProbability != null) {
-                         umbrella = shouldTakeUmbrellaToday(darkSkyResponse.currently.precipProbability!!)
-                     }
-                     // extended forecast
-                     if (darkSkyResponse.daily != null) {
-                         data = Gson().toJson(darkSkyResponse.daily.data)
-                     }
+                .startWith(0L)
+                .subscribeOn(Schedulers.io())
+                .doOnError { error ->
+                    var errorMessage: String? = "Error retrieving Dark Sky data."
+                    if (!TextUtils.isEmpty(error.message)) {
+                        errorMessage = "Dark Sky Error " + error.message
+                    }
+                    Timber.e("Dark Sky Error: " + errorMessage);
+                    Observable.just(true)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                showAlertMessage(errorMessage)
+                            }
+                }
+                .flatMap { n -> fetcher.getExtendedFeedData(key, units, lat, lon) }
+                .doOnNext({ darkSkyResponse ->
+                    Timber.d("response received")
+                    var umbrella = false
+                    var icon = ""
+                    var temperature = ""
+                    var precipitation = ""
+                    var summary = ""
+                    var data = ""
+                    // current weather
+                    if (darkSkyResponse.currently != null) {
+                        icon = darkSkyResponse.currently.icon
+                        temperature = round(darkSkyResponse.currently.apparentTemperature).toString()
+                        precipitation = darkSkyResponse.currently.precipProbability.toString()
+                        summary = darkSkyResponse.currently.summary
+                    }
+                    // should we take an umbrella today?
+                    if (darkSkyResponse.currently != null && darkSkyResponse.currently.precipProbability != null) {
+                        umbrella = shouldTakeUmbrellaToday(darkSkyResponse.currently.precipProbability!!)
+                    }
+                    // extended forecast
+                    if (darkSkyResponse.daily != null) {
+                        data = Gson().toJson(darkSkyResponse.daily.data)
+                    }
 
-                     insertNetworkResponse(icon, temperature, precipitation, units, summary, data, umbrella)
-                 })
-                 .doOnComplete({
-                     Timber.d("complete")}
-                 )
-                 .doOnError { error ->
-                     var errorMessage: String? = "Error retrieving Dark Sky data."
-                     if(!TextUtils.isEmpty(error.message)) {
-                         errorMessage = "Dark Sky Error " + error.message
-                     }
-                     Timber.e("Dark Sky Error: " + errorMessage);
-                     Observable.just(true)
-                             .observeOn(AndroidSchedulers.mainThread())
-                             .subscribe { aBoolean ->
-                                 showAlertMessage("Dark Sky: " + errorMessage)
-                             }
-                 }
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe())
-
-
-       /* disposable.add(fetcher.getExtendedFeedData(key, units, lat, lon)
-                .subscribeOn(Schedulers.computation())
+                    insertNetworkResponse(icon, temperature, precipitation, units, summary, data, umbrella)
+                })
+                .doOnComplete({
+                    Timber.d("complete")
+                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith( object : DisposableObserver<DarkSkyResponse>() {
-                    override fun onNext(darkSkyResponse: DarkSkyResponse) {
-                        var umbrella = false
-                        var icon = ""
-                        var temperature = ""
-                        var precipitation = ""
-                        var summary = ""
-                        var data = ""
-
-                        // current weather
-                        if (darkSkyResponse.currently != null) {
-                            icon = darkSkyResponse.currently.icon
-                            temperature = round(darkSkyResponse.currently.apparentTemperature).toString()
-                            precipitation = darkSkyResponse.currently.precipProbability.toString()
-                            summary = darkSkyResponse.currently.summary
-                        }
-
-                        // should we take an umbrella today?
-                        if (darkSkyResponse.currently != null && darkSkyResponse.currently.precipProbability != null) {
-                            umbrella = shouldTakeUmbrellaToday(darkSkyResponse.currently.precipProbability!!)
-                        }
-
-                        // extended forecast
-                        if (darkSkyResponse.daily != null) {
-                            data = Gson().toJson(darkSkyResponse.daily.data)
-                        }
-
-                        showAlertMessage("We win!!")
-                        insertNetworkResponse(icon, temperature, precipitation, units, summary, data, umbrella)
-                    }
-                    override fun onComplete() {
-                        Timber.d("complete");
-                        showAlertMessage("We win!!")
-                    }
-                    override fun onError(error: Throwable) {
-                        var errorMessage: String? = "Error retrieving DarkSky data."
-                        if(!TextUtils.isEmpty(error.message)) {
-                            errorMessage = "DarkSky Error " + error.message
-                        }
-                        Timber.e("error: " + errorMessage);
-                        showAlertMessage(errorMessage)
-                    }
-                }))*/
+                .subscribe({
+                }, { error -> Timber.e("Dark Sky error" + error.message) }))
     }
 
     /**
@@ -239,7 +195,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
      * @return
      */
     private fun shouldTakeUmbrellaToday(precipProbability: Double): Boolean {
-        return precipProbability > 0.3
+        return precipProbability > PRECIP_AMOUNT
     }
 
     /**
@@ -249,6 +205,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
      * a boolean flag.
      */
     companion object {
-        val LOAD_INTERVAL: Long = 30 // in minutes
+        const val LOAD_INTERVAL: Long = 30 // in minutes
+        const val PRECIP_AMOUNT: Double = 0.3 // rain probability
     }
 }

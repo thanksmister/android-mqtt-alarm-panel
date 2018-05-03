@@ -96,8 +96,14 @@ class InformationFragment : BaseFragment() {
             connectWeatherModule()
             weatherLayout.visibility = View.VISIBLE
         } else {
+            weatherViewModel.onCleared()
             weatherLayout.visibility = View.GONE
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        weatherViewModel.onCleared()
     }
 
     override fun onDetach() {
@@ -127,10 +133,11 @@ class InformationFragment : BaseFragment() {
                                     outlookText.text = item.summary
                                     val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
                                     temperatureText.text = getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
                                     forecastList = Gson().fromJson(item.data, object : TypeToken<List<Datum>>(){}.type)
                                     if (item.umbrella) {
                                         conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                    } else {
+                                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
                                     }
                                 }
                             }

@@ -107,7 +107,7 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
 
     override fun subscriptionMessage(id: String, topic: String, payload: String) {
         Timber.d("topic: " + topic)
-        if (NOTIFICATION_STATE_TOPIC == topic || (ALARM_STATE_TOPIC == topic && AlarmUtils.hasSupportedStates(payload))) {
+        if (mqttOptions.getNotificationTopic() == topic || (ALARM_STATE_TOPIC == topic && AlarmUtils.hasSupportedStates(payload))) {
             listener.onMQTTMessage(id, topic, payload)
         } else {
             Timber.e("We received some bad info: topic: $topic payload: $payload");

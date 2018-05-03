@@ -67,7 +67,7 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
             textToSpeech?.language = Locale.getDefault()
             textToSpeech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onError(p0: String?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    // na-da
                 }
                 override fun onStart(utteranceId: String) {
                     Timber.i("onStart")

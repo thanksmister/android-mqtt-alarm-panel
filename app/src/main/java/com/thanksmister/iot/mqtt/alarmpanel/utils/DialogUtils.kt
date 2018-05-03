@@ -219,7 +219,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
         view.minimumWidth = (displayRectangle.width() * 0.7f).toInt()
         val density = activity.resources.displayMetrics.densityDpi
-        if(resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             if (density == DisplayMetrics.DENSITY_MEDIUM) {
                 view.minimumHeight = (displayRectangle.height() * 0.6f).toInt()
             } else {

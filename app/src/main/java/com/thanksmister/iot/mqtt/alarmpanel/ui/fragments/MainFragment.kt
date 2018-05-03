@@ -165,14 +165,16 @@ class MainFragment : BaseFragment() {
      * alarm will trigger immediately.
      */
     private fun showAlarmDisableDialog(delayTime: Int) {
-        if(isAdded && delayTime > 0) {
+        if(isAdded && delayTime > 0 && activity != null) {
             dialogUtils.showAlarmDisableDialog(activity as BaseActivity, object : AlarmDisableView.ViewListener {
                 override fun onComplete(code: Int) {
                     listener?.publishDisarmed()
                     dialogUtils.clearDialogs()
                 }
                 override fun onError() {
-                    Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    if(activity != null) {
+                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    }
                 }
                 override fun onCancel() {
                     dialogUtils.clearDialogs()
@@ -182,7 +184,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun showAlarmTriggered() {
-        if (isAdded) {
+        if (isAdded && activity != null) {
             mainView.visibility = View.GONE
             triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode

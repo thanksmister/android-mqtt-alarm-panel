@@ -47,7 +47,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -98,7 +97,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             readWeatherOptions().setIsCelsius(true)
             configuration.isFirstTime = false
             configuration.setHasNotifications(true)
-            configuration.setClockScreenSaverModule(false)
+            configuration.setClockScreenSaverModule(true)
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCamera(true)
             configuration.setWebModule(true)
@@ -324,7 +323,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
-        if(NOTIFICATION_STATE_TOPIC == topic) {
+        if(readMqttOptions().getNotificationTopic() == topic) {
             this@MainActivity.runOnUiThread({
                 if(viewModel.hasSystemAlerts()) {
                     val notifications = NotificationUtils(this@MainActivity)
