@@ -40,6 +40,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
@@ -52,10 +53,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFragment.OnControlsFragmentListener,
         MQTTModule.MQTTListener, CameraModule.CallbackListener, MainFragment.OnMainFragmentListener, PlatformFragment.OnPlatformFragmentListener {
+
+    @Inject
+    lateinit var mqttOptions: MQTTOptions
 
     private lateinit var pagerAdapter: PagerAdapter
 
@@ -84,7 +89,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             readWeatherOptions().darkSkyKey = BuildConfig.DARK_SKY_KEY
             readWeatherOptions().setLat(BuildConfig.LATITUDE)
             readWeatherOptions().setLon(BuildConfig.LONGITUDE)
-            readMqttOptions().setBroker(BuildConfig.BROKER)
+            mqttOptions.setBroker(BuildConfig.BROKER)
             configuration.webUrl = BuildConfig.HASS_URL
             configuration.setMailFrom(BuildConfig.MAIL_FROM)
             configuration.setMailGunApiKey(BuildConfig.MAIL_GUN_KEY)
@@ -249,7 +254,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private val initializeOnBackground = Runnable {
-        Timber.d("initializeOnBackground")
+        Timber.d("c")
         if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewModel.hasTss()) {
             Timber.d("textToSpeechModule")
             textToSpeechModule = TextToSpeechModule(this@MainActivity, configuration)
@@ -257,9 +262,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 lifecycle.addObserver(textToSpeechModule!!)
             })
         }
-        if (mqttModule == null && readMqttOptions().isValid) {
+        if (mqttModule == null && mqttOptions.isValid) {
             Timber.d("mqttModule")
-            mqttModule = MQTTModule(this@MainActivity.applicationContext, readMqttOptions(),this@MainActivity)
+            mqttModule = MQTTModule(this@MainActivity.applicationContext, mqttOptions,this@MainActivity)
             runOnUiThread({
                 lifecycle.addObserver(mqttModule!!)
             })
@@ -323,14 +328,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
-        if(readMqttOptions().getNotificationTopic() == topic) {
+        Timber.d("onMQTTMessage topic: " + topic)
+        Timber.d("onMQTTMessage payload: " + payload)
+        if(mqttOptions.getNotificationTopic() == topic) {
             this@MainActivity.runOnUiThread({
                 if(viewModel.hasSystemAlerts()) {
                     val notifications = NotificationUtils(this@MainActivity)
                     notifications.createAlarmNotification(getString(R.string.preference_title_system_notifications), payload)
                 }
                 if(viewModel.hasAlerts() || viewModel.hasTss()) {
-                    awakenDeviceForAction() // wake device temporarily for alerts
+                    awakenDeviceForAction()
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         if (textToSpeechModule != null && viewModel.hasTss()) {
                             textToSpeechModule!!.speakText(payload)

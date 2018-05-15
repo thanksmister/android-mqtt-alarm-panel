@@ -64,10 +64,6 @@ open class BaseFragment : DaggerFragment() {
         disposable.dispose()
     }
 
-    fun readMqttOptions(): MQTTOptions {
-        return (activity as BaseActivity).readMqttOptions()
-    }
-
     fun readWeatherOptions(): DarkSkyOptions {
         return (activity as BaseActivity).readWeatherOptions()
     }

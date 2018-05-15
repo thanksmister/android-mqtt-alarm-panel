@@ -295,7 +295,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:tint="@color/dark_gray"
-                    android:src="@drawable/ic_backspace_black_32dp"/>
+                    android:src="@drawable/ic_backspace_black"/>
                 
             </FrameLayout>
 

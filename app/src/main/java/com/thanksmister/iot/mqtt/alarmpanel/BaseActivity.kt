@@ -212,7 +212,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         Timber.d("acquireTemporaryWakeLock")
         if (wakeLock == null) {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "ALARM_TEMPORARY_WAKE_TAG")
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "alarm:ALARM_TEMPORARY_WAKE_TAG")
         }
         if (wakeLock != null && !wakeLock!!.isHeld()) {  // but we don't hold it
             wakeLock!!.acquire(10000)
@@ -235,10 +235,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         if (wakeLock != null && wakeLock!!.isHeld()) {
             wakeLock!!.release()
         }
-    }
-
-    fun readMqttOptions(): MQTTOptions {
-        return MQTTOptions(preferences)
     }
 
     fun readWeatherOptions(): DarkSkyOptions {
@@ -312,8 +308,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
+    fun applicationInBackground():Boolean {
+        return !LifecycleHandler.isApplicationInForeground() && !userPresent
+    }
+
     fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground() && !userPresent) {
+        if (applicationInBackground()) {
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP

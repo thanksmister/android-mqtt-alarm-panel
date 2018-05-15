@@ -41,6 +41,7 @@ import javax.inject.Inject
 class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var mqttOptions: MQTTOptions
     
     private var topicPreference: EditTextPreference? = null
     private var systemPreference: CheckBoxPreference? = null
@@ -49,7 +50,6 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
     private var soundPreference: CheckBoxPreference? = null
     private var alertsPreference: CheckBoxPreference? = null
     private var descriptionPreference: Preference? = null
-    private var mqttOptions: MQTTOptions? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -82,10 +82,6 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
 
         super.onViewCreated(view, savedInstanceState)
 
-        if (isAdded && activity != null) {
-            mqttOptions = (activity as BaseActivity).readMqttOptions()
-        }
-
         topicPreference = findPreference(PREF_NOTIFICATION_TOPIC) as EditTextPreference
         notificationsPreference = findPreference(Configuration.PREF_MODULE_NOTIFICATION) as CheckBoxPreference
         soundPreference = findPreference(Configuration.PREF_SYSTEM_SOUNDS) as CheckBoxPreference
@@ -100,9 +96,9 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
         systemPreference!!.isChecked = configuration.hasSystemAlerts()
         soundPreference!!.isChecked = configuration.systemSounds
 
-        if (!TextUtils.isEmpty(mqttOptions!!.getNotificationTopic())) {
-            topicPreference!!.text = mqttOptions!!.getNotificationTopic()
-            topicPreference!!.summary = mqttOptions!!.getNotificationTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getNotificationTopic())) {
+            topicPreference!!.text = mqttOptions.getNotificationTopic()
+            topicPreference!!.summary = mqttOptions.getNotificationTopic()
         }
 
         topicPreference!!.isEnabled = configuration.hasNotifications()
@@ -117,7 +113,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
             PREF_NOTIFICATION_TOPIC -> {
                 value = topicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setNotificationTopic(value)
+                    mqttOptions.setNotificationTopic(value)
                     topicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()

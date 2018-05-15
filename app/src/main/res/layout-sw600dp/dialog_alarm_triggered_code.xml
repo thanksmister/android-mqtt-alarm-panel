@@ -363,7 +363,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_backspace_black_32dp"
+                        android:src="@drawable/ic_backspace_black"
                         android:tint="@color/white"
                         tools:ignore="ContentDescription" />
 

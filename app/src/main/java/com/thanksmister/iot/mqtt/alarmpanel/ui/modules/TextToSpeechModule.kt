@@ -36,10 +36,6 @@ import android.content.Intent
 import android.support.v4.content.ContextCompat.startActivity
 import android.icu.util.ULocale.getLanguage
 
-
-
-
-
 /**
  * Module to use Google Text-to-Speech to speak the payload of MQTT messages.
  */
@@ -54,14 +50,14 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
     init {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
         if(configuration.hasTssModule() && textToSpeech == null) {
+            Timber.i( "TTS initializing")
             textToSpeech = TextToSpeech(baseContext, this)
         }
     }
 
-    // FIXME null pointer line 67 for textToSpeech
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
             textToSpeech?.language = Locale.getDefault()
@@ -96,10 +92,6 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
                 textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
             }
         }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun pause() {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

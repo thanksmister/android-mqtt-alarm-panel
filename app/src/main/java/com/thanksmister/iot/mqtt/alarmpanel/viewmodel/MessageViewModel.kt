@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.text.TextUtils
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
@@ -38,7 +39,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MessageViewModel @Inject
-constructor(application: Application, private val dataSource: MessageDao, private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application, private val dataSource: MessageDao, private val configuration: Configuration, private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
 
     private var mailSubscription: Disposable? = null
     private var telegramSubscription: Disposable? = null
@@ -48,10 +49,10 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     @AlarmUtils.AlarmStates
     private fun setAlarmModeFromState(state: String) {
         if(state == AlarmUtils.STATE_PENDING) {
-            if (getAlarmMode().equals(MODE_ARM_HOME) || getAlarmMode().equals(MODE_ARM_AWAY)) {
-                if (getAlarmMode().equals(MODE_ARM_HOME)){
+            if (getAlarmMode() == MODE_ARM_HOME || getAlarmMode() == MODE_ARM_AWAY) {
+                if (getAlarmMode() == MODE_ARM_HOME){
                     setAlarmMode(MODE_HOME_TRIGGERED_PENDING);
-                } else if(getAlarmMode().equals(MODE_ARM_AWAY)) {
+                } else if(getAlarmMode() == MODE_ARM_AWAY) {
                     setAlarmMode(MODE_AWAY_TRIGGERED_PENDING);
                 } else {
                     setAlarmMode(MODE_TRIGGERED_PENDING);
@@ -178,10 +179,9 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     fun insertMessage(messageId: String,topic: String, payload: String): Completable {
         Timber.d("insertMessage: " + topic)
         Timber.d("insertMessage: " + payload)
-        val type = if(ALARM_STATE_TOPIC == topic) {
-            ALARM_TYPE
-        } else {
-            NOTIFICATION_TYPE
+        val type = when (topic) {
+            mqttOptions.getNotificationTopic() -> NOTIFICATION_TYPE
+            else -> ALARM_TYPE
         }
         return Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()

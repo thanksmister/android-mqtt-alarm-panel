@@ -54,7 +54,6 @@ class MQTTService(private var context: Context, options: MQTTOptions,
     override fun close() {
         Timber.d("close")
         if (mqttClient != null) {
-            // TODO IllegalArgumentException: Invalid ClientHandle and no dialog showing sound stuck
             mqttClient?.setCallback(null)
             if (mqttClient!!.isConnected) {
                 mqttClient!!.disconnect(0)
@@ -119,7 +118,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             Timber.i("TslConnect: " + mqttOptions!!.getTlsConnection())
             Timber.i("MQTT Configuration:")
             Timber.i("Broker: " + mqttOptions?.brokerUrl)
-            Timber.i("Subscibed to topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
+            Timber.i("Subscribed to topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
             Timber.i("Publishing to topic: " + mqttOptions!!.getCommandTopic())
             if (mqttOptions!!.isValid) {
                 initializeMqttClient()
@@ -130,17 +129,14 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             }
         } catch (e: MqttException) {
             if (listener != null) {
-                //listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
                 listener!!.handleMqttException(context.getString(R.string.error_mqtt_connection))
             }
         } catch (e: IOException) {
             if (listener != null) {
-                //listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
                 listener!!.handleMqttException(context.getString(R.string.error_mqtt_connection))
             }
         } catch (e: GeneralSecurityException) {
             if (listener != null) {
-                //listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
                 listener!!.handleMqttException(context.getString(R.string.error_mqtt_connection))
             }
         }
@@ -215,7 +211,6 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                 Timber.e("Error Sending Command: " + e.message)
                 e.printStackTrace()
                 if (listener != null) {
-                    //listener!!.handleMqttException("Error Sending Command: " + e.message)
                     listener!!.handleMqttException(context.getString(R.string.error_mqtt_subscription))
                 }
             }

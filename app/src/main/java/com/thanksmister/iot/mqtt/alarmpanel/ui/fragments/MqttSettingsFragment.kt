@@ -45,6 +45,7 @@ import javax.inject.Inject
 class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var mqttOptions: MQTTOptions
 
     private var brokerPreference: EditTextPreference? = null
     private var clientPreference: EditTextPreference? = null
@@ -54,7 +55,6 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var userNamePreference: EditTextPreference? = null
     private var sslPreference: CheckBoxPreference? = null
     private var passwordPreference: EditTextPreference? = null
-    private var mqttOptions: MQTTOptions? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -95,40 +95,36 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
+        
+        brokerPreference!!.text = mqttOptions.getBroker()
+        clientPreference!!.text = mqttOptions.getClientId().toString()
+        portPreference!!.text = mqttOptions.getPort().toString()
+        commandTopicPreference!!.text = mqttOptions.getCommandTopic()
+        stateTopicPreference!!.text = mqttOptions.getStateTopic()
+        userNamePreference!!.text = mqttOptions.getUsername()
+        passwordPreference!!.text = mqttOptions.getPassword()
+        sslPreference!!.isChecked = mqttOptions.getTlsConnection()
 
-        if (isAdded && activity != null) {
-            mqttOptions = (activity as BaseActivity).readMqttOptions()
+        if (!TextUtils.isEmpty(mqttOptions.getBroker())) {
+            brokerPreference!!.summary = mqttOptions.getBroker()
         }
-
-        brokerPreference!!.text = mqttOptions!!.getBroker()
-        clientPreference!!.text = mqttOptions!!.getClientId().toString()
-        portPreference!!.text = mqttOptions!!.getPort().toString()
-        commandTopicPreference!!.text = mqttOptions!!.getCommandTopic()
-        stateTopicPreference!!.text = mqttOptions!!.getStateTopic()
-        userNamePreference!!.text = mqttOptions!!.getUsername()
-        passwordPreference!!.text = mqttOptions!!.getPassword()
-        sslPreference!!.isChecked = mqttOptions!!.getTlsConnection()
-
-        if (!TextUtils.isEmpty(mqttOptions!!.getBroker())) {
-            brokerPreference!!.summary = mqttOptions!!.getBroker()
+        if (!TextUtils.isEmpty(mqttOptions.getClientId())) {
+            clientPreference!!.summary = mqttOptions.getClientId()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getClientId())) {
-            clientPreference!!.summary = mqttOptions!!.getClientId()
+        if (!TextUtils.isEmpty(mqttOptions.getPort().toString())) {
+            portPreference!!.summary = mqttOptions.getPort().toString()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getPort().toString())) {
-            portPreference!!.summary = mqttOptions!!.getPort().toString()
+        if (!TextUtils.isEmpty(mqttOptions.getCommandTopic())) {
+            commandTopicPreference!!.summary = mqttOptions.getCommandTopic()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getCommandTopic())) {
-            commandTopicPreference!!.summary = mqttOptions!!.getCommandTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getStateTopic())) {
+            stateTopicPreference!!.summary = mqttOptions.getStateTopic()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getStateTopic())) {
-            stateTopicPreference!!.summary = mqttOptions!!.getStateTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getUsername())) {
+            userNamePreference!!.summary = mqttOptions.getUsername()
         }
-        if (!TextUtils.isEmpty(mqttOptions!!.getUsername())) {
-            userNamePreference!!.summary = mqttOptions!!.getUsername()
-        }
-        if (!TextUtils.isEmpty(mqttOptions!!.getPassword())) {
-            passwordPreference!!.summary = toStars(mqttOptions!!.getPassword())
+        if (!TextUtils.isEmpty(mqttOptions.getPassword())) {
+            passwordPreference!!.summary = toStars(mqttOptions.getPassword())
         }
     }
 
@@ -138,7 +134,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             PREF_BROKER -> {
                 value = brokerPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setBroker(value)
+                    mqttOptions.setBroker(value)
                     brokerPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
@@ -147,56 +143,56 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             PREF_CLIENT_ID -> {
                 value = clientPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setClientId(value)
+                    mqttOptions.setClientId(value)
                     clientPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    clientPreference!!.text = mqttOptions!!.getClientId()
+                    clientPreference!!.text = mqttOptions.getClientId()
                 }
             }
             PREF_PORT -> {
                 value = portPreference!!.text
                 if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setPort(Integer.valueOf(value)!!)
+                    mqttOptions.setPort(Integer.valueOf(value)!!)
                     portPreference!!.summary = value.toString()
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    portPreference!!.text = mqttOptions!!.getPort().toString()
+                    portPreference!!.text = mqttOptions.getPort().toString()
                 }
             }
             PREF_COMMAND_TOPIC -> {
                 value = commandTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setCommandTopic(value)
+                    mqttOptions.setCommandTopic(value)
                     commandTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    commandTopicPreference!!.text = mqttOptions!!.getCommandTopic()
+                    commandTopicPreference!!.text = mqttOptions.getCommandTopic()
                 }
             }
             PREF_STATE_TOPIC -> {
                 value = stateTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
-                    mqttOptions!!.setAlarmTopic(value)
+                    mqttOptions.setAlarmTopic(value)
                     stateTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    stateTopicPreference!!.text = mqttOptions!!.getStateTopic()
+                    stateTopicPreference!!.text = mqttOptions.getStateTopic()
                 }
             }
             PREF_USERNAME -> {
                 value = userNamePreference!!.text
-                mqttOptions!!.setUsername(value)
+                mqttOptions.setUsername(value)
                 userNamePreference!!.summary = value
             }
             PREF_PASSWORD -> {
                 value = passwordPreference!!.text
-                mqttOptions!!.setPassword(value)
+                mqttOptions.setPassword(value)
                 passwordPreference!!.summary = toStars(value)
             }
             PREF_TLS_CONNECTION -> {
                 val checked = sslPreference!!.isChecked
-                mqttOptions!!.setTlsConnection(checked)
+                mqttOptions.setTlsConnection(checked)
             }
         }
     }

@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.location.LocationManager;
 import android.view.LayoutInflater;
 
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
 import dagger.Module;
@@ -60,5 +61,10 @@ class ActivityModule {
     @Provides
     static Configuration provideConfiguration() {
         return new Configuration();
+    }
+
+    @Provides
+    static MQTTOptions provideMQTTOptions(DPreference preference) {
+        return new MQTTOptions(preference);
     }
 }

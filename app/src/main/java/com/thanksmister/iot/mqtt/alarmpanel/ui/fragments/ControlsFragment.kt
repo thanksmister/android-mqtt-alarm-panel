@@ -30,6 +30,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmPendingView
@@ -57,6 +58,8 @@ class ControlsFragment : BaseFragment() {
 
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var mqttOptions: MQTTOptions
+
     private var alarmPendingView: AlarmPendingView? = null
     private var mListener: OnControlsFragmentListener? = null
 
@@ -114,7 +117,7 @@ class ControlsFragment : BaseFragment() {
             if (!hasNetworkConnectivity()) {
                 // we can't change the alarm state without network connection.
                 handleNetworkDisconnect()
-            } else if (readMqttOptions().isValid) {
+            } else if (mqttOptions.isValid) {
                 if (viewModel.getAlarmMode() == MODE_DISARM) {
                     showArmOptionsDialog()
                 } else {

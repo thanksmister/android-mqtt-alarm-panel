@@ -212,34 +212,34 @@ abstract class BaseAlarmView : LinearLayout {
         if (pinCode1 != null && pinCode2 != null && pinCode3 != null && pinCode4 != null) {
             when (pinsShown) {
                 1 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
+                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
                 }
                 2 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
+                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
                 }
                 3 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
+                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
                 }
                 4 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black_32dp)
+                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black)
                 }
                 else -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black_32dp)
+                    pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
                 }
             }
         }
