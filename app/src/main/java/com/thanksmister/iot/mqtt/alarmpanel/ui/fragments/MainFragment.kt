@@ -197,12 +197,8 @@ class MainFragment : BaseFragment() {
                     listener!!.publishDisarmed()
                 }
                 override fun onError() {
-                    try {
-                        if (activity != null && isAdded) {
-                            Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (e : NullPointerException) {
-                        Timber.e(e.message)
+                    if (activity != null && isAdded) {
+                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

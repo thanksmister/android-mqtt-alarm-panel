@@ -20,6 +20,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -60,6 +61,14 @@ class LogFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_logs, menu)
+        val itemLen = menu.size()
+        for (i in 0 until itemLen) {
+            val drawable = menu.getItem(i).icon
+            if (drawable != null) {
+                drawable.mutate()
+                drawable.setColorFilter(resources.getColor(R.color.gray), PorterDuff.Mode.SRC_ATOP)
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
