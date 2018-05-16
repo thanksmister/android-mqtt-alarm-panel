@@ -19,23 +19,29 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MessageAdapter
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_logs.*
 import timber.log.Timber
+import java.util.*
+import javax.inject.Inject
+
 
 class LogFragment : BaseFragment() {
+
+    @Inject
+    lateinit var dialogUtils: DialogUtils
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -43,11 +49,28 @@ class LogFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true);
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         observeViewModel(viewModel)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_logs, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            onBackPressed()
+            return true
+        } else if (id == R.id.action_delete) {
+            clearMessages()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,21 +91,31 @@ class LogFragment : BaseFragment() {
         disposable.dispose()
     }
 
+    private fun clearMessages() {
+        if(isAdded && activity != null) {
+            dialogUtils.showAlertDialogCancel(activity!!, getString(R.string.dialog_clear_logs), DialogInterface.OnClickListener { _, _ ->
+                disposable.add(viewModel.clearMessages()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            logs_list.adapter = MessageAdapter(ArrayList<MessageMqtt>())
+                            logs_list.invalidate()
+                        }, { error -> Timber.e("Unable to delete messages: " + error)}))
+            })
+        }
+    }
+
     private fun observeViewModel(viewModel: MessageViewModel) {
         disposable.add(viewModel.getMessages()
                .subscribeOn(Schedulers.io())
                .observeOn(AndroidSchedulers.mainThread())
                .subscribe({messages ->
-                   list.adapter = MessageAdapter(messages)
-                   list.invalidate()
+                   logs_list.adapter = MessageAdapter(messages)
+                   logs_list.invalidate()
                }, { error -> Timber.e("Unable to get messages: " + error)}))
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         fun newInstance(): LogFragment {
             return LogFragment()
         }

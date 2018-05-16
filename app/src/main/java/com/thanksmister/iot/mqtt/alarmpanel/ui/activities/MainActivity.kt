@@ -119,8 +119,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     })
                     .show()
         }
-
-        Timber.d("onCreate")
     }
 
     public override fun onStart() {

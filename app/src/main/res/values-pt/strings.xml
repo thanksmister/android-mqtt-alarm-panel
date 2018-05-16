@@ -258,6 +258,8 @@
     <string name="pref_back_behavior_title">Substituir o comportamento traseiro</string>
     <string name="pref_back_behavior_summary">O botão Android se comporta como o botão Voltar do navegador.</string>
     <string name="text_touch_sensor">Sensor de toque</string>
+    <string name="dialog_clear_logs">Você quer limpar os logs?</string>
+    <string name="menu_item_clear_logs">Limpar logs</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

@@ -257,6 +257,8 @@
     <string name="pref_back_behavior_title">Negeer het achtergedrag</string>
     <string name="pref_back_behavior_summary">Android-knop gedraagt zich als browser-terugknop.</string>
     <string name="text_touch_sensor">Aanraaksensor</string>
+    <string name="dialog_clear_logs">Wilt u de logboeken wissen?</string>
+    <string name="menu_item_clear_logs">Logboeken wissen</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

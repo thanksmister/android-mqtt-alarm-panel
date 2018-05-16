@@ -40,7 +40,7 @@ interface MessageDao {
      * Get all messages
      * @return list of all messages
      */
-    @Query("SELECT * FROM Messages")
+    @Query("SELECT * FROM Messages ORDER BY createdAt DESC")
     fun getMessages(): Flowable<List<MessageMqtt>>
 
     /**

@@ -257,6 +257,8 @@
     <string name="pref_back_behavior_title">Override Back Behavior</string>
     <string name="pref_back_behavior_summary">Android button behaves like browser back button.</string>
     <string name="text_touch_sensor">Touch sensor</string>
+    <string name="dialog_clear_logs">Do you want to clear the logs?</string>
+    <string name="menu_item_clear_logs">Clear logs</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

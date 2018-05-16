@@ -99,10 +99,10 @@ class AboutFragment : BaseFragment() {
     }
 
     companion object {
-        val SUPPORT_URL:String = "https://thanksmister.com/android-mqtt-alarm-panel/"
-        val GOOGLE_PLAY_RATING = "com.thanksmister.iot.mqtt.alarmpanel"
-        val GITHUB_URL = "https://github.com/thanksmister/android-mqtt-alarm-panel"
-        val EMAIL_ADDRESS = "mister@thanksmister.com"
+        const val SUPPORT_URL:String = "https://thanksmister.com/android-mqtt-alarm-panel/"
+        const val GOOGLE_PLAY_RATING = "com.thanksmister.iot.mqtt.alarmpanel"
+        const val GITHUB_URL = "https://github.com/thanksmister/android-mqtt-alarm-panel"
+        const val EMAIL_ADDRESS = "mister@thanksmister.com"
 
         fun newInstance(): AboutFragment {
             return AboutFragment()

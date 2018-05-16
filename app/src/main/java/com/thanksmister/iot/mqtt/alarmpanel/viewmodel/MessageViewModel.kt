@@ -16,7 +16,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MailGunModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TelegramModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY_PENDING
@@ -192,6 +191,12 @@ constructor(application: Application, private val dataSource: MessageDao, privat
             message.messageId = messageId
             message.createdAt = createdAt
             dataSource.insertMessage(message)
+        }
+    }
+
+    fun clearMessages():Completable {
+        return Completable.fromAction {
+            dataSource.deleteAllMessages()
         }
     }
 

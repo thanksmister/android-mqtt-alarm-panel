@@ -257,6 +257,8 @@
     <string name="pref_back_behavior_title">Modificar el comportamiento del botón volver</string>
     <string name="pref_back_behavior_summary">El botón volver de Android se comporta como el botón de retroceso del navegador.</string>
     <string name="text_touch_sensor">Sensor tactil</string>
+    <string name="dialog_clear_logs">Do you want to clear the logs?</string>
+    <string name="menu_item_clear_logs">Borrar registros</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

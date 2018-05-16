@@ -123,6 +123,16 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
+    fun showAlertDialogCancel(context: Context, message: String, onClickListener: DialogInterface.OnClickListener) {
+        hideAlertDialog()
+        Timber.d("showAlertDialog")
+        alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, onClickListener)
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+    }
+
     fun showArmOptionsDialog(activity: AppCompatActivity, armListener: ArmOptionsView.ViewListener) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
