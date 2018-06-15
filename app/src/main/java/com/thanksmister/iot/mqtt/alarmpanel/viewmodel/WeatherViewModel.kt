@@ -111,7 +111,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
             item.units = units
             item.umbrella = umbrella
             item.createdAt = createdAt
-            dataSource.insertItem(item) }
+            dataSource.updateItem(item) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -98,7 +99,7 @@ class ScreenSaverView : RelativeLayout {
             task = null
         }
 
-        if (picasso != null) {
+        if (picasso != null && !TextUtils.isEmpty(imageUrl)) {
             picasso!!.invalidate(imageUrl!!)
             picasso!!.cancelRequest(screenSaverImage)
             picasso = null

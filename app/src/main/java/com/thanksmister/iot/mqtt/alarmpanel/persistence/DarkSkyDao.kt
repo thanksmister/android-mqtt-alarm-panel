@@ -16,10 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 import io.reactivex.Flowable
 
@@ -42,6 +39,12 @@ interface DarkSkyDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(item: DarkSky)
+
+    @Transaction
+    fun updateItem(item: DarkSky) {
+        deleteAllItems()
+        insertItem(item)
+    }
 
     /**
      * Delete all items.
