@@ -47,6 +47,10 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
+    var fullScreen: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCXREEN, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCXREEN, value)
+
     var systemAlerts: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, value)
@@ -273,6 +277,7 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_FINGERPRINT)
         sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
         sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
+        sharedPreferences.removePreference(PREF_FULL_SCXREEN)
     }
 
     companion object {
@@ -294,6 +299,7 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_IMAGE_ROTATION = "pref_image_rotation"
         const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
+        const val PREF_FULL_SCXREEN = "pref_full_screen"
         const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
         const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         const val PREF_MODULE_TSS = "pref_module_tss"

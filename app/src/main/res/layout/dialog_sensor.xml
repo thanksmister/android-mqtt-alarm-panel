@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sensorDialogView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            style="@style/WizardPageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:text="Edit Sensor"
+            android:textAllCaps="true"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/sensorType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Pick sensor type or use generic." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <EditText
+            android:id="@+id/sensorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:hint="Name" />
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="The display name for the sensor (Front Door)." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/sensorTopicPrefix"
+                style="@style/TextAppearance.TextLarge"
+                android:textSize="18sp"
+                android:layout_marginLeft="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:hint="home/sensor/"/>
+
+            <EditText
+                android:id="@+id/sensorTopic"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:hint="Topic"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/sensorTopicDescription"
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="@string/sensor_topic_description"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <EditText
+            android:id="@+id/sensorPayloadActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:hint="Payload Active" />
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Payload value when the sensor is active (open, on, yes, presence)." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <EditText
+            android:id="@+id/sensorPayloadInactive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:hint="Payload Inactive" />
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Payload value when the sensor is inative (close, off, no, empty)." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            style="@style/TextAppearance.TextMedium.SmallAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginLeft="4dp"
+            android:paddingBottom="8dp"
+            android:textAllCaps="true"
+            android:text="MQTT Output" />
+
+        <TextView
+            android:id="@+id/sensorMQTT"
+            style="@style/TextAppearance.TextSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginLeft="4dp"
+            android:selectAllOnFocus="true"
+            android:textIsSelectable="true"
+            android:text="{&quot;payload&quot;:&quot;open&quot;,&quot;topic&quot;:&quot;home/sensor/frontdoor/&quot;}" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <CheckBox
+            android:id="@+id/sensorAlarm"
+            style="@style/TextAppearance.TextMedium.SmallAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Required for Alarm Set"/>
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="The alarm can not be set if the sensor is active." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <CheckBox
+            android:id="@+id/sensorNotification"
+            style="@style/TextAppearance.TextMedium.SmallAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Active Notification Sound"/>
+
+        <TextView
+            style="@style/TextAppearance.SmallText.ExtraSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="Play notification sound when sensor is active (open, on, presence)." />
+
+
+    </LinearLayout>
+
+</com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView>

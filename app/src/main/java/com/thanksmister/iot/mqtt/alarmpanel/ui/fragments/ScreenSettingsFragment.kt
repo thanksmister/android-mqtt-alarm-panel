@@ -20,7 +20,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
@@ -34,7 +33,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 
-import com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_screen_saver
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.SECONDS_VALUE
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -48,6 +46,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var urlPreference: EditTextPreference? = null
     private var clientIdPreference: EditTextPreference? = null
     private var imageFitPreference: CheckBoxPreference? = null
+    private var fullScreenPreference: CheckBoxPreference? = null
     private var rotationPreference: EditTextPreference? = null
     private var inactivityPreference: ListPreference? = null
     private var imageOptions: ImageOptions? = null
@@ -58,7 +57,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(preferences_screen_saver)
+        addPreferencesFromResource(R.xml.preferences_screen)
     }
 
     override fun onResume() {
@@ -86,6 +85,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         imageFitPreference = findPreference(Configuration.PREF_IMAGE_FIT_SIZE) as CheckBoxPreference
         rotationPreference = findPreference(Configuration.PREF_IMAGE_ROTATION) as EditTextPreference
         inactivityPreference = findPreference(Configuration.PREF_INACTIVITY_TIME) as ListPreference
+        fullScreenPreference = findPreference(Configuration.PREF_FULL_SCXREEN) as CheckBoxPreference
 
         if (isAdded && activity != null) {
             imageOptions = (activity as BaseActivity).readImageOptions()
@@ -113,6 +113,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         }
 
         imageFitPreference!!.isChecked = imageOptions!!.imageFitScreen
+        fullScreenPreference!!.isChecked = configuration.fullScreen
 
         setPhotoScreenSaver(configuration.showPhotoScreenSaver())
         setClockScreenSaver(configuration.showClockScreenSaverModule())
@@ -168,6 +169,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             Configuration.PREF_IMAGE_FIT_SIZE -> {
                 val fitScreen = imageFitPreference!!.isChecked
                 imageOptions!!.imageFitScreen = fitScreen
+            }
+            Configuration.PREF_FULL_SCXREEN -> {
+                val fullscreen = fullScreenPreference!!.isChecked
+                configuration.fullScreen = fullscreen
             }
             Configuration.PREF_IMAGE_ROTATION -> {
                 val rotation = Integer.valueOf(rotationPreference!!.text)!!

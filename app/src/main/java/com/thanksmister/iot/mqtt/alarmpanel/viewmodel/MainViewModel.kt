@@ -9,6 +9,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask
@@ -16,6 +18,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MailGunModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TelegramModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY_PENDING
@@ -25,25 +28,29 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_TYPE
+
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class MessageViewModel @Inject
-constructor(application: Application, private val dataSource: MessageDao, private val configuration: Configuration, private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
+class MainViewModel @Inject
+constructor(application: Application, private val messageDataSource: MessageDao, private val sensorDataSource: SensorDao,
+            private val configuration: Configuration, private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
 
     private var mailSubscription: Disposable? = null
     private var telegramSubscription: Disposable? = null
-
+    private val disposable = CompositeDisposable()
     private var armed: Boolean = false
+
 
     @AlarmUtils.AlarmStates
     private fun setAlarmModeFromState(state: String) {
@@ -150,16 +157,39 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     }
 
     /**
+     * Get the sensor items.
+     * @return a [Flowable]
+     */
+    fun getSensorItems(): Flowable<List<Sensor>> {
+        return sensorDataSource.getItems()
+                .filter { items -> items.isNotEmpty() }
+    }
+
+    /**
+     * Insert new item into the database.
+     */
+    fun insertSensorItem(sensor: Sensor) {
+        disposable.add(Completable.fromAction {
+            sensorDataSource.insertItem(sensor)
+        }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
+
+    }
+
+    /**
      * Get the messages.
      * @return a [Flowable] that will emit every time the messages have been updated.
      */
     fun getMessages():Flowable<List<MessageMqtt>> {
-        return dataSource.getMessages()
+        return messageDataSource.getMessages()
                 .filter {messages -> messages.isNotEmpty()}
     }
 
     fun getAlarmState():Flowable<String> {
-        return dataSource.getMessages(ALARM_TYPE)
+        return messageDataSource.getMessages(ALARM_TYPE)
                 .filter {messages -> messages.isNotEmpty()}
                 .map {messages -> messages[messages.size - 1]}
                 .map {message ->
@@ -175,14 +205,14 @@ constructor(application: Application, private val dataSource: MessageDao, privat
     /**
      * Insert new message into the database.
      */
-    fun insertMessage(messageId: String,topic: String, payload: String): Completable {
+    fun insertMessage(messageId: String,topic: String, payload: String) {
         Timber.d("insertMessage: " + topic)
         Timber.d("insertMessage: " + payload)
         val type = when (topic) {
             mqttOptions.getNotificationTopic() -> NOTIFICATION_TYPE
             else -> ALARM_TYPE
         }
-        return Completable.fromAction {
+        disposable.add(Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()
             val message = MessageMqtt()
             message.type = type
@@ -190,13 +220,16 @@ constructor(application: Application, private val dataSource: MessageDao, privat
             message.payload = payload
             message.messageId = messageId
             message.createdAt = createdAt
-            dataSource.insertMessage(message)
-        }
+            messageDataSource.insertMessage(message)
+        } .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
     }
 
     fun clearMessages():Completable {
         return Completable.fromAction {
-            dataSource.deleteAllMessages()
+            messageDataSource.deleteAllMessages()
         }
     }
 
@@ -278,6 +311,13 @@ constructor(application: Application, private val dataSource: MessageDao, privat
             }
         })
         return dataTask
+    }
+
+    public override fun onCleared() {
+        //prevents memory leaks by disposing pending observable objects
+        if (!disposable.isDisposed) {
+            disposable.clear()
+        }
     }
 
     /**

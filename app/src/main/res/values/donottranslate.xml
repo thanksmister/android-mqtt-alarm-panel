@@ -40,9 +40,10 @@
         <item>@string/action_settings</item>
         <item>@string/text_alarm_settings</item>
         <item>@string/text_mqtt_settings</item>
+        <item>@string/sensors_settings</item>
         <item>@string/preference_title_notification</item>
         <item>@string/preference_camera_title</item>
-        <item>@string/preference_title_screen_saver_title</item>
+        <item>@string/preference_title_display_title</item>
         <item>@string/preference_title_weather_settings</item>
         <item>@string/preference_title_web_settings</item>
         <item>@string/text_about</item>

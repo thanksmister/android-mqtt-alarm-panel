@@ -42,7 +42,7 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
-    
+
     private var topicPreference: EditTextPreference? = null
     private var systemPreference: CheckBoxPreference? = null
     private var notificationsPreference: CheckBoxPreference? = null

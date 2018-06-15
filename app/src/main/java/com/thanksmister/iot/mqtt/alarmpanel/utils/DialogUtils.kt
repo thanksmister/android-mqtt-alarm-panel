@@ -40,12 +40,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.*
 import timber.log.Timber
 
 /**
@@ -133,6 +129,21 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
+    // TODO possibly add password text value
+    fun showEditTextDialog(activity: AppCompatActivity, value: String, listener: EditTextDialogView.ViewListener) {
+        clearDialogs()
+        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_edit_text, null, false)
+        val editTextDialogView = view.findViewById<EditTextDialogView>(R.id.editTextDialogView)
+        editTextDialogView.setListener(listener)
+        editTextDialogView.setValue(value)
+        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
+                .setView(editTextDialogView)
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onComplete(editTextDialogView.value)}
+                .setNegativeButton(android.R.string.cancel, { _, _ -> listener.onCancel() })
+                .show()
+    }
+
     fun showArmOptionsDialog(activity: AppCompatActivity, armListener: ArmOptionsView.ViewListener) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -140,8 +151,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         val displayRectangle = Rect()
         val window = activity.window
         window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-        val density = activity.resources.displayMetrics.densityDpi
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             view.minimumWidth = (displayRectangle.width() * 0.4f).toInt()
             view.minimumHeight = (displayRectangle.height() * 0.4f).toInt()
         }
@@ -218,6 +228,20 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setUseSound(systemSounds)
         dialog = buildImmersiveDialog(activity, true, view, false)
         dialog!!.setOnCancelListener(onCancelListener)
+    }
+
+    fun showSensorDialog(activity: AppCompatActivity, sensor: Sensor, topic: String, listener: SensorDialogView.ViewListener) {
+        clearDialogs()
+        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_sensor, null, false)
+        val sensorDialogView = view.findViewById<SensorDialogView>(R.id.sensorDialogView)
+        sensorDialogView.setListener(listener)
+        sensorDialogView.setSensor(sensor, topic)
+        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
+                .setView(sensorDialogView)
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onComplete(sensorDialogView.sensor) }
+                .setNegativeButton(android.R.string.cancel, { _, _ -> listener.onCancel() })
+                .show()
     }
 
     fun showExtendedForecastDialog(activity: AppCompatActivity, data: List<Datum>) {

@@ -63,7 +63,7 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
             textToSpeech?.language = Locale.getDefault()
             textToSpeech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onError(p0: String?) {
-                    // na-da
+                    Timber.e(p0)
                 }
                 override fun onStart(utteranceId: String) {
                     Timber.i("onStart")

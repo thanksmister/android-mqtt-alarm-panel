@@ -12,21 +12,21 @@
 
     <color name="transparent">#00000000</color>
 
-    <color name="green">#c87dac2f</color>
+    <color name="green">#ff7dac2f</color>
     <color name="light_green">#ff7dac2f</color>
     <color name="light_green_pressed">#ff67932c</color>
     <color name="text_green">#ff67932c</color>
-    <color name="yellow">#c8eeee22</color>
+    <color name="preference_green">#ff7dac2f</color>
+    <color name="yellow">#eeee22</color>
     <color name="gray">#818181</color>
     <color name="dark_gray">#818181</color>
     <color name="blue">#ff3c75c4</color>
     <color name="blue_pressed">#4170c4</color>
 
-    <color name="black">#000000</color>
+    <color name="black">#ff000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="white_alpha">#beffffff</color>
     <color name="light_gray">#efefef</color>
-    <color name="red">#c8d7523e</color>
+    <color name="red">#d7523e</color>
     <color name="red_light_up">#fff4492c</color>
     <color name="red_light_pressed">#ffd3402a</color>
     <color name="gray_color">#eeeeee</color>

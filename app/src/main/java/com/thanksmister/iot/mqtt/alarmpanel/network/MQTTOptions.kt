@@ -4,17 +4,20 @@ import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.NOTIFICATION_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.SENSOR_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import dpreference.DPreference
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 /**
  * For original implementation see https://github.com/androidthings/sensorhub-cloud-iot.
  */
-class MQTTOptions constructor(private val sharedPreferences: DPreference) {
+class MQTTOptions @Inject
+constructor(private val sharedPreferences: DPreference) {
 
     val brokerUrl: String
         get() = if (!TextUtils.isEmpty(getBroker())) {
@@ -61,6 +64,7 @@ class MQTTOptions constructor(private val sharedPreferences: DPreference) {
         return sharedPreferences.getPrefString(PREF_STATE_TOPIC, ALARM_STATE_TOPIC)
     }
 
+    // TODO we need to add all the topics from sensor database
     fun getStateTopics(): Array<String> {
         val topics = ArrayList<String>()
         topics.add(sharedPreferences.getPrefString(PREF_STATE_TOPIC, ALARM_STATE_TOPIC))
@@ -68,8 +72,12 @@ class MQTTOptions constructor(private val sharedPreferences: DPreference) {
         return topics.toArray(arrayOf<String>())
     }
 
-    fun getNotificationTopic(): String? {
+    fun getNotificationTopic(): String {
         return sharedPreferences.getPrefString(PREF_NOTIFICATION_TOPIC, NOTIFICATION_STATE_TOPIC)
+    }
+
+    fun getSensorTopic(): String {
+        return sharedPreferences.getPrefString(PREF_SENSOR_TOPIC, SENSOR_STATE_TOPIC)
     }
 
     fun getUsername(): String {
@@ -128,6 +136,11 @@ class MQTTOptions constructor(private val sharedPreferences: DPreference) {
         setOptionsUpdated(true)
     }
 
+    fun setSensorTopic(value: String) {
+        this.sharedPreferences.setPrefString(PREF_SENSOR_TOPIC, value)
+        setOptionsUpdated(true)
+    }
+
     fun setTlsConnection(value: Boolean) {
         this.sharedPreferences.setPrefBoolean(PREF_TLS_CONNECTION, value)
         setOptionsUpdated(true)
@@ -149,6 +162,7 @@ class MQTTOptions constructor(private val sharedPreferences: DPreference) {
         const val HTTP_BROKER_URL_FORMAT = "%s:%d"
         const val PREF_STATE_TOPIC = "pref_alarm_topic"
         const val PREF_NOTIFICATION_TOPIC = "pref_notification_topic"
+        const val PREF_SENSOR_TOPIC = "pref_sensor_topic"
         const val PREF_USERNAME = "pref_username"
         const val PREF_COMMAND_TOPIC = "pref_command_topic"
         const val PREF_TLS_CONNECTION = "pref_tls_connection"

@@ -30,7 +30,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MessageAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
+
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_logs.*
@@ -114,7 +115,7 @@ class LogFragment : BaseFragment() {
         }
     }
 
-    private fun observeViewModel(viewModel: MessageViewModel) {
+    private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getMessages()
                .subscribeOn(Schedulers.io())
                .observeOn(AndroidSchedulers.mainThread())

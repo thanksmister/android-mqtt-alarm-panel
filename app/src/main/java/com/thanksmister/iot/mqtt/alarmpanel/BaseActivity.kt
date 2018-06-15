@@ -32,23 +32,21 @@ import android.os.PowerManager
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
-import com.thanksmister.iot.mqtt.alarmpanel.managers.ProximityManager
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import dagger.android.support.DaggerAppCompatActivity
 import dpreference.DPreference
 import io.reactivex.disposables.CompositeDisposable
@@ -61,12 +59,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     private val REQUEST_PERMISSIONS = 88
 
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var mqttOptions: MQTTOptions
     @Inject lateinit var preferences: DPreference
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var darkSkyDataSource: DarkSkyDao
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MessageViewModel
+    lateinit var viewModel: MainViewModel
 
     private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
@@ -88,11 +87,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MessageViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
         this.window.setFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+
         decorView = window.decorView
 
         lifecycle.addObserver(dialogUtils)
@@ -112,8 +112,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            val visibility: Int
+        val visibility: Int
+        if (hasFocus && configuration.fullScreen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -131,6 +131,17 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
                 window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+            decorView?.systemUiVisibility = visibility
+        } else if (hasFocus) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+            } else {
+                visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
             }
             decorView?.systemUiVisibility = visibility
         }
@@ -208,14 +219,14 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     /**
      * Wakes the device temporarily (or always if triggered) when the alarm requires attention.
      */
-    fun acquireTemporaryWakeLock() {
+    fun acquireTemporaryWakeLock(timeout: Long) {
         Timber.d("acquireTemporaryWakeLock")
         if (wakeLock == null) {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "alarm:ALARM_TEMPORARY_WAKE_TAG")
         }
-        if (wakeLock != null && !wakeLock!!.isHeld()) {  // but we don't hold it
-            wakeLock!!.acquire(10000)
+        if (wakeLock != null && !wakeLock!!.isHeld) {  // but we don't hold it
+            wakeLock!!.acquire(timeout)
         }
 
         // Some Amazon devices are not seeing this permission so we are trying to check
@@ -232,7 +243,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * Wakelock used to temporarily bring application to foreground if alarm needs attention.
      */
     fun releaseTemporaryWakeLock() {
-        if (wakeLock != null && wakeLock!!.isHeld()) {
+        if (wakeLock != null && wakeLock!!.isHeld) {
             wakeLock!!.release()
         }
     }
@@ -258,9 +269,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     open fun showScreenSaver() {
-        Timber.d("viewModel.isAlarmTriggeredMode() " + viewModel.isAlarmTriggeredMode())
-        Timber.d("viewModel.hasScreenSaver() " + viewModel.hasScreenSaver())
-        Timber.d("viewModel.hasWeatherModule() " + configuration.showWeatherModule())
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
             inactivityHandler.removeCallbacks(inactivityCallback)
             val hasWeather = (configuration.showWeatherModule() && readWeatherOptions().isValid)
@@ -285,7 +293,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             val notifications = NotificationUtils(this@BaseActivity)
             notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
         } else {
-            acquireTemporaryWakeLock()
+            acquireTemporaryWakeLock(10000)
             dialogUtils.hideScreenSaverDialog()
             dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                     getString(R.string.text_notification_network_description))
@@ -308,12 +316,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
-    fun applicationInBackground():Boolean {
-        return !LifecycleHandler.isApplicationInForeground() && !userPresent
-    }
-
     fun bringApplicationToForegroundIfNeeded() {
-        if (applicationInBackground()) {
+        if (!LifecycleHandler.isApplicationInForeground() && !userPresent) {
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP

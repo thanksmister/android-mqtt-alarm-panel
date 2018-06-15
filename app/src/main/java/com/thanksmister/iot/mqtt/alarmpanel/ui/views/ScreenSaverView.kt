@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -41,7 +40,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_screen_saver.view.*
 import retrofit2.Response
@@ -64,7 +62,6 @@ class ScreenSaverView : RelativeLayout {
     private var dataSource: DarkSkyDao? = null
     private var useImageSaver: Boolean = false
     private var hasWeather: Boolean = false
-    private val disposable = CompositeDisposable()
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -99,7 +96,7 @@ class ScreenSaverView : RelativeLayout {
             task = null
         }
 
-        if (picasso != null && !TextUtils.isEmpty(imageUrl)) {
+        if (picasso != null) {
             picasso!!.invalidate(imageUrl!!)
             picasso!!.cancelRequest(screenSaverImage)
             picasso = null
@@ -112,8 +109,6 @@ class ScreenSaverView : RelativeLayout {
         if (timeHandler != null) {
             timeHandler!!.removeCallbacks(timeRunnable)
         }
-
-        disposable.dispose()
     }
 
     fun setDataSource(dataSource: DarkSkyDao) {
@@ -152,13 +147,13 @@ class ScreenSaverView : RelativeLayout {
 
     private fun setWeatherDataOnView() {
         if(dataSource != null) {
-            disposable.add(dataSource!!.getItems()
+            dataSource!!.getItems()
                     .filter { items -> items.isNotEmpty() }
                     .map { items -> items[items.size - 1] }
                     .doOnError { error ->
                         Timber.e(error.message)
                     }
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ item ->
                         if (item != null) {
@@ -173,6 +168,7 @@ class ScreenSaverView : RelativeLayout {
                                     }
                                 } catch (e : Exception) {
                                     Timber.e(e.message)
+                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                                 }
                             } else {
                                 temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
@@ -184,10 +180,11 @@ class ScreenSaverView : RelativeLayout {
                                     }
                                 } catch (e : Exception) {
                                     Timber.e(e.message)
+                                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                                 }
                             }
                         }
-                    }))
+                    })
         }
     }
 

@@ -60,7 +60,7 @@
     <string name="preference_title_units">Gebruik Celsius (°C)</string>
     <string name="preference_summary_units">Gebruik celsius voor de temperatuureenheid.</string>
 
-    <string name="preference_title_screen_saver_title">Screensaver</string>
+    <string name="preference_title_display_title">Scherm</string>
     <string name="preference_title_screen_saver_settings">Screensaver instellingen</string>
     <string name="preference_summary_screen_saver_settings">Wanneer actief, een ingebouwde klok screensaver zal worden gebruikt.</string>
     <string name="preference_title_screen_saver">Klok screensaver</string>
@@ -109,7 +109,7 @@
     <string name="preference_summary_tts">Gebruik een Google Text-To-Speech om de status van een alarm of een MQTT bericht uit te spreken. (Let op: Werkt alleen op Android Lollipop of hoger.)</string>
 
     <string name="preference_tts_topic">TTS onderwerp</string>
-    <string name="preference_tts_topic_title">Zet onderwerp waarde</string>
+    <string name="preference_topic_title">Zet onderwerp waarde</string>
     <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
 
 
@@ -259,6 +259,14 @@
     <string name="text_touch_sensor">Aanraaksensor</string>
     <string name="dialog_clear_logs">Wilt u de logboeken wissen?</string>
     <string name="menu_item_clear_logs">Logboeken wissen</string>
+    <string name="sensors_settings">Sensors</string>
+    <string name="button_add_sensor">+ ADD SENSOR</string>
+    <string name="pref_sensor_title">Add Sensor</string>
+    <string name="toast_changes_cancelled">Changes cancelled...</string>
+    <string name="error_sensor_empty_data">Sensor must have a topic and both payloads set to be saved.</string>
+    <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
+    <string name="text_sensor">Sensor</string>
+    <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

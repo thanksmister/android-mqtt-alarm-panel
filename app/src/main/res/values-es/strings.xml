@@ -109,7 +109,7 @@
     <string name="preference_summary_tts">Usa el servicio "Google Text-To-Speech" para reproducir el valor de "alarmState" de los mensajes MQTT. (Nota: Requiere Android Lollipop o superior.)</string>
 
     <string name="preference_tts_topic">TTS Topic</string>
-    <string name="preference_tts_topic_title">Esteblece el "Topic Value"</string>
+    <string name="preference_topic_title">Esteblece el "Topic Value"</string>
     <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
@@ -259,6 +259,14 @@
     <string name="text_touch_sensor">Sensor tactil</string>
     <string name="dialog_clear_logs">¿Quieres borrar los registros?</string>
     <string name="menu_item_clear_logs">Borrar registros</string>
+    <string name="sensors_settings">Sensors</string>
+    <string name="button_add_sensor">+ ADD SENSOR</string>
+    <string name="pref_sensor_title">Add Sensor</string>
+    <string name="toast_changes_cancelled">Changes cancelled…</string>
+    <string name="error_sensor_empty_data">Sensor must have a topic and both payloads set to be saved.</string>
+    <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
+    <string name="text_sensor">Sensor</string>
+    <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

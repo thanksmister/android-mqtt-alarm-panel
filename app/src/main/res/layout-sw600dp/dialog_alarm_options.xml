@@ -24,7 +24,6 @@
         android:id="@+id/armOptionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:padding="16dp"
         android:gravity="center"
         android:orientation="vertical">

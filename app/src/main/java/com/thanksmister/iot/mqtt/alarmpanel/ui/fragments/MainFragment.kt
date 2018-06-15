@@ -34,7 +34,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -105,7 +105,7 @@ class MainFragment : BaseFragment() {
         listener = null
     }
 
-    private fun observeViewModel(viewModel: MessageViewModel) {
+    private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -184,7 +184,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun showAlarmTriggered() {
-        if (isAdded) {
+        if (isAdded && activity != null) {
             mainView.visibility = View.GONE
             triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode
@@ -197,7 +197,7 @@ class MainFragment : BaseFragment() {
                     listener!!.publishDisarmed()
                 }
                 override fun onError() {
-                    if (activity != null && isAdded) {
+                    if(activity != null) {
                         Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                     }
                 }
