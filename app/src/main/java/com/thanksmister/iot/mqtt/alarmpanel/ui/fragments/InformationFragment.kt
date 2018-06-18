@@ -43,7 +43,9 @@ import java.util.*
 import javax.inject.Inject
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
+import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import timber.log.Timber
 
@@ -52,6 +54,8 @@ class InformationFragment : BaseFragment() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var weatherViewModel: WeatherViewModel
+    @Inject lateinit var imageOptions: ImageOptions
+    @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
     private var forecastList: List<Datum> = Collections.emptyList()
     private var timeHandler: Handler? = null
@@ -92,7 +96,7 @@ class InformationFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (configuration.showWeatherModule() && readWeatherOptions().isValid) {
+        if (configuration.showWeatherModule() && darkSkyOptions.isValid) {
             connectWeatherModule()
             weatherLayout.visibility = View.VISIBLE
         } else {
@@ -151,10 +155,10 @@ class InformationFragment : BaseFragment() {
 
     private fun connectWeatherModule() {
         Timber.d("connectWeatherModule")
-        val apiKey = readWeatherOptions().darkSkyKey
-        val units = readWeatherOptions().weatherUnits
-        val lat = readWeatherOptions().latitude
-        val lon = readWeatherOptions().longitude
+        val apiKey = darkSkyOptions.darkSkyKey
+        val units = darkSkyOptions.weatherUnits
+        val lat = darkSkyOptions.latitude
+        val lon = darkSkyOptions.longitude
         weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units!!, lat!!, lon!!)
     }
 

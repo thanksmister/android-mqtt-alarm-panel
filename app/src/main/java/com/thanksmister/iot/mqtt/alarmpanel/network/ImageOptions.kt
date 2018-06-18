@@ -3,74 +3,32 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 import android.text.TextUtils
 
 import dpreference.DPreference
+import javax.inject.Inject
 
 /**
  * For original implementation see https://github.com/androidthings/sensorhub-cloud-iot.
  */
-class ImageOptions private constructor(
-        /**
-         * Preferences.
-         */
-        private val sharedPreferences: DPreference) {
-
-    /**
-     * Fit image to screen.
-     */
-    private var fitScreen: Boolean = false
-
-    /**
-     * Image source.
-     */
-    private var imageSource: String? = null
-
-    /**
-     * Client Id.
-     */
-    private var clientId: String? = null
-
-    /**
-     * Rotation interval.
-     */
-    private var rotation: Int = 0
+class ImageOptions @Inject
+constructor(private val sharedPreferences: DPreference) {
 
     val isValid: Boolean
         get() = !TextUtils.isEmpty(imageSource) && !TextUtils.isEmpty(imageClientId)
 
     var imageClientId: String?
-        get() = clientId
+        get() = sharedPreferences.getPrefString(PREF_IMAGE_CLIENT_ID, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_IMAGE_CLIENT_ID, value)
 
     var imageRotation: Int
-        get() = rotation
+        get() = sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, ROTATE_TIME_IN_MINUTES)
         set(value) = this.sharedPreferences.setPrefInt(PREF_IMAGE_ROTATION, value)
 
     var imageFitScreen: Boolean
-        get() = fitScreen
+        get() = sharedPreferences.getPrefBoolean(PREF_IMAGE_FIT_SIZE, false)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_IMAGE_FIT_SIZE, value)
 
-    fun getClientId(): String? {
-        return clientId
-    }
-
-    fun setClientId(value: String) {
-        this.sharedPreferences.setPrefString(PREF_IMAGE_CLIENT_ID, value)
-    }
-
-    fun getRotation(): Int {
-        return imageRotation
-    }
-
-    fun setRotation(value: Int) {
-        this.sharedPreferences.setPrefInt(PREF_IMAGE_ROTATION, value)
-    }
-
-    fun getTag(): String? {
-        return imageSource
-    }
-
-    fun setTag(value: String) {
-        this.sharedPreferences.setPrefString(PREF_IMAGE_SOURCE, value)
-    }
+    var imageSource: String
+        get() = sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "landscape")
+        set(value) = this.sharedPreferences.setPrefString(PREF_IMAGE_SOURCE, value)
 
     private fun setOptionsUpdated(value: Boolean) {
         this.sharedPreferences.setPrefBoolean(IMAGE_OPTIONS_UPDATED, value)
@@ -85,19 +43,17 @@ class ImageOptions private constructor(
     }
 
     companion object {
-
-        val PREF_IMAGE_SOURCE = "pref_image_source"
-        val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
-        val PREF_IMAGE_ROTATION = "pref_image_rotation"
-        val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
-
+        const val PREF_IMAGE_SOURCE = "pref_image_source"
+        const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
+        const val PREF_IMAGE_ROTATION = "pref_image_rotation"
+        const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         private val IMAGE_OPTIONS_UPDATED = "pref_image_options_updated"
         private val ROTATE_TIME_IN_MINUTES = 30 // 30 minutes
 
         /**
-         * Construct a MqttOptions object from Configuration.
+         * Construct an object from Configuration.
          */
-        fun from(sharedPreferences: DPreference): ImageOptions {
+        /*fun from(sharedPreferences: DPreference): ImageOptions {
             try {
                 val options = ImageOptions(sharedPreferences)
                 options.imageSource = sharedPreferences.getPrefString(PREF_IMAGE_SOURCE, "landscape")
@@ -109,6 +65,6 @@ class ImageOptions private constructor(
                 throw IllegalArgumentException("While processing image options", e)
             }
 
-        }
+        }*/
     }
 }

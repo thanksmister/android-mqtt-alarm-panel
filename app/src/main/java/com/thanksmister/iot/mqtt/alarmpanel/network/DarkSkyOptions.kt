@@ -3,72 +3,44 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 import android.text.TextUtils
 
 import dpreference.DPreference
+import javax.inject.Inject
 
 /**
  * For original implementation see https://github.com/androidthings/sensorhub-cloud-iot.
  */
-class DarkSkyOptions private constructor(
-
-    /**
-     * Preferences.
-     */
-    private val sharedPreferences: DPreference) {
-
-    /**
-     * Port number.
-     */
-    private var isCelsius: Boolean = false
-
-    /**
-     * Dark Sky key.
-     */
-    private var key: String? = null
-
-    /**
-     * Longitude.
-     */
-    var longitude: String? = null
-        private set
-
-    /**
-     * Latitude.
-     */
-    var latitude: String? = null
-        private set
-
-    /**
-     * Units.
-     */
-    var weatherUnits: String? = null
-        private set
+class DarkSkyOptions @Inject
+constructor(private val sharedPreferences: DPreference) {
 
     val isValid: Boolean
         get() = !TextUtils.isEmpty(latitude) &&
                 !TextUtils.isEmpty(longitude) &&
                 !TextUtils.isEmpty(weatherUnits) &&
-                !TextUtils.isEmpty(key)
+                !TextUtils.isEmpty(darkSkyKey)
 
     var darkSkyKey: String?
-        get() = key
+        get() = sharedPreferences.getPrefString(PREF_DARK_SKY_KEY, null)
         set(value) {
             this.sharedPreferences.setPrefString(PREF_DARK_SKY_KEY, value)
             setOptionsUpdated(true)
         }
 
-    fun setLon(longitude: String) {
-        this.sharedPreferences.setPrefString(PREF_WEATHER_LON, longitude)
-    }
+    var weatherUnits: String
+        get() = sharedPreferences.getPrefString(PREF_WEATHER_UNITS, DarkSkyRequest.UNITS_US)
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_UNITS, value)
 
-    fun setLat(latitude: String) {
-        this.sharedPreferences.setPrefString(PREF_WEATHER_LAT, latitude)
-    }
+    var longitude: String
+        get() = sharedPreferences.getPrefString(PREF_WEATHER_LON, null)
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_LON, value)
 
-    fun getIsCelsius(): Boolean {
-        return isCelsius
+    var latitude: String
+        get() = sharedPreferences.getPrefString(PREF_WEATHER_LAT, null)
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_LAT, value)
+
+    fun isCelsius(): Boolean {
+        return sharedPreferences.getPrefString(PREF_WEATHER_UNITS, DarkSkyRequest.UNITS_US) == DarkSkyRequest.UNITS_SI
     }
 
     fun setIsCelsius(isCelsius: Boolean) {
-        this.isCelsius = isCelsius
         sharedPreferences.setPrefString(PREF_WEATHER_UNITS, if (isCelsius) DarkSkyRequest.UNITS_SI else DarkSkyRequest.UNITS_US)
         setOptionsUpdated(true)
     }
@@ -97,10 +69,10 @@ class DarkSkyOptions private constructor(
         /**
          * Construct a MqttOptions object from Configuration.
          */
-        fun from(sharedPreferences: DPreference): DarkSkyOptions {
+        /*fun from(sharedPreferences: DPreference): DarkSkyOptions {
             try {
                 val options = DarkSkyOptions(sharedPreferences)
-                options.key = sharedPreferences.getPrefString(PREF_DARK_SKY_KEY, null)
+                options.key =
                 options.latitude = sharedPreferences.getPrefString(PREF_WEATHER_LAT, null)
                 options.longitude = sharedPreferences.getPrefString(PREF_WEATHER_LON, null)
                 options.isCelsius = sharedPreferences.getPrefString(PREF_WEATHER_UNITS, DarkSkyRequest.UNITS_US) == DarkSkyRequest.UNITS_SI
@@ -110,6 +82,6 @@ class DarkSkyOptions private constructor(
                 throw IllegalArgumentException("While processing weather options", e)
             }
 
-        }
+        }*/
     }
 }

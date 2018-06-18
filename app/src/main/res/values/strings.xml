@@ -60,8 +60,8 @@
     <string name="preference_title_units">Use Celsius (°C)</string>
     <string name="preference_summary_units">Use celsius for temperature values.</string>
 
-    <string name="preference_title_display_title">Display</string>
-    <string name="preference_title_screen_saver_settings">Screensaver Settings</string>
+    <string name="preference_title_display">Display</string>
+    <string name="preference_title_screen_saver_settings">Screensaver</string>
     <string name="preference_summary_screen_saver_settings">When active, uses a built-in clock screen saver.</string>
     <string name="preference_title_screen_saver">Clock Screen Saver</string>
     <string name="pref_title_image_client_id">Imgur Client Id</string>
@@ -109,7 +109,7 @@
     <string name="preference_summary_tts">Use Google Text-To-Speech to speak the payload value of an MQTT message. (Note: Requires Android Lollipop or above.)</string>
 
     <string name="preference_tts_topic">TTS Topic</string>
-    <string name="preference_tts_topic_title">Set Topic Value</string>
+    <string name="preference_topic_title">Set Topic Value</string>
     <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken (note that externally powered speakers are required for TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
@@ -147,6 +147,8 @@
 
     <string name="text_arm_home">ARM HOME</string>
     <string name="text_arm_away">ARM AWAY</string>
+    <string name="text_armed_home">ARMED HOME</string>
+    <string name="text_armed_away">ARMED AWAY</string>
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">DISARMED</string>
     <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
@@ -208,7 +210,7 @@
     <string name="pref_time_format_title">Use 24-hour format</string>
     <string name="text_dialog_select_time">Select Time</string>
     <string name="pref_density_summary">Change the screen density. Currently %1$s dpi.</string>
-    <string name="pref_device_brightness_summary">Set the screen brightness between 0 and 255. Currently %1$s.</string>
+    <string name="pref_device_brightness_summary">Set the screen brightness between 1 and 5. Currently %1$s.</string>
     <string name="pref_device_density_title">Screen Density</string>
     <string name="pref_device_brightness_title">Screen Brightness</string>
     <string name="pref_reset_category">Reset</string>
@@ -268,8 +270,16 @@
     <string name="error_sensor_empty_data">Sensor must have a topic and both payloads set to be saved.</string>
     <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
     <string name="text_sensor">Sensor</string>
-    <string name="text_sensor_mqtt_output">"{\"topic\":\"%1$s\",\"payload\":\"%2$s\"}"</string>
     <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
+    <string name="pref_dark_mode_start_time">Start Time: %1$s</string>
+    <string name="pref_dark_mode_end_time">End Time: %1$s</string>
+    <string name="dialog_select_time">Select Time</string>
+    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
+    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
+    <string name="pref_night_mode_end_description">Night Mode End Time</string>
+    <string name="pref_fullscreen_title">Fullscreen Mode</string>
+    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
+
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
+import android.app.Dialog
 import android.app.KeyguardManager
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -44,6 +45,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.ScreenSaverActivity
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -60,7 +64,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
-    @Inject lateinit var preferences: DPreference
+    @Inject lateinit var imageOptions: ImageOptions
+    @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var darkSkyDataSource: DarkSkyDao
 
@@ -69,11 +74,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
-    val disposable = CompositeDisposable()
     private var wakeLock: PowerManager.WakeLock? = null
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
+
+    val disposable = CompositeDisposable()
+    var screenSaverDialog : Dialog? = null
 
     abstract fun getLayoutId(): Int
 
@@ -185,13 +192,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     fun resetInactivityTimer() {
         Timber.d("resetInactivityTimer")
-        dialogUtils.hideScreenSaverDialog()
+        hideScreenSaver()
         inactivityHandler.removeCallbacks(inactivityCallback)
         inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
     }
 
     fun stopDisconnectTimer() {
-        dialogUtils.hideScreenSaverDialog()
+        hideScreenSaver()
         inactivityHandler.removeCallbacks(inactivityCallback)
     }
 
@@ -210,10 +217,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onResume()
         releaseTemporaryWakeLock()
         checkPermissions()
-    }
 
-    override fun onPause() {
-        super.onPause()
+        if(configuration.nightModeChanged) {
+            configuration.nightModeChanged = false // reset
+            dayNightModeChanged() // reset screen brightness if day/night mode inactive
+        }
     }
 
     /**
@@ -248,20 +256,36 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         }
     }
 
-    fun readWeatherOptions(): DarkSkyOptions {
-        return DarkSkyOptions.from(preferences)
-    }
-
-    fun readImageOptions(): ImageOptions {
-        return ImageOptions.from(preferences)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return item.itemId == android.R.id.home
+    }
+
+    open fun dayNightModeCheck(dayNightMode:String?) {
+        Timber.d("dayNightModeCheck")
+        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
+            Timber.d("Tis the night!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            recreate()
+        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            Timber.d("Tis the day!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            recreate()
+        }
+    }
+
+    private fun dayNightModeChanged() {
+        Timber.d("dayNightModeChanged")
+        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (!configuration.useNightDayMode && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            Timber.d("Tis the day!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            recreate()
+        }
     }
 
     /**
@@ -271,15 +295,20 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     open fun showScreenSaver() {
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
             inactivityHandler.removeCallbacks(inactivityCallback)
-            val hasWeather = (configuration.showWeatherModule() && readWeatherOptions().isValid)
+            val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             dialogUtils.showScreenSaver(this@BaseActivity,
                     configuration.showPhotoScreenSaver(),
-                    readImageOptions(),
+                    imageOptions,
                     View.OnClickListener {
                         dialogUtils.hideScreenSaverDialog()
                         resetInactivityTimer()
                     }, darkSkyDataSource, hasWeather)
         }
+    }
+
+    open fun hideScreenSaver() {
+        dialogUtils.hideScreenSaverDialog()
+        screenSaverDialog = null
     }
 
     /**
@@ -294,7 +323,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
         } else {
             acquireTemporaryWakeLock(10000)
-            dialogUtils.hideScreenSaverDialog()
+            hideScreenSaver()
             dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                     getString(R.string.text_notification_network_description))
         }

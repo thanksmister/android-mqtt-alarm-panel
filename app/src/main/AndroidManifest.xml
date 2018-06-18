@@ -63,6 +63,7 @@
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.activities.LogActivity"/>
+        <activity android:name=".ui.activities.ScreenSaverActivity" />
 
         <!-- Preference Provider -->
         <provider

@@ -51,7 +51,7 @@ constructor(private val sharedPreferences: DPreference) {
     fun getClientId(): String {
         var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, null)
         if (TextUtils.isEmpty(clientId)) {
-            clientId = DeviceUtils.getUuIdHash()
+            clientId = DeviceUtils.uuIdHash
         }
         return clientId
     }

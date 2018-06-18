@@ -42,7 +42,7 @@ public class ImageTask extends NetworkTask<String, Void, Response<ImageResponse>
         String clientId = params[0];
         String tag = params[1];
 
-        Call<ImageResponse> call = fetcher.getImagesByTag(clientId, tag);
-        return call.execute();
+        //Call<ImageResponse> call = fetcher.getImagesByTag(clientId, tag);
+        return null; //call.execute();
     }
 }

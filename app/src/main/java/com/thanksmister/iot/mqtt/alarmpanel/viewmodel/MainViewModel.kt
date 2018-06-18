@@ -7,10 +7,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask
@@ -43,7 +40,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewModel @Inject
-constructor(application: Application, private val messageDataSource: MessageDao, private val sensorDataSource: SensorDao,
+constructor(application: Application, private val messageDataSource: MessageDao, private val sensorDataSource: SensorDao, private val darkSkyDataSource: DarkSkyDao,
             private val configuration: Configuration, private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
 
     private var mailSubscription: Disposable? = null
@@ -51,6 +48,33 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     private val disposable = CompositeDisposable()
     private var armed: Boolean = false
 
+    private val toastText = ToastMessage()
+    private val alertText = AlertMessage()
+    private val snackbarText = SnackbarMessage()
+
+    fun getToastMessage(): ToastMessage {
+        return toastText
+    }
+
+    fun getAlertMessage(): AlertMessage {
+        return alertText
+    }
+
+    fun getSnackBarMessage(): SnackbarMessage {
+        return snackbarText
+    }
+
+    private fun showSnackbarMessage(message: Int) {
+        snackbarText.value = message
+    }
+
+    private fun showAlertMessage(message: String) {
+        alertText.value = message
+    }
+
+    private fun showToastMessage(message: String) {
+        toastText.value = message
+    }
 
     @AlarmUtils.AlarmStates
     private fun setAlarmModeFromState(state: String) {
@@ -200,6 +224,12 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     init {
+    }
+
+    fun getWeatherItem(): Flowable<DarkSky> {
+        return darkSkyDataSource.getItems()
+                .filter { items -> items.isNotEmpty() }
+                .map { items -> items[0] }
     }
 
     /**

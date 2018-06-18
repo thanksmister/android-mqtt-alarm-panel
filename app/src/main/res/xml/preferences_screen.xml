@@ -18,13 +18,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preferenceView">
 
-
-    <PreferenceCategory android:title="@string/preference_title_display_title">
+    <PreferenceCategory android:title="@string/preference_title_display">
 
         <CheckBoxPreference
-            android:title="Fullscreen Mode"
-            android:summary="Display application in fullscreen mode."
+            android:key="pref_day_night_mode"
+            android:summary="@string/pref_night_mode_description"
+            android:title="Use Night Mode"/>
+
+        <Preference
+            android:key="mode_day_night_start"
+            android:title="@string/pref_night_mode_start_description"
+            android:summary="19:00"/>
+
+        <Preference
+            android:key="mode_day_night_end"
+            android:title="@string/pref_night_mode_end_description"
+            android:summary="6:00"/>
+
+        <CheckBoxPreference
+            android:title="@string/pref_fullscreen_title"
+            android:summary="@string/pref_fullscreen_description"
             android:key="pref_full_screen"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preference_title_screen_saver_settings">
 
         <CheckBoxPreference
             android:title="@string/preference_title_screen_saver"

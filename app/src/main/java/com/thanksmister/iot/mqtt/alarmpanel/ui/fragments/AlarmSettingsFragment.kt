@@ -239,7 +239,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     @SuppressLint("InlinedApi")
     private fun isFingerprintSupported(): Boolean {
         val fingerPrintIdentity = FingerprintIdentify(context, BaseFingerprint.FingerprintIdentifyExceptionListener {
-            Timber.e("Fingerprint Error: " + it.message)
+            Timber.w("Fingerprint Error: " + it.message)
         })
 
         if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {

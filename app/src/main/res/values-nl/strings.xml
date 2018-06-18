@@ -60,8 +60,8 @@
     <string name="preference_title_units">Gebruik Celsius (°C)</string>
     <string name="preference_summary_units">Gebruik celsius voor de temperatuureenheid.</string>
 
-    <string name="preference_title_display_title">Scherm</string>
-    <string name="preference_title_screen_saver_settings">Screensaver instellingen</string>
+    <string name="preference_title_display">Scherm</string>
+    <string name="preference_title_screen_saver_settings">Screensaver</string>
     <string name="preference_summary_screen_saver_settings">Wanneer actief, een ingebouwde klok screensaver zal worden gebruikt.</string>
     <string name="preference_title_screen_saver">Klok screensaver</string>
     <string name="pref_title_image_client_id">Imgur Client Id</string>
@@ -147,6 +147,8 @@
 
     <string name="text_arm_home">ACTIVEER THUIS</string>
     <string name="text_arm_away">ACTIVEER WEG</string>
+    <string name="text_armed_home">ACTIVEER THUIS</string>
+    <string name="text_armed_away">ACTIVEER WEG</string>
     <string name="text_system">SYSTEEM</string>
     <string name="text_disarmed">GEDEACTIVEERD</string>
     <string name="dialog_alarm_triggered">VOER CODE IN</string>
@@ -208,7 +210,7 @@
     <string name="pref_time_format_title">Gebruik het 24-uurs formaat</string>
     <string name="text_dialog_select_time">Selecteer tijd</string>
     <string name="pref_density_summary">Verander de scherm dichtheid. Momenteel %1$s dpi.</string>
-    <string name="pref_device_brightness_summary">Zet de schermhelderheid tussen de 0 en 255. Momenteel %1$s.</string>
+    <string name="pref_device_brightness_summary">Zet de schermhelderheid tussen de 1 en 5. Momenteel %1$s.</string>
     <string name="pref_device_density_title">Scherm dichtheid</string>
     <string name="pref_device_brightness_title">Scherm helderheid</string>
     <string name="pref_reset_category">Herstellen</string>
@@ -267,6 +269,14 @@
     <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
     <string name="text_sensor">Sensor</string>
     <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
+    <string name="pref_dark_mode_start_time">Starttijd: %1$s</string>
+    <string name="pref_dark_mode_end_time">Eindtijd: %1$s</string>
+    <string name="dialog_select_time">Selecteer Tijd</string>
+    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
+    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
+    <string name="pref_night_mode_end_description">Night Mode End Time</string>
+    <string name="pref_fullscreen_title">Fullscreen Mode</string>
+    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

@@ -60,8 +60,8 @@
     <string name="preference_title_units">Usar Celsius (°C)</string>
     <string name="preference_summary_units">Usar celsius para los valores de temperatura.</string>
 
-    <string name="preference_title_screen_saver_title">Salvapantallas</string>
-    <string name="preference_title_screen_saver_settings">Ajustes del salvapantallas</string>
+    <string name="preference_title_display">Display</string>
+    <string name="preference_title_screen_saver_settings">Salvapantallas</string>
     <string name="preference_summary_screen_saver_settings">Cuando está activo, se usa el salvapantallas de reloj incluido.</string>
     <string name="preference_title_screen_saver">Reloj salvapantallas</string>
     <string name="pref_title_image_client_id">"Client Id" de Imgur</string>
@@ -147,6 +147,8 @@
 
     <string name="text_arm_home">EN CASA</string>
     <string name="text_arm_away">FUERA DE CASA</string>
+    <string name="text_armed_home">EN CASA</string>
+    <string name="text_armed_away">FUERA DE CASA</string>
     <string name="text_system">ALARMA</string>
     <string name="text_disarmed">INACTIVA</string>
     <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO PARA ANULAR</string>
@@ -208,7 +210,7 @@
     <string name="pref_time_format_title">Usar formato de 24h</string>
     <string name="text_dialog_select_time">Seleccionar la hora</string>
     <string name="pref_density_summary">Modificar la densidad de pantalla. Actualmente es de %1$s dpi.</string>
-    <string name="pref_device_brightness_summary">Ajusta el brillo de la pantalla entre 0 y 255. Actualmente es %1$s.</string>
+    <string name="pref_device_brightness_summary">Ajusta el brillo de la pantalla entre 1 y 5. Actualmente es %1$s.</string>
     <string name="pref_device_density_title">Densidad de la pantalla</string>
     <string name="pref_device_brightness_title">Brillo de la pantalla</string>
     <string name="pref_reset_category">Reiniciar</string>
@@ -267,6 +269,14 @@
     <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
     <string name="text_sensor">Sensor</string>
     <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
+    <string name="pref_dark_mode_start_time">Hora de inicio: %1$s</string>
+    <string name="pref_dark_mode_end_time">Hora de finalización: %1$s</string>
+    <string name="dialog_select_time">Seleccionar tiempo</string>
+    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
+    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
+    <string name="pref_night_mode_end_description">Night Mode End Time</string>
+    <string name="pref_fullscreen_title">Fullscreen Mode</string>
+    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

@@ -21,7 +21,10 @@ import android.support.annotation.NonNull;
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse;
 
+
+import io.reactivex.Observable;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class ImageFetcher {
 
@@ -31,7 +34,11 @@ public class ImageFetcher {
         this.networkApi = networkApi;
     }
 
-    public Call<ImageResponse> getImagesByTag(final String clientId, final String tag) {
+    /*public Call<ImageResponse> getImagesByTag(final String clientId, final String tag) {
+        return networkApi.getImagesByTag(clientId, tag);
+    }
+*/
+    public Observable<ImageResponse> getImagesByTag(final String clientId, final String tag) {
         return networkApi.getImagesByTag(clientId, tag);
     }
 }

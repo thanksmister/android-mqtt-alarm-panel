@@ -212,7 +212,7 @@
             android:layout_gravity="fill_horizontal"
             android:lines="1"
             android:ellipsize="end"
-            android:text="@string/preference_title_display_title" />
+            android:text="@string/preference_title_display" />
 
     </LinearLayout>
 

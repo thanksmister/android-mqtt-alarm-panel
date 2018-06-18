@@ -19,7 +19,10 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.Manifest
+import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
@@ -37,10 +40,12 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.managers.DayNightAlarmLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
@@ -48,6 +53,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
@@ -70,6 +76,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     private var cameraModule: CameraModule? = null
     private var alertDialog: AlertDialog? = null
     private var releaseWakeHandler:Handler? = null
+    private var alarmLiveData: DayNightAlarmLiveData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,9 +92,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         if(BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
-            readWeatherOptions().darkSkyKey = BuildConfig.DARK_SKY_KEY
-            readWeatherOptions().setLat(BuildConfig.LATITUDE)
-            readWeatherOptions().setLon(BuildConfig.LONGITUDE)
+            darkSkyOptions.darkSkyKey = BuildConfig.DARK_SKY_KEY
+            darkSkyOptions.latitude = BuildConfig.LATITUDE
+            darkSkyOptions.longitude = BuildConfig.LONGITUDE
             mqttOptions.setBroker(BuildConfig.BROKER)
             configuration.webUrl = BuildConfig.HASS_URL
             configuration.setMailFrom(BuildConfig.MAIL_FROM)
@@ -96,9 +103,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.setMailGunUrl(BuildConfig.MAIL_GUN_URL)
             configuration.telegramChatId = BuildConfig.TELEGRAM_CHAT_ID
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
-            readImageOptions().setClientId(BuildConfig.IMGUR_CLIENT_ID)
-            readImageOptions().setTag(BuildConfig.IMGUR_TAG) // Imgur tags
-            readWeatherOptions().setIsCelsius(true)
+            imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
+            imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
+            darkSkyOptions.setIsCelsius(true)
             configuration.isFirstTime = false
             configuration.setHasNotifications(true)
             configuration.setClockScreenSaverModule(true)
@@ -118,12 +125,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     }
                     .show()
         }
+
+        alarmLiveData = DayNightAlarmLiveData(this@MainActivity, configuration)
+        alarmLiveData?.observe(this, Observer { dayNightMode ->
+            dayNightModeCheck(dayNightMode)
+        })
+
+        Timber.d("imageOptions clientID ${imageOptions.imageClientId}")
+        Timber.d("mqttOptions broker ${mqttOptions.getBroker()}")
     }
 
     public override fun onStart() {
+
         super.onStart()
 
-        Timber.d("onStart")
         lifecycle.addObserver(dialogUtils)
 
         disposable.add(viewModel.getAlarmState()
@@ -134,7 +149,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         Timber.d("onStart state: " + state)
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
-                                awakenDeviceForAction(30000)
+                                awakenDeviceForAction(AWAKE_TIME)
                                 resetInactivityTimer()
                                 if(viewModel.hasSystemAlerts()) {
                                     val notifications = NotificationUtils(this@MainActivity)
@@ -143,18 +158,18 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             }
                             AlarmUtils.STATE_ARM_AWAY,
                             AlarmUtils.STATE_ARM_HOME -> {
-                                awakenDeviceForAction(30000)
+                                awakenDeviceForAction(AWAKE_TIME)
                                 resetInactivityTimer()
                             }
                             AlarmUtils.STATE_TRIGGERED -> {
-                                awakenDeviceForAction(10800000) // 3 hours
+                                awakenDeviceForAction(TRIGGERED_AWAKE_TIME) // 3 hours
                                 if(viewModel.showSystemTriggeredAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
                                 }
                             }
                             AlarmUtils.STATE_PENDING -> {
-                                awakenDeviceForAction(30000)
+                                awakenDeviceForAction(AWAKE_TIME)
                                 if(viewModel.showSystemPendingAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
@@ -163,6 +178,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         }
                     }
                 }, { error -> Timber.e("Unable to get message: " + error)}))
+
+        viewModel.getAlertMessage().observe(this, Observer { message ->
+            Timber.d("getAlertMessage")
+            dialogUtils.showAlertDialog(this@MainActivity, message!!)
+
+        })
+        viewModel.getToastMessage().observe(this, Observer { message ->
+            Timber.d("getToastMessage")
+            Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+        })
     }
 
     override fun onResume() {
@@ -315,10 +340,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         acquireTemporaryWakeLock(timeout)
         stopDisconnectTimer() // stop screen saver mode
         if (view_pager != null && pagerAdapter.count > 0) {
-            dialogUtils.hideAlertDialog()
             view_pager.currentItem = 0
         }
         bringApplicationToForegroundIfNeeded()
+        hideScreenSaver()
     }
 
     private fun captureImage() {
@@ -335,7 +360,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     notifications.createAlarmNotification(getString(R.string.preference_title_system_notifications), payload)
                 }
                 if(viewModel.hasAlerts() || viewModel.hasTss()) {
-                    awakenDeviceForAction(30000) // wake device temporarily for alerts
+                    awakenDeviceForAction(AWAKE_TIME) // wake device temporarily for alerts
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         if (textToSpeechModule != null && viewModel.hasTss()) {
                             textToSpeechModule!!.speakText(payload)
@@ -422,5 +447,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         }
 
         fun getCurrentFragment() = currentFragment
+    }
+
+    companion object {
+        const val AWAKE_TIME: Long = 30000 // 30 SECONDS
+        const val TRIGGERED_AWAKE_TIME: Long = 10800000 // 3 HOURS
     }
 }

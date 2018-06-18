@@ -22,9 +22,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.ScreenSaverActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.ScreenSaverViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
 import dagger.Binds
@@ -50,8 +52,16 @@ internal abstract class AndroidBindingModule {
     @ViewModelKey(SensorViewModel::class)
     abstract fun bindsSensorViewModel(mainViewModel: SensorViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(ScreenSaverViewModel::class)
+    abstract fun bindsScreenSaverViewModel(mainViewModel: ScreenSaverViewModel): ViewModel
+
     @ContributesAndroidInjector
     internal abstract fun baseActivity(): BaseActivity
+
+    @ContributesAndroidInjector
+    internal abstract fun screenSaverActivity(): ScreenSaverActivity
 
     @ContributesAndroidInjector
     internal abstract fun mainActivity(): MainActivity

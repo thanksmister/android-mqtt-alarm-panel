@@ -60,10 +60,6 @@ open class BaseFragment : DaggerFragment() {
         disposable.dispose()
     }
 
-    fun readWeatherOptions(): DarkSkyOptions {
-        return (activity as BaseActivity).readWeatherOptions()
-    }
-
     fun hasNetworkConnectivity(): Boolean {
         return (activity as BaseActivity).hasNetworkConnectivity()
     }

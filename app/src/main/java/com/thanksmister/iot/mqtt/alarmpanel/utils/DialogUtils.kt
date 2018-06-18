@@ -37,7 +37,6 @@ import android.widget.TextView
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
@@ -66,6 +65,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         }
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             screenSaverDialog!!.dismiss()
+            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
             screenSaverDialog = null
         }
     }
@@ -73,6 +73,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
     fun hideScreenSaverDialog() {
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             screenSaverDialog!!.dismiss()
+            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
             screenSaverDialog = null
         }
     }
@@ -267,6 +268,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         dialog = buildImmersiveDialog(activity, true, view, false)
     }
 
+
     /**
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue
      * with the alarm disabled because the disable time will be longer than this.
@@ -280,10 +282,12 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
         val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
-        screenSaverView.setDataSource(dataSource)
-        screenSaverView.setScreenSaver(showPhotoScreenSaver, options, dataSource, hasWeather)
+        screenSaverView.init(showPhotoScreenSaver, options, dataSource, hasWeather)
         screenSaverView.setOnClickListener(onClickListener)
         screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
+        if (screenSaverDialog != null){
+            screenSaverDialog!!.getWindow().addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+        }
     }
 
     // immersive dialogs without navigation
