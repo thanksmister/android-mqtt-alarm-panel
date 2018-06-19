@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -112,7 +113,7 @@ class MainFragment : BaseFragment() {
                 .subscribe({ state ->
                     Timber.d("Alarm state: " + state)
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
-                    activity?.runOnUiThread(java.lang.Runnable {
+                    activity?.runOnUiThread {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
                                 dialogUtils.clearDialogs()
@@ -132,7 +133,7 @@ class MainFragment : BaseFragment() {
                                 showAlarmTriggered()
                             }
                         }
-                    })
+                    }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
     }
 
@@ -185,6 +186,7 @@ class MainFragment : BaseFragment() {
 
     private fun showAlarmTriggered() {
         if (isAdded && activity != null) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
             mainView.visibility = View.GONE
             triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode
@@ -208,6 +210,7 @@ class MainFragment : BaseFragment() {
     private fun hideTriggeredView() {
         mainView.visibility = View.VISIBLE
         triggeredView.visibility = View.GONE
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
     }
 
     companion object {
