@@ -20,9 +20,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.Manifest
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
@@ -37,8 +35,6 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatDelegate
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
@@ -46,22 +42,18 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.managers.DayNightAlarmLiveData
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
-import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFragment.OnControlsFragmentListener,
@@ -337,12 +329,12 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
      */
     private fun awakenDeviceForAction(timeout: Long) {
         Timber.d("awakenDeviceForAction")
+        bringApplicationToForegroundIfNeeded()
         acquireTemporaryWakeLock(timeout)
         stopDisconnectTimer() // stop screen saver mode
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
-        bringApplicationToForegroundIfNeeded()
         hideScreenSaver()
     }
 

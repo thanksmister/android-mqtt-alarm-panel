@@ -286,7 +286,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         screenSaverView.setOnClickListener(onClickListener)
         screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
         if (screenSaverDialog != null){
-            screenSaverDialog!!.getWindow().addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+            screenSaverDialog!!.window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
         }
     }
 

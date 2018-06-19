@@ -30,6 +30,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.PowerManager
+import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -80,12 +81,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     private var connectionLiveData: ConnectionLiveData? = null
 
     val disposable = CompositeDisposable()
-    var screenSaverDialog : Dialog? = null
+    private var screenSaverDialog : Dialog? = null
 
     abstract fun getLayoutId(): Int
 
     private val inactivityCallback = Runnable {
-        dialogUtils.hideScreenSaverDialog()
+        Timber.d("inactivityCallback")
+        dialogUtils.clearDialogs()
         userPresent = false
         showScreenSaver()
     }
@@ -324,6 +326,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         } else {
             acquireTemporaryWakeLock(10000)
             hideScreenSaver()
+            bringApplicationToForegroundIfNeeded()
             dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                     getString(R.string.text_notification_network_description))
         }
@@ -346,7 +349,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground() && !userPresent) {
+        if (!LifecycleHandler.isApplicationInForeground()) {
+            Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
