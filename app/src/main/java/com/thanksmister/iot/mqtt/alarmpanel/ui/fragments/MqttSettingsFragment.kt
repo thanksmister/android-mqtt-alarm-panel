@@ -96,6 +96,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
         
+
         brokerPreference!!.text = mqttOptions.getBroker()
         clientPreference!!.text = mqttOptions.getClientId().toString()
         portPreference!!.text = mqttOptions.getPort().toString()

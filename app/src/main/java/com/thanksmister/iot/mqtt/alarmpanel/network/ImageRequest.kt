@@ -20,8 +20,10 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse
+import io.reactivex.Observable
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -31,5 +33,5 @@ interface ImageRequest {
 
     @GET("3/gallery/t/{tag}")
     fun getImagesByTag(@Header("authorization") clientId: String,
-                       @Path("tag") user: String): Call<ImageResponse>
+                       @Path("tag") user: String): Observable<ImageResponse>
 }

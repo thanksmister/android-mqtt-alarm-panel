@@ -60,8 +60,8 @@
     <string name="preference_title_units">Gebruik Celsius (°C)</string>
     <string name="preference_summary_units">Gebruik celsius voor de temperatuureenheid.</string>
 
-    <string name="preference_title_screen_saver_title">Screensaver</string>
-    <string name="preference_title_screen_saver_settings">Screensaver instellingen</string>
+    <string name="preference_title_display">Scherm</string>
+    <string name="preference_title_screen_saver_settings">Screensaver</string>
     <string name="preference_summary_screen_saver_settings">Wanneer actief, een ingebouwde klok screensaver zal worden gebruikt.</string>
     <string name="preference_title_screen_saver">Klok screensaver</string>
     <string name="pref_title_image_client_id">Imgur Client Id</string>
@@ -109,7 +109,7 @@
     <string name="preference_summary_tts">Gebruik een Google Text-To-Speech om de status van een alarm of een MQTT bericht uit te spreken. (Let op: Werkt alleen op Android Lollipop of hoger.)</string>
 
     <string name="preference_tts_topic">TTS onderwerp</string>
-    <string name="preference_tts_topic_title">Zet onderwerp waarde</string>
+    <string name="preference_topic_title">Zet onderwerp waarde</string>
     <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
 
 
@@ -147,6 +147,8 @@
 
     <string name="text_arm_home">ACTIVEER THUIS</string>
     <string name="text_arm_away">ACTIVEER WEG</string>
+    <string name="text_armed_home">ACTIVEER THUIS</string>
+    <string name="text_armed_away">ACTIVEER WEG</string>
     <string name="text_system">SYSTEEM</string>
     <string name="text_disarmed">GEDEACTIVEERD</string>
     <string name="dialog_alarm_triggered">VOER CODE IN</string>
@@ -208,7 +210,7 @@
     <string name="pref_time_format_title">Gebruik het 24-uurs formaat</string>
     <string name="text_dialog_select_time">Selecteer tijd</string>
     <string name="pref_density_summary">Verander de scherm dichtheid. Momenteel %1$s dpi.</string>
-    <string name="pref_device_brightness_summary">Zet de schermhelderheid tussen de 0 en 255. Momenteel %1$s.</string>
+    <string name="pref_device_brightness_summary">Zet de schermhelderheid tussen de 1 en 5. Momenteel %1$s.</string>
     <string name="pref_device_density_title">Scherm dichtheid</string>
     <string name="pref_device_brightness_title">Scherm helderheid</string>
     <string name="pref_reset_category">Herstellen</string>
@@ -259,6 +261,22 @@
     <string name="text_touch_sensor">Aanraaksensor</string>
     <string name="dialog_clear_logs">Wilt u de logboeken wissen?</string>
     <string name="menu_item_clear_logs">Logboeken wissen</string>
+    <string name="sensors_settings">Sensors</string>
+    <string name="button_add_sensor">+ ADD SENSOR</string>
+    <string name="pref_sensor_title">Add Sensor</string>
+    <string name="toast_changes_cancelled">Changes cancelled...</string>
+    <string name="error_sensor_empty_data">Sensor must have a topic and both payloads set to be saved.</string>
+    <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification if a door is opened or prevent the alarm to be set until a window sensor is closed.</string>
+    <string name="text_sensor">Sensor</string>
+    <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
+    <string name="pref_dark_mode_start_time">Starttijd: %1$s</string>
+    <string name="pref_dark_mode_end_time">Eindtijd: %1$s</string>
+    <string name="dialog_select_time">Selecteer Tijd</string>
+    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
+    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
+    <string name="pref_night_mode_end_description">Night Mode End Time</string>
+    <string name="pref_fullscreen_title">Fullscreen Mode</string>
+    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>
@@ -293,6 +311,15 @@
         <item>Draai links</item>
         <item>Draai rechts</item>
         <item>Spiegel verticaal</item>
+    </string-array>
+
+    <string-array name="sensor_types">
+        <item>Generic</item>
+        <item>Door</item>
+        <item>Window</item>
+        <item>Sound</item>
+        <item>Motion</item>
+        <item>Camera</item>
     </string-array>
 
 </resources>

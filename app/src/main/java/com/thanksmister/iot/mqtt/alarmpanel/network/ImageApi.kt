@@ -22,13 +22,16 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.GsonBuilder
 import com.thanksmister.iot.mqtt.alarmpanel.network.adapters.DataTypeAdapterFactory
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse
+import io.reactivex.Observable
 
 import java.util.concurrent.TimeUnit
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ImageApi {
@@ -40,7 +43,7 @@ class ImageApi {
         val base_url = "https://api.imgur.com/"
 
         val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
+        logging.level = HttpLoggingInterceptor.Level.HEADERS
 
         val httpClient = OkHttpClient.Builder()
                 .addInterceptor(logging)
@@ -56,13 +59,14 @@ class ImageApi {
         val retrofit = Retrofit.Builder()
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(base_url)
                 .build()
 
         service = retrofit.create(ImageRequest::class.java)
     }
 
-    fun getImagesByTag(clientId: String, tag: String): Call<ImageResponse> {
+    fun getImagesByTag(clientId: String, tag: String): Observable<ImageResponse> {
         val service = service
         val auth = "Client-ID " + clientId
         return service.getImagesByTag(auth, tag)

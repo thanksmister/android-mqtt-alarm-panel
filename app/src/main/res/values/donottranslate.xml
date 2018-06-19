@@ -36,13 +36,16 @@
         limitations under the License.
     ]]></string>
 
+    <string name="text_sensor_mqtt_output">"{\"topic\":\"%1$s\",\"payload\":\"%2$s\"}"</string>
+
     <string-array name="settings_titles">
         <item>@string/action_settings</item>
         <item>@string/text_alarm_settings</item>
         <item>@string/text_mqtt_settings</item>
+        <item>@string/sensors_settings</item>
         <item>@string/preference_title_notification</item>
         <item>@string/preference_camera_title</item>
-        <item>@string/preference_title_screen_saver_title</item>
+        <item>@string/preference_title_display</item>
         <item>@string/preference_title_weather_settings</item>
         <item>@string/preference_title_web_settings</item>
         <item>@string/text_about</item>
@@ -81,6 +84,14 @@
         <item>-90f</item>
         <item>90f</item>
         <item>180f</item>
+    </string-array>
+
+    <string-array name="screen_brightness_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
 </resources>

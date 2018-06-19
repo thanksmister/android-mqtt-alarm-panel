@@ -43,9 +43,37 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, value)
 
+    var useNightDayMode: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_DAY_NIGHT_MODE, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_DAY_NIGHT_MODE, value)
+
+    var dayNightMode: String
+        get() = this.sharedPreferences.getPrefString(DISPLAY_MODE_DAY_NIGHT, DISPLAY_MODE_DAY)
+        set(value) = this.sharedPreferences.setPrefString(DISPLAY_MODE_DAY_NIGHT, value)
+
+    var nightModeChanged: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, value)
+
+    var dayNightModeStartTime: String
+        get() = this.sharedPreferences.getPrefString(PREF_MODE_DAY_NIGHT_START, DAY_NIGHT_START_VALUE_DEFAULT)
+        set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_START, value)
+
+    var dayNightModeEndTime: String
+        get() = this.sharedPreferences.getPrefString(PREF_MODE_DAY_NIGHT_END, DAY_NIGHT_END_VALUE_DEFAULT)
+        set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_END, value)
+
+    var screenBrightness: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 5)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value)
+
     var alarmMode: String
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
+
+    var fullScreen: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCXREEN, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCXREEN, value)
 
     var systemAlerts: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
@@ -273,6 +301,7 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_FINGERPRINT)
         sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
         sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
+        sharedPreferences.removePreference(PREF_FULL_SCXREEN)
     }
 
     companion object {
@@ -294,6 +323,7 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_IMAGE_ROTATION = "pref_image_rotation"
         const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
+        const val PREF_FULL_SCXREEN = "pref_full_screen"
         const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
         const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         const val PREF_MODULE_TSS = "pref_module_tss"
@@ -315,7 +345,7 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_DEVICE_TIME = "pref_device_time"
         const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
         const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
-        const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_brightness"
+        const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
         const val PREF_WEATHER_WEATHER = "pref_weather_module"
         const val PREF_WEATHER_UNITS = "pref_weather_units"
@@ -326,5 +356,14 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_TELEGRAM_MODULE = "pref_telegram_module"
         const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
         const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
+        const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
+        const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
+        const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
+        private const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
+        private const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
+        const val DISPLAY_MODE_DAY = "mode_day"
+        const val DISPLAY_MODE_NIGHT = "mode_night"
+        const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
+        const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
     }
 }

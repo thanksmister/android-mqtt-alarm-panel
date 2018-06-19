@@ -39,7 +39,7 @@ class ExtendedForecastView : FrameLayout {
         super.onFinishInflate()
     }
 
-    fun setExtendedForecast(data: List<Datum>) {
+    fun setExtendedForecast(data: List<Datum>?) {
         if (data != null) {
             recycleView.setHasFixedSize(true)
             val linearLayoutManager = LinearLayoutManager(context)

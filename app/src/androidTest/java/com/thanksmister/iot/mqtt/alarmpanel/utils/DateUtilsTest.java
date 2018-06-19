@@ -12,7 +12,7 @@ public class DateUtilsTest {
     @Test
     public void dayOfWeek() throws Exception {
         long time = 1502766000; // this is short from DarkSky API
-        String day = DateUtils.dayOfWeek(time);
+        String day = DateUtils.INSTANCE.dayOfWeek(time);
         assertEquals("Tuesday", day);
     }
 }

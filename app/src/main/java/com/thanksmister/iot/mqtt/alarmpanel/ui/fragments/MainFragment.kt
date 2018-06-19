@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -34,7 +35,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -105,14 +106,14 @@ class MainFragment : BaseFragment() {
         listener = null
     }
 
-    private fun observeViewModel(viewModel: MessageViewModel) {
+    private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
                     Timber.d("Alarm state: " + state)
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
-                    activity?.runOnUiThread(java.lang.Runnable {
+                    activity?.runOnUiThread {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
                                 dialogUtils.clearDialogs()
@@ -132,7 +133,7 @@ class MainFragment : BaseFragment() {
                                 showAlarmTriggered()
                             }
                         }
-                    })
+                    }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
     }
 
@@ -184,7 +185,8 @@ class MainFragment : BaseFragment() {
     }
 
     private fun showAlarmTriggered() {
-        if (isAdded) {
+        if (isAdded && activity != null) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
             mainView.visibility = View.GONE
             triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode
@@ -197,7 +199,7 @@ class MainFragment : BaseFragment() {
                     listener!!.publishDisarmed()
                 }
                 override fun onError() {
-                    if (activity != null && isAdded) {
+                    if(activity != null) {
                         Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -208,6 +210,7 @@ class MainFragment : BaseFragment() {
     private fun hideTriggeredView() {
         mainView.visibility = View.VISIBLE
         triggeredView.visibility = View.GONE
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
     }
 
     companion object {

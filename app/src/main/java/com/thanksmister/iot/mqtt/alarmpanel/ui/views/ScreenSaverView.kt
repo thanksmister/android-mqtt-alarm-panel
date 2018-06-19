@@ -18,11 +18,11 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -36,6 +36,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.ImageFetcher
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Item
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSky
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
@@ -51,6 +52,7 @@ import java.util.*
 
 class ScreenSaverView : RelativeLayout {
 
+    private val disposable = CompositeDisposable()
     private var task: ImageTask? = null
     private var rotationHandler: Handler? = null
     private var timeHandler: Handler? = null
@@ -59,12 +61,10 @@ class ScreenSaverView : RelativeLayout {
     private var imageUrl: String? = null
     private var rotationInterval: Long = 0
     private var options:ImageOptions? = null
-
     private var saverContext: Context? = null
     private var dataSource: DarkSkyDao? = null
     private var useImageSaver: Boolean = false
     private var hasWeather: Boolean = false
-    private val disposable = CompositeDisposable()
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -99,7 +99,7 @@ class ScreenSaverView : RelativeLayout {
             task = null
         }
 
-        if (picasso != null && !TextUtils.isEmpty(imageUrl)) {
+        if (picasso != null) {
             picasso!!.invalidate(imageUrl!!)
             picasso!!.cancelRequest(screenSaverImage)
             picasso = null
@@ -113,7 +113,7 @@ class ScreenSaverView : RelativeLayout {
             timeHandler!!.removeCallbacks(timeRunnable)
         }
 
-        disposable.dispose()
+        disposable.clear()
     }
 
     fun setDataSource(dataSource: DarkSkyDao) {
@@ -150,51 +150,51 @@ class ScreenSaverView : RelativeLayout {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun setWeatherDataOnView() {
-        if(dataSource != null) {
-            disposable.add(dataSource!!.getItems()
-                    .filter { items -> items.isNotEmpty() }
-                    .map { items -> items[items.size - 1] }
-                    .doOnError { error ->
-                        Timber.e(error.message)
-                    }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ item ->
-                        if (item != null) {
-                            val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
-                            if (useImageSaver) {
-                                temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                try {
-                                    if (item.umbrella) {
-                                        conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                                    } else {
-                                        conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
-                                    }
-                                } catch (e : Exception) {
-                                    Timber.e(e.message)
-                                }
-                            } else {
-                                temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                try {
-                                    if (item.umbrella) {
-                                         conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                                    } else {
-                                         conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
-                                    }
-                                } catch (e : Exception) {
-                                    Timber.e(e.message)
-                                }
-                            }
-                        }
-                    }))
+        disposable.add(dataSource!!.getItems()
+                .filter { items -> items.isNotEmpty() }
+                .map { items -> items[0] }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({item ->
+                    setDisplayData(item)
+                }, { error -> Timber.e("Error Notifications: ${error.message}")}))
+    }
+
+    private fun setDisplayData(item: DarkSky) {
+        val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
+        if (useImageSaver) {
+            temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
+            try {
+                if (item.umbrella) {
+                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                } else {
+                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                }
+            } catch (e : Exception) {
+                Timber.e(e.message)
+                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+            }
+        } else {
+            temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
+            try {
+                if (item.umbrella) {
+                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
+                } else {
+                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+                }
+            } catch (e : Exception) {
+                Timber.e(e.message)
+                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
-    fun setScreenSaver(useImageScreenSaver: Boolean,  options:ImageOptions, dataSource: DarkSkyDao, hasWeather: Boolean) {
+    fun init(useImageScreenSaver: Boolean, options:ImageOptions, dataSource: DarkSkyDao, hasWeather: Boolean) {
         this.dataSource = dataSource
         this.options = options
-        this.rotationInterval = (options.getRotation() * 60 * 1000).toLong() // convert to milliseconds
+        this.rotationInterval = (options.imageRotation * 60 * 1000).toLong() // convert to milliseconds
         this.hasWeather = hasWeather
         this.useImageSaver = useImageScreenSaver
         if(hasWeather) {
@@ -253,28 +253,20 @@ class ScreenSaverView : RelativeLayout {
             }
         }
     }
-
-    // TODO move to RxJava
     private fun fetchMediaData() {
-        if (task == null || task!!.isCancelled) {
-            val api = ImageApi()
-            val fetcher = ImageFetcher(api)
-            task = ImageTask(fetcher)
-            task!!.setOnExceptionListener(object :   NetworkTask.OnExceptionListener {
-                override fun onException(paramException: Exception) {
-                    Timber.e("Imgur Exception: " + paramException.message)
-                }
-            })
-            task!!.setOnCompleteListener(object : NetworkTask.OnCompleteListener<Response<ImageResponse>> {
-                override fun onComplete(paramResult: Response<ImageResponse>) {
-                    val instagramResponse = paramResult.body()
-                    if (instagramResponse != null) {
-                        itemList = instagramResponse.items
+        val clientId = options?.imageClientId
+        val tag = options?.imageSource
+        val api = ImageApi()
+        val fetcher = ImageFetcher(api)
+        disposable.add(fetcher.getImagesByTag(clientId, tag)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({paramResult ->
+                    Timber.d("Imgur results ${paramResult.toString()}")
+                    if (paramResult != null) {
+                        itemList = paramResult.items
                         startImageRotation()
                     }
-                }
-            })
-            task!!.execute(options!!.imageClientId, options!!.getTag())
-        }
+                }, { error -> Timber.e("Error Images: ${error.message}")}))
     }
 }

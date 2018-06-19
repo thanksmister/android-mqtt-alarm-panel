@@ -18,9 +18,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.app.Dialog
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -46,9 +43,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISA
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_controls.*
 import timber.log.Timber
@@ -59,7 +56,6 @@ class ControlsFragment : BaseFragment() {
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
-
     private var alarmPendingView: AlarmPendingView? = null
     private var mListener: OnControlsFragmentListener? = null
 
@@ -138,14 +134,14 @@ class ControlsFragment : BaseFragment() {
         mListener = null
     }
 
-    private fun observeViewModel(viewModel: MessageViewModel) {
+    private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
                     Timber.d("Alarm state: " + state)
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
-                    activity?.runOnUiThread(java.lang.Runnable {
+                    activity?.runOnUiThread {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY -> {
                                 dialogUtils.clearDialogs()
@@ -184,18 +180,18 @@ class ControlsFragment : BaseFragment() {
                                 setDisarmedView()
                             }
                         }
-                    })
+                    }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
     }
 
     private fun setArmedAwayView() {
-        alarmText.setText(R.string.text_arm_away)
+        alarmText.setText(R.string.text_armed_away)
         alarmText.setTextColor(resources.getColor(R.color.red))
         alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
     }
 
     private fun setArmedHomeView() {
-        alarmText.setText(R.string.text_arm_home)
+        alarmText.setText(R.string.text_armed_home)
         alarmText.setTextColor(resources.getColor(R.color.yellow))
         alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
     }
@@ -210,12 +206,12 @@ class ControlsFragment : BaseFragment() {
         viewModel.isArmed(true)
         viewModel.setAlarmMode(mode)
         if (MODE_ARM_HOME_PENDING == mode) {
-            alarmText.setText(R.string.text_arm_home)
+            alarmText.setText(R.string.text_armed_home)
             alarmText.setTextColor(resources.getColor(R.color.yellow))
             alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
             showAlarmPendingView(configuration.pendingHomeTime)
         } else if (MODE_ARM_AWAY_PENDING == mode) {
-            alarmText.setText(R.string.text_arm_away)
+            alarmText.setText(R.string.text_armed_away)
             alarmText.setTextColor(resources.getColor(R.color.red))
             alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
             showAlarmPendingView(configuration.pendingAwayTime)
@@ -293,10 +289,6 @@ class ControlsFragment : BaseFragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         fun newInstance(): ControlsFragment {
             return ControlsFragment()
         }

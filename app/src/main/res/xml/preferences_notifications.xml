@@ -63,7 +63,7 @@
             android:positiveButtonText="@android:string/ok"
             android:summary="home/notification"
             android:enabled="false"
-            android:title="@string/preference_tts_topic_title" />
+            android:title="@string/preference_topic_title" />
 
         <Preference
             android:key="pref_description"

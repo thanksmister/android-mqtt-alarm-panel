@@ -24,6 +24,9 @@ import android.content.ContextWrapper
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
+
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
 
@@ -103,10 +106,9 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
         }
     }
 
-    // TODO we should trust that we subscribed to the correct topics
     override fun subscriptionMessage(id: String, topic: String, payload: String) {
         Timber.d("topic: " + topic)
-        if (mqttOptions.getNotificationTopic() == topic || (mqttOptions.getStateTopic() == topic && AlarmUtils.hasSupportedStates(payload))) {
+        if (mqttOptions.getNotificationTopic() == topic || (ALARM_STATE_TOPIC == topic && AlarmUtils.hasSupportedStates(payload))) {
             listener.onMQTTMessage(id, topic, payload)
         } else {
             Timber.e("We received some bad info: topic: $topic payload: $payload");

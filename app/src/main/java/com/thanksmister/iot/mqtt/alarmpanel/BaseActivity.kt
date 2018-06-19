@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
+import android.app.Dialog
 import android.app.KeyguardManager
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -29,26 +30,28 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.PowerManager
+import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
-import com.thanksmister.iot.mqtt.alarmpanel.managers.ProximityManager
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.ScreenSaverActivity
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MessageViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import dagger.android.support.DaggerAppCompatActivity
 import dpreference.DPreference
 import io.reactivex.disposables.CompositeDisposable
@@ -61,25 +64,30 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     private val REQUEST_PERMISSIONS = 88
 
     @Inject lateinit var configuration: Configuration
-    @Inject lateinit var preferences: DPreference
+    @Inject lateinit var mqttOptions: MQTTOptions
+    @Inject lateinit var imageOptions: ImageOptions
+    @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var darkSkyDataSource: DarkSkyDao
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MessageViewModel
+    lateinit var viewModel: MainViewModel
 
     private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
-    val disposable = CompositeDisposable()
     private var wakeLock: PowerManager.WakeLock? = null
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
 
+    val disposable = CompositeDisposable()
+    private var screenSaverDialog : Dialog? = null
+
     abstract fun getLayoutId(): Int
 
     private val inactivityCallback = Runnable {
-        dialogUtils.hideScreenSaverDialog()
+        Timber.d("inactivityCallback")
+        dialogUtils.clearDialogs()
         userPresent = false
         showScreenSaver()
     }
@@ -88,11 +96,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MessageViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
         this.window.setFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+
         decorView = window.decorView
 
         lifecycle.addObserver(dialogUtils)
@@ -112,8 +121,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            val visibility: Int
+        val visibility: Int
+        if (hasFocus && configuration.fullScreen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -131,6 +140,17 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
                 window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+            decorView?.systemUiVisibility = visibility
+        } else if (hasFocus) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+            } else {
+                visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
             }
             decorView?.systemUiVisibility = visibility
         }
@@ -174,13 +194,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     fun resetInactivityTimer() {
         Timber.d("resetInactivityTimer")
-        dialogUtils.hideScreenSaverDialog()
+        hideScreenSaver()
         inactivityHandler.removeCallbacks(inactivityCallback)
         inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
     }
 
     fun stopDisconnectTimer() {
-        dialogUtils.hideScreenSaverDialog()
+        hideScreenSaver()
         inactivityHandler.removeCallbacks(inactivityCallback)
     }
 
@@ -199,23 +219,24 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onResume()
         releaseTemporaryWakeLock()
         checkPermissions()
-    }
 
-    override fun onPause() {
-        super.onPause()
+        if(configuration.nightModeChanged) {
+            configuration.nightModeChanged = false // reset
+            dayNightModeChanged() // reset screen brightness if day/night mode inactive
+        }
     }
 
     /**
      * Wakes the device temporarily (or always if triggered) when the alarm requires attention.
      */
-    fun acquireTemporaryWakeLock() {
+    fun acquireTemporaryWakeLock(timeout: Long) {
         Timber.d("acquireTemporaryWakeLock")
         if (wakeLock == null) {
             val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
             wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "alarm:ALARM_TEMPORARY_WAKE_TAG")
         }
-        if (wakeLock != null && !wakeLock!!.isHeld()) {  // but we don't hold it
-            wakeLock!!.acquire(10000)
+        if (wakeLock != null && !wakeLock!!.isHeld) {  // but we don't hold it
+            wakeLock!!.acquire(timeout)
         }
 
         // Some Amazon devices are not seeing this permission so we are trying to check
@@ -232,17 +253,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * Wakelock used to temporarily bring application to foreground if alarm needs attention.
      */
     fun releaseTemporaryWakeLock() {
-        if (wakeLock != null && wakeLock!!.isHeld()) {
+        if (wakeLock != null && wakeLock!!.isHeld) {
             wakeLock!!.release()
         }
-    }
-
-    fun readWeatherOptions(): DarkSkyOptions {
-        return DarkSkyOptions.from(preferences)
-    }
-
-    fun readImageOptions(): ImageOptions {
-        return ImageOptions.from(preferences)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -253,25 +266,51 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
+    open fun dayNightModeCheck(dayNightMode:String?) {
+        Timber.d("dayNightModeCheck")
+        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
+            Timber.d("Tis the night!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            recreate()
+        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            Timber.d("Tis the day!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            recreate()
+        }
+    }
+
+    private fun dayNightModeChanged() {
+        Timber.d("dayNightModeChanged")
+        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (!configuration.useNightDayMode && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            Timber.d("Tis the day!")
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            recreate()
+        }
+    }
+
     /**
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue
      * with the alarm disabled because the disable time will be longer than this.
      */
     open fun showScreenSaver() {
-        Timber.d("viewModel.isAlarmTriggeredMode() " + viewModel.isAlarmTriggeredMode())
-        Timber.d("viewModel.hasScreenSaver() " + viewModel.hasScreenSaver())
-        Timber.d("viewModel.hasWeatherModule() " + configuration.showWeatherModule())
         if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
             inactivityHandler.removeCallbacks(inactivityCallback)
-            val hasWeather = (configuration.showWeatherModule() && readWeatherOptions().isValid)
+            val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             dialogUtils.showScreenSaver(this@BaseActivity,
                     configuration.showPhotoScreenSaver(),
-                    readImageOptions(),
+                    imageOptions,
                     View.OnClickListener {
                         dialogUtils.hideScreenSaverDialog()
                         resetInactivityTimer()
                     }, darkSkyDataSource, hasWeather)
         }
+    }
+
+    open fun hideScreenSaver() {
+        dialogUtils.hideScreenSaverDialog()
+        screenSaverDialog = null
     }
 
     /**
@@ -285,8 +324,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             val notifications = NotificationUtils(this@BaseActivity)
             notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
         } else {
-            acquireTemporaryWakeLock()
-            dialogUtils.hideScreenSaverDialog()
+            acquireTemporaryWakeLock(10000)
+            hideScreenSaver()
+            bringApplicationToForegroundIfNeeded()
             dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                     getString(R.string.text_notification_network_description))
         }
@@ -308,12 +348,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
-    fun applicationInBackground():Boolean {
-        return !LifecycleHandler.isApplicationInForeground() && !userPresent
-    }
-
     fun bringApplicationToForegroundIfNeeded() {
-        if (applicationInBackground()) {
+        if (!LifecycleHandler.isApplicationInForeground()) {
+            Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP

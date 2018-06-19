@@ -63,13 +63,13 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var configuration: Configuration
+    @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
     private var weatherModulePreference: CheckBoxPreference? = null
     private var unitsPreference: CheckBoxPreference? = null
     private var weatherApiKeyPreference: EditTextPreference? = null
     private var weatherLatitude: EditTextPreference? = null
     private var weatherLongitude: EditTextPreference? = null
-    private var weatherOptions: DarkSkyOptions? = null
     private var locationManager: LocationManager? = null
     private var locationHandler: Handler? = null
 
@@ -80,10 +80,10 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                     val latitude = location.latitude.toString()
                     val longitude = location.longitude.toString()
                     if (LocationUtils.coordinatesValid(latitude, longitude)) {
-                        weatherOptions!!.setLat(location.latitude.toString())
-                        weatherOptions!!.setLon(location.longitude.toString())
-                        weatherLatitude!!.summary = weatherOptions!!.latitude.toString()
-                        weatherLongitude!!.summary = weatherOptions!!.longitude
+                        darkSkyOptions.latitude = location.latitude.toString()
+                        darkSkyOptions.longitude = location.longitude.toString()
+                        weatherLatitude!!.summary = darkSkyOptions.latitude.toString()
+                        weatherLongitude!!.summary = darkSkyOptions.longitude
                     } else {
                         Toast.makeText(activity, R.string.toast_invalid_coordinates, Toast.LENGTH_SHORT).show()
                     }
@@ -173,29 +173,25 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                 return
             }
         }
-
-        if (isAdded && activity != null) {
-            weatherOptions = (activity as BaseActivity).readWeatherOptions()
+        
+        if (!TextUtils.isEmpty(darkSkyOptions.darkSkyKey)) {
+            weatherApiKeyPreference!!.text = darkSkyOptions.darkSkyKey.toString()
+            weatherApiKeyPreference!!.summary = darkSkyOptions.darkSkyKey.toString()
         }
 
-        if (!TextUtils.isEmpty(weatherOptions!!.darkSkyKey)) {
-            weatherApiKeyPreference!!.text = weatherOptions!!.darkSkyKey.toString()
-            weatherApiKeyPreference!!.summary = weatherOptions!!.darkSkyKey.toString()
+        if (!TextUtils.isEmpty(darkSkyOptions.latitude)) {
+            weatherLatitude!!.text = darkSkyOptions.latitude.toString()
+            weatherLatitude!!.summary = darkSkyOptions.latitude.toString()
         }
 
-        if (!TextUtils.isEmpty(weatherOptions!!.latitude)) {
-            weatherLatitude!!.text = weatherOptions!!.latitude.toString()
-            weatherLatitude!!.summary = weatherOptions!!.latitude.toString()
-        }
-
-        if (!TextUtils.isEmpty(weatherOptions!!.longitude)) {
-            weatherLongitude!!.text = weatherOptions!!.longitude
-            weatherLongitude!!.summary = weatherOptions!!.longitude
+        if (!TextUtils.isEmpty(darkSkyOptions.longitude)) {
+            weatherLongitude!!.text = darkSkyOptions.longitude
+            weatherLongitude!!.summary = darkSkyOptions.longitude
         }
 
         weatherModulePreference!!.isChecked = configuration.showWeatherModule()
 
-        unitsPreference!!.isChecked = weatherOptions!!.getIsCelsius()
+        unitsPreference!!.isChecked = darkSkyOptions.isCelsius()
         unitsPreference!!.isEnabled = configuration.showWeatherModule()
         weatherApiKeyPreference!!.isEnabled = configuration.showWeatherModule()
         weatherLatitude!!.isEnabled = configuration.showWeatherModule()
@@ -217,32 +213,32 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
             }
             PREF_WEATHER_UNITS -> {
                 val useCelsius = unitsPreference!!.isChecked
-                weatherOptions!!.setIsCelsius(useCelsius)
+                darkSkyOptions.setIsCelsius(useCelsius)
             }
             PREF_WEATHER_API_KEY -> {
                 val value = weatherApiKeyPreference!!.text
-                weatherOptions!!.darkSkyKey = value
+                darkSkyOptions.darkSkyKey = value
                 weatherApiKeyPreference!!.summary = value
             }
             PREF_WEATHER_LONGITUDE -> {
                 val value = weatherLongitude!!.text
                 if (LocationUtils.longitudeValid(value)) {
-                    weatherOptions!!.setLon(value)
+                    darkSkyOptions.longitude = value
                     weatherLongitude!!.summary = value
                 } else {
                     Toast.makeText(activity, R.string.toast_invalid_latitude, Toast.LENGTH_SHORT).show()
-                    weatherOptions!!.setLon(value)
+                    darkSkyOptions.longitude = value
                     weatherLongitude!!.summary = ""
                 }
             }
             PREF_WEATHER_LATITUDE -> {
                 val value = weatherLatitude!!.text
                 if (LocationUtils.longitudeValid(value)) {
-                    weatherOptions!!.setLat(value)
+                    darkSkyOptions.latitude = value
                     weatherLatitude!!.summary = value
                 } else {
                     Toast.makeText(activity, R.string.toast_invalid_longitude, Toast.LENGTH_SHORT).show()
-                    weatherOptions!!.setLat(value)
+                    darkSkyOptions.latitude = value
                     weatherLatitude!!.summary = ""
                 }
             }

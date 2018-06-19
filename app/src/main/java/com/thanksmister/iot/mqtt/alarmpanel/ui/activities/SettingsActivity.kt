@@ -48,7 +48,7 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, Setting
     private var settingTitles: Array<String>? = null
     private var pagerAdapter: PagerAdapter? = null
     private var actionBar: ActionBar? = null
-    private val PAGE_NUM = 9
+    private val PAGE_NUM = 10
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
@@ -178,12 +178,13 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, Setting
             return when (position) {
                 1 -> AlarmSettingsFragment()
                 2 -> MqttSettingsFragment()
-                3 -> NotificationsSettingsFragment()
-                4 -> CameraSettingsFragment()
-                5 -> ScreenSettingsFragment()
-                6 -> WeatherSettingsFragment()
-                7 -> PlatformSettingsFragment()
-                8 -> AboutFragment()
+                3 -> SensorsFragment()
+                4 -> NotificationsSettingsFragment()
+                5 -> CameraSettingsFragment()
+                6 -> ScreenSettingsFragment()
+                7 -> WeatherSettingsFragment()
+                8 -> PlatformSettingsFragment()
+                9 -> AboutFragment()
                 else -> SettingsFragment()
             }
         }
