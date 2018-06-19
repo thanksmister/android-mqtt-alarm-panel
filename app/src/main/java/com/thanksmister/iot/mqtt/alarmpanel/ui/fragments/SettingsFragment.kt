@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -70,7 +71,10 @@ class SettingsFragment : BaseFragment() {
         buttonWeatherSettings.setOnClickListener { listener?.navigatePageNumber(WEATHER_SETTINGS) }
         buttonPlatformSettings.setOnClickListener { listener?.navigatePageNumber(PLATFORM_SETTINGS) }
         buttonAboutSettings.setOnClickListener { listener?.navigatePageNumber(ABOUT_SETTINGS) }
-        buttonSensorSettings.setOnClickListener { listener?.navigatePageNumber(SENSOR_SETTINGS) }
+        buttonSensorSettings.setOnClickListener {
+            //listener?.navigatePageNumber(SENSOR_SETTINGS)
+            Toast.makeText(context, "The ability to display sensor states is coming soon...", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onDetach() {

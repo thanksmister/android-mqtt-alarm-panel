@@ -266,7 +266,7 @@
     <string name="pref_sensor_title">Add Sensor</string>
     <string name="toast_changes_cancelled">Changes cancelled...</string>
     <string name="error_sensor_empty_data">Sensor must have a topic and both payloads set to be saved.</string>
-    <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification you if a door is opened or to prevent the alarm to be set until a window is closed.</string>
+    <string name="add_sensor_description">Create a list of sensors to receive sensor state changes. For example, create a sound notification if a door is opened or prevent the alarm to be set until a window sensor is closed.</string>
     <string name="text_sensor">Sensor</string>
     <string name="sensor_topic_description">Sensor MQTT topic to subscribe to for state changes (%1$s/frontdoor).</string>
     <string name="pref_dark_mode_start_time">Starttijd: %1$s</string>
@@ -311,6 +311,15 @@
         <item>Draai links</item>
         <item>Draai rechts</item>
         <item>Spiegel verticaal</item>
+    </string-array>
+
+    <string-array name="sensor_types">
+        <item>Generic</item>
+        <item>Door</item>
+        <item>Window</item>
+        <item>Sound</item>
+        <item>Motion</item>
+        <item>Camera</item>
     </string-array>
 
 </resources>

@@ -59,12 +59,12 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
         val context = view.getContext()
         view.sensorList.layoutManager = LinearLayoutManager(context)
         view.sensorList.adapter =  SensorAdapter(ArrayList<Sensor>(), mqttOptions.getSensorTopic(), this)
-        addSensorButton.setOnClickListener({
+        addSensorButton.setOnClickListener {
             showAddSensorDialog(Sensor())
-        })
-        sensorTopic.setOnClickListener({
+        }
+        sensorTopic.setOnClickListener {
             showTopicDialog(mqttOptions.getSensorTopic())
-        })
+        }
         sensorTopicPrefixValue.text = mqttOptions.getSensorTopic()
     }
 
