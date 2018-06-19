@@ -139,6 +139,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
                                 awakenDeviceForAction(AWAKE_TIME)
+                                resetInactivityTimer()
                                 if(viewModel.hasSystemAlerts()) {
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.clearNotification()
@@ -147,9 +148,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             AlarmUtils.STATE_ARM_AWAY,
                             AlarmUtils.STATE_ARM_HOME -> {
                                 awakenDeviceForAction(AWAKE_TIME)
+                                resetInactivityTimer()
                             }
                             AlarmUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction(TRIGGERED_AWAKE_TIME) // 3 hours
+                                stopDisconnectTimer() // stop screen saver mode
                                 if(viewModel.showSystemTriggeredAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
@@ -157,6 +160,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             }
                             AlarmUtils.STATE_PENDING -> {
                                 awakenDeviceForAction(AWAKE_TIME)
+                                resetInactivityTimer()
                                 if(viewModel.showSystemPendingAlert()){
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
@@ -326,7 +330,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         Timber.d("awakenDeviceForAction")
         bringApplicationToForegroundIfNeeded()
         acquireTemporaryWakeLock(timeout)
-        stopDisconnectTimer() // stop screen saver mode
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
