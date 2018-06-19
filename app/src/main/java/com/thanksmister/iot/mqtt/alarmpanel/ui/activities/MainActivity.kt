@@ -122,9 +122,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         alarmLiveData?.observe(this, Observer { dayNightMode ->
             dayNightModeCheck(dayNightMode)
         })
-
-        Timber.d("imageOptions clientID ${imageOptions.imageClientId}")
-        Timber.d("mqttOptions broker ${mqttOptions.getBroker()}")
     }
 
     public override fun onStart() {
