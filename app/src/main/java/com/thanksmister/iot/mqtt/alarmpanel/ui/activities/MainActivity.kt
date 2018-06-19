@@ -139,7 +139,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
                                 awakenDeviceForAction(AWAKE_TIME)
-                                resetInactivityTimer()
                                 if(viewModel.hasSystemAlerts()) {
                                     val notifications = NotificationUtils(this@MainActivity)
                                     notifications.clearNotification()
@@ -148,7 +147,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             AlarmUtils.STATE_ARM_AWAY,
                             AlarmUtils.STATE_ARM_HOME -> {
                                 awakenDeviceForAction(AWAKE_TIME)
-                                resetInactivityTimer()
                             }
                             AlarmUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction(TRIGGERED_AWAKE_TIME) // 3 hours
@@ -332,7 +330,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
-        hideScreenSaver()
     }
 
     private fun captureImage() {
