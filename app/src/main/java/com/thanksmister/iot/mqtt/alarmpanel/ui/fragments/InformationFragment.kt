@@ -54,7 +54,6 @@ class InformationFragment : BaseFragment() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var weatherViewModel: WeatherViewModel
-    @Inject lateinit var imageOptions: ImageOptions
     @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
     private var forecastList: List<Datum> = Collections.emptyList()
@@ -83,11 +82,11 @@ class InformationFragment : BaseFragment() {
         timeHandler = Handler(getMainLooper())
         timeHandler!!.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
-        weatherLayout.setOnClickListener({
+        weatherLayout.setOnClickListener {
             if (!forecastList.isEmpty()) {
                 dialogUtils.showExtendedForecastDialog(activity as BaseActivity, forecastList)
             }
-        })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -130,7 +129,7 @@ class InformationFragment : BaseFragment() {
                 viewModel.getLatestItem()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ item ->
+                        .subscribe { item ->
                             if(item != null) {
                                 (activity as BaseActivity).runOnUiThread {
                                     weatherLayout.visibility = View.VISIBLE
@@ -149,17 +148,16 @@ class InformationFragment : BaseFragment() {
                                     }
                                 }
                             }
-                        })
-            )
+                        }
+        )
     }
 
     private fun connectWeatherModule() {
-        Timber.d("connectWeatherModule")
         val apiKey = darkSkyOptions.darkSkyKey
         val units = darkSkyOptions.weatherUnits
         val lat = darkSkyOptions.latitude
         val lon = darkSkyOptions.longitude
-        weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units!!, lat!!, lon!!)
+        weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units, lat!!, lon!!)
     }
 
     companion object {

@@ -28,11 +28,11 @@ constructor(private val sharedPreferences: DPreference) {
         get() = sharedPreferences.getPrefString(PREF_WEATHER_UNITS, DarkSkyRequest.UNITS_US)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_UNITS, value)
 
-    var longitude: String
+    var longitude: String?
         get() = sharedPreferences.getPrefString(PREF_WEATHER_LON, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_LON, value)
 
-    var latitude: String
+    var latitude: String?
         get() = sharedPreferences.getPrefString(PREF_WEATHER_LAT, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEATHER_LAT, value)
 
