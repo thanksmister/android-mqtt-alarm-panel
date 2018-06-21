@@ -262,7 +262,7 @@
     <string name="text_touch_sensor">Sensor de toque</string>
     <string name="dialog_clear_logs">Você quer limpar os logs?</string>
     <string name="menu_item_clear_logs">Limpar logs</string>
-    <string name="sensors_settings">Sensors</string>
+    <string name="sensors_settings">Sensores</string>
     <string name="button_add_sensor">+ ADD SENSOR</string>
     <string name="pref_sensor_title">Add Sensor</string>
     <string name="toast_changes_cancelled">Changes cancelled...</string>
@@ -273,12 +273,11 @@
     <string name="pref_dark_mode_start_time">Hora de início: %1$s</string>
     <string name="pref_dark_mode_end_time">Fim do tempo: %1$s</string>
     <string name="dialog_select_time">Selecione o horário</string>
-    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
-    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
-    <string name="pref_night_mode_end_description">Night Mode End Time</string>
-    <string name="pref_fullscreen_title">Fullscreen Mode</string>
-    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
-
+    <string name="pref_night_mode_description">Escurece a exibição e usa um tema escuro com base no horário de início e término.</string>
+    <string name="pref_night_mode_start_description">Hora de início do modo noturno</string>
+    <string name="pref_night_mode_end_description">Hora Final do Modo Noturno</string>
+    <string name="pref_fullscreen_title">Modo tela cheia</string>
+    <string name="pref_fullscreen_description">Exibir aplicativo no modo de tela cheia.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

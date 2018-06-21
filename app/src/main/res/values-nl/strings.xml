@@ -261,7 +261,7 @@
     <string name="text_touch_sensor">Aanraaksensor</string>
     <string name="dialog_clear_logs">Wilt u de logboeken wissen?</string>
     <string name="menu_item_clear_logs">Logboeken wissen</string>
-    <string name="sensors_settings">Sensors</string>
+    <string name="sensors_settings">Sensoren</string>
     <string name="button_add_sensor">+ ADD SENSOR</string>
     <string name="pref_sensor_title">Add Sensor</string>
     <string name="toast_changes_cancelled">Changes cancelled...</string>
@@ -272,11 +272,11 @@
     <string name="pref_dark_mode_start_time">Starttijd: %1$s</string>
     <string name="pref_dark_mode_end_time">Eindtijd: %1$s</string>
     <string name="dialog_select_time">Selecteer Tijd</string>
-    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
-    <string name="pref_night_mode_start_description">Night Mode Start Time</string>
-    <string name="pref_night_mode_end_description">Night Mode End Time</string>
-    <string name="pref_fullscreen_title">Fullscreen Mode</string>
-    <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
+    <string name="pref_night_mode_description">Dimt het display en gebruikt een donker thema op basis van de begin- en eindtijd.</string>
+    <string name="pref_night_mode_start_description">Starttijd nachtmodus</string>
+    <string name="pref_night_mode_end_description">Eindtijd nachtmodus</string>
+    <string name="pref_fullscreen_title">Volledig scherm</string>
+    <string name="pref_fullscreen_description">Geef de app weer in de modus voor volledig scherm.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

@@ -36,7 +36,7 @@
         limitations under the License.
     ]]></string>
 
-    <string name="text_sensor_mqtt_output">"{\"topic\":\"%1$s\",\"payload\":\"%2$s\"}"</string>
+    <string name="text_sensor_mqtt_output" translatable="false">"{\"topic\":\"%1$s\",\"payload\":\"%2$s\"}"</string>
 
     <string-array name="settings_titles">
         <item>@string/action_settings</item>

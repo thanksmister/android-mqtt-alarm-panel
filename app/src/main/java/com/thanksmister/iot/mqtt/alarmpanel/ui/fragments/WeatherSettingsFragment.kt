@@ -82,7 +82,7 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
                     if (LocationUtils.coordinatesValid(latitude, longitude)) {
                         darkSkyOptions.latitude = location.latitude.toString()
                         darkSkyOptions.longitude = location.longitude.toString()
-                        weatherLatitude!!.summary = darkSkyOptions.latitude.toString()
+                        weatherLatitude!!.summary = darkSkyOptions.latitude
                         weatherLongitude!!.summary = darkSkyOptions.longitude
                     } else {
                         Toast.makeText(activity, R.string.toast_invalid_coordinates, Toast.LENGTH_SHORT).show()
@@ -180,8 +180,8 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
         }
 
         if (!TextUtils.isEmpty(darkSkyOptions.latitude)) {
-            weatherLatitude!!.text = darkSkyOptions.latitude.toString()
-            weatherLatitude!!.summary = darkSkyOptions.latitude.toString()
+            weatherLatitude!!.text = darkSkyOptions.latitude
+            weatherLatitude!!.summary = darkSkyOptions.latitude
         }
 
         if (!TextUtils.isEmpty(darkSkyOptions.longitude)) {
