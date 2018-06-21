@@ -279,7 +279,6 @@
     <string name="pref_fullscreen_title">Modo tela cheia</string>
     <string name="pref_fullscreen_description">Exibir aplicativo no modo de tela cheia.</string>
 
-
     <string-array name="inactivity_times">
         <item>15 segundos</item>
         <item>30 segundos</item>
