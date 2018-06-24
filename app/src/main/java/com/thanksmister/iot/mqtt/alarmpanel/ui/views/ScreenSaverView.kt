@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -130,7 +131,7 @@ class ScreenSaverView : RelativeLayout {
         }
 
         // setup the views
-        if (useImageSaver) {
+        if (useImageSaver && options!!.isValid) {
             screenSaverImageLayout.visibility = View.VISIBLE
             screenSaverClockLayout.visibility = View.GONE
             if(!hasWeather) {
@@ -196,7 +197,7 @@ class ScreenSaverView : RelativeLayout {
         this.options = options
         this.rotationInterval = (options.imageRotation * 60 * 1000).toLong() // convert to milliseconds
         this.hasWeather = hasWeather
-        this.useImageSaver = useImageScreenSaver
+        this.useImageSaver = (useImageScreenSaver && options.isValid)
         if(hasWeather) {
             setWeatherDataOnView()
         }

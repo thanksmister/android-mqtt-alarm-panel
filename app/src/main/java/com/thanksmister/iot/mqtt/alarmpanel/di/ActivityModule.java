@@ -18,7 +18,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.di;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Configuration;
+
 import android.content.res.Resources;
 import android.location.LocationManager;
 import android.view.LayoutInflater;
@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
 import dagger.Module;
@@ -61,8 +62,8 @@ class ActivityModule {
     }
 
     @Provides
-    static Configuration provideConfiguration() {
-        return new Configuration();
+    static Configuration provideConfiguration(DPreference preference) {
+        return new Configuration(preference);
     }
 
     @Provides

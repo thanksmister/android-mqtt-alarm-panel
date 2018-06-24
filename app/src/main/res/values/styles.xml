@@ -8,8 +8,9 @@
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog">
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="CustomPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">

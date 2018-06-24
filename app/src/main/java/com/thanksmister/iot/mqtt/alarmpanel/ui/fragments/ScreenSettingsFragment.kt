@@ -23,7 +23,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.preference.*
+import android.text.TextUtils
 import android.view.View
+import android.widget.Toast
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
@@ -211,11 +213,20 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             }
             Configuration.PREF_IMAGE_SOURCE -> {
                 val value = urlPreference!!.text
-                imageOptions.imageSource = value
+                if(TextUtils.isEmpty(value)) {
+                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                    urlPreference!!.text = imageOptions.imageSource
+                } else {
+                    imageOptions.imageSource = value
+                }
             }
             Configuration.PREF_IMAGE_CLIENT_ID -> {
                 val value = clientIdPreference!!.text
-                imageOptions.imageClientId = value
+                if(TextUtils.isEmpty(value)) {
+                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                } else {
+                    imageOptions.imageClientId = value
+                }
             }
             Configuration.PREF_IMAGE_FIT_SIZE -> {
                 val fitScreen = imageFitPreference!!.isChecked

@@ -20,6 +20,8 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.Manifest
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -50,16 +52,22 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFragment.OnControlsFragmentListener,
         MQTTModule.MQTTListener, CameraModule.CallbackListener, MainFragment.OnMainFragmentListener, PlatformFragment.OnPlatformFragmentListener {
 
     private lateinit var pagerAdapter: PagerAdapter
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
 
     private var textToSpeechModule: TextToSpeechModule? = null
     private var mqttModule: MQTTModule? = null
@@ -118,18 +126,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     .show()
         }
 
-        alarmLiveData = DayNightAlarmLiveData(this@MainActivity, configuration)
-        alarmLiveData?.observe(this, Observer { dayNightMode ->
-            dayNightModeCheck(dayNightMode)
-        })
+        // We must be sure we have the instantiated the view model before we observe.
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        lifecycle.addObserver(dialogUtils)
+        observeViewModel()
     }
 
-    public override fun onStart() {
-
-        super.onStart()
-
-        lifecycle.addObserver(dialogUtils)
-
+    private fun observeViewModel() {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -179,6 +182,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             Timber.d("getToastMessage")
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
         })
+
+        alarmLiveData = DayNightAlarmLiveData(this@MainActivity, configuration)
+        alarmLiveData?.observe(this, Observer { dayNightMode ->
+            dayNightModeCheck(dayNightMode)
+        })
+    }
+
+    public override fun onStart() {
+        super.onStart()
     }
 
     override fun onResume() {

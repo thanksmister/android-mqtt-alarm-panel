@@ -101,10 +101,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
         return (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl))
     }
 
-    fun hasScreenSaver() : Boolean {
-        return (configuration.showPhotoScreenSaver() || configuration.showClockScreenSaverModule())
-    }
-
     fun hasCamera() : Boolean {
         return (configuration.hasCamera() && (configuration.hasMailGunCredentials() || configuration.hasTelegramCredentials()))
     }
@@ -148,28 +144,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
 
     fun showSystemPendingAlert(): Boolean {
         return (getAlarmMode() == AlarmUtils.MODE_ARM_HOME || getAlarmMode() == AlarmUtils.MODE_ARM_AWAY) && hasSystemAlerts()
-    }
-
-    fun isAlarmTriggeredMode(): Boolean {
-        return getAlarmMode() == MODE_TRIGGERED
-                || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING
-                || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING
-                || getAlarmMode() == MODE_TRIGGERED_PENDING
-    }
-
-    fun isAlarmPendingMode(): Boolean {
-        return (getAlarmMode() == MODE_ARM_AWAY_PENDING
-                || getAlarmMode() == MODE_ARM_HOME_PENDING
-                || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING
-                || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING)
-    }
-
-    fun isAlarmDisableMode(): Boolean {
-        return (getAlarmMode() == MODE_ARM_HOME
-                || getAlarmMode() == MODE_ARM_AWAY
-                || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING
-                || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING
-                || getAlarmMode() == MODE_TRIGGERED_PENDING)
     }
 
     fun isArmed(value: Boolean) {

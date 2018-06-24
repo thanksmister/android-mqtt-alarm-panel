@@ -19,6 +19,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
@@ -51,9 +52,11 @@ import timber.log.Timber
 
 class InformationFragment : BaseFragment() {
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var weatherViewModel: WeatherViewModel
+
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var weatherViewModel: WeatherViewModel
     @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
     private var forecastList: List<Datum> = Collections.emptyList()

@@ -260,6 +260,32 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.setPrefString(PREF_CAMERA_ROTATE, value)
     }
 
+    fun hasScreenSaver() : Boolean {
+        return (showPhotoScreenSaver() || showClockScreenSaverModule())
+    }
+
+    fun isAlarmTriggeredMode(): Boolean {
+        return alarmMode == AlarmUtils.MODE_TRIGGERED
+                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
+                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
+                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING
+    }
+
+    fun isAlarmPendingMode(): Boolean {
+        return (alarmMode == AlarmUtils.MODE_ARM_AWAY_PENDING
+                || alarmMode == AlarmUtils.MODE_ARM_HOME_PENDING
+                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
+                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING)
+    }
+
+    fun isAlarmDisableMode(): Boolean {
+        return (alarmMode == AlarmUtils.MODE_ARM_HOME
+                || alarmMode == AlarmUtils.MODE_ARM_AWAY
+                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
+                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
+                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING)
+    }
+    
     /**
      * Reset the `SharedPreferences` and database
      */

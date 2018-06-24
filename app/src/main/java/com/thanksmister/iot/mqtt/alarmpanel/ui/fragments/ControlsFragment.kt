@@ -18,6 +18,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -53,6 +55,9 @@ import javax.inject.Inject
 
 class ControlsFragment : BaseFragment() {
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
+
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
@@ -77,9 +82,10 @@ class ControlsFragment : BaseFragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+
         super.onActivityCreated(savedInstanceState)
 
-        observeViewModel(viewModel)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
         // TODO this may not be needed since we pick up the state from the mqtt service
         if (viewModel.isArmed()) {
@@ -91,6 +97,8 @@ class ControlsFragment : BaseFragment() {
         } else {
             setDisarmedView()
         }
+
+        observeViewModel(viewModel)
     }
 
     override fun onAttach(context: Context?) {
@@ -164,7 +172,7 @@ class ControlsFragment : BaseFragment() {
                                 setDisarmedView()
                             }
                             AlarmUtils.STATE_PENDING ->
-                                if (viewModel.isAlarmPendingMode()) {
+                                if (configuration.isAlarmPendingMode()) {
                                     if (viewModel.getAlarmMode() == MODE_ARM_HOME_PENDING || viewModel.getAlarmMode() == MODE_HOME_TRIGGERED_PENDING) {
                                         setArmedHomeView()
                                     } else if (viewModel.getAlarmMode() == MODE_ARM_AWAY_PENDING || viewModel.getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING) {

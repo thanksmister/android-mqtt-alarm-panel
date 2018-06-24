@@ -22,7 +22,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.ScreenSaverActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -59,9 +58,6 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun baseActivity(): BaseActivity
-
-    @ContributesAndroidInjector
-    internal abstract fun screenSaverActivity(): ScreenSaverActivity
 
     @ContributesAndroidInjector
     internal abstract fun mainActivity(): MainActivity

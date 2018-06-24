@@ -22,15 +22,14 @@ import android.Manifest
 import android.app.Dialog
 import android.app.KeyguardManager
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.PowerManager
-import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -39,21 +38,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
+import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.ScreenSaverActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import dagger.android.support.DaggerAppCompatActivity
-import dpreference.DPreference
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -69,9 +63,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var darkSkyDataSource: DarkSkyDao
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MainViewModel
 
     private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
@@ -96,15 +87,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-
         this.window.setFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
 
         decorView = window.decorView
-
-        lifecycle.addObserver(dialogUtils)
     }
 
     override fun onStart(){
@@ -295,7 +282,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     open fun showScreenSaver() {
-        if (!viewModel.isAlarmTriggeredMode() && viewModel.hasScreenSaver()) {
+        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
             inactivityHandler.removeCallbacks(inactivityCallback)
             val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             dialogUtils.showScreenSaver(this@BaseActivity,

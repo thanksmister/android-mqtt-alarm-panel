@@ -18,6 +18,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.PorterDuff
@@ -45,6 +47,9 @@ class LogFragment : BaseFragment() {
     @Inject
     lateinit var dialogUtils: DialogUtils
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
     }
@@ -56,6 +61,7 @@ class LogFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         observeViewModel(viewModel)
     }
 

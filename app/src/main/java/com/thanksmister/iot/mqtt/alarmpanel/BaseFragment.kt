@@ -34,8 +34,6 @@ import javax.inject.Inject
 
 open class BaseFragment : DaggerFragment() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MainViewModel
     val disposable = CompositeDisposable()
 
     override fun onAttach(context: Context?) {
@@ -52,7 +50,6 @@ open class BaseFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     override fun onDetach() {

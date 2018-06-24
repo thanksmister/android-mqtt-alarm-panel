@@ -17,6 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -57,7 +58,9 @@ import javax.inject.Inject
 
 class ScreenSaverActivity : BaseActivity() {
 
-    @Inject lateinit var screenSaverModel: ScreenSaverViewModel
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModel: ScreenSaverViewModel
+
     private var task: ImageTask? = null
     private var rotationHandler: Handler? = null
     private var timeHandler: Handler? = null
@@ -97,11 +100,11 @@ class ScreenSaverActivity : BaseActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        screenSaverModel = ViewModelProviders.of(this, viewModelFactory).get(ScreenSaverViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ScreenSaverViewModel::class.java)
 
         lifecycle.addObserver(dialogUtils)
 
-        observeViewModel(screenSaverModel)
+        observeViewModel(viewModel)
 
         timeHandler = Handler()
         timeHandler!!.postDelayed(timeRunnable, 10)
@@ -111,7 +114,7 @@ class ScreenSaverActivity : BaseActivity() {
 
     public override fun onStart() {
         super.onStart()
-        disposable.add(viewModel.getAlarmState()
+       /* disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({state ->
@@ -120,7 +123,7 @@ class ScreenSaverActivity : BaseActivity() {
                            // hideScreenSaver()
                         }
                     }
-                }, { error -> Timber.e("Unable to get message: " + error)}))
+                }, { error -> Timber.e("Unable to get message: " + error)}))*/
     }
 
     override fun onDestroy() {

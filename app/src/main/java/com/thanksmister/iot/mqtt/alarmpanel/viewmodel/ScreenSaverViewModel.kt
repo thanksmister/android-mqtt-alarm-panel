@@ -18,9 +18,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.content.res.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSky
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import io.reactivex.Flowable
@@ -28,7 +25,7 @@ import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ScreenSaverViewModel @Inject
-constructor(application: Application, private val dataSource: DarkSkyDao, private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application, private val dataSource: DarkSkyDao) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
     private val toastText = ToastMessage()

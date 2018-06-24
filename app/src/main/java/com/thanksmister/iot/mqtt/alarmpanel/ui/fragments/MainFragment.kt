@@ -16,6 +16,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,6 +45,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : BaseFragment() {
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
 
     @Inject lateinit var configuration: Configuration;
     @Inject lateinit var dialogUtils: DialogUtils;
@@ -74,6 +79,7 @@ class MainFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         observeViewModel(viewModel)
     }
 
@@ -124,7 +130,7 @@ class MainFragment : BaseFragment() {
                             }
                             AlarmUtils.STATE_PENDING -> {
                                 dialogUtils.clearDialogs()
-                                if (viewModel.isAlarmDisableMode()) {
+                                if (configuration.isAlarmDisableMode()) {
                                     showAlarmDisableDialog(viewModel.getAlarmDelayTime())
                                 }
                             }
@@ -145,13 +151,17 @@ class MainFragment : BaseFragment() {
             dialogUtils.showSettingsCodeDialog(activity as MainActivity, configuration.alarmCode, object : SettingsCodeView.ViewListener {
                 override fun onComplete(code: Int) {
                     if (code == configuration.alarmCode) {
-                        val intent = SettingsActivity.createStartIntent(activity!!.applicationContext)
-                        startActivity(intent)
+                        if(isAdded && activity != null) {
+                            val intent = SettingsActivity.createStartIntent(activity!!.applicationContext)
+                            startActivity(intent)
+                        }
                     }
                     dialogUtils.clearDialogs()
                 }
                 override fun onError() {
-                    Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    if(isAdded && activity != null) {
+                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    }
                 }
                 override fun onCancel() {
                     dialogUtils.clearDialogs()
