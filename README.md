@@ -15,6 +15,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
+- Day/Night mode themes based on set time.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
 - Camera support for capturing and emailing images when the alarm is disabled (requires Mailgun api key).
 - Google Text-to-Speech support to speak MQTT notification messages.
