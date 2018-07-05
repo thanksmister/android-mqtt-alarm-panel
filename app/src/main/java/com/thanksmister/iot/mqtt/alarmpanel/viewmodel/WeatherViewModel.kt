@@ -155,7 +155,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
                             }
                 }
                 .flatMap { n -> fetcher.getExtendedFeedData(key, units, lat, lon) }
-                .doOnNext({ darkSkyResponse ->
+                .doOnNext { darkSkyResponse ->
                     Timber.d("response received")
                     var umbrella = false
                     var icon = ""
@@ -180,10 +180,10 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
                     }
 
                     insertNetworkResponse(icon, temperature, precipitation, units, summary, data, umbrella)
-                })
-                .doOnComplete({
+                }
+                .doOnComplete {
                     Timber.d("complete")
-                })
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                 }, { error -> Timber.e("Dark Sky error" + error.message) }))

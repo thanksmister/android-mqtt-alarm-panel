@@ -23,18 +23,14 @@ import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.content.ContextWrapper
-import android.media.AudioManager
 import android.os.Build
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import android.support.annotation.RequiresApi
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import timber.log.Timber
 import java.util.*
-import android.speech.tts.UtteranceProgressListener
-import android.support.annotation.RequiresApi
-import android.content.Intent
-import android.support.v4.content.ContextCompat.startActivity
-import android.icu.util.ULocale.getLanguage
 
 /**
  * Module to use Google Text-to-Speech to speak the payload of MQTT messages.
@@ -85,8 +81,6 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
 
     fun speakText(message: String) {
         if(configuration.hasTssModule()) {
-            val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            am.setStreamVolume(AudioManager.STREAM_MUSIC, 11, 0)
             if (textToSpeech != null && isInitialized) {
                 Timber.d("Speak this: " + message)
                 textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
