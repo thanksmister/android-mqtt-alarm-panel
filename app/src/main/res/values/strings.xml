@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Alarm Panel</string>
 
+    <string name="service_notification_message" translatable="false">Alarm Panel Running…</string>
+
     <!-- Menus -->
     <string name="action_settings">Settings</string>
     <string name="action_publish">Publish</string>

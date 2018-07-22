@@ -32,12 +32,10 @@ import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
-import android.widget.Toast
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject

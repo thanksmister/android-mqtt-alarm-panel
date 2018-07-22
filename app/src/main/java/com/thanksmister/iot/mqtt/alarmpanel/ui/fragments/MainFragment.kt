@@ -28,7 +28,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity

@@ -27,16 +27,13 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.SECONDS_VALUE
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 import javax.inject.Inject
 
 class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {

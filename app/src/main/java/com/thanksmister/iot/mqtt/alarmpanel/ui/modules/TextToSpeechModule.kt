@@ -28,7 +28,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.annotation.RequiresApi
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import timber.log.Timber
 import java.util.*
 

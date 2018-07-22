@@ -24,10 +24,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.fragment_platform.*
-import timber.log.Timber
 import javax.inject.Inject
 import android.widget.CheckBox
 import com.baviux.homeassistant.HassWebView

@@ -30,7 +30,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmPendingView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView
@@ -46,7 +46,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_controls.*

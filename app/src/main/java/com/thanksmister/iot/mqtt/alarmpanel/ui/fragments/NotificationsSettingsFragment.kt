@@ -29,10 +29,9 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_NOTIFICATION_TOPIC
 import dagger.android.support.AndroidSupportInjection

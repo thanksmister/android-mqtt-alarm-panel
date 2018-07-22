@@ -33,7 +33,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +46,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
-import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import timber.log.Timber
 

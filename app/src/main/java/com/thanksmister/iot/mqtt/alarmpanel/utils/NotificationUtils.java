@@ -23,6 +23,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -44,9 +46,11 @@ public class NotificationUtils extends ContextWrapper {
     private NotificationManager notificationManager;
     private final PendingIntent pendingIntent;
     private final Intent notificationIntent;
+    private final Resources resources;
 
-    public NotificationUtils(Context context) {
+    public NotificationUtils(Context context, Resources resources) {
         super(context);
+        this.resources = resources;
         ANDROID_CHANNEL_NAME = getString(R.string.notification_channel_name);
         notificationIntent = new Intent(context, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
@@ -77,6 +81,21 @@ public class NotificationUtils extends ContextWrapper {
         return notificationManager;
     }
 
+    public Notification createOngoingNotification(String title, String message) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder nb = getAndroidChannelOngoingNotification(title, message);
+            return nb.build();
+        } else {
+            NotificationCompat.Builder nb = getAndroidOngoingNotification(title, message);
+            // This ensures that navigating backward from the Activity leads out of your app to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+            stackBuilder.addParentStack(MainActivity.class);
+            stackBuilder.addNextIntent(notificationIntent);
+            nb.setContentIntent(pendingIntent);
+            return nb.build();
+        }
+    }
+
     public void createAlarmNotification(String title, String message) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder nb = getAndroidChannelNotification(title, message);
@@ -91,6 +110,24 @@ public class NotificationUtils extends ContextWrapper {
             getManager().notify(NOTIFICATION_ID, nb.build());
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public Notification.Builder getAndroidChannelOngoingNotification(String title, String body) {
+        final int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
+        Notification.Builder builder =  new Notification.Builder(getApplicationContext(), ANDROID_CHANNEL_ID)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setColor(color)
+                .setOngoing(true)
+                .setLocalOnly(true)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_dashboard_white)
+                .setAutoCancel(false);
+
+        builder.setContentIntent(pendingIntent);
+        return builder;
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Notification.Builder getAndroidChannelNotification(String title, String body) {
@@ -108,7 +145,21 @@ public class NotificationUtils extends ContextWrapper {
         builder.setContentIntent(pendingIntent);
         return builder;
     }
-    
+
+    public NotificationCompat.Builder getAndroidOngoingNotification(String title, String body) {
+        final int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
+        return new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(R.drawable.ic_dashboard_white)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+                .setContentTitle(title)
+                .setContentText(body)
+                .setOngoing(false)
+                .setLocalOnly(true)
+                .setColor(color)
+                .setAutoCancel(false);
+    }
+
+
     public NotificationCompat.Builder getAndroidNotification(String title, String body) {
         final int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
         return new NotificationCompat.Builder(getApplicationContext())

@@ -18,30 +18,24 @@ package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.os.Handler
 import android.text.TextUtils
 import com.google.gson.Gson
-import com.thanksmister.iot.mqtt.alarmpanel.BaseApplication
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.DarkSkyFetcher
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.DarkSkyResponse
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSky
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.lang.Math.round
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import android.os.Looper
-
 
 
 class WeatherViewModel @Inject

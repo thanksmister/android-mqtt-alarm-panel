@@ -20,7 +20,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.Manifest
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -43,18 +42,17 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.LocationUtils
 
 import timber.log.Timber
 
 import com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_API_KEY
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LATITUDE
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LONGITUDE
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_UNITS
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_WEATHER
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_API_KEY
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_LATITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_LONGITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_UNITS
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_WEATHER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject

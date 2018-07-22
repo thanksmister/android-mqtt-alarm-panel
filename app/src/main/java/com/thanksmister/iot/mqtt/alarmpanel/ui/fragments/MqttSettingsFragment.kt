@@ -27,7 +27,6 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_STATE_TOPIC
@@ -38,7 +37,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_P
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PORT
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

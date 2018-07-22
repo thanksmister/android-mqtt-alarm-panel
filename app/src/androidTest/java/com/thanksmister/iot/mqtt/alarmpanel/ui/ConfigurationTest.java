@@ -21,6 +21,8 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

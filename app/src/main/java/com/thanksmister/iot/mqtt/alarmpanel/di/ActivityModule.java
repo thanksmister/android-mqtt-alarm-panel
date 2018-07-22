@@ -26,7 +26,7 @@ import android.view.LayoutInflater;
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 
 import dagger.Module;

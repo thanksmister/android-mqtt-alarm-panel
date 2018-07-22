@@ -1,22 +1,20 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 LocalBuzz
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui
+package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
@@ -142,6 +140,70 @@ constructor(private val sharedPreferences: DPreference) {
     var telegramModule: Boolean
         get() = sharedPreferences.getPrefBoolean(PREF_TELEGRAM_MODULE, true)
         set(value) = sharedPreferences.setPrefBoolean(PREF_TELEGRAM_MODULE, value)
+
+    var cameraMotionWake: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_CAMERA_MOTION_WAKE, true)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_CAMERA_FACE_WAKE, value)
+
+    var cameraFaceWake: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_CAMERA_FACE_WAKE, true)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_CAMERA_FACE_WAKE, value)
+
+    var cameraFPS: Float
+        get() = this.sharedPreferences.getPrefString(PREF_CAMERA_FPS, "15f").toFloat()
+        set(value) = this.sharedPreferences.setPrefString(PREF_CAMERA_FPS, value.toString())
+
+    var cameraId: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ID, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ID, value)
+
+    var cameraMotionMinLuma: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ID, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ID, value)
+
+    var mqttSensorFrequency: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_SENSOR_FREQUENCY, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_SENSOR_FREQUENCY, value)
+
+    var httpPort: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_HTTP_PORT, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_HTTP_PORT, value)
+
+    var cameraMotionLeniency: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ID, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ID, value)
+
+    var httpMJPEGMaxStreams: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_HTTP_MAX_STREAMS, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_HTTP_MAX_STREAMS, value)
+
+    var motionResetTime: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_MOTION_RESET_TIME, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_MOTION_RESET_TIME, value)
+
+    var cameraEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_CAMERA_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_CAMERA_ENABLED, value)
+
+    var cameraMotionEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_CAMERA_MOTION_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_CAMERA_MOTION_ENABLED, value)
+
+    var sensorsEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SENSOR_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SENSOR_ENABLED, value)
+
+    var cameraFaceEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_CAMERA_FACE_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_CAMERA_FACE_ENABLED, value)
+
+    var cameraQRCodeEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_CAMERA_QRCODE_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_CAMERA_QRCODE_ENABLED, value)
+
+    var httpMJPEGEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_CAMERA_MJPEG_ENABLED, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_CAMERA_MJPEG_ENABLED, value)
 
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
@@ -391,5 +453,20 @@ constructor(private val sharedPreferences: DPreference) {
         const val DISPLAY_MODE_NIGHT = "mode_night"
         const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
         const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
+
+        const val PREF_SENSOR_FREQUENCY = "pref_sensor_frequency"
+        const val PREF_CAMERA_ID = "pref_camera_id"
+        const val PREF_CAMERA_ENABLED = "pref_camera_enabled"
+        const val PREF_CAMERA_FACE_WAKE = "pref_camera_face_wake"
+        const val PREF_CAMERA_FACE_ENABLED = "pref_camera_face_enabled"
+        const val PREF_CAMERA_QRCODE_ENABLED = "pref_camera_qrcode_enabled"
+        const val PREF_CAMERA_FPS = "pref_camera_fps"
+        const val PREF_CAMERA_MOTION_ENABLED = "pref_camera_motion_enabled"
+        const val PREF_CAMERA_MOTION_WAKE = "pref_camera_motion_wake"
+        const val PREF_CAMERA_MOTION_RESET_TIME  = "pref_camera_motion_reset_time"
+        const val PREF_SENSOR_ENABLED = "pref_sensor_enabled"
+        const val PREF_CAMERA_MJPEG_ENABLED = "pref_camera_mjpeg_enabled"
+        const val PREF_HTTP_PORT = "pref_http_port"
+        const val PREF_HTTP_MAX_STREAMS = "pref_http_max_streams"
     }
 }

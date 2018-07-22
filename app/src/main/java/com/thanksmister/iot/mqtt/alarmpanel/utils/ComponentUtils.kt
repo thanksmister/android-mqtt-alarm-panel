@@ -18,8 +18,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.utils
 
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-
 import java.util.ArrayList
 
 /**
@@ -33,6 +31,26 @@ class ComponentUtils {
 
         val NOTIFICATION_STATE_TOPIC = "home/notification"
         val NOTIFICATION_TYPE = "NOTIFICATION"
+
+        const val TOPIC_COMMAND = "command"
+        const val COMMAND_STATE = "state"
+        const val VALUE = "value"
+        const val COMMAND_SENSOR_FACE = "sensor/face"
+        const val COMMAND_SENSOR_QR_CODE = "sensor/qrcode"
+        const val COMMAND_SENSOR_MOTION = "sensor/motion"
+        const val STATE_CURRENT_URL = "currentUrl"
+        const val STATE_SCREEN_ON = "screenOn"
+        const val STATE_BRIGHTNESS = "brightness"
+        const val COMMAND_SENSOR = "sensor/"
+        const val COMMAND_URL = "url"
+        const val COMMAND_RELAUNCH = "relaunch"
+        const val COMMAND_WAKE = "wake"
+        const val COMMAND_BRIGHTNESS = "brightness"
+        const val COMMAND_RELOAD = "reload"
+        const val COMMAND_CLEAR_CACHE = "clearCache"
+        const val COMMAND_EVAL = "eval"
+        const val COMMAND_AUDIO = "audio"
+        const val COMMAND_SPEAK = "speak"
 
         val SENSOR_STATE_TOPIC = "home/sensor/"
         val SESOR_TYPE = "SENSOR"

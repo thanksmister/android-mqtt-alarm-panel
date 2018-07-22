@@ -18,7 +18,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
@@ -26,12 +25,12 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_MODULE_WEB
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_BACK_BEHAVIOR
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_ADMIN_MENU
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PLATFORM_BAR
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEB_URL
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_MODULE_WEB
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_BACK_BEHAVIOR
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_ADMIN_MENU
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_BAR
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEB_URL
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

@@ -11,16 +11,13 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MailGunModule
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TelegramModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED
