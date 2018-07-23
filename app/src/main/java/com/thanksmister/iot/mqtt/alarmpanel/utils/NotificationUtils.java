@@ -39,7 +39,7 @@ import static android.support.v4.app.NotificationCompat.PRIORITY_MAX;
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 public class NotificationUtils extends ContextWrapper {
-    
+
     private static int NOTIFICATION_ID = 1138;
     public static final String ANDROID_CHANNEL_ID = "com.thanksmister.iot.mqtt.alarmpanel.ANDROID";
     public static String ANDROID_CHANNEL_NAME;
@@ -121,7 +121,7 @@ public class NotificationUtils extends ContextWrapper {
                 .setOngoing(true)
                 .setLocalOnly(true)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .setSmallIcon(R.drawable.ic_dashboard_white)
+                .setSmallIcon(R.drawable.ic_home_white)
                 .setAutoCancel(false);
 
         builder.setContentIntent(pendingIntent);
@@ -149,7 +149,7 @@ public class NotificationUtils extends ContextWrapper {
     public NotificationCompat.Builder getAndroidOngoingNotification(String title, String body) {
         final int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
         return new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_dashboard_white)
+                .setSmallIcon(R.drawable.ic_home_white)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
                 .setContentTitle(title)
                 .setContentText(body)
@@ -178,7 +178,7 @@ public class NotificationUtils extends ContextWrapper {
     public void clearNotification() {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
-            notificationManager.cancelAll();
+            notificationManager.cancel(NOTIFICATION_ID);
         }
     }
 }

@@ -29,6 +29,7 @@ import android.view.View
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BASE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BROKER
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_CLIENT_ID
@@ -54,6 +55,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var userNamePreference: EditTextPreference? = null
     private var sslPreference: CheckBoxPreference? = null
     private var passwordPreference: EditTextPreference? = null
+    private var baseTopicPreference: EditTextPreference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -94,13 +96,14 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
-        
+        baseTopicPreference = findPreference(PREF_BASE_TOPIC) as EditTextPreference
 
+        baseTopicPreference!!.text = mqttOptions.getBaseTopic()
         brokerPreference!!.text = mqttOptions.getBroker()
-        clientPreference!!.text = mqttOptions.getClientId().toString()
+        clientPreference!!.text = mqttOptions.getClientId()
         portPreference!!.text = mqttOptions.getPort().toString()
-        commandTopicPreference!!.text = mqttOptions.getCommandTopic()
-        stateTopicPreference!!.text = mqttOptions.getStateTopic()
+        commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
+        stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
         userNamePreference!!.text = mqttOptions.getUsername()
         passwordPreference!!.text = mqttOptions.getPassword()
         sslPreference!!.isChecked = mqttOptions.getTlsConnection()
@@ -114,17 +117,20 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         if (!TextUtils.isEmpty(mqttOptions.getPort().toString())) {
             portPreference!!.summary = mqttOptions.getPort().toString()
         }
-        if (!TextUtils.isEmpty(mqttOptions.getCommandTopic())) {
-            commandTopicPreference!!.summary = mqttOptions.getCommandTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getAlarmCommandTopic())) {
+            commandTopicPreference!!.summary = mqttOptions.getAlarmCommandTopic()
         }
-        if (!TextUtils.isEmpty(mqttOptions.getStateTopic())) {
-            stateTopicPreference!!.summary = mqttOptions.getStateTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getAlarmStateTopic())) {
+            stateTopicPreference!!.summary = mqttOptions.getAlarmStateTopic()
         }
         if (!TextUtils.isEmpty(mqttOptions.getUsername())) {
             userNamePreference!!.summary = mqttOptions.getUsername()
         }
         if (!TextUtils.isEmpty(mqttOptions.getPassword())) {
             passwordPreference!!.summary = toStars(mqttOptions.getPassword())
+        }
+        if (!TextUtils.isEmpty(mqttOptions.getBaseTopic())) {
+            baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, mqttOptions.getBaseTopic())
         }
     }
 
@@ -167,7 +173,18 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     commandTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    commandTopicPreference!!.text = mqttOptions.getCommandTopic()
+                    commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
+                }
+            }
+            PREF_BASE_TOPIC -> {
+                value = baseTopicPreference!!.text
+                if (!TextUtils.isEmpty(value)) {
+                    mqttOptions.setBaseTopic(value)
+                    baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, value)
+                } else if (isAdded) {
+                    Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                    baseTopicPreference!!.text = mqttOptions.getBaseTopic()
+                    baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, mqttOptions.getBaseTopic())
                 }
             }
             PREF_STATE_TOPIC -> {
@@ -177,7 +194,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     stateTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    stateTopicPreference!!.text = mqttOptions.getStateTopic()
+                    stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
                 }
             }
             PREF_USERNAME -> {

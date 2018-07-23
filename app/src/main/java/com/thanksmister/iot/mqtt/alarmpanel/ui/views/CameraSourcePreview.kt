@@ -39,6 +39,7 @@ import java.io.IOException
 import timber.log.Timber
 
 class CameraSourcePreview(private val mContext: Context, attrs: AttributeSet) : ViewGroup(mContext, attrs) {
+
     private val mLayout: LinearLayout
     private val mSurfaceView: SurfaceView
     private var mStartRequested: Boolean = false
@@ -164,12 +165,6 @@ class CameraSourcePreview(private val mContext: Context, attrs: AttributeSet) : 
 
         mLayout.layout((layoutWidth - childWidth)/2, 0, layoutWidth, layoutHeight)
         mSurfaceView.layout(0, 0, childWidth, childHeight)
-
-        /*try {
-            startIfReady()
-        } catch (e: IOException) {
-            Timber.e("Could not start camera source.", e)
-        }*/
     }
 
     companion object {

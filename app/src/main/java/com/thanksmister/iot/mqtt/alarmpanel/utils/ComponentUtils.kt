@@ -29,8 +29,11 @@ class ComponentUtils {
 
     companion object {
 
+        @Deprecated("Moving to command")
         val NOTIFICATION_STATE_TOPIC = "home/notification"
         val NOTIFICATION_TYPE = "NOTIFICATION"
+
+        const val BASE_TOPIC = "alarmpanel"
 
         const val TOPIC_COMMAND = "command"
         const val COMMAND_STATE = "state"
@@ -41,18 +44,14 @@ class ComponentUtils {
         const val STATE_CURRENT_URL = "currentUrl"
         const val STATE_SCREEN_ON = "screenOn"
         const val STATE_BRIGHTNESS = "brightness"
-        const val COMMAND_SENSOR = "sensor/"
-        const val COMMAND_URL = "url"
-        const val COMMAND_RELAUNCH = "relaunch"
-        const val COMMAND_WAKE = "wake"
-        const val COMMAND_BRIGHTNESS = "brightness"
-        const val COMMAND_RELOAD = "reload"
-        const val COMMAND_CLEAR_CACHE = "clearCache"
-        const val COMMAND_EVAL = "eval"
+        const val COMMAND_SENSOR_PREFIX = "sensor/"
+
         const val COMMAND_AUDIO = "audio"
         const val COMMAND_SPEAK = "speak"
+        const val COMMAND_NOTIFICATION = "notification"
+        const val COMMAND_ALERT = "alart"
+        const val COMMAND_SENSOR = "sensor"
 
-        val SENSOR_STATE_TOPIC = "home/sensor/"
         val SESOR_TYPE = "SENSOR"
         val SENSOR_GENERIC_TYPE = "GENERIC"
         val SENSOR_DOOR_TYPE = "DOOR"

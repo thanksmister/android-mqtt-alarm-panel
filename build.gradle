@@ -6,7 +6,7 @@ buildscript {
         google()
         jcenter()
         maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
-        maven { url "https://download.01.org/crosswalk/releases/crosswalk/android/maven2" }
+        //maven { url "https://download.01.org/crosswalk/releases/crosswalk/android/maven2" }
         maven { url 'https://maven.fabric.io/public' }
         mavenCentral()
     }
@@ -24,7 +24,7 @@ allprojects {
         google()
         jcenter()
         maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
-        maven { url "https://download.01.org/crosswalk/releases/crosswalk/android/maven2" }
+        //maven { url "https://download.01.org/crosswalk/releases/crosswalk/android/maven2" }
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://jitpack.io' }
         mavenCentral()

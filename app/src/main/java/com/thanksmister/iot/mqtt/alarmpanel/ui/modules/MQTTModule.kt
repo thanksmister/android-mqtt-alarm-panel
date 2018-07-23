@@ -25,7 +25,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
 
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
@@ -85,13 +84,22 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
         stop()
     }
 
-    fun publish(command : String) {
+    fun publishAlarm(command : String) {
         Timber.d("command: " + command)
         if(mqttService != null) {
-            mqttService!!.publish(command)
+            mqttService!!.publishAlarm(command)
         }
     }
 
+    // TODO update service to have two different publishAlarm
+    fun publishState(command : String, message: String) {
+        Timber.d("command: " + command)
+        if(mqttService != null) {
+            mqttService!!.publishState(command, message)
+        }
+    }
+
+    @Deprecated("we don't need this any longer.")
     fun resetMQttOptions(mqttOptions: MQTTOptions) {
         this.mqttOptions = mqttOptions
         if (mqttService != null && mqttOptions.hasUpdates()) {
@@ -107,12 +115,9 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     }
 
     override fun subscriptionMessage(id: String, topic: String, payload: String) {
-        Timber.d("topic: " + topic)
-        if (mqttOptions.getNotificationTopic() == topic || (ALARM_STATE_TOPIC == topic && AlarmUtils.hasSupportedStates(payload))) {
-            listener.onMQTTMessage(id, topic, payload)
-        } else {
-            Timber.e("We received some bad info: topic: $topic payload: $payload");
-        }
+        Timber.d("topic: $topic")
+        Timber.d("payload: $payload")
+        listener.onMQTTMessage(id, topic, payload)
     }
 
     override fun handleMqttException(errorMessage: String) {

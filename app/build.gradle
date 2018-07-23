@@ -140,6 +140,9 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        renderscriptTargetApi 16
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
@@ -218,12 +221,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation "com.android.support:support-vector-drawable:$versions.support"
     implementation 'com.google.android.gms:play-services-vision:15.0.2'
-
-    // 3rd party
-    implementation 'fr.baloomba:viewpagerindicator:2.4.2'
-    implementation 'org.xwalk:xwalk_core_library:23.53.589.4'
-    implementation 'com.koushikdutta.async:androidasync:2.1.9'
-    //implementation 'io.github.silvaren:easyrs:0.5.3'
+    implementation 'com.android.support:multidex:1.0.3'
 
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
@@ -274,6 +272,10 @@ dependencies {
 
     // Fingerprint Identify
     implementation 'com.wei.android.lib:fingerprintidentify:1.2.1'
+
+    // 3rd party
+    implementation 'io.github.silvaren:easyrs:0.5.3'
+    implementation 'com.koushikdutta.async:androidasync:2.1.9'
 
     // Home Assistant WebView
     implementation 'com.github.sjvc:Home-Assistant-WebView:master-SNAPSHOT'

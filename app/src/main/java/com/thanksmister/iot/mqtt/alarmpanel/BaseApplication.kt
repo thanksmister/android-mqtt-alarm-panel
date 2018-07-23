@@ -18,6 +18,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel
 
+import android.content.Context
+import android.support.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.thanksmister.iot.mqtt.alarmpanel.di.DaggerApplicationComponent
@@ -46,5 +48,10 @@ class BaseApplication : DaggerApplication() {
             Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())
         }
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 }

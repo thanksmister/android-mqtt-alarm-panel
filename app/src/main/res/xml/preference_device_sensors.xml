@@ -1,0 +1,84 @@
+<!--
+  ~ Copyright (c) 2018 LocalBuzz
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Sensors">
+
+        <SwitchPreference
+            android:key="pref_device_sensors"
+            android:title="@string/title_enable_sensor_data"
+            android:summary="@string/summary_enable_sensor_data"/>
+
+        <EditTextPreference
+            android:defaultValue="@string/default_setting_mqtt_sensorfrequency"
+            android:dependency="@string/key_setting_sensors_enabled"
+            android:inputType="number"
+            android:key="@string/key_setting_mqtt_sensorfrequency"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/title_setting_mqtt_sensorfrequency" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Sensor List">
+
+        <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="@string/pref_sensor_list_summary"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <Preference
+            android:key="@string/key_settings_sensors_temperature"
+            android:selectable="false"
+            android:summary="@string/summary_setting_sensors_default"
+            android:title="@string/title_setting_sensors_temperature"
+            android:dependency="@string/key_setting_sensors_enabled"/>
+
+        <Preference
+            android:key="@string/key_settings_sensors_light"
+            android:summary="@string/summary_setting_sensors_default"
+            android:selectable="false"
+            android:title="@string/title_setting_sensors_light"
+            android:dependency="@string/key_setting_sensors_enabled"/>
+
+        <Preference
+            android:key="@string/key_settings_sensors_magneticField"
+            android:summary="@string/summary_setting_sensors_default"
+            android:selectable="false"
+            android:title="@string/title_setting_sensors_magneticField"
+            android:dependency="@string/key_setting_sensors_enabled"/>
+
+        <Preference
+            android:key="@string/key_settings_sensors_pressure"
+            android:summary="@string/summary_setting_sensors_default"
+            android:selectable="false"
+            android:title="@string/title_setting_sensors_pressure"
+            android:dependency="@string/key_setting_sensors_enabled"/>
+
+        <Preference
+            android:key="@string/key_settings_sensors_humidity"
+            android:summary="@string/summary_setting_sensors_default"
+            android:selectable="false"
+            android:title="@string/title_setting_sensors_humidity"
+            android:dependency="@string/key_setting_sensors_enabled"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
+

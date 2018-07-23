@@ -40,36 +40,26 @@
 
     <PreferenceCategory android:title="@string/pref_mqtt_settings_category">
 
-        <CheckBoxPreference
-            android:key="pref_module_notification"
-            android:summary="@string/preference_title_mqtt_notifications"
-            android:title="@string/preference_summary_mqtt_notifications"/>
-
-        <CheckBoxPreference
-            android:key="pref_module_tss"
-            android:enabled="false"
-            android:summary="@string/preference_summary_tts"
-            android:title="@string/preference_tts" />
-
-        <CheckBoxPreference
-            android:key="pref_module_alerts"
-            android:enabled="false"
-            android:summary="@string/preference_title_alert"
-            android:title="@string/preference_summary_alert" />
+        <EditTextPreference
+            android:selectable="false"
+            android:summary="@string/preference_summary_alert"
+            android:title="@string/preference_title_alert"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
 
         <EditTextPreference
-            android:key="pref_notification_topic"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="home/notification"
-            android:enabled="false"
-            android:title="@string/preference_topic_title" />
-
-        <Preference
-            android:key="pref_description"
             android:selectable="false"
-            android:enabled="false"
-            android:summary="@string/preference_tts_topic_summary" />
+            android:summary="@string/summary_notification_topic"
+            android:title="@string/preference_title_system_notifications"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <EditTextPreference
+            android:selectable="false"
+            android:summary="@string/preference_tts_topic_summary"
+            android:title="@string/preference_tts"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
 
     </PreferenceCategory>
 

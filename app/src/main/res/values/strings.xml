@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Alarm Panel</string>
 
-    <string name="service_notification_message" translatable="false">Alarm Panel Running…</string>
 
     <!-- Menus -->
     <string name="action_settings">Settings</string>
@@ -82,7 +81,7 @@
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
-    <string name="preference_title_web_settings">HASS</string>
+    <string name="preference_title_web_settings">Browser</string>
     <string name="preference_summary_web_settings">Allows you to load external web page to access your home automation platform interface.</string>
     <string name="preference_title_web">Home Automation Page</string>
     <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
@@ -104,7 +103,7 @@
 
     <string name="preference_title_alert">Alert Notifications</string>
     <string name="preference_title_system_notifications">System Notifications</string>
-    <string name="preference_summary_alert">Use an alert dialog to show the notification content.</string>
+    <string name="preference_summary_alert">Example format for the message topic and payload to display alert dialog: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice">TTS Voice</string>
     <string name="preference_tts">TTS Notifications</string>
@@ -112,12 +111,13 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_topic_title">Set Topic Value</string>
-    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken (note that externally powered speakers are required for TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
+
+    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken: \n\n"{\"topic\":\"alarmpanel/speak\", \"payload\":\"Hello!\"}"</string>
 
     <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera Capture</string>
-    <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled. (Note: Requires Android Lollipop or above.)</string>
+    <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled.</string>
 
     <string name="preference_camera_flip_title">Rotate Camera</string>
     <string name="preference_camera_flip_summary">Depending on your camera, you may need to rotate or flip the camera. Currently %1$s.</string>
@@ -255,7 +255,7 @@
     <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
     <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
     <string name="pref_fingerprint_title">Fingerprint Unlock</string>
-    <string name="pref_hass_settings">Home Assistant Settings</string>
+    <string name="pref_hass_settings">Experimental Settings</string>
     <string name="pref_hide_menu_title">Hide Menu</string>
     <string name="pref_hide_menu_summary">Hides the administrator menu items.</string>
     <string name="pref_back_behavior_title">Override Back Behavior</string>

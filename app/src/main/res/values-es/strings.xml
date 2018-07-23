@@ -102,7 +102,7 @@
 
     <string name="preference_title_alert">Notificaciones de alertas</string>
     <string name="preference_title_system_notifications">Notificaciones del sistema</string>
-    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema</string>
+    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice"> Voz TTS</string>
     <string name="preference_tts">Notificaciones TTS</string>
@@ -110,12 +110,12 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_topic_title">Esteblece el "Topic Value"</string>
-    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido: \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
     <string name="preference_camera">Cámara</string>
     <string name="preference_camera_title">Capturas con la cámara</string>
-    <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma. (Nota: Requiere Android Lollipop o superior.)</string>
+    <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma.</string>
 
     <string name="preference_camera_flip_title">Rotar la imagen</string>
     <string name="preference_camera_flip_summary">Dependiendo de tu cámara, puede que tengas que rotar la imagen. Actualmente es %1$s.</string>

@@ -64,6 +64,7 @@
 
         <activity android:name=".ui.activities.LogActivity"/>
         <activity android:name=".ui.activities.ScreenSaverActivity" />
+        <activity android:name=".ui.activities.LiveCameraActivity" />
 
         <!-- Preference Provider -->
         <provider

@@ -178,7 +178,7 @@ class SettingsActivity : BaseActivity(), ViewPager.OnPageChangeListener, Setting
             return when (position) {
                 1 -> AlarmSettingsFragment()
                 2 -> MqttSettingsFragment()
-                3 -> SensorsFragment()
+                3 -> DeviceSensorsFragment()
                 4 -> NotificationsSettingsFragment()
                 5 -> CameraSettingsFragment()
                 6 -> ScreenSettingsFragment()

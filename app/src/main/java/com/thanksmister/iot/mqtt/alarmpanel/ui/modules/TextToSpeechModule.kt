@@ -36,7 +36,7 @@ import java.util.*
  * Module to use Google Text-to-Speech to speak the payload of MQTT messages.
  */
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-class TextToSpeechModule( base: Context?, private val configuration: Configuration) : ContextWrapper(base),
+class TextToSpeechModule( base: Context?) : ContextWrapper(base),
         TextToSpeech.OnInitListener, LifecycleObserver {
 
     private var textToSpeech: TextToSpeech? = null
@@ -48,7 +48,7 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
-        if(configuration.hasTssModule() && textToSpeech == null) {
+        if(textToSpeech == null) {
             Timber.i( "TTS initializing")
             textToSpeech = TextToSpeech(baseContext, this)
         }
@@ -80,11 +80,9 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
     }
 
     fun speakText(message: String) {
-        if(configuration.hasTssModule()) {
-            if (textToSpeech != null && isInitialized) {
-                Timber.d("Speak this: " + message)
-                textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
-            }
+        if (textToSpeech != null && isInitialized) {
+            Timber.d("Speak this: " + message)
+            textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
         }
     }
 

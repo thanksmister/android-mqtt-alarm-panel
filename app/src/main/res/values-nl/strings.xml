@@ -102,7 +102,7 @@
 
     <string name="preference_title_alert">Alert notificaties</string>
     <string name="preference_title_system_notifications">Systeem notificaties</string>
-    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen.</string>
+    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice">TTS stem</string>
     <string name="preference_tts">TTS notificaties</string>
@@ -110,12 +110,12 @@
 
     <string name="preference_tts_topic">TTS onderwerp</string>
     <string name="preference_topic_title">Zet onderwerp waarde</string>
-    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden: \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
 
 
     <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera opname</string>
-    <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt. Let op: Werkt alleen op Android Lollipop of hoger.)</string>
+    <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt.</string>
 
     <string name="preference_camera_flip_title">Rotate Camera</string>
     <string name="preference_camera_flip_summary">Afhankelijk van je camera, moet je misschien het beeld draaien. Momenteel %1$s.</string>

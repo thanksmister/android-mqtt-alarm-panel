@@ -64,7 +64,7 @@
                 android:layout_height="48dp"
                 android:tint="@color/dark_gray"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_home_black"
+                android:src="@drawable/ic_home"
                 tools:ignore="ContentDescription"/>
 
             <android.support.v4.widget.Space

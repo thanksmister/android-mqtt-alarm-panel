@@ -19,8 +19,10 @@ package com.thanksmister.iot.mqtt.alarmpanel.di;
 import android.app.Application;
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.LocationManager;
+import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
@@ -28,6 +30,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -57,18 +61,24 @@ class ActivityModule {
     }
 
     @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences(Application app) {
+        return PreferenceManager.getDefaultSharedPreferences(app.getApplicationContext());
+    }
+
+    @Provides
     static LocationManager provideLocationManager(Application application) {
         return (LocationManager) application.getSystemService(Context.LOCATION_SERVICE);
     }
 
     @Provides
-    static Configuration provideConfiguration(DPreference preference) {
-        return new Configuration(preference);
+    static Configuration provideConfiguration(Application application, DPreference preference) {
+        return new Configuration(application, preference);
     }
 
     @Provides
-    static MQTTOptions provideMQTTOptions(DPreference preference) {
-        return new MQTTOptions(preference);
+    static MQTTOptions provideMQTTOptions(Application application, DPreference preference) {
+        return new MQTTOptions(application, preference);
     }
 
     @Provides
@@ -80,6 +90,4 @@ class ActivityModule {
     static DarkSkyOptions provideDarkSkyOptions(DPreference preference) {
         return new DarkSkyOptions(preference);
     }
-
-
 }

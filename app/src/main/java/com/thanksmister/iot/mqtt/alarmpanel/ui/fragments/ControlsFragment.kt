@@ -283,11 +283,9 @@ class ControlsFragment : BaseFragment() {
                 mListener!!.publishDisarmed()
                 dialogUtils.clearDialogs()
             }
-
             override fun onError() {
                 Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
             }
-
             override fun onCancel() {
                 Timber.d("onCancel")
                 dialogUtils.clearDialogs()

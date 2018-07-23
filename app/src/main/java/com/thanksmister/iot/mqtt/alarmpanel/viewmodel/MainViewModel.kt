@@ -4,16 +4,9 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.graphics.Bitmap
 import android.text.TextUtils
-import android.widget.Toast
-import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.stores.StoreManager
-import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
-import com.thanksmister.iot.mqtt.alarmpanel.tasks.SubscriptionDataTask
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MailGunModule
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TelegramModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
@@ -27,8 +20,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIF
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -99,7 +90,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     fun hasCamera() : Boolean {
-        return (configuration.hasCamera() && (configuration.hasMailGunCredentials() || configuration.hasTelegramCredentials()))
+        return (configuration.hasCameraCapture() && (configuration.hasMailGunCredentials() || configuration.hasTelegramCredentials()))
     }
 
     fun hasTss() : Boolean {
@@ -195,12 +186,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     init {
-    }
 
-    fun getWeatherItem(): Flowable<DarkSky> {
-        return darkSkyDataSource.getItems()
-                .filter { items -> items.isNotEmpty() }
-                .map { items -> items[0] }
     }
 
     /**
@@ -236,14 +222,14 @@ constructor(application: Application, private val messageDataSource: MessageDao,
 
     fun sendCapturedImage(bitmap: Bitmap) {
         if(configuration.hasMailGunCredentials()) {
-            emailImage(bitmap)
+            //emailImage(bitmap)
         }
         if(configuration.hasTelegramCredentials()) {
-            sendTelegram(bitmap)
+            //sendTelegram(bitmap)
         }
     }
 
-    private fun sendTelegram(bitmap: Bitmap) {
+    /*private fun sendTelegram(bitmap: Bitmap) {
         Timber.d("sendTelegram")
         val token = configuration.telegramToken
         val chatId = configuration.telegramChatId
@@ -294,25 +280,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
                 .doOnError({ throwable -> Timber.e("Image error: " + throwable.message); })
                 .onErrorReturn { Toast.makeText(getApplication<Application>(), R.string.error_mailgun_credentials, Toast.LENGTH_LONG).show() }
                 .subscribe( );
-    }
-
-    @Deprecated("moving over to RxJava")
-    fun getUpdateMqttDataTask(storeManager: StoreManager): SubscriptionDataTask {
-        val dataTask = SubscriptionDataTask(storeManager)
-        dataTask.setOnExceptionListener(object : NetworkTask.OnExceptionListener {
-            override fun onException(paramException: Exception) {
-                Timber.e("Update Exception: " + paramException.message)
-            }
-        })
-        dataTask.setOnCompleteListener(object : NetworkTask.OnCompleteListener<Boolean> {
-            override fun onComplete(paramResult: Boolean) {
-                if ((!paramResult)) {
-                    Timber.e("Update Exception response: " + paramResult)
-                }
-            }
-        })
-        return dataTask
-    }
+    }*/
 
     public override fun onCleared() {
         //prevents memory leaks by disposing pending observable objects
@@ -321,12 +289,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
         }
     }
 
-    /**
-     * Network connectivity receiver to notify client of the network disconnect issues and
-     * to clear any network notifications when reconnected. It is easy for network connectivity
-     * to run amok that is why we only notify the user once for network disconnect with
-     * a boolean flag.
-     */
     companion object {
 
     }

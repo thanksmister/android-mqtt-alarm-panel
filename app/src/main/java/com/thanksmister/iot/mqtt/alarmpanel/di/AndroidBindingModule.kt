@@ -20,14 +20,13 @@ package com.thanksmister.iot.mqtt.alarmpanel.di
 import android.arch.lifecycle.ViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LiveCameraActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.ScreenSaverViewModel
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.*
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -56,6 +55,14 @@ internal abstract class AndroidBindingModule {
     @ViewModelKey(ScreenSaverViewModel::class)
     abstract fun bindsScreenSaverViewModel(mainViewModel: ScreenSaverViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetectionViewModel::class)
+    abstract fun bindsDetectionViewModel(mainViewModel: DetectionViewModel): ViewModel
+
+    @ContributesAndroidInjector
+    internal abstract fun alarmService(): AlarmPanelService
+
     @ContributesAndroidInjector
     internal abstract fun baseActivity(): BaseActivity
 
@@ -67,6 +74,9 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun settingsActivity(): SettingsActivity
+
+    @ContributesAndroidInjector
+    internal abstract fun cameraActivity(): LiveCameraActivity
 
     @ContributesAndroidInjector
     internal abstract fun baseFragment(): BaseFragment
@@ -114,5 +124,5 @@ internal abstract class AndroidBindingModule {
     internal abstract fun mqttSettingsFragment(): MqttSettingsFragment
 
     @ContributesAndroidInjector
-    internal abstract fun sensorFragment(): SensorsFragment
+    internal abstract fun deviceSensorsFragment(): DeviceSensorsFragment
 }

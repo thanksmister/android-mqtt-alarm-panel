@@ -62,7 +62,7 @@ constructor(private val context: Context) {
     private var streamDetectorProcessor: MultiProcessor<Stream>? = null
     private val byteArray = MutableLiveData<ByteArray>()
     private var bitmapComplete = true;
-    private var bitmapCreateTask: BitmapTask? = null
+    private var byteArrayCreateTask: ByteArrayTask? = null
     private var cameraOrientation: Int = 0
     private var cameraPreview: CameraSourcePreview? = null
 
@@ -76,9 +76,9 @@ constructor(private val context: Context) {
 
     fun stopCamera() {
 
-        if (bitmapCreateTask != null) {
-            bitmapCreateTask!!.cancel(true)
-            bitmapCreateTask = null
+        if (byteArrayCreateTask != null) {
+            byteArrayCreateTask!!.cancel(true)
+            byteArrayCreateTask = null
         }
 
         if (cameraSource != null) {
@@ -219,14 +219,14 @@ constructor(private val context: Context) {
                     override fun onUpdate(p0: Detector.Detections<Stream>?, stream: Stream?) {
                         super.onUpdate(p0, stream)
                         if (stream?.byteArray != null && bitmapComplete && configuration.httpMJPEGEnabled) {
-                            bitmapCreateTask = BitmapTask(context, renderScript, object : OnCompleteListener {
+                            byteArrayCreateTask = ByteArrayTask(context, renderScript, object : OnCompleteListener {
                                 override fun onComplete(byteArray: ByteArray?) {
                                     bitmapComplete = true
                                     setJpeg(byteArray!!)
                                 }
                             })
                             bitmapComplete = false
-                            bitmapCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation)
+                            byteArrayCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation)
                         }
                     }
                 }
@@ -340,7 +340,7 @@ constructor(private val context: Context) {
         fun onComplete(byteArray: ByteArray?)
     }
 
-    class BitmapTask(context: Context, private val renderScript: RenderScript, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
+    class ByteArrayTask(context: Context, private val renderScript: RenderScript, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
 
         private val contextRef: WeakReference<Context> = WeakReference(context)
 

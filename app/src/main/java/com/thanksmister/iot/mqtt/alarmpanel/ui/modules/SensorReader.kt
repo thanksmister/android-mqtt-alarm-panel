@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.wallpanel.modules
+package com.thanksmister.iot.mqtt.alarmpanel.ui.modules
 
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE
@@ -26,6 +26,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.BatteryManager
 import android.os.Handler
+import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.SensorCallback
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber

@@ -18,22 +18,17 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.DialogInterface
-import android.content.pm.PackageManager
+import android.content.*
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.support.annotation.LayoutRes
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
@@ -44,14 +39,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.managers.DayNightAlarmLiveData
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.MQTTModule
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.TextToSpeechModule
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -59,31 +51,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFragment.OnControlsFragmentListener,
-        MQTTModule.MQTTListener, CameraModule.CallbackListener, MainFragment.OnMainFragmentListener, PlatformFragment.OnPlatformFragmentListener {
-
-    private lateinit var pagerAdapter: PagerAdapter
+        MainFragment.OnMainFragmentListener, PlatformFragment.OnPlatformFragmentListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
-
-    private var textToSpeechModule: TextToSpeechModule? = null
-    private var mqttModule: MQTTModule? = null
-    private var mBackgroundThread: HandlerThread? = null
-    private var mBackgroundHandler: Handler? = null
-    private var cameraModule: CameraModule? = null
+    private lateinit var pagerAdapter: PagerAdapter
     private var alertDialog: AlertDialog? = null
-    private var releaseWakeHandler:Handler? = null
     private var alarmLiveData: DayNightAlarmLiveData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mBackgroundThread = HandlerThread("BackgroundThread")
-        mBackgroundThread?.start()
-        mBackgroundHandler = Handler(mBackgroundThread?.looper)
 
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)
         view_pager.adapter = pagerAdapter
@@ -110,7 +89,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.setHasNotifications(true)
             configuration.setClockScreenSaverModule(true)
             configuration.setPhotoScreenSaver(false)
-            configuration.setHasCamera(true)
+            configuration.setHasCameraCapture(true)
             configuration.setWebModule(true)
             configuration.setShowWeatherModule(true)
             configuration.setTssModule(true)
@@ -130,6 +109,17 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         lifecycle.addObserver(dialogUtils)
         observeViewModel()
+
+        // Filter messages from service
+        val filter = IntentFilter()
+        filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
+        val bm = LocalBroadcastManager.getInstance(this)
+        bm.registerReceiver(mBroadcastReceiver, filter)
+
+        // Start our service to handle MQTT
+        val alarmPanelService = Intent(this, AlarmPanelService::class.java)
+        startService(alarmPanelService)
     }
 
     private fun observeViewModel() {
@@ -141,33 +131,21 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         Timber.d("onStart state: " + state)
                         when (state) {
                             AlarmUtils.STATE_DISARM -> {
-                                awakenDeviceForAction(AWAKE_TIME)
+                                awakenDeviceForAction()
                                 resetInactivityTimer()
-                                if(viewModel.hasSystemAlerts()) {
-                                    val notifications = NotificationUtils(this@MainActivity)
-                                    notifications.clearNotification()
-                                }
                             }
                             AlarmUtils.STATE_ARM_AWAY,
                             AlarmUtils.STATE_ARM_HOME -> {
-                                awakenDeviceForAction(AWAKE_TIME)
+                                awakenDeviceForAction()
                                 resetInactivityTimer()
                             }
                             AlarmUtils.STATE_TRIGGERED -> {
-                                awakenDeviceForAction(TRIGGERED_AWAKE_TIME) // 3 hours
+                                awakenDeviceForAction() // 3 hours
                                 stopDisconnectTimer() // stop screen saver mode
-                                if(viewModel.showSystemTriggeredAlert()){
-                                    val notifications = NotificationUtils(this@MainActivity)
-                                    notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
-                                }
                             }
                             AlarmUtils.STATE_PENDING -> {
-                                awakenDeviceForAction(AWAKE_TIME)
+                                awakenDeviceForAction()
                                 resetInactivityTimer()
-                                if(viewModel.showSystemPendingAlert()){
-                                    val notifications = NotificationUtils(this@MainActivity)
-                                    notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
-                                }
                             }
                         }
                     }
@@ -197,26 +175,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         Timber.d("onResume")
         super.onResume()
         resetInactivityTimer()
-        mBackgroundHandler!!.post(initializeOnBackground)
         setViewPagerState()
     }
 
     override fun onDestroy() {
         Timber.d("onDestroy")
         super.onDestroy()
-        try {
-            if (mBackgroundThread != null) mBackgroundThread!!.quit()
-        } catch (t: Throwable) {
-            // close quietly
-        }
-        mBackgroundThread = null
-        mBackgroundHandler = null
         if(alertDialog != null) {
             alertDialog?.dismiss()
             alertDialog = null
         }
-
-        releaseWake();
     }
 
     override fun onBackPressed() {
@@ -229,13 +197,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         } else {
             // Otherwise, if back key press is not handled by fragment, select the previous step.
             view_pager.currentItem = view_pager.currentItem - 1
-        }
-    }
-
-    private fun releaseWake() {
-        if(releaseWakeHandler != null) {
-            releaseWakeHandler?.removeCallbacks(releaseWakeLockRunnable)
-            releaseWakeHandler = null
         }
     }
 
@@ -261,51 +222,26 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
     override fun publishArmedHome() {
         Timber.d("publishArmedHome")
-        if (mqttModule != null) {
-            mqttModule?.publish(AlarmUtils.COMMAND_ARM_HOME)
-        }
+        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_ARM_HOME)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     override fun publishArmedAway() {
         Timber.d("publishArmedAway")
-        if (mqttModule != null) {
-            mqttModule?.publish(AlarmUtils.COMMAND_ARM_AWAY)
-        }
+        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_ARM_AWAY)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     override fun publishDisarmed() {
         Timber.d("publishDisarmed")
-        if (mqttModule != null) {
-            mqttModule?.publish(AlarmUtils.COMMAND_DISARM)
-        }
-        Handler().postDelayed({ captureImage() }, 300)
-    }
-
-    private val initializeOnBackground = Runnable {
-        Timber.d("initializeOnBackground")
-        if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && viewModel.hasTss()) {
-            Timber.d("textToSpeechModule")
-            textToSpeechModule = TextToSpeechModule(this@MainActivity, configuration)
-            runOnUiThread {
-                lifecycle.addObserver(textToSpeechModule!!)
-            }
-        }
-        if (mqttModule == null && mqttOptions.isValid) {
-            Timber.d("mqttModule")
-            mqttModule = MQTTModule(this@MainActivity.applicationContext, mqttOptions,this@MainActivity)
-            runOnUiThread {
-                lifecycle.addObserver(mqttModule!!)
-            }
-        }
-        if (cameraModule == null && viewModel.hasCamera() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                Timber.d("cameraModule")
-                cameraModule = CameraModule(this@MainActivity, mBackgroundHandler!!, this@MainActivity)
-                runOnUiThread{
-                    lifecycle.addObserver(cameraModule!!)
-                }
-            }
-        }
+        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_DISARM)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     @LayoutRes
@@ -313,51 +249,31 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         return R.layout.activity_main
     }
 
-    override fun handleNetworkConnect() {
-        if (mqttModule != null && !hasNetworkConnectivity()) {
-            mqttModule?.restart()
-        }
-        super.handleNetworkConnect()
-    }
-
-    override fun handleNetworkDisconnect() {
-        if (mqttModule != null && hasNetworkConnectivity()) {
-            mqttModule?.pause()
-        }
-        super.handleNetworkDisconnect()
-    }
-
-    /**
-     * Temporarily wake the screen so we can notify the user of pending alarm and
-     * then allow the device to sleep again as needed after a set amount of time.
-     */
-    private var releaseWakeLockRunnable: Runnable = Runnable {
-        releaseTemporaryWakeLock()
-    }
-
     /**
      * We need to awaken the device and allow the user to take action.
      */
-    private fun awakenDeviceForAction(timeout: Long) {
+    private fun awakenDeviceForAction() {
         Timber.d("awakenDeviceForAction")
-        bringApplicationToForegroundIfNeeded()
-        acquireTemporaryWakeLock(timeout)
+        //bringApplicationToForegroundIfNeeded()
+        //acquireTemporaryWakeLock(timeout)
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
     }
 
+    // TODO broadcast to service to capture
     private fun captureImage() {
-        if (cameraModule != null) {
+        /*if (cameraModule != null) {
             cameraModule?.takePicture(configuration.getCameraRotate()!!)
-        }
+        }*/
     }
 
-    override fun onMQTTMessage(id: String, topic: String, payload: String) {
-        if(mqttOptions.getNotificationTopic() == topic) {
+    // TODO MOVE THIS TO THE SERVICE
+    fun onMQTTMessage(id: String, topic: String, payload: String) {
+        /*if(mqttOptions.getNotificationTopic() == topic) {
             this@MainActivity.runOnUiThread {
                 if(viewModel.hasSystemAlerts()) {
-                    val notifications = NotificationUtils(this@MainActivity)
+                    val notifications = NotificationUtils(this@MainActivity, resources)
                     notifications.createAlarmNotification(getString(R.string.preference_title_system_notifications), payload)
                 }
                 if(viewModel.hasAlerts() || viewModel.hasTss()) {
@@ -375,39 +291,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     }
                 }
             }
-        }
-        viewModel.insertMessage(id, topic, payload)
+        }*/
+        //viewModel.insertMessage(id, topic, payload)
     }
 
-    override fun onMQTTException(message: String) {
-        Timber.d("onMQTTException")
-        this@MainActivity.runOnUiThread {
-            dialogUtils.showAlertDialog(this@MainActivity, message, DialogInterface.OnClickListener { _, _ ->
-                if (mqttModule != null) {
-                    mqttModule!!.restart()
-                }
-            })
-        }
-    }
-
-    override fun onMQTTDisconnect() {
-        Timber.d("onMQTTDisconnect")
-        this@MainActivity.runOnUiThread {
-            dialogUtils.showAlertDialog(this@MainActivity, getString(R.string.error_mqtt_connection), DialogInterface.OnClickListener { _, _ ->
-                if (mqttModule != null) {
-                    mqttModule!!.restart()
-                }
-            })
-        }
-    }
-
-    override fun onCameraException(message: String) {
-        this@MainActivity.runOnUiThread {
-            dialogUtils.showAlertDialog(this@MainActivity, message)
-        }
-    }
-
-    override fun onCameraComplete(bitmap: Bitmap) {
+    // TODO run from service
+    @Deprecated("Move to broadcast")
+    fun onCameraComplete(bitmap: Bitmap) {
         Timber.d("onCameraComplete")
         viewModel.sendCapturedImage(bitmap)
     }
@@ -427,18 +317,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
     private inner class MainSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         private var currentFragment : BaseFragment? = null
-
         override fun getItem(position: Int): Fragment {
-            when (position) {
-                0 -> return MainFragment.newInstance()
-                1 -> return PlatformFragment.newInstance()
-                else -> return MainFragment.newInstance()
+            return when (position) {
+                0 -> MainFragment.newInstance()
+                1 -> PlatformFragment.newInstance()
+                else -> MainFragment.newInstance()
             }
         }
         override fun getCount(): Int {
             return 2
         }
-
         override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
             super.setPrimaryItem(container, position, `object`)
 
@@ -446,12 +334,21 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 currentFragment = `object` as BaseFragment
             }
         }
-
         fun getCurrentFragment() = currentFragment
     }
 
-    companion object {
-        const val AWAKE_TIME: Long = 30000 // 30 SECONDS
-        const val TRIGGERED_AWAKE_TIME: Long = 10800000 // 3 HOURS
+    // handler for received data from service
+    private val mBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
+                val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+                dialogUtils.showAlertDialog(this@MainActivity, message)
+            } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
+                val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+            } else if (AlarmPanelService.BROADCAST_AWAKE_DEVICE_FOR_ACTION == intent.action) {
+                awakenDeviceForAction()
+            }
+        }
     }
 }
