@@ -295,7 +295,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startSensors() {
-        if (configuration.sensorsEnabled && mqttOptions.isValid) {
+        Timber.d("sensorsEnabled ${configuration.deviceSensors}")
+        if (configuration.deviceSensors && mqttOptions.isValid) {
             Timber.d("startSensors")
             sensorReader.startReadings(configuration.mqttSensorFrequency, sensorCallback)
         }
@@ -368,7 +369,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
-    // TODO capture image if publishing disarmed
     private fun publishAlarm(command: String) {
         if(mqttModule != null) {
             Timber.d("publishAlarm $command")
@@ -435,10 +435,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startHttp() {
-        Timber.d("startHttp")
         if (httpServer == null && configuration.httpMJPEGEnabled) {
+            Timber.d("startHttp")
             httpServer = AsyncHttpServer()
-
             if (configuration.httpMJPEGEnabled) {
                 startMJPEG()
                 httpServer!!.addAction("GET", "/camera/stream") { _, response ->
@@ -472,7 +471,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.d("startMJPEG")
         cameraReader.getJpeg().observe(this, Observer { jpeg ->
             if (mJpegSockets.size > 0 && jpeg != null) {
-                Timber.d("mJpegSockets")
+                Timber.d("mJpegSockets ${mJpegSockets.size }")
                 var i = 0
                 while (i < mJpegSockets.size) {
                     val s = mJpegSockets[i]
@@ -501,7 +500,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startMJPEG(response: AsyncHttpServerResponse) {
-        Timber.d("startmJpeg Called")
+        Timber.d("startMJPEG Called")
+        Timber.d("startMJPEG configuration.httpMJPEGMaxStreams ${configuration.httpMJPEGMaxStreams}")
+        Timber.d("startMJPEG mJpegSockets.size ${mJpegSockets.size}")
         if (mJpegSockets.size < configuration.httpMJPEGMaxStreams) {
             Timber.i("Starting new MJPEG stream")
             response.headers.add("Cache-Control", "no-cache")
