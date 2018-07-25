@@ -15,10 +15,14 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
+- Camera support for streaming video, motion detection, face detection, and QR Code reading.
+- Capture and emailing images when the alarm is disabled (requires Mailgun api key).
+- Streaming MJPEG server support using the device camera.
+- MQTT commands to remotely the application (speak, play audio, notifications, alerts, etc.).
+- Sensor data reporting for the device (temperature, light, pressure, battery).
+- Google Text-to-Speech support to speak MQTT notification messages (requires Android Lolipop or higher).
 - Day/Night mode themes based on set time.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
-- Camera support for capturing and emailing images when the alarm is disabled (requires Mailgun api key).
-- Google Text-to-Speech support to speak MQTT notification messages.
 - Optional screensaver mode using a digital clock or Imgur images. 
 - Seven day Weather forecast (requires Darksky api key).
 - Home Automation Platform webpage support for viewing your home automation website.
@@ -50,7 +54,11 @@ You can also load your home automation platfgorm website by entering the address
 
 ## Software
 
-- Android Studio with Android SDK 14 or above.
+- Android Studio with Android SDK 15 or above.
+
+## Installation
+
+You can clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device. You can also side load the built APK from from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 
 ## Home Assistant Setup
 
@@ -58,10 +66,6 @@ You can also load your home automation platfgorm website by entering the address
 - Configure the [MQTT service](https://home-assistant.io/components/mqtt/) note thr broker address and username/password if applicable.
 - Add the [MQTT Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuraiton with the default settings for now.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
-
-## Installation
-
-You can clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device. You can also side load the built APK from from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 
 ## Alarm Setup
 
@@ -113,6 +117,168 @@ To use a screen saver other than the digital clock, turn this feature on in the 
 ## Platform Screen
 
 You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+
+## MQTT Sensor and State Data
+If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states.
+
+### Device Sensors
+The application will post device sensors data per the API description and Sensor Reading Frequency. Curerntly device sensors for Pressure, Temperature, Light, and Battery Level are published. 
+
+#### Sensor Data
+Sensor | Keys | Example | Notes
+-|-|-|-
+battery | unit, value, charging, acPlugged, usbPlugged | ```{"unit":"%", "value":"39", "acPlugged":false, "usbPlugged":true, "charging":true}``` |
+light | unit, value | ```{"unit":"lx", "value":"920"}``` |
+magneticField | unit, value | ```{"unit":"uT", "value":"-1780.699951171875"}``` |
+pressure | unit, value | ```{"unit":"hPa", "value":"1011.584716796875"}``` |
+temperature | unit, value | ```{"unit":"°C", "value":"24"}``` |
+
+*NOTE:* Sensor values are device specific. Not all devices will publish all sensor values.
+
+* Sensor values are constructued as JSON per the above table
+* For MQTT
+  * WallPanel publishes all sensors to MQTT under ```[alarmpanel]/sensor```
+  * Each sensor publishes to a subtopic based on the type of sensor
+    * Example: ```alarmpanel/sensor/battery```
+    
+#### Home Assistant Examples
+```YAML
+sensor:
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/battery"
+    name: "Alarm Panel Battery Level"
+    unit_of_measurement: "%"
+    value_template: '{{ value_json.value }}'
+    
+ - platform: mqtt
+    state_topic: "alarmpanel/sensor/temperature"
+    name: "WallPanel Temperature"
+    unit_of_measurement: "°C"
+    value_template: '{{ value_json.value }}'
+
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/light"
+    name: "Alarm Panel Light Level"
+    unit_of_measurement: "lx"
+    value_template: '{{ value_json.value }}'
+    
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/magneticField"
+    name: "Alarm Panel Magnetic Field"
+    unit_of_measurement: "uT"
+    value_template: '{{ value_json.value }}'
+
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/pressure"
+    name: "Alarm Panel Pressure"
+    unit_of_measurement: "hPa"
+    value_template: '{{ value_json.value }}'
+```
+
+### Camera Motion, Face, and QR Codes Detections
+In additional to device sensor data publishing. The application can also publish states for Motion detection and Face detection, as well as the data from QR Codes derived from the device camera.  
+
+Detection | Keys | Example | Notes
+-|-|-|-
+motion | value | ```{"value": false}``` | Published immediately when motion detected
+face | value | ```{"value": false}``` | Published immediately when face detected
+qrcode | value | ```{"value": data}``` | Published immediately when QR Code scanned
+
+* For MQTT
+  * WallPanel publishes all sensors to MQTT under ```[alarmpanel]/sensor```
+  * Each sensor publishes to a subtopic based on the type of sensor
+    * Example: ```alarmpanel/sensor/motion```
+
+#### Home Assistant Examples
+
+```YAML
+binary_sensor:
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/motion"
+    name: "Motion"
+    payload_on: '{"value":true}'
+    payload_off: '{"value":false}'
+    device_class: motion 
+    
+binary_sensor:
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/face"
+    name: "Face Detected"
+    payload_on: '{"value":true}'
+    payload_off: '{"value":false}'
+    device_class: motion 
+  
+sensor:
+  - platform: mqtt
+    state_topic: "alarmpanel/sensor/qrcode"
+    name: "QR Code"
+    value_template: '{{ value_json.value }}'
+    
+```
+
+### Application State Data
+The application canl also publish state data about the application such as the current dashboard url loaded or the screen state.
+
+Key | Value | Example | Description
+-|-|-|-
+currentUrl | URL String | ```{"currentUrl":"http://hasbian:8123/states"}``` | Current URL the Dashboard is displaying
+screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
+
+* State values are presented together as a JSON block
+  * eg, ```{"currentUrl":"http://hasbian:8123/states","screenOn":true}```
+* For REST
+  * GET the JSON from URL ```http://[192.168.1.1]:2971/api/state```
+* For MQTT
+  * WallPanel publishes state to topic ```[alarmpanel]/state```
+    * Default Topic: ```alarmpanel/state```
+
+## MJPEG Video Streaming
+
+Use the device camera as a live MJPEG stream. Just connect to the stream using the device IP address and end point. Be sure to turn on the camera streaming options in the settings and set the number of allowed streams and HTTP port number. Note that performance depends upon your device (older devices will be slow).
+
+#### Browser Example:
+
+```http://192.168.1.1:2971/camera/stream```
+
+#### Home Assistant Example:
+
+```YAML
+camera:
+  - platform: mjpeg
+    mjpeg_url: http://192.168.1.1:2971/camera/stream
+    name: Alarm Panel Camera
+```
+
+## MQTT and HTTP Commands
+Interact and control the application and device remotely using either MQTT or HTTP (REST) commands, including using your device as an announcer with Google Text-To-Speach. 
+
+### Commands
+Key | Value | Example Payload | Description
+-|-|-|-
+audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
+wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
+speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
+alert | data | ```{"notification": "Hello!"}``` | Displays an alert dialog within the application
+notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the devie
+
+* The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
+* Commands are constructed via valid JSON. It is possible to string multiple commands together:
+  * eg, ```{"clearCache":true, "relaunch":true}```
+* For REST
+  * POST the JSON to URL ```http://[alarpanel]:2971/api/command```
+* For MQTT
+  * WallPanel subscribes to topic ```[alarmpanel]/command```
+    * Default Topic: ```alarmpanel/command```
+  * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
+
+
+### Google Text-To-Speach Command
+You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
+
+Example format for the message topic and payload: 
+
+```{"topic":"wallpanel/mywallpanel/command", "payload":"{'speak':'Hello!'}"}```
+
 
 ## Notes
 
