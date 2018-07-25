@@ -70,6 +70,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_ALERT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_CAPTURE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_NOTIFICATION
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_WAKE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -223,7 +224,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startForeground() {
         Timber.d("startForeground")
-
         val notificationUtils = NotificationUtils(applicationContext)
         val notification = notificationUtils.createOngoingNotification(getString(R.string.app_name),
                 getString(R.string.service_notification_message))
@@ -296,13 +296,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startSensors() {
         if (configuration.sensorsEnabled && mqttOptions.isValid) {
+            Timber.d("startSensors")
             sensorReader.startReadings(configuration.mqttSensorFrequency, sensorCallback)
         }
     }
 
     private fun configureMqtt() {
-        Timber.d("configureMqtt")
         if (mqttModule == null && mqttOptions.isValid) {
+            Timber.d("configureMqtt")
             mqttModule = MQTTModule(this@AlarmPanelService.applicationContext, mqttOptions,this@AlarmPanelService)
             lifecycle.addObserver(mqttModule!!)
             publishState(COMMAND_STATE, state.toString())
@@ -312,7 +313,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     override fun onMQTTDisconnect() {
         Timber.w("onMQTTDisconnect")
         if(hasNetwork()) {
-            //Toast.makeText(this, getString(R.string.error_mqtt_connection), Toast.LENGTH_SHORT).show()
             sendAlertMessage(getString(R.string.error_mqtt_connection))
             reconnectHandler.postDelayed(restartMqttRunnable, 3000)
         }
@@ -321,7 +321,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     override fun onMQTTException(message: String) {
         Timber.w("onMQTTException: $message")
         if(hasNetwork()) {
-            //Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             sendAlertMessage(message)
             reconnectHandler.postDelayed(restartMqttRunnable, 3000)
         }
@@ -371,8 +370,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     // TODO capture image if publishing disarmed
     private fun publishAlarm(command: String) {
-        Timber.d("publishAlarm $command")
         if(mqttModule != null) {
+            Timber.d("publishAlarm $command")
             mqttModule!!.publishAlarm(command)
             if(command == AlarmUtils.COMMAND_DISARM) {
                 captureImageTask()
@@ -385,8 +384,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun publishState(command: String, message: String) {
-        Timber.d("publishState")
         if(mqttModule != null) {
+            Timber.d("publishState command $command")
+            Timber.d("publishState message $message")
             mqttModule!!.publishState(command, message)
         }
     }
@@ -523,6 +523,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.d("processCommand ${commandJson}")
         var payload: String = ""
         try {
+            if (commandJson.has(COMMAND_WAKE)) {
+                payload = commandJson.getString(COMMAND_WAKE)
+                switchScreenOn(AWAKE_TIME)
+            }
             if (commandJson.has(COMMAND_AUDIO)) {
                 payload = commandJson.getString(COMMAND_AUDIO)
                 playAudio(payload)
@@ -533,7 +537,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             if (commandJson.has(COMMAND_NOTIFICATION)) {
                 payload = commandJson.getString(COMMAND_SPEAK)
-                notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
+                val title = getString(R.string.notification_title)
+                notifications.createAlarmNotification(title, payload)
             }
             if (commandJson.has(COMMAND_ALERT)) {
                 payload = commandJson.getString(COMMAND_ALERT)

@@ -147,7 +147,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                 val mqttMessage = MqttMessage()
                 mqttMessage.payload = payload.toByteArray()
                 mqttMessage.isRetained = false
-                sendMessage(mqttOptions?.getBaseTopic() + command, mqttMessage)
+                sendMessage( mqttOptions?.getBaseTopic() + "/" + command, mqttMessage)
             }
         } catch (e: MqttException) {
             if (listener != null) {

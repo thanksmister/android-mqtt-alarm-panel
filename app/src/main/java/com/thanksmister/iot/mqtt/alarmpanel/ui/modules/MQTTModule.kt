@@ -38,7 +38,7 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     init {
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun start() {
         Timber.d("start")
         if (mqttService == null) {
@@ -85,16 +85,16 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     }
 
     fun publishAlarm(command : String) {
-        Timber.d("command: " + command)
         if(mqttService != null) {
+            Timber.d("command: $command")
             mqttService!!.publishAlarm(command)
         }
     }
 
     // TODO update service to have two different publishAlarm
     fun publishState(command : String, message: String) {
-        Timber.d("command: " + command)
         if(mqttService != null) {
+            Timber.d("state command: $command")
             mqttService!!.publishState(command, message)
         }
     }

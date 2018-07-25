@@ -28,7 +28,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import kotlinx.android.synthetic.main.dialog_sensor.view.*
 import android.widget.ArrayAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_SENSOR
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_DEVICE_SENSOR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.SENSOR_GENERIC_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.sensorTypes
 import timber.log.Timber
@@ -154,9 +154,9 @@ class SensorDialogView : ScrollView {
 
     private fun createSensorMQTT(sensor: Sensor) {
         var payload = sensor.payloadActive
-        var topic = COMMAND_SENSOR + sensor.topic
+        var topic = COMMAND_DEVICE_SENSOR + sensor.topic
         if(TextUtils.isEmpty(sensor.topic)) {
-            topic = COMMAND_SENSOR + "frontdoor"
+            topic = COMMAND_DEVICE_SENSOR + "frontdoor"
         }
         if(TextUtils.isEmpty(sensor.payloadActive)) {
             payload = "open"

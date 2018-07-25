@@ -71,7 +71,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     private fun getCommandTopic(): String {
-        return getBaseTopic() + TOPIC_COMMAND
+        return getBaseTopic() + "/" + TOPIC_COMMAND
     }
 
     fun getClientId(): String {
