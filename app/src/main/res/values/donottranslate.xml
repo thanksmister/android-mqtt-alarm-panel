@@ -19,16 +19,8 @@
 
     <string name="text_f" translatable="false">°F</string>
     <string name="text_c" translatable="false">°C</string>
-
     <string name="default_setting_mqtt_sensorfrequency">30</string>
-    <string name="key_setting_android_startonboot">setting_android_startonboot</string>
-    <string name="key_setting_mqtt_password">setting_mqtt_password</string>
-    <string name="default_setting_mqtt_password">""</string>
     <string name="key_setting_mqtt_sensorfrequency">setting_mqtt_sensorfrequency</string>
-    <string name="key_setting_mqtt_username">setting_mqtt_username</string>
-    <string name="default_setting_mqtt_username">""</string>
-    <string name="default_setting_android_startonboot">false</string>
-    <string name="key_setting_android_browsertype">setting_android_browsertype</string>
     <string name="key_settings_sensors_light">setting_sensors_light</string>
     <string name="key_setting_test_zoomlevel">setting_test_zoomlevel</string>
     <string name="key_settings_sensors_magneticField">setting_sensors_magneticField</string>
@@ -36,46 +28,24 @@
     <string name="key_settings_sensors_pressure">setting_sensors_pressure</string>
     <string name="key_settings_sensors_humidity">setting_sensors_humidity</string>
     <string name="key_setting_sensors_enabled">setting_device_sensors_enabled</string>
-    <string name="default_setting_sensors_value">false</string>
-    <string name="key_setting_mqtt_basetopic">setting_mqtt_basetopic</string>
-    <string name="key_setting_mqtt_serverport">setting_mqtt_serverport</string>
-    <string name="default_setting_mqtt_serverport">1883</string>
-    <string name="key_setting_mqtt_servername">setting_mqtt_servername</string>
-    <string name="default_setting_mqtt_servername">192.186.1.1</string>
-    <string name="key_setting_mqtt_enabled">setting_mqtt_enabled</string>
-    <string name="key_setting_mqtt_tls_enabled">setting_mqtt_tls_enabled</string>
-    <string name="default_setting_mqtt_enabled">false</string>
-    <string name="default_setting_mqtt_tts_enabled">false</string>
-    <string name="default_setting_mqtt_basetopic">wallpanel/mywallpanel/</string>
-    <string name="key_setting_mqtt_clientid">setting_mqtt_clientid</string>
-    <string name="default_setting_mqtt_clientid">mywallpanel</string>
     <string name="default_setting_http_mjpegmaxstreams">1</string>
     <string name="default_setting_http_mjpegenabled">false</string>
     <string name="key_setting_http_mjpegmaxstreams">setting_http_mjpegmaxstreams</string>
     <string name="default_setting_http_port">2971</string>
     <string name="key_setting_http_mjpegenabled">setting_http_mjpegenabled</string>
-    <string name="default_setting_http_restenabled">false</string>
     <string name="key_setting_http_port">setting_http_port</string>
     <string name="default_setting_camera_qrcodeenabled">false</string>
-    <string name="key_setting_http_restenabled">setting_http_enabled</string>
     <string name="default_setting_camera_facewake">false</string>
     <string name="key_setting_camera_qrcodeenabled">setting_camera_qrcodeenabled</string>
     <string name="default_setting_camera_faceenabled">false</string>
     <string name="key_setting_camera_facewake">setting_camera_facewake</string>
-    <string name="default_setting_camera_motionontime">0</string>
     <string name="key_setting_camera_faceenabled">setting_camera_faceenabled</string>
-    <string name="default_setting_camera_motionbright">false</string>
-    <string name="key_setting_camera_motionontime">setting_camera_motionontime</string>
     <string name="default_setting_camera_motionwake">false</string>
-    <string name="key_setting_camera_motionbright">setting_camera_motionbright</string>
     <string name="default_setting_camera_motionminluma">1000</string>
     <string name="key_setting_camera_motionwake">setting_camera_motionwake</string>
     <string name="default_setting_camera_motionleniency">20</string>
     <string name="key_setting_camera_motionminluma">setting_camera_motionminluma</string>
-    <string name="default_setting_camera_processinginterval">500</string>
     <string name="key_setting_camera_motionleniency">setting_camera_motionleniency</string>
-    <string name="default_setting_camera_motionenabled">false</string>
-    <string name="key_setting_camera_processinginterval">setting_camera_processinginterval</string>
     <string name="default_setting_camera_cameraid">0</string>
     <string name="key_setting_camera_motionenabled">setting_camera_motionenabled</string>
     <string name="default_setting_camera_enabled">false</string>
@@ -83,22 +53,7 @@
     <string name="default_setting_app_showactivity">true</string>
     <string name="key_setting_camera_enabled">setting_camera_enabled</string>
     <string name="key_setting_app_showactivity">setting_app_showactivity</string>
-    <string name="default_setting_app_preventsleep">false</string>
-    <string name="key_setting_app_launchurl">setting_app_launchurl</string>
-    <string name="default_setting_app_launchurl">https://thanksmister.com/wallpanel-android/</string>
-    <string name="default_setting_app_deviceid">mywallpanel</string>
-    <string name="key_setting_app_preventsleep">setting_app_preventsleep</string>
-    <string name="key_settings_first_timed">setting_app_first_time</string>
-    <string name="key_setting_app_deviceid">setting_app_deviceid</string>
     <string name="default_setting_test_zoomlevel">1.0</string>
-    <string name="key_camera_test">camera_test</string>
-    <string name="key_setting_tts_enabled">setting_tts_enabled</string>
-    <string name="default_setting_tss_enabled">false</string>
-    <string name="key_pref_module_tss">pref_module_tss</string>
-    <string name="key_pref_description">pref_description</string>
-    <string name="key_pref_module_notification">pref_module_notification</string>
-    <string name="key_pref_tts_notification">pref_module_tss</string>
-    <string name="default_tts_notification">false</string>
     <string name="key_setting_browser_user_agent">setting_browser_header</string>
     <string name="default_browser_user_agent">""</string>
     <string name="key_setting_camera_fps">setting_camera_fps</string>
@@ -148,36 +103,11 @@
         <item>1800000</item>
     </string-array>
 
-    <string-array name="timeout_values">
-        <item>15000</item>
-        <item>30000</item>
-        <item>60000</item>
-        <item>120000</item>
-        <item>180000</item>
-        <item>300000</item>
-        <item>600000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>7200000</item>
-        <item>10800000</item>
-        <item>21600000</item>
-        <item>43200000</item>
-        <item>86400000</item>
-    </string-array>
-
     <string-array name="flip_values">
         <item>0F</item>
         <item>-90f</item>
         <item>90f</item>
         <item>180f</item>
-    </string-array>
-
-    <string-array name="screen_brightness_array">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
     </string-array>
 
     <string-array name="zoom_level_names">
@@ -208,11 +138,9 @@
     <string name="pref_sensor_list_summary">Below is a list of sensor data available on this device to be published as MQTT data.</string>
     <string name="pref_qr_code_summary">Will scan QR codes using the device\'s camera and publish the scanned code over MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publish Frequency (in seconds)</string>
-    <string name="summary_setting_mqtt_basetopic">Unique identifier to receive MQTT commands for this panel, currently: %1$s</string>
+    <string name="summary_setting_mqtt_basetopic">Identifier to receive MQTT commands for this panel. Each panel should have a unique identifier.</string>
     <string name="title_setting_mqtt_basetopic">Base Topic</string>
     <string name="service_notification_message">Alarm Panel Running…</string>
-    <string name="text_camera_front">Front</string>
-    <string name="text_camera_back">Back</string>
     <string name="toast_camera_source_error">Could not start camera source, you may want to try again.</string>
     <string name="pref_user_agent_title">User Agent String (Optional)</string>
     <string name="pref_user_agent_summary">Set the browser user agent stream if needed to load the dashboard (leave blank otherwise)</string>
@@ -223,7 +151,6 @@
     <string name="text_front">Front</string>
     <string name="text_back">Back</string>
     <string name="text_camera_pattern">{0}: {1} Camera {3}x{4} {2}º</string>
-
     <string name="pref_camera_test_title">Camera Test</string>
     <string name="pref_camera_test_button_title">Camera Test</string>
     <string name="title_setting_http_port">HTTP Listening Port</string>
@@ -238,36 +165,28 @@
     <string name="title_setting_camera_enabled">Camera Enabled</string>
     <string name="title_setting_camera_cameraid">Selected Camera</string>
     <string name="title_setting_camera_motionenabled">Motion Detection Enabled</string>
-    <string name="title_setting_camera_processinginterval">Image Processing Interval (ms)</string>
     <string name="title_setting_camera_motionleniency">Maximum Leniency</string>
     <string name="title_setting_camera_motionminluma">Minimum Luma</string>
     <string name="title_setting_camera_motionwake">Wakes Screen</string>
-    <string name="title_setting_camera_motionbright">Screen Brightness</string>
-    <string name="title_setting_camera_motionontime">Screen Dim Delay (Seconds)</string>
     <string name="title_setting_camera_faceenabled">Face Detection Enabled</string>
     <string name="title_setting_camera_facewake">Wakes Screen</string>
     <string name="title_setting_camera_qrcodeenabled">QR Code Reader</string>
-
     <string name="pref_motion_detection_summary">Detects motion using the device\'s camera.</string>
     <string name="pref_motion_wake_summary">Wakes the device screen when motion detected.</string>
     <string name="pref_motion_detection_title">Motion Detection</string>
     <string name="pref_motion_adjustments_title">Motion Adjustments</string>
     <string name="pref_face_detection_summary">Detects faces using the device\'s camera.</string>
     <string name="pref_face_wake_summary">Turns on the screen when face detected.</string>
-    <string name="pref_button_motion_detection">Motion Detection</string>
-    <string name="pref_button_face_detection">Face Detection</string>
-    <string name="pref_button_qrcode_reader">QR Code Reader</string>
     <string name="pref_button_camera_test">Test the camera settings.</string>
     <string name="toast_qr_code_read">QR Code Read....</string>
-
     <string name="toast_too_dark_motion">Too dark for motion detection</string>
     <string name="toast_motion_detected">Motion Detected!</string>
     <string name="toast_face_detected">Face Detected!</string>
     <string name="toast_qrcode_read">QR Code %1$s</string>
-
     <string name="title_setting_app_showactivity">Show Browser Activity</string>
     <string name="pref_show_browser_activity_summary">Display browser loading progress.</string>
     <string name="pref_zoom_level_summary">Zooms the browser level (experimental).</string>
     <string name="title_setting_test_zoomlevel">Browser Zoom Level</string>
+    <string name="progress_loading">Loading %1$s&#37;</string>
 
 </resources>

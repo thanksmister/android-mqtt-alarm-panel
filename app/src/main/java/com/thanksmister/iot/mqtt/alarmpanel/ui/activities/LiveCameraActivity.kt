@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 LocalBuzz
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraCallback
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.CameraSourcePreview
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.DetectionViewModel
 import dagger.android.support.DaggerAppCompatActivity
 
@@ -39,11 +40,17 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class LiveCameraActivity : DaggerAppCompatActivity() {
+class LiveCameraActivity : BaseActivity() {
+
+    private val inactivityHandler: Handler = Handler()
+    private val inactivityCallback = Runnable {
+        Toast.makeText(this@LiveCameraActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
+        dialogUtils.clearDialogs()
+        finish()
+    }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: DetectionViewModel
-    @Inject lateinit var configuration: Configuration
+    private lateinit var detectionViewModel: DetectionViewModel
     private var updateHandler: Handler? = null
     private var removeTextCountdown: Int = 0
     private val interval = 1000/15L
@@ -78,12 +85,12 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
 
         window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         preview = findViewById<CameraSourcePreview>(R.id.imageView_preview)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetectionViewModel::class.java)
+        detectionViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetectionViewModel::class.java)
 
         // Check for the camera permission before accessing the camera.
         val rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (rc == PackageManager.PERMISSION_GRANTED) {
-            viewModel.startCamera(cameraCallback, preview!!)
+            detectionViewModel.startCameraPreview(cameraCallback, preview!!)
         } else {
             requestCameraPermission()
         }
@@ -118,8 +125,14 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
         stopUpdatePicture()
     }
 
-    public override fun onResume() {
+    override fun onResume() {
         super.onResume()
+        inactivityHandler.postDelayed(inactivityCallback, 300000)
+    }
+
+    override fun onUserInteraction() {
+        inactivityHandler.removeCallbacks(inactivityCallback)
+        inactivityHandler.postDelayed(inactivityCallback, 300000)
     }
 
     public override fun onDestroy() {
@@ -127,6 +140,7 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
         if (toast != null) {
             toast!!.cancel()
         }
+        inactivityHandler.removeCallbacks(inactivityCallback)
     }
 
     private fun requestCameraPermission() {
@@ -145,7 +159,7 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
             return
         }
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            viewModel.startCamera(cameraCallback, preview!!)
+            detectionViewModel.startCameraPreview(cameraCallback, preview!!)
             return
         }
         Toast.makeText(this, getString(R.string.dialog_no_camera_permissions), Toast.LENGTH_LONG).show()
@@ -164,11 +178,9 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
     }
 
     private val cameraCallback = object : CameraCallback {
-
         override fun onCameraError() {
             Toast.makeText(this@LiveCameraActivity, getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
         }
-
         override fun onMotionDetected() {
             runOnUiThread {
                 if(removeTextCountdown == 0) {
@@ -177,7 +189,6 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
                 }
             }
         }
-
         override fun onTooDark() {
             runOnUiThread {
                 if(removeTextCountdown == 0) {
@@ -186,7 +197,6 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
                 }
             }
         }
-
         override fun onFaceDetected() {
             runOnUiThread {
                 if(removeTextCountdown == 0) {
@@ -195,7 +205,6 @@ class LiveCameraActivity : DaggerAppCompatActivity() {
                 }
             }
         }
-
         override fun onQRCode(data: String) {
             runOnUiThread {
                 if(removeTextCountdown == 0) {

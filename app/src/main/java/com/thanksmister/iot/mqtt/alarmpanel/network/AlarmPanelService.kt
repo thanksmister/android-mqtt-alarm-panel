@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 LocalBuzz
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,13 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.media.MediaPlayer
 import android.net.wifi.WifiManager
 import android.os.*
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v8.renderscript.RenderScript
 import android.text.TextUtils
-import android.view.Surface
-import android.view.WindowManager
 import com.koushikdutta.async.AsyncServer
 import com.koushikdutta.async.ByteBufferList
 import com.koushikdutta.async.http.server.AsyncHttpServer
@@ -72,17 +68,15 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_ALERT
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_CAPTURE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_NOTIFICATION
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
-import io.github.silvaren.easyrs.tools.Nv21Image
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.ByteArrayOutputStream
-import java.lang.ref.WeakReference
 
 class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
@@ -94,6 +88,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     lateinit var sensorReader: SensorReader
     @Inject
     lateinit var mqttOptions: MQTTOptions
+    @Inject
+    lateinit var notifications: NotificationUtils
     @Inject
     lateinit var messageDataSource: MessageDao
 
@@ -116,6 +112,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private var faceDetected: Boolean = false
     private var currentUrl: String? = null
     private val reconnectHandler = Handler()
+    private var localBroadCastManager: LocalBroadcastManager? = null
 
     inner class WallPanelServiceBinder : Binder() {
         val service: AlarmPanelService
@@ -148,16 +145,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         this.currentUrl = configuration.webUrl
 
-        val filter = IntentFilter()
-        filter.addAction(BROADCAST_EVENT_URL_CHANGE)
-        filter.addAction(BROADCAST_EVENT_SCREEN_TOUCH)
-        filter.addAction(Intent.ACTION_SCREEN_ON)
-        filter.addAction(Intent.ACTION_SCREEN_OFF)
-        filter.addAction(Intent.ACTION_USER_PRESENT)
-
-        val bm = LocalBroadcastManager.getInstance(this)
-        bm.registerReceiver(mBroadcastReceiver, filter)
-
         configureMqtt()
         configurePowerOptions()
         startHttp()
@@ -166,18 +153,34 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         startForeground()
         configureTextToSpeech()
         startSensors()
+
+        val filter = IntentFilter()
+        filter.addAction(BROADCAST_EVENT_URL_CHANGE)
+        filter.addAction(BROADCAST_EVENT_SCREEN_TOUCH)
+        filter.addAction(Intent.ACTION_SCREEN_ON)
+        filter.addAction(Intent.ACTION_SCREEN_OFF)
+        filter.addAction(Intent.ACTION_USER_PRESENT)
+        localBroadCastManager= LocalBroadcastManager.getInstance(this)
+        localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        cameraReader.stopCamera()
-        sensorReader.stopReadings()
-        stopHttp()
-        stopPowerOptions()
         reconnectHandler.removeCallbacks(restartMqttRunnable)
         if (!disposable.isDisposed) {
             disposable.clear()
         }
+        if(localBroadCastManager != null) {
+            localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
+        }
+        if (mqttModule == null) {
+            mqttModule!!.pause()
+            mqttModule = null
+        }
+        cameraReader.stopCamera()
+        sensorReader.stopReadings()
+        stopHttp()
+        stopPowerOptions()
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -220,16 +223,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startForeground() {
         Timber.d("startForeground")
-        // make a continuously running notification
-        val notificationUtils = NotificationUtils(applicationContext, application.resources)
+
+        val notificationUtils = NotificationUtils(applicationContext)
         val notification = notificationUtils.createOngoingNotification(getString(R.string.app_name),
                 getString(R.string.service_notification_message))
-        if (notification != null) {
-            startForeground(ONGOING_NOTIFICATION_ID, notification)
-        }
-        if (notification != null) {
-            startForeground(ONGOING_NOTIFICATION_ID, notification)
-        }
+
+        startForeground(ONGOING_NOTIFICATION_ID, notification)
+
         // listen for network connectivity changes
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData?.observe(this, Observer { connected ->
@@ -243,7 +243,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun handleNetworkConnect() {
         Timber.d("handleNetworkConnect")
-        val notifications = NotificationUtils(this@AlarmPanelService, resources)
         notifications.clearNotification()
         if (mqttModule != null && !hasNetwork.get()) {
             mqttModule?.restart()
@@ -344,7 +343,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 AlarmUtils.STATE_DISARM -> {
                     switchScreenOn(AWAKE_TIME)
                     if(configuration.hasSystemAlerts()) {
-                        val notifications = NotificationUtils(this@AlarmPanelService, resources)
                         notifications.clearNotification()
                     }
                 }
@@ -355,14 +353,12 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 AlarmUtils.STATE_TRIGGERED -> {
                     switchScreenOn(TRIGGERED_AWAKE_TIME) // 3 hours
                     if(configuration.alarmMode == AlarmUtils.MODE_TRIGGERED && configuration.hasSystemAlerts()){
-                        val notifications = NotificationUtils(this@AlarmPanelService, resources)
                         notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
                     }
                 }
                 AlarmUtils.STATE_PENDING -> {
                     switchScreenOn(AWAKE_TIME)
                     if((configuration.alarmMode == AlarmUtils.MODE_ARM_HOME || configuration.alarmMode == AlarmUtils.MODE_ARM_AWAY) && configuration.hasSystemAlerts()){
-                        val notifications = NotificationUtils(this@AlarmPanelService, resources)
                         notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
                     }
                 }
@@ -378,15 +374,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.d("publishAlarm $command")
         if(mqttModule != null) {
             mqttModule!!.publishAlarm(command)
-            if(command == AlarmUtils.COMMAND_DISARM && configuration.captureCameraImage()) {
-                val bitmapTask = BitmapTask(object : OnCompleteListener {
-                    override fun onComplete(bitmap: Bitmap?) {
-                        if(bitmap != null) {
-                            sendCapturedImage(bitmap)
-                        }
-                    }
-                })
-                bitmapTask.execute(cameraReader.getJpeg())
+            if(command == AlarmUtils.COMMAND_DISARM) {
+                captureImageTask()
             }
         }
     }
@@ -402,9 +391,15 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    /**
+     * Configure the camera with multiple detections (face, motion, qrcode, mjpeg stream) or
+     * just set up the camera to take a capture a photo on alarm disarm
+     */
     private fun configureCamera() {
         Timber.d("configureCamera ${configuration.cameraEnabled}")
-        if (configuration.cameraEnabled) {
+        if (configuration.hasCameraDetections()) {
+            cameraReader.startCameraDetector(cameraDetectorCallback, configuration)
+        } else if (configuration.captureCameraImage()) {
             cameraReader.startCamera(cameraDetectorCallback, configuration)
         }
     }
@@ -538,12 +533,15 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             if (commandJson.has(COMMAND_NOTIFICATION)) {
                 payload = commandJson.getString(COMMAND_SPEAK)
-                val notifications = NotificationUtils(this@AlarmPanelService, resources)
                 notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
             }
             if (commandJson.has(COMMAND_ALERT)) {
                 payload = commandJson.getString(COMMAND_ALERT)
                 sendAlertMessage(payload)
+            }
+            if (commandJson.has(COMMAND_CAPTURE)) {
+                payload = commandJson.getString(COMMAND_CAPTURE)
+                captureImageTask()
             }
             insertMessage(id, topic, payload)
         } catch (ex: JSONException) {
@@ -693,6 +691,22 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 }, { error -> Timber.e("Database error" + error.message) }))
     }
 
+    /**
+     * Capture and send image if user has setup this feature.
+     */
+    private fun captureImageTask() {
+        if(configuration.captureCameraImage()) {
+            val bitmapTask = BitmapTask(object : OnCompleteListener {
+                override fun onComplete(bitmap: Bitmap?) {
+                    if(bitmap != null) {
+                        sendCapturedImage(bitmap)
+                    }
+                }
+            })
+            bitmapTask.execute(cameraReader.getJpeg())
+        }
+    }
+
     private fun sendAlertMessage(message: String) {
         Timber.d("browseUrl")
         val intent = Intent(BROADCAST_ALERT_MESSAGE)
@@ -723,8 +737,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             } else if (BROADCAST_EVENT_SCREEN_TOUCH == intent.action) {
                 Timber.i("Screen touched")
                 publishState(COMMAND_STATE, state.toString())
-            } else if (BROADCAST_ALARM_MODE == intent.action) {
-                val alarmMode = intent.getStringExtra(BROADCAST_ALARM_MODE)
+            } else if (BROADCAST_EVENT_ALARM_MODE == intent.action) {
+                val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE)
                 Timber.i("Alarm Mode Changed $alarmMode")
                 if(!TextUtils.isEmpty(alarmMode)) {
                     publishAlarm(alarmMode)
@@ -868,9 +882,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val ONGOING_NOTIFICATION_ID = 1
         const val BROADCAST_EVENT_URL_CHANGE = "BROADCAST_EVENT_URL_CHANGE"
         const val BROADCAST_EVENT_SCREEN_TOUCH = "BROADCAST_EVENT_SCREEN_TOUCH"
-        const val BROADCAST_ALARM_MODE = "BROADCAST_ALARM_MODE"
+        const val BROADCAST_EVENT_ALARM_MODE = "BROADCAST_EVENT_ALARM_MODE"
         const val BROADCAST_ALERT_MESSAGE = "BROADCAST_ALERT_MESSAGE"
         const val BROADCAST_TOAST_MESSAGE = "BROADCAST_TOAST_MESSAGE"
-        const val BROADCAST_AWAKE_DEVICE_FOR_ACTION = "BROADCAST_AWAKE_DEVICE_FOR_ACTION"
     }
 }

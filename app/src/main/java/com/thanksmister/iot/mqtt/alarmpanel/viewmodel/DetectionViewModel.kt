@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 LocalBuzz
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ constructor(application: Application, private val configuration: Configuration,
 
     init {
         Timber.d("init")
-        getCameraList()
+        //getCameraList()
     }
 
     //prevents memory leaks by disposing pending observable objects
@@ -88,9 +88,13 @@ constructor(application: Application, private val configuration: Configuration,
         setCameras(cameraList)
     }
 
-    fun startCamera(callback: CameraCallback, preview: CameraSourcePreview?) {
-        Timber.d("startCamera")
-        cameraReader.startCameraPreview(callback, configuration, preview)
+    fun startCameraPreview(callback: CameraCallback, preview: CameraSourcePreview?) {
+        Timber.d("startCameraPreview")
+        if (configuration.hasCameraDetections()) {
+            cameraReader.startCameraPreview(callback, configuration, preview)
+        } else if (configuration.captureCameraImage()) {
+            cameraReader.startCameraPreviewSolo(callback, configuration, preview)
+        }
     }
 
     companion object {

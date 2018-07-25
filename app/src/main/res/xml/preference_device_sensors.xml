@@ -19,18 +19,18 @@
     <PreferenceCategory android:title="Sensors">
 
         <SwitchPreference
-            android:key="pref_device_sensors"
+            android:key="@string/key_setting_sensors_enabled"
             android:title="@string/title_enable_sensor_data"
             android:summary="@string/summary_enable_sensor_data"/>
 
         <EditTextPreference
             android:defaultValue="@string/default_setting_mqtt_sensorfrequency"
-            android:dependency="@string/key_setting_sensors_enabled"
             android:inputType="number"
             android:key="@string/key_setting_mqtt_sensorfrequency"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/title_setting_mqtt_sensorfrequency" />
+            android:title="@string/title_setting_mqtt_sensorfrequency"
+            android:dependency="@string/key_setting_sensors_enabled"/>
 
     </PreferenceCategory>
 
@@ -47,36 +47,31 @@
             android:key="@string/key_settings_sensors_temperature"
             android:selectable="false"
             android:summary="@string/summary_setting_sensors_default"
-            android:title="@string/title_setting_sensors_temperature"
-            android:dependency="@string/key_setting_sensors_enabled"/>
+            android:title="@string/title_setting_sensors_temperature"/>
 
         <Preference
             android:key="@string/key_settings_sensors_light"
             android:summary="@string/summary_setting_sensors_default"
             android:selectable="false"
-            android:title="@string/title_setting_sensors_light"
-            android:dependency="@string/key_setting_sensors_enabled"/>
+            android:title="@string/title_setting_sensors_light"/>
 
         <Preference
             android:key="@string/key_settings_sensors_magneticField"
             android:summary="@string/summary_setting_sensors_default"
             android:selectable="false"
-            android:title="@string/title_setting_sensors_magneticField"
-            android:dependency="@string/key_setting_sensors_enabled"/>
+            android:title="@string/title_setting_sensors_magneticField"/>
 
         <Preference
             android:key="@string/key_settings_sensors_pressure"
             android:summary="@string/summary_setting_sensors_default"
             android:selectable="false"
-            android:title="@string/title_setting_sensors_pressure"
-            android:dependency="@string/key_setting_sensors_enabled"/>
+            android:title="@string/title_setting_sensors_pressure"/>
 
         <Preference
             android:key="@string/key_settings_sensors_humidity"
             android:summary="@string/summary_setting_sensors_default"
             android:selectable="false"
-            android:title="@string/title_setting_sensors_humidity"
-            android:dependency="@string/key_setting_sensors_enabled"/>
+            android:title="@string/title_setting_sensors_humidity" />
 
     </PreferenceCategory>
 

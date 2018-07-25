@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 LocalBuzz
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,17 +137,17 @@ constructor(private val context: Context) {
         Timber.d("startCameraPreview")
         this.cameraCallback = callback
         if (configuration.cameraEnabled) {
-            buildDetectors(configuration)
+            buildCameraDetector(configuration)
             if(multiDetector != null) {
                 try {
-                    initCamera(configuration.cameraId, configuration.cameraFPS)
+                    initCameraDetectors(configuration.cameraId, configuration.cameraFPS)
                 } catch (e : IOException) {
                     Timber.e(e.message)
                     try {
                         if(configuration.cameraId == CAMERA_FACING_FRONT) {
-                            initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
+                            initCameraDetectors(CAMERA_FACING_BACK, configuration.cameraFPS)
                         } else {
-                            initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS)
+                            initCameraDetectors(CAMERA_FACING_FRONT, configuration.cameraFPS)
                         }
                     } catch (e : IOException) {
                         Timber.e(e.message)
@@ -155,6 +155,72 @@ constructor(private val context: Context) {
                         cameraCallback?.onCameraError()
                     }
                 }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun startCameraDetector(callback: CameraCallback, configuration: Configuration) {
+        Timber.d("startCameraPreview")
+        this.cameraCallback = callback
+        if (configuration.cameraEnabled && configuration.captureCameraImage()) {
+            buildDetectors(configuration)
+            if(multiDetector != null) {
+                try {
+                    initCameraDetectors(configuration.cameraId, configuration.cameraFPS)
+                } catch (e : IOException) {
+                    Timber.e(e.message)
+                    try {
+                        if(configuration.cameraId == CAMERA_FACING_FRONT) {
+                            initCameraDetectors(CAMERA_FACING_BACK, configuration.cameraFPS)
+                        } else {
+                            initCameraDetectors(CAMERA_FACING_FRONT, configuration.cameraFPS)
+                        }
+                    } catch (e : IOException) {
+                        Timber.e(e.message)
+                        cameraSource!!.stop()
+                        cameraCallback?.onCameraError()
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Throws(IOException::class)
+    fun startCameraPreviewSolo(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
+        Timber.d("startCameraPreview")
+        if (configuration.cameraEnabled && preview != null) {
+            this.cameraCallback = callback
+            this.cameraPreview = preview
+            buildCameraDetector(configuration)
+            if(multiDetector != null) {
+                cameraSource = initCameraPreview(configuration.cameraId, configuration.cameraFPS)
+                cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
+                    override fun onCameraError() {
+                        Timber.e("Camera Preview Error")
+                        cameraSource = if(configuration.cameraId == CAMERA_FACING_FRONT) {
+                            initCameraPreview(CAMERA_FACING_BACK, configuration.cameraFPS)
+                        } else {
+                            initCameraPreview(CAMERA_FACING_FRONT, configuration.cameraFPS)
+                        }
+                        if(cameraPreview != null) {
+                            try {
+                                cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
+                                    override fun onCameraError() {
+                                        Timber.e("Camera Preview Error")
+                                        cameraCallback!!.onCameraError()
+                                    }
+                                })
+                            } catch (e: Exception) {
+                                Timber.e(e.message)
+                                cameraPreview!!.stop()
+                                cameraSource!!.stop()
+                                cameraCallback!!.onCameraError()
+                            }
+                        }
+                    }
+                })
             }
         }
     }
@@ -195,6 +261,48 @@ constructor(private val context: Context) {
                     }
                 })
             }
+        }
+    }
+
+    private fun buildCameraDetector(configuration: Configuration) {
+        val info = Camera.CameraInfo()
+        try{
+            Camera.getCameraInfo(configuration.cameraId, info)
+        } catch (e: RuntimeException) {
+            Timber.e(e.message)
+            cameraCallback!!.onCameraError()
+            return
+        }
+        cameraOrientation = info.orientation
+        val multiDetectorBuilder = MultiDetector.Builder()
+        var detectorAdded = false
+        if(configuration.cameraEnabled) {
+            streamDetector = StreamingDetector.Builder().build()
+            streamDetectorProcessor = MultiProcessor.Builder<Stream>(MultiProcessor.Factory<Stream> {
+                object : Tracker<Stream>() {
+                    override fun onUpdate(p0: Detector.Detections<Stream>?, stream: Stream?) {
+                        super.onUpdate(p0, stream)
+                        if (stream?.byteArray != null && bitmapComplete && configuration.httpMJPEGEnabled) {
+                            byteArrayCreateTask = ByteArrayTask(context, renderScript, object : OnCompleteListener {
+                                override fun onComplete(byteArray: ByteArray?) {
+                                    bitmapComplete = true
+                                    setJpeg(byteArray!!)
+                                }
+                            })
+                            bitmapComplete = false
+                            byteArrayCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation)
+                        }
+                    }
+                }
+            }).build()
+
+            streamDetector!!.setProcessor(streamDetectorProcessor)
+            multiDetectorBuilder.add(streamDetector)
+            detectorAdded = true
+        }
+
+        if(detectorAdded) {
+            multiDetector = multiDetectorBuilder.build()
         }
     }
 
@@ -325,8 +433,21 @@ constructor(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     @Throws(Exception::class)
+    private fun initCameraDetectors(camerId: Int, fsp: Float) {
+        Timber.d("initCameraDetectors camerId $camerId")
+        cameraSource = CameraSource.Builder(context, multiDetector)
+                .setRequestedFps(fsp)
+                .setRequestedPreviewSize(640, 480)
+                .setFacing(camerId)
+                .build()
+
+        cameraSource!!.start()
+    }
+
+    @SuppressLint("MissingPermission")
+    @Throws(Exception::class)
     private fun initCamera(camerId: Int, fsp: Float) {
-        Timber.d("initCamera camerId $camerId")
+        Timber.d("initCameraDetectors camerId $camerId")
         cameraSource = CameraSource.Builder(context, multiDetector)
                 .setRequestedFps(fsp)
                 .setRequestedPreviewSize(640, 480)

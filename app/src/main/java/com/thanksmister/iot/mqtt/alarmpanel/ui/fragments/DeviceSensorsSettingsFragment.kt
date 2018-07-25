@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 LocalBuzz
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class DeviceSensorsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class DeviceSensorsSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject lateinit var configuration: Configuration
 
@@ -64,11 +64,11 @@ class DeviceSensorsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         super.onViewCreated(view, savedInstanceState)
 
         sensorsPreference = findPreference(getString(R.string.key_setting_sensors_enabled)) as SwitchPreference
-        sensorPublishFrequency = findPreference(getString(R.string.key_setting_mqtt_sensorfrequency)) as EditTextPreference
-
         sensorsPreference!!.isChecked = configuration.deviceSensors
-        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency)
-        sensorPublishFrequency!!.setSummary(configuration.deviceSensorFrequency)
+
+        sensorPublishFrequency = findPreference(getString(R.string.key_setting_mqtt_sensorfrequency)) as EditTextPreference
+        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency.toString())
+        sensorPublishFrequency!!.summary = configuration.deviceSensorFrequency.toString()
 
         val mSensorManager = activity!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         setSensorPreferenceSummary(findPreference(getString(R.string.key_settings_sensors_temperature)), mSensorManager.getSensorList(Sensor.TYPE_AMBIENT_TEMPERATURE));
@@ -88,14 +88,14 @@ class DeviceSensorsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                         sensorPublishFrequency!!.summary = value
                     } else if (isAdded) {
                         Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency)
-                        sensorPublishFrequency!!.setSummary(configuration.deviceSensorFrequency)
+                        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency.toString())
+                        sensorPublishFrequency!!.setSummary(configuration.deviceSensorFrequency.toString())
                     }
                 } catch (e : Exception) {
                     if(isAdded) {
                         Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency)
-                        sensorPublishFrequency!!.setSummary(configuration.deviceSensorFrequency)
+                        sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency.toString())
+                        sensorPublishFrequency!!.setSummary(configuration.deviceSensorFrequency.toString())
                     }
                 }
             }

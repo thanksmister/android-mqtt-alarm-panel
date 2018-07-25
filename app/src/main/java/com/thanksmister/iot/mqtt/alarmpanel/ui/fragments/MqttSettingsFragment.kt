@@ -1,19 +1,17 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
@@ -130,7 +128,8 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             passwordPreference!!.summary = toStars(mqttOptions.getPassword())
         }
         if (!TextUtils.isEmpty(mqttOptions.getBaseTopic())) {
-            baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, mqttOptions.getBaseTopic())
+            baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseTopic())
+            baseTopicPreference!!.summary = mqttOptions.getBaseTopic()
         }
     }
 
@@ -180,11 +179,11 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 value = baseTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
                     mqttOptions.setBaseTopic(value)
-                    baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, value)
+                    baseTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
                     baseTopicPreference!!.text = mqttOptions.getBaseTopic()
-                    baseTopicPreference!!.summary = getString(R.string.summary_setting_mqtt_basetopic, mqttOptions.getBaseTopic())
+                    baseTopicPreference!!.summary = mqttOptions.getBaseTopic()
                 }
             }
             PREF_STATE_TOPIC -> {

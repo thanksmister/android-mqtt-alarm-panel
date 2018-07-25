@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. ThanksMister LLC
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
@@ -30,6 +30,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
 
 import javax.inject.Singleton;
 
@@ -79,6 +80,11 @@ class ActivityModule {
     @Provides
     static MQTTOptions provideMQTTOptions(Application application, DPreference preference) {
         return new MQTTOptions(application, preference);
+    }
+
+    @Provides
+    static NotificationUtils notificationUtils(Application application) {
+        return new NotificationUtils(application);
     }
 
     @Provides

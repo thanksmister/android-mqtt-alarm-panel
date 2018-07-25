@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2017 The Android Open Source Project
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:startDestination="@+id/settings_fragment">
+
+    <fragment android:id="@+id/settings_fragment"
+              android:label="@string/activity_settings_title"
+              android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SettingsFragment" >
+        <action android:id="@+id/camera_action" app:destination="@id/camera_fragment"/>
+        <action android:id="@+id/mqtt_action" app:destination="@id/mqtt_fragment"/>
+        <action android:id="@+id/sensors_action" app:destination="@id/sensors_fragment"/>
+        <action android:id="@+id/about_action" app:destination="@id/about_fragment"/>
+        <action android:id="@+id/platform_action" app:destination="@id/platform_fragment"/>
+        <action android:id="@+id/screen_action" app:destination="@id/screen_fragment"/>
+        <action android:id="@+id/weather_action" app:destination="@id/weather_fragment"/>
+        <action android:id="@+id/notifications_action" app:destination="@id/notifications_fragment"/>
+        <action android:id="@+id/alarm_action" app:destination="@id/alarm_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/camera_fragment"
+              android:label="@string/preference_camera"
+              android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.CameraSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+        <action android:id="@+id/capture_action" app:destination="@id/capture_fragment"/>
+        <action android:id="@+id/motion_action" app:destination="@id/motion_fragment"/>
+        <action android:id="@+id/face_action" app:destination="@id/face_fragment"/>
+        <action android:id="@+id/qrcode_action" app:destination="@id/qrcode_fragment"/>
+        <action android:id="@+id/mjpeg_action" app:destination="@id/mjpeg_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/about_fragment"
+        android:label="@string/text_about"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AboutFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/sensors_fragment"
+        android:label="@string/sensors_settings"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.DeviceSensorsSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/mqtt_fragment"
+        android:label="@string/preference_title_mqtt_server"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MqttSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/alarm_fragment"
+        android:label="@string/preference_title_alarm"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.AlarmSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/notifications_fragment"
+        android:label="@string/preference_title_notification"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.NotificationsSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/screen_fragment"
+        android:label="@string/preference_title_display"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ScreenSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/weather_fragment"
+        android:label="@string/preference_title_weather_settings"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.WeatherSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/platform_fragment"
+        android:label="@string/preference_title_web_settings"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/mjpeg_fragment"
+        android:label="@string/pref_mjpeg_streaming_title"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MjpegSettingsFragment" >
+        <action android:id="@+id/settings_action" app:destination="@id/settings_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/motion_fragment"
+        android:label="@string/pref_motion_detection_title"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MotionSettingsFragment" >
+        <action android:id="@+id/camera_action" app:destination="@id/camera_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/face_fragment"
+        android:label="@string/pref_face_detection_title"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.FaceSettingsFragment" >
+        <action android:id="@+id/camera_action" app:destination="@id/camera_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/qrcode_fragment"
+        android:label="@string/title_setting_camera_qrcodeenabled"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.QrSettingsFragment" >
+        <action android:id="@+id/camera_action" app:destination="@id/camera_fragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/capture_fragment"
+        android:label="@string/preference_camera_title"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.CaptureSettingsFragment" >
+        <action android:id="@+id/camera_action" app:destination="@id/camera_fragment"/>
+    </fragment>
+
+
+</navigation>

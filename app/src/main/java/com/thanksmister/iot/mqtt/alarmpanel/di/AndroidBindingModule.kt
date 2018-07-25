@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. ThanksMister LLC
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,5 +124,20 @@ internal abstract class AndroidBindingModule {
     internal abstract fun mqttSettingsFragment(): MqttSettingsFragment
 
     @ContributesAndroidInjector
-    internal abstract fun deviceSensorsFragment(): DeviceSensorsFragment
+    internal abstract fun deviceSensorsFragment(): DeviceSensorsSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun cameraCaptureSettingsFragment(): CaptureSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun faceSettingsFragment(): FaceSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun qrSettingsFragment(): QrSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun mjpegSettingsFragment(): MjpegSettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun motionSettingsFragment(): MotionSettingsFragment
 }

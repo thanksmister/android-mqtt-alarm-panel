@@ -1,0 +1,55 @@
+<!--
+  ~ Copyright (c) 2018 LocalBuzz
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <PreferenceCategory android:title="@string/pref_mjpeg_streaming_title">
+
+        <SwitchPreference
+            android:defaultValue="@string/default_setting_http_mjpegenabled"
+            android:key="@string/key_setting_http_mjpegenabled"
+            android:title="@string/title_setting_http_mjpegenabled"/>
+
+        <EditTextPreference
+            android:defaultValue="@string/default_setting_http_mjpegmaxstreams"
+            android:inputType="number"
+            android:key="@string/key_setting_http_mjpegmaxstreams"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/title_setting_http_mjpegmaxstreams"
+            android:dependency="@string/key_setting_http_mjpegenabled"/>
+
+        <EditTextPreference
+            android:defaultValue="@string/default_setting_http_port"
+            android:inputType="number"
+            android:key="@string/key_setting_http_port"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/title_setting_http_port"
+            android:dependency="@string/key_setting_http_mjpegenabled"/>
+
+        <EditTextPreference
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"
+            android:selectable="false"
+            android:paddingTop="0dp"
+            android:summary="@string/pref_mjpeg_streaming_description"
+            android:dependency="@string/key_setting_http_mjpegenabled"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

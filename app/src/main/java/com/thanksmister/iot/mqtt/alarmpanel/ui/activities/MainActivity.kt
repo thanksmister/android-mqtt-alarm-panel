@@ -1,19 +1,17 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
@@ -22,7 +20,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.*
-import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
@@ -32,7 +30,9 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
+import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -60,9 +60,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     private lateinit var pagerAdapter: PagerAdapter
     private var alertDialog: AlertDialog? = null
     private var alarmLiveData: DayNightAlarmLiveData? = null
+    private var localBroadCastManager: LocalBroadcastManager? = null
+    private var decorView: View? = null
+    private var alarmPanelService: Intent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_main)
+
+        this.window.setFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+
+        decorView = window.decorView
 
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)
         view_pager.adapter = pagerAdapter
@@ -114,12 +125,27 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         val filter = IntentFilter()
         filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
-        val bm = LocalBroadcastManager.getInstance(this)
-        bm.registerReceiver(mBroadcastReceiver, filter)
+        localBroadCastManager = LocalBroadcastManager.getInstance(this)
+        localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
 
-        // Start our service to handle MQTT
-        val alarmPanelService = Intent(this, AlarmPanelService::class.java)
+        if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.d("onStart")
+        alarmPanelService = Intent(this, AlarmPanelService::class.java)
         startService(alarmPanelService)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("onStop")
+        if(alarmPanelService != null) {
+            //stopService(alarmPanelService)
+        }
     }
 
     private fun observeViewModel() {
@@ -167,10 +193,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         })
     }
 
-    public override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
         Timber.d("onResume")
         super.onResume()
@@ -185,6 +207,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             alertDialog?.dismiss()
             alertDialog = null
         }
+        if(localBroadCastManager != null) {
+            localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
+        }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
     }
 
     override fun onBackPressed() {
@@ -197,6 +223,40 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         } else {
             // Otherwise, if back key press is not handled by fragment, select the previous step.
             view_pager.currentItem = view_pager.currentItem - 1
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        val visibility: Int
+        if (hasFocus && configuration.fullScreen) {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                else -> {
+                    visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+                    window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                }
+            }
+            decorView?.systemUiVisibility = visibility
+        } else if (hasFocus) {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_VISIBLE)
+                else -> visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
+            }
+            decorView?.systemUiVisibility = visibility
         }
     }
 
@@ -222,31 +282,26 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
     override fun publishArmedHome() {
         Timber.d("publishArmedHome")
-        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_ARM_HOME)
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_HOME)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
     override fun publishArmedAway() {
         Timber.d("publishArmedAway")
-        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_ARM_AWAY)
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_AWAY)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
     override fun publishDisarmed() {
         Timber.d("publishDisarmed")
-        val intent = Intent(AlarmPanelService.BROADCAST_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_ALARM_MODE, AlarmUtils.COMMAND_DISARM)
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_DISARM)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
-    }
-
-    @LayoutRes
-    override fun getLayoutId(): Int {
-        return R.layout.activity_main
     }
 
     /**
@@ -254,52 +309,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
      */
     private fun awakenDeviceForAction() {
         Timber.d("awakenDeviceForAction")
-        //bringApplicationToForegroundIfNeeded()
-        //acquireTemporaryWakeLock(timeout)
+        bringApplicationToForegroundIfNeeded()
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
-    }
-
-    // TODO broadcast to service to capture
-    private fun captureImage() {
-        /*if (cameraModule != null) {
-            cameraModule?.takePicture(configuration.getCameraRotate()!!)
-        }*/
-    }
-
-    // TODO MOVE THIS TO THE SERVICE
-    fun onMQTTMessage(id: String, topic: String, payload: String) {
-        /*if(mqttOptions.getNotificationTopic() == topic) {
-            this@MainActivity.runOnUiThread {
-                if(viewModel.hasSystemAlerts()) {
-                    val notifications = NotificationUtils(this@MainActivity, resources)
-                    notifications.createAlarmNotification(getString(R.string.preference_title_system_notifications), payload)
-                }
-                if(viewModel.hasAlerts() || viewModel.hasTss()) {
-                    awakenDeviceForAction(AWAKE_TIME) // wake device temporarily for alerts
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        if (textToSpeechModule != null && viewModel.hasTss()) {
-                            textToSpeechModule!!.speakText(payload)
-                        }
-                    }
-                    if (viewModel.hasAlerts()) {
-                        alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
-                                .setMessage(payload)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
-                    }
-                }
-            }
-        }*/
-        //viewModel.insertMessage(id, topic, payload)
-    }
-
-    // TODO run from service
-    @Deprecated("Move to broadcast")
-    fun onCameraComplete(bitmap: Bitmap) {
-        Timber.d("onCameraComplete")
-        viewModel.sendCapturedImage(bitmap)
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -346,8 +359,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-            } else if (AlarmPanelService.BROADCAST_AWAKE_DEVICE_FOR_ACTION == intent.action) {
-                awakenDeviceForAction()
             }
         }
     }

@@ -1,19 +1,17 @@
 <!--
+  ~ Copyright (c) 2018 ThanksMister LLC
   ~
-  ~   ~ Copyright (c) 2017. ThanksMister LLC
-  ~   ~
-  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~   ~ you may not use this file except in compliance with the License. 
-  ~   ~ You may obtain a copy of the License at
-  ~   ~
-  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~   ~
-  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
-  ~   ~ under the License is distributed on an "AS IS" BASIS, 
-  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  ~   ~ See the License for the specific language governing permissions and 
-  ~   ~ limitations under the License.
-  ~   
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,19 +33,11 @@
     <EditTextPreference
         android:defaultValue="@string/default_camera_fps"
         android:key="@string/key_setting_camera_fps"
-        android:summary="15"
+        android:summary="@string/pref_camera_fps_summary"
         android:title="@string/pref_camera_fps_title"
         android:dependency="@string/key_setting_camera_enabled"/>
 
-    <!--<EditTextPreference
-        android:textColor="@color/light_gray"
-        android:textSize="12sp"
-        android:selectable="false"
-        android:paddingTop="0dp"
-        android:summary="@string/pref_camera_fps_summary"/>-->
-
     <Preference
-        android:icon="@drawable/ic_photo_camera"
         android:key="button_key_camera_test"
         android:title="@string/pref_camera_test_button_title"
         android:summary="@string/pref_button_camera_test"
@@ -57,239 +47,35 @@
 
     <PreferenceCategory android:title="Optional Settings">
 
-        <PreferenceScreen android:title="@string/preference_camera_title"
+        <Preference
+            android:key="button_key_capture"
+            android:title="@string/preference_camera_title"
             android:summary="@string/preference_camera_summary"
-            android:dependency="@string/key_setting_camera_enabled">
+            android:dependency="@string/key_setting_camera_enabled"/>
 
-            <PreferenceCategory android:title="@string/preference_camera">
-
-                <CheckBoxPreference
-                    android:key="pref_module_camera"
-                    android:summary="@string/preference_camera_summary"
-                    android:title="@string/preference_camera_title" />
-
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/preference_mail_title">
-
-                <EditTextPreference
-                    android:key="pref_mail_from"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/preference_mail_from_summary"
-                    android:title="@string/preference_mail_from" />
-
-                <EditTextPreference
-                    android:key="pref_mail_to"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/preference_mail_to_summary"
-                    android:title="@string/preference_mail_to" />
-
-                <EditTextPreference
-                    android:key="pref_mail_url"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/preference_mail_domain_summary"
-                    android:title="@string/preference_mail_domain" />
-
-                <EditTextPreference
-                    android:key="pref_mail_api_key"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/preference_mail_key_summary"
-                    android:title="@string/preference_mail_key" />
-
-                <Preference
-                    android:key="pref_mail_description"
-                    android:selectable="false"
-                    android:summary="@string/preference_mail_description" />
-
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref_telegram_title">
-
-                <EditTextPreference
-                    android:key="pref_telegram_chat_id"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/pref_telegram_chat_id_summary"
-                    android:title="@string/pref_telegram_chat_id_title" />
-
-                <EditTextPreference
-                    android:key="pref_telegram_token"
-                    android:negativeButtonText="@android:string/cancel"
-                    android:positiveButtonText="@android:string/ok"
-                    android:summary="@string/pref_telegram_token_summary"
-                    android:title="@string/pref_telegram_api_title" />
-
-            </PreferenceCategory>
-
-            <Preference
-                android:key="pref_description"
-                android:selectable="false"
-                android:summary="@string/pref_camera_send_image_notes" />
-
-        </PreferenceScreen>
-
-        <PreferenceScreen
+        <Preference
+            android:key="button_key_motion"
             android:title="@string/pref_motion_detection_title"
             android:summary="@string/pref_motion_detection_summary"
-            android:dependency="@string/key_setting_camera_enabled">
+            android:dependency="@string/key_setting_camera_enabled"/>
 
-            <PreferenceCategory android:title="@string/pref_motion_detection_title">
-
-                <SwitchPreference
-                    android:key="@string/key_setting_camera_motionenabled"
-                    android:summary="@string/pref_motion_detection_summary"
-                    android:title="@string/title_setting_camera_motionenabled" />
-
-                <SwitchPreference
-                    android:defaultValue="@string/default_setting_camera_motionwake"
-                    android:dependency="@string/key_setting_camera_motionenabled"
-                    android:key="@string/key_setting_camera_motionwake"
-                    android:summary="@string/pref_motion_wake_summary"
-                    android:title="@string/title_setting_camera_motionwake" />
-
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref_motion_adjustments_title">
-
-                <EditTextPreference
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:defaultValue="@string/default_motion_clear"
-                    android:dependency="@string/key_setting_camera_motionenabled"
-                    android:key="@string/key_setting_motion_clear"
-                    android:title="@string/pref_motion_reset_title"
-                    tools:summary="60" />
-
-                <EditTextPreference
-                    android:paddingTop="0dp"
-                    android:selectable="false"
-                    android:summary="@string/pref_motion_reset_description"
-                    android:textColor="@color/light_gray"
-                    android:textSize="12sp" />
-
-                <EditTextPreference
-                    android:contentDescription="Kittens"
-                    android:defaultValue="@string/default_setting_camera_motionleniency"
-                    android:dependency="@string/key_setting_camera_motionenabled"
-                    android:hint="Cookies"
-                    android:inputType="number"
-                    android:key="@string/key_setting_camera_motionleniency"
-                    android:selectAllOnFocus="true"
-                    android:singleLine="true"
-                    android:title="@string/title_setting_camera_motionleniency" />
-
-                <EditTextPreference
-                    android:paddingTop="0dp"
-                    android:selectable="false"
-                    android:summary="@string/pref_motion_leniency_description"
-                    android:textColor="@color/light_gray"
-                    android:textSize="12sp" />
-
-                <EditTextPreference
-                    android:defaultValue="@string/default_setting_camera_motionminluma"
-                    android:dependency="@string/key_setting_camera_motionenabled"
-                    android:inputType="number"
-                    android:key="@string/key_setting_camera_motionminluma"
-                    android:selectAllOnFocus="true"
-                    android:singleLine="true"
-                    android:title="@string/title_setting_camera_motionminluma" />
-
-                <EditTextPreference
-                    android:paddingTop="0dp"
-                    android:selectable="false"
-                    android:summary="@string/pref_motion_luma_description"
-                    android:textColor="@color/light_gray"
-                    android:textSize="12sp" />
-
-            </PreferenceCategory>
-
-        </PreferenceScreen>
-
-        <PreferenceScreen
+        <Preference
+            android:key="button_key_face"
             android:title="@string/pref_face_detection_title"
             android:summary="@string/pref_face_detection_summary"
-            android:dependency="@string/key_setting_camera_enabled">
+            android:dependency="@string/key_setting_camera_enabled"/>
 
-            <PreferenceCategory android:title="@string/pref_face_detection_title"
-                android:summary="@string/pref_face_detection_summary">
-
-                <SwitchPreference
-                    android:defaultValue="@string/default_setting_camera_faceenabled"
-                    android:key="@string/key_setting_camera_faceenabled"
-                    android:title="@string/title_setting_camera_faceenabled"
-                    android:summary="@string/pref_face_detection_summary"/>
-
-                <SwitchPreference
-                    android:defaultValue="@string/default_setting_camera_facewake"
-                    android:key="@string/key_setting_camera_facewake"
-                    android:title="@string/title_setting_camera_facewake"
-                    android:summary="@string/pref_face_wake_summary"
-                    android:dependency="@string/key_setting_camera_faceenabled"/>
-
-            </PreferenceCategory>
-
-        </PreferenceScreen>
-
-        <PreferenceScreen
+        <Preference
+            android:key="button_key_qr"
             android:title="@string/title_setting_camera_qrcodeenabled"
             android:summary="@string/pref_qr_code_summary"
-            android:dependency="@string/key_setting_camera_enabled">
+            android:dependency="@string/key_setting_camera_enabled"/>
 
-            <PreferenceCategory android:title="QR Code Detection">
-
-                <SwitchPreference
-                    android:defaultValue="@string/default_setting_camera_qrcodeenabled"
-                    android:key="@string/key_setting_camera_qrcodeenabled"
-                    android:title="@string/title_setting_camera_qrcodeenabled"
-                    android:summary="@string/pref_qr_code_summary"/>
-
-            </PreferenceCategory>
-
-        </PreferenceScreen>
-
-        <PreferenceScreen
+        <Preference
+            android:key="button_key_mjpeg"
             android:title="@string/pref_mjpeg_streaming_title"
             android:summary="@string/pref_mjpeg_streaming_summary"
-            android:dependency="@string/key_setting_camera_enabled">
-
-            <PreferenceCategory android:title="@string/pref_mjpeg_streaming_title">
-
-                <SwitchPreference
-                    android:defaultValue="@string/default_setting_http_mjpegenabled"
-                    android:key="@string/key_setting_http_mjpegenabled"
-                    android:title="@string/title_setting_http_mjpegenabled"/>
-
-                <EditTextPreference
-                    android:defaultValue="@string/default_setting_http_mjpegmaxstreams"
-                    android:inputType="number"
-                    android:key="@string/key_setting_http_mjpegmaxstreams"
-                    android:selectAllOnFocus="true"
-                    android:singleLine="true"
-                    android:title="@string/title_setting_http_mjpegmaxstreams"
-                    android:dependency="@string/key_setting_http_mjpegenabled"/>
-
-                <EditTextPreference
-                    android:defaultValue="@string/default_setting_http_port"
-                    android:inputType="number"
-                    android:key="@string/key_setting_http_port"
-                    android:selectAllOnFocus="true"
-                    android:singleLine="true"
-                    android:title="@string/title_setting_http_port"/>
-
-                <EditTextPreference
-                    android:textColor="@color/light_gray"
-                    android:textSize="12sp"
-                    android:selectable="false"
-                    android:paddingTop="0dp"
-                    android:summary="@string/pref_mjpeg_streaming_description"/>
-
-            </PreferenceCategory>
-
-        </PreferenceScreen>
+            android:dependency="@string/key_setting_camera_enabled"/>
 
     </PreferenceCategory>
 

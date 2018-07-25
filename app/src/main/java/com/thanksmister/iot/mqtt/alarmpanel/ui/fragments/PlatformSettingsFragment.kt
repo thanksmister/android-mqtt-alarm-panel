@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. ThanksMister LLC
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     private var webModulePreference: CheckBoxPreference? = null
     private var platformBarPreference: CheckBoxPreference? = null
     private var webUrlPreference: EditTextPreference? = null
-    private var adminMenuPreference: CheckBoxPreference? = null
-    private var backBehaviorPreference: CheckBoxPreference? = null
     private var browserActivityPreference: SwitchPreference? = null
     private var browserHeaderPreference: EditTextPreference? = null
 
@@ -77,12 +75,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         webModulePreference = findPreference(PREF_MODULE_WEB) as CheckBoxPreference
         platformBarPreference = findPreference(PREF_PLATFORM_BAR) as CheckBoxPreference
-        adminMenuPreference = findPreference(PREF_PLATFORM_ADMIN_MENU) as CheckBoxPreference
-        backBehaviorPreference = findPreference(PREF_PLATFORM_BACK_BEHAVIOR) as CheckBoxPreference
-
         browserHeaderPreference = findPreference(getString(R.string.key_setting_browser_user_agent)) as EditTextPreference
         browserActivityPreference = findPreference(getString(R.string.key_setting_app_showactivity)) as SwitchPreference
-
         webUrlPreference = findPreference(PREF_WEB_URL) as EditTextPreference
 
         if (!TextUtils.isEmpty(configuration.webUrl)) {
@@ -90,8 +84,6 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
             webUrlPreference!!.summary = configuration.webUrl
         }
 
-        adminMenuPreference!!.isChecked = configuration.hideAdminMenu
-        backBehaviorPreference!!.isChecked = configuration.adjustBackBehavior
         webModulePreference!!.isChecked = configuration.hasPlatformModule()
         platformBarPreference!!.isChecked = configuration.platformBar
         platformBarPreference!!.isEnabled = configuration.hasPlatformModule()
@@ -103,24 +95,30 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
                 val checked = webModulePreference!!.isChecked
                 configuration.setWebModule(checked)
                 platformBarPreference!!.isEnabled = checked
+                configuration.setHasPlatformChange(true)
             }
             PREF_PLATFORM_BAR -> {
                 val checked = platformBarPreference!!.isChecked
                 configuration.platformBar = checked
             }
-            PREF_PLATFORM_ADMIN_MENU -> {
-                val checked = adminMenuPreference!!.isChecked
-                configuration.hideAdminMenu = checked
+            getString(R.string.key_setting_browser_user_agent) -> {
+                val value = browserHeaderPreference!!.text
+                configuration.browserUserAgent = value
+                browserHeaderPreference!!.setDefaultValue(value)
+                browserHeaderPreference!!.summary = value
+                configuration.setHasPlatformChange(true)
             }
-            PREF_PLATFORM_BACK_BEHAVIOR -> {
-                val checked = backBehaviorPreference!!.isChecked
-                configuration.adjustBackBehavior = checked
+            getString(R.string.key_setting_app_showactivity) -> {
+                val checked = browserActivityPreference!!.isChecked
+                configuration.appShowActivity = checked
+                configuration.setHasPlatformChange(true)
             }
             PREF_WEB_URL -> {
                 val value = webUrlPreference!!.text
                 configuration.webUrl = value
                 webUrlPreference!!.text = value
                 webUrlPreference!!.summary = value
+                configuration.setHasPlatformChange(true)
             }
         }
     }

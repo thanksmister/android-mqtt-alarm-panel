@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <vector android:height="24dp" android:viewportHeight="500.0"
     android:viewportWidth="500.0" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path android:fillColor="#FF000000" android:pathData="M252.9,47.7c5.9,25.1 0.9,44.9 -17.1,63.9c-35.9,37.9 -69.5,78.1 -107.7,121.4c44.7,0 84.1,0 125.2,0c0,14.6 0,26.7 0,40.8c-60.4,0 -121.4,0 -183.5,0c-5.6,-23.1 -2.5,-42.5 15.4,-61.1c31.2,-32.4 60,-67.1 89.6,-100.9c5.2,-5.9 9.9,-12.4 17.4,-21.9c-42.9,0 -81.7,0 -122.5,0c0,-14.8 0,-27.6 0,-42.3C130.7,47.7 191.7,47.7 252.9,47.7z"/>
