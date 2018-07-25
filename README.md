@@ -27,13 +27,6 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 - Seven day Weather forecast (requires Darksky api key).
 - Home Automation Platform webpage support for viewing your home automation website.
 
- Supported Command and Publish States
-
-- Command topic:  home/alarm/set, home/notification
-- Command payloads: ARM_HOME, ARM_AWAY, DISARM
-- Publish topic: home/alarm
-- Publish payloads: disarmed, armed_away, armed_home, pending, triggered.
-
 ## Screen Shots:
 
 ![alarm_home](https://user-images.githubusercontent.com/142340/29889460-9f615642-8d9a-11e7-99a6-1a49529dd580.png)
@@ -72,6 +65,15 @@ You can clone the repository and compile the APK using Andoid Studio, then side 
 - Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
 
 - Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel. Here is an example of the setup I use in Home Assistant's configuration.yaml file.  
+
+### Supported Command and Publish States
+
+- Command topic:  home/alarm/set, home/notification
+- Command payloads: ARM_HOME, ARM_AWAY, DISARM
+- Publish topic: home/alarm
+- Publish payloads: disarmed, armed_away, armed_home, pending, triggered.
+
+### Example Home Assistant Setup
 
 ```
 alarm_control_panel:
