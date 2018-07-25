@@ -68,18 +68,18 @@ You can clone the repository and compile the APK using Andoid Studio, then side 
 
 ### Supported Command and Publish States
 
-- Command topic:  home/alarm/set, home/notification
+- Command topic:  alarmpanel/alarm/set
 - Command payloads: ARM_HOME, ARM_AWAY, DISARM
-- Publish topic: home/alarm
-- Publish payloads: disarmed, armed_away, armed_home, pending, triggered.
+- Publish topic: alarmpanel/alarm
+- Publish payloads: disarmed, armed_away, armed_home, pending, triggered (armed_night not currently supported).
 
 ### Example Home Assistant Setup
 
 ```
 alarm_control_panel:
   - platform: manual_mqtt
-    state_topic: home/alarm
-    command_topic: home/alarm/set
+    state_topic: alarmpanel/alarm
+    command_topic: alarmpanel/alarm/set
     pending_time: 60
     trigger_time: 1800
     disarm_after_trigger: false
@@ -121,7 +121,7 @@ To use a screen saver other than the digital clock, turn this feature on in the 
 You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
 ## MQTT Sensor and State Data
-If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states.
+If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
 
 ### Device Sensors
 The application will post device sensors data per the API description and Sensor Reading Frequency. Curerntly device sensors for Pressure, Temperature, Light, and Battery Level are published. 
@@ -186,7 +186,7 @@ motion | value | ```{"value": false}``` | Published immediately when motion dete
 face | value | ```{"value": false}``` | Published immediately when face detected
 qrcode | value | ```{"value": data}``` | Published immediately when QR Code scanned
 
-* For MQTT
+* MQTT
   * WallPanel publishes all sensors to MQTT under ```[alarmpanel]/sensor```
   * Each sensor publishes to a subtopic based on the type of sensor
     * Example: ```alarmpanel/sensor/motion```
@@ -228,9 +228,7 @@ screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
 
 * State values are presented together as a JSON block
   * eg, ```{"currentUrl":"http://hasbian:8123/states","screenOn":true}```
-* For REST
-  * GET the JSON from URL ```http://[192.168.1.1]:2971/api/state```
-* For MQTT
+* MQTT
   * WallPanel publishes state to topic ```[alarmpanel]/state```
     * Default Topic: ```alarmpanel/state```
 
@@ -250,9 +248,8 @@ camera:
     mjpeg_url: http://192.168.1.1:2971/camera/stream
     name: Alarm Panel Camera
 ```
-
-## MQTT and HTTP Commands
-Interact and control the application and device remotely using either MQTT or HTTP (REST) commands, including using your device as an announcer with Google Text-To-Speach. 
+## MQTT Commands
+Interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
 
 ### Commands
 Key | Value | Example Payload | Description
@@ -266,21 +263,17 @@ notification | data | ```{"notification": "Hello!"}``` | Displays a system notif
 * The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
 * Commands are constructed via valid JSON. It is possible to string multiple commands together:
   * eg, ```{"clearCache":true, "relaunch":true}```
-* For REST
-  * POST the JSON to URL ```http://[alarpanel]:2971/api/command```
-* For MQTT
+* MQTT
   * WallPanel subscribes to topic ```[alarmpanel]/command```
     * Default Topic: ```alarmpanel/command```
   * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
-
 
 ### Google Text-To-Speach Command
 You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
 
 Example format for the message topic and payload: 
 
-```{"topic":"wallpanel/mywallpanel/command", "payload":"{'speak':'Hello!'}"}```
-
+```{"topic":"alarmpanel/command", "payload":"{'speak':'Hello!'}"}```
 
 ## Notes
 
