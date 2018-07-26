@@ -43,9 +43,9 @@ You can also load your home automation platfgorm website by entering the address
 
 ![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
 
-## Software
+## Hardware & Softare 
 
-- Android Studio with Android SDK 16 or above.
+- Android Device running Android OS 4.1 or greater.
 
 ## Installation
 
