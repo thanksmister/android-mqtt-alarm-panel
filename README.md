@@ -22,7 +22,7 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 - Day/Night mode themes based on set start and end times.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
 - Optional screensaver mode using a digital clock or Imgur images. 
-- Seven day Weather forecast (requires Darksky api key).
+- Seven day Weather forecast (requires DarkSky api key).
 - Home Automation Platform webpage support for viewing home automation dashboards.
 
 ## Screen Shots:
