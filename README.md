@@ -45,7 +45,7 @@ You can also load your home automation platfgorm website by entering the address
 
 ## Software
 
-- Android Studio with Android SDK 15 or above.
+- Android Studio with Android SDK 16 or above.
 
 ## Installation
 
