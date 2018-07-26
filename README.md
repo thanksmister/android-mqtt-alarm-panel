@@ -15,17 +15,15 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
-- Camera support for streaming video, motion detection, face detection, and QR Code reading.
-- Capture and emailing images when the alarm is disabled (requires Mailgun api key).
-- Streaming MJPEG server support using the device camera.
-- MQTT commands to remotely the application (speak, play audio, notifications, alerts, etc.).
-- Sensor data reporting for the device (temperature, light, pressure, battery).
-- Google Text-to-Speech support to speak MQTT notification messages (requires Android Lolipop or higher).
-- Day/Night mode themes based on set time.
+- Stream video, detect motion, detect faces, and read QR Codes.
+- Capture and emailing images when the alarm is disabled.
+- MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
+- Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
+- Day/Night mode themes based on set start and end times.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
 - Optional screensaver mode using a digital clock or Imgur images. 
 - Seven day Weather forecast (requires Darksky api key).
-- Home Automation Platform webpage support for viewing your home automation website.
+- Home Automation Platform webpage support for viewing home automation dashboards.
 
 ## Screen Shots:
 
