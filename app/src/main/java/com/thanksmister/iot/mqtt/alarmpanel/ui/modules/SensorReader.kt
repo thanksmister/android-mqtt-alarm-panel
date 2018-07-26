@@ -26,7 +26,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.BatteryManager
 import android.os.Handler
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.SensorCallback
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
@@ -42,6 +41,7 @@ constructor(private val context: Context){
     private var updateFrequencyMilliSeconds: Int = 0
     private var callback: SensorCallback? = null
     private var sensorsPublished: Boolean = false
+    private var lightSensorEvent: SensorEvent? = null
 
     private val batteryHandlerRunnable = object : Runnable {
         override fun run() {
@@ -81,7 +81,7 @@ constructor(private val context: Context){
     }
 
     private fun publishSensorData(sensorName: String?, sensorData: JSONObject) {
-        Timber.d("publishSensorData")
+        Timber.d("publishSensorData $sensorName")
         if(sensorName != null) {
             callback?.publishSensorData(sensorName, sensorData)
         }
@@ -113,10 +113,10 @@ constructor(private val context: Context){
      * Start all sensor readings.
      */
     private fun startSensorReadings() {
-        Timber.d("startSensorReadings")
+        Timber.d("startSensorReadings $mSensorList")
         if(mSensorManager != null) {
             for (sensor in mSensorList) {
-                mSensorManager.registerListener(sensorListener, sensor, 1000)
+                mSensorManager.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
             }
         }
     }
@@ -134,15 +134,20 @@ constructor(private val context: Context){
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             if(event != null && !sensorsPublished) {
-                val unit = getSensorUnit(event.sensor.type)
-                val data = JSONObject()
-                try {
-                    data.put(VALUE, event.values[0].toDouble())
-                    data.put(UNIT, unit)
-                    data.put(ID, event.sensor.name)
-                } catch (ex: JSONException) {
-                    ex.printStackTrace()
+                var data = JSONObject()
+                if(event.sensor.type == Sensor.TYPE_LIGHT) {
+                    lightSensorEvent = event
                 }
+                if(lightSensorEvent != null) {
+                    data.put(VALUE, lightSensorEvent!!.values[0])
+                    data.put(UNIT, getSensorUnit(lightSensorEvent!!.sensor.type))
+                    data.put(ID, lightSensorEvent!!.sensor.name)
+                    publishSensorData(getSensorName(lightSensorEvent!!.sensor.type), data)
+                }
+                data = JSONObject()
+                data.put(VALUE, event.values[0])
+                data.put(UNIT, getSensorUnit(event.sensor.type))
+                data.put(ID, event.sensor.name)
                 publishSensorData(getSensorName(event.sensor.type), data)
                 sensorsPublished = true
             }

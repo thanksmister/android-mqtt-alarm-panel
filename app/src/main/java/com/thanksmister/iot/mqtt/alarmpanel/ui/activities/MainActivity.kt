@@ -125,6 +125,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         val filter = IntentFilter()
         filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
         localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
 
@@ -359,6 +360,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+            } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action) {
+                awakenDeviceForAction()
+                resetInactivityTimer()
             }
         }
     }

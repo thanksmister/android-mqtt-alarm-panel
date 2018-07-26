@@ -56,7 +56,7 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val context = view.getContext()
+        val context = view.context
         view.sensorList.layoutManager = LinearLayoutManager(context)
         view.sensorList.adapter =  SensorAdapter(ArrayList<Sensor>(), COMMAND_DEVICE_SENSOR, this)
         addSensorButton.setOnClickListener {

@@ -471,7 +471,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.d("startMJPEG")
         cameraReader.getJpeg().observe(this, Observer { jpeg ->
             if (mJpegSockets.size > 0 && jpeg != null) {
-                Timber.d("mJpegSockets ${mJpegSockets.size }")
                 var i = 0
                 while (i < mJpegSockets.size) {
                     val s = mJpegSockets[i]
@@ -500,9 +499,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startMJPEG(response: AsyncHttpServerResponse) {
-        Timber.d("startMJPEG Called")
-        Timber.d("startMJPEG configuration.httpMJPEGMaxStreams ${configuration.httpMJPEGMaxStreams}")
-        Timber.d("startMJPEG mJpegSockets.size ${mJpegSockets.size}")
+        Timber.d("startMJPEG")
         if (mJpegSockets.size < configuration.httpMJPEGMaxStreams) {
             Timber.i("Starting new MJPEG stream")
             response.headers.add("Cache-Control", "no-cache")
@@ -556,7 +553,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun processCommand(id: String, topic: String, command: String) {
-        Timber.d("processCommand Called")
+        Timber.d("processCommand")
         return try {
             processCommand(id, topic, JSONObject(command))
         } catch (ex: JSONException) {
@@ -607,6 +604,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             partialWakeLock!!.release()
             partialWakeLock!!.acquire(awakeTime)
         }
+        sendWakeScreen()
     }
 
     private fun publishMotionDetected() {
@@ -714,15 +712,22 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun sendAlertMessage(message: String) {
-        Timber.d("browseUrl")
+        Timber.d("sendAlertMessage")
         val intent = Intent(BROADCAST_ALERT_MESSAGE)
         intent.putExtra(BROADCAST_ALERT_MESSAGE, message)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
+    private fun sendWakeScreen() {
+        Timber.d("sendWakeScreen")
+        val intent = Intent(BROADCAST_SCREEN_WAKE)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
     private fun sendToastMessage(message: String) {
-        Timber.d("browseUrl")
+        Timber.d("sendToastMessage")
         val intent = Intent(BROADCAST_TOAST_MESSAGE)
         intent.putExtra(BROADCAST_TOAST_MESSAGE, message)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
@@ -891,5 +896,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_EVENT_ALARM_MODE = "BROADCAST_EVENT_ALARM_MODE"
         const val BROADCAST_ALERT_MESSAGE = "BROADCAST_ALERT_MESSAGE"
         const val BROADCAST_TOAST_MESSAGE = "BROADCAST_TOAST_MESSAGE"
+        const val BROADCAST_SCREEN_WAKE = "BROADCAST_SCREEN_WAKE"
     }
 }
