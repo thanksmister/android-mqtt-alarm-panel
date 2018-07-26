@@ -361,7 +361,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
             } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action) {
-                awakenDeviceForAction()
                 resetInactivityTimer()
             }
         }

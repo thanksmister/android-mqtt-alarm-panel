@@ -91,6 +91,14 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
+    fun showAlertDialog(context: Context, message: String) {
+        hideAlertDialog()
+        alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+    }
+
     fun showAlertDialogToDismiss(activity: AppCompatActivity, title: String, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)

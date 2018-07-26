@@ -444,15 +444,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     Timber.i("GET Arrived (/camera/stream)")
                     startMJPEG(response)
                 }
-                Timber.i("Enabled MJPEG Endpoint")
+                //Timber.i("Enabled MJPEG Endpoint")
             }
-
             httpServer!!.addAction("*", "*") { request, response ->
                 Timber.i("Unhandled Request Arrived")
                 response.code(404)
                 response.send("")
             }
-
             httpServer!!.listen(AsyncServer.getDefault(), configuration.httpPort)
             Timber.i("Started HTTP server on " + configuration.httpPort)
         }
@@ -485,7 +483,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     } else {
                         mJpegSockets.removeAt(i)
                         i--
-                        Timber.i("MJPEG Session Count is " + mJpegSockets.size)
+                        //Timber.i("MJPEG Session Count is " + mJpegSockets.size)
                     }
                     i++
                 }
@@ -501,7 +499,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun startMJPEG(response: AsyncHttpServerResponse) {
         Timber.d("startMJPEG")
         if (mJpegSockets.size < configuration.httpMJPEGMaxStreams) {
-            Timber.i("Starting new MJPEG stream")
             response.headers.add("Cache-Control", "no-cache")
             response.headers.add("Connection", "close")
             response.headers.add("Pragma", "no-cache")
@@ -610,36 +607,32 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun publishMotionDetected() {
         Timber.d("publishMotionDetected")
         val delay = (configuration.motionResetTime * 1000).toLong()
-        if (!motionDetected) {
-            val data = JSONObject()
-            try {
-                data.put(VALUE, true)
-            } catch (ex: JSONException) {
-                ex.printStackTrace()
-            }
-            motionDetected = true
-            publishState(COMMAND_SENSOR_MOTION, data)
-            motionClearHandler.postDelayed({ clearMotionDetected() }, delay)
+        val data = JSONObject()
+        try {
+            data.put(VALUE, true)
+        } catch (ex: JSONException) {
+            ex.printStackTrace()
         }
+        motionDetected = true
+        publishState(COMMAND_SENSOR_MOTION, data)
+        motionClearHandler.postDelayed({ clearMotionDetected() }, delay)
     }
 
     private fun publishFaceDetected() {
         Timber.d("publishFaceDetected")
-        if (!faceDetected) {
-            val data = JSONObject()
-            try {
-                data.put(VALUE, true)
-            } catch (ex: JSONException) {
-                ex.printStackTrace()
-            }
-            faceDetected = true
-            publishState(COMMAND_SENSOR_FACE, data)
-            faceClearHandler.postDelayed({ clearFaceDetected() }, 1000)
+        val data = JSONObject()
+        try {
+            data.put(VALUE, true)
+        } catch (ex: JSONException) {
+            ex.printStackTrace()
         }
+        faceDetected = true
+        publishState(COMMAND_SENSOR_FACE, data)
+        faceClearHandler.postDelayed({ clearFaceDetected() }, 1000)
     }
 
     private fun clearMotionDetected() {
-        Timber.d("Clearing motion detected status")
+        Timber.d("Motion cleared")
         motionDetected = false
         val data = JSONObject()
         try {
@@ -651,7 +644,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun clearFaceDetected() {
-        Timber.d("Clearing face detected status")
+        Timber.d("Face cleared")
         val data = JSONObject()
         try {
             data.put(VALUE, false)
@@ -769,21 +762,25 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             sendToastMessage(getString(R.string.toast_camera_source_error))
         }
         override fun onMotionDetected() {
-            Timber.i("Motion detected")
-            if (configuration.cameraMotionWake) {
-                switchScreenOn(AWAKE_TIME)
+            if(!motionDetected) {
+                Timber.d("Motion detected")
+                if (configuration.cameraMotionWake) {
+                    switchScreenOn(AWAKE_TIME)
+                }
+                publishMotionDetected()
             }
-            publishMotionDetected()
         }
         override fun onTooDark() {
            // Timber.i("Too dark for motion detection")
         }
         override fun onFaceDetected() {
-            Timber.i("Face detected")
-            if (configuration.cameraFaceWake) {
-                switchScreenOn(AWAKE_TIME)
+            if(!faceDetected) {
+                Timber.d("Face detected")
+                if (configuration.cameraFaceWake) {
+                    switchScreenOn(AWAKE_TIME)
+                }
+                publishFaceDetected()
             }
-            publishFaceDetected()
         }
         override fun onQRCode(data: String) {
             Timber.i("QR Code Received: $data")

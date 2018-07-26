@@ -20,22 +20,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.*
+import android.widget.CheckBox
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import kotlinx.android.synthetic.main.fragment_platform.*
-import javax.inject.Inject
-import android.widget.CheckBox
-import com.baviux.homeassistant.HassWebView
-import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import kotlinx.android.synthetic.main.dialog_progress.*
+import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
+import javax.inject.Inject
 
 class PlatformFragment : BaseFragment(){
 
@@ -113,7 +113,6 @@ class PlatformFragment : BaseFragment(){
 
     private fun loadWebPage() {
         Timber.d("loadWebPage url ${configuration.webUrl}")
-        Timber.d("loadWebPage hasPlatformModule ${configuration.hasPlatformModule()}")
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
             configureWebSettings(configuration.browserUserAgent)
             webView.webChromeClient = object : WebChromeClient() {
@@ -127,42 +126,24 @@ class PlatformFragment : BaseFragment(){
                     prgressDialog.visibility = View.VISIBLE
                     progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                 }
+
+                override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
+                    dialogUtils.showAlertDialog(view.context, message)
+                    return true
+                }
             }
             webView.webViewClient = object : WebViewClient() {
                 //If you will not use this method url links are open in new browser not in webview
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                    webView.loadUrl(configuration.webUrl)
                     return true
                 }
             }
-            webView.setOnFinishEventHandler { button_alarm.callOnClick() }
-            webView.setMoreInfoDialogHandler(object : HassWebView.IMoreInfoDialogHandler{
-                override fun onShowMoreInfoDialog() {
-                    listener!!.setPagingEnabled(false)
-                }
-                override fun onHideMoreInfoDialog() {
-                    listener!!.setPagingEnabled(true)
-                }
-            })
             if (zoomLevel.toDouble() != 1.0) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
             webView.loadUrl(configuration.webUrl)
         } else if (webView != null) {
-            if (zoomLevel.toDouble() != 1.0) {
-                webView!!.setInitialScale((zoomLevel * 100).toInt())
-            }
-            webView.webChromeClient = object : WebChromeClient() {
-                override fun onProgressChanged(view: WebView, newProgress: Int) {
-                    if (!displayProgress) return
-                    if (newProgress == 100) {
-                        prgressDialog.visibility = View.GONE
-                        pageLoadComplete(view.url)
-                        return
-                    }
-                    prgressDialog.visibility = View.VISIBLE
-                    progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
-                }
-            }
             webView.loadUrl(WEBSITE)
         }
     }
@@ -183,6 +164,7 @@ class PlatformFragment : BaseFragment(){
         webSettings.domStorageEnabled = true
         webSettings.databaseEnabled = true
         webSettings.setAppCacheEnabled(true)
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
         if(!TextUtils.isEmpty(userAgent)) {
             webSettings.userAgentString = userAgent
         }
