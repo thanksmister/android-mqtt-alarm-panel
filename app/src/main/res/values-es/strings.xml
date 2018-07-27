@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
     <string name="app_name">Panel de la alarma</string>
 
@@ -102,7 +118,7 @@
 
     <string name="preference_title_alert">Notificaciones de alertas</string>
     <string name="preference_title_system_notifications">Notificaciones del sistema</string>
-    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema</string>
+    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice"> Voz TTS</string>
     <string name="preference_tts">Notificaciones TTS</string>
@@ -110,12 +126,12 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_topic_title">Esteblece el "Topic Value"</string>
-    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido (ten en cuenta que para reproducir locuciones TTS, se necesitan unos altavoces externos): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido: \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
 
     <string name="preference_camera">Cámara</string>
     <string name="preference_camera_title">Capturas con la cámara</string>
-    <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma. (Nota: Requiere Android Lollipop o superior.)</string>
+    <string name="preference_camera_summary">Uso de la cámara para la captura de una imagen  y enviarla por email cuando alguien desactiva la alarma.</string>
 
     <string name="preference_camera_flip_title">Rotar la imagen</string>
     <string name="preference_camera_flip_summary">Dependiendo de tu cámara, puede que tengas que rotar la imagen. Actualmente es %1$s.</string>
@@ -278,6 +294,71 @@
     <string name="pref_night_mode_end_description">Hora de finalización del modo nocturno</string>
     <string name="pref_fullscreen_title">Modo de pantalla completa</string>
     <string name="pref_fullscreen_description">Mostrar aplicación en modo pantalla completa.</string>
+    <string name="notification_title">Notificacione</string>
+
+    <string name="summary_setting_sensors_default">No disponible</string>
+    <string name="title_setting_sensors_temperature">Temperatura</string>
+    <string name="title_setting_sensors_light">Ligero</string>
+    <string name="title_setting_sensors_magneticField">Campo magnético</string>
+    <string name="title_setting_sensors_pressure">Presión</string>
+    <string name="title_setting_sensors_humidity">Humedad</string>
+    <string name="summary_notification_topic">Formato de ejemplo para el tema del mensaje y la carga útil: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="title_sensor_settings">Configuración del sensor</string>
+    <string name="title_enable_sensor_data">Habilitar publicación de sensores</string>
+    <string name="summary_enable_sensor_data">Publica los datos disponibles del sensor del dispositivo sobre MQTT</string>
+    <string name="pref_sensor_list_summary">A continuación hay una lista de datos de sensores disponibles en este dispositivo para publicar como datos MQTT.</string>
+    <string name="pref_qr_code_summary">Escaneará códigos QR utilizando la cámara del dispositivo y publicará el código escaneado en MQTT.</string>
+    <string name="title_setting_mqtt_sensorfrequency">Frecuencia de publicación (en segundos)</string>
+    <string name="summary_setting_mqtt_basetopic">Identificador para recibir comandos MQTT para este panel. Cada panel debe tener un identificador único.</string>
+    <string name="title_setting_mqtt_basetopic">Tema básico</string>
+    <string name="service_notification_message">Panel de alarma ...</string>
+    <string name="toast_camera_source_error">No se pudo iniciar la fuente de la cámara, es posible que desee volver a intentarlo.</string>
+    <string name="pref_user_agent_title">Cadena de agente de usuario (opcional)</string>
+    <string name="pref_user_agent_summary">Configure la secuencia del agente de usuario del navegador si es necesario para cargar el panel (de lo contrario, deje en blanco)</string>
+    <string name="pref_camera_fps_title">Camera FPS</string>
+    <string name="pref_camera_fps_summary">Configure la velocidad de la cámara, use un valor más bajo para dispositivos más antiguos, actualmente %1$s.</string>
+    <string name="pref_motion_reset_title">Tiempo de reinicio de movimiento</string>
+    <string name="pref_motion_reset_description">El tiempo (en segundos) antes de reiniciar el detector de movimiento.</string>
+    <string name="text_front">Frente</string>
+    <string name="text_back">Detrás</string>
+    <string name="text_camera_pattern">{0}: {1} Cámara {3}x{4} {2}º</string>
+    <string name="pref_camera_test_title">Prueba de cámara</string>
+    <string name="pref_camera_test_button_title">Prueba de cámara</string>
+    <string name="title_setting_http_port">HTTP Puerto de escucha</string>
+    <string name="title_setting_http_mjpegenabled">MJPEG Transmisión de cámara</string>
+    <string name="title_setting_http_mjpegmaxstreams">MJPEG Máximo flujo de cámara</string>
+    <string name="pref_face_detection_title">Detección de rostro</string>
+    <string name="pref_motion_leniency_description">La tolerancia máxima de la diferencia entre imágenes. Una tolerancia más baja significa que el movimiento es más sensible (1 - 20).</string>
+    <string name="pref_motion_luma_description">Nivel de brillo mínimo para detectar movimiento. No se detectará ningún movimiento si el brillo cae por debajo de este valor (1 - 1000).</string>
+    <string name="pref_mjpeg_streaming_description">Use la cámara del dispositivo como una transmisión MJPEG en vivo. Conéctese a la transmisión usando la dirección IP del dispositivo, el puerto HTTP y el punto final: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_title">MJPEG transmisión</string>
+    <string name="pref_mjpeg_streaming_summary">Use la cámara del dispositivo como una transmisión MJPEG en vivo.</string>
+    <string name="title_setting_camera_enabled">Cámara Habilitada</string>
+    <string name="title_setting_camera_cameraid">Cámara Seleccionada</string>
+    <string name="title_setting_camera_motionenabled">Detección de movimiento habilitada</string>
+    <string name="title_setting_camera_motionleniency">Máxima clemencia</string>
+    <string name="title_setting_camera_motionminluma">Luma mínima</string>
+    <string name="title_setting_camera_motionwake">Despierta la pantalla</string>
+    <string name="title_setting_camera_faceenabled">Detección de rostros habilitada</string>
+    <string name="title_setting_camera_facewake">Wekt het scherm</string>
+    <string name="title_setting_camera_qrcodeenabled">Lector de código QR</string>
+    <string name="pref_motion_detection_summary">Detecta movimiento usando la cámara del dispositivo.</string>
+    <string name="pref_motion_wake_summary">Despierta la pantalla del dispositivo cuando se detecta movimiento.</string>
+    <string name="pref_motion_detection_title">Detección de movimiento</string>
+    <string name="pref_motion_adjustments_title">Ajustes de movimiento</string>
+    <string name="pref_face_detection_summary">Detecta caras usando la cámara del dispositivo.</string>
+    <string name="pref_face_wake_summary">Enciende la pantalla cuando se detecta la cara.</string>
+    <string name="pref_button_camera_test">Pruebe la configuración de la cámara.</string>
+    <string name="toast_qr_code_read">Código QR Leer........</string>
+    <string name="toast_too_dark_motion">Demasiado oscuro para la detección de movimiento</string>
+    <string name="toast_motion_detected">Movimiento detectado</string>
+    <string name="toast_face_detected">¡Cara detectada!</string>
+    <string name="toast_qrcode_read">Código QR %1$s</string>
+    <string name="title_setting_app_showactivity">Mostrar actividad del navegador</string>
+    <string name="pref_show_browser_activity_summary">Mostrar el progreso de carga del navegador.</string>
+    <string name="pref_zoom_level_summary">Acerca el nivel del navegador (experimental).</string>
+    <string name="title_setting_test_zoomlevel">Nivel de zoom del navegador</string>
+    <string name="progress_loading">Cargando %1$s &#37;</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

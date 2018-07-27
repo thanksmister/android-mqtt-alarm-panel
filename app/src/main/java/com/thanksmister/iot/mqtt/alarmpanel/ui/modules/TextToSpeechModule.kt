@@ -1,19 +1,17 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.modules
@@ -28,7 +26,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.annotation.RequiresApi
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import timber.log.Timber
 import java.util.*
 
@@ -36,7 +34,7 @@ import java.util.*
  * Module to use Google Text-to-Speech to speak the payload of MQTT messages.
  */
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-class TextToSpeechModule( base: Context?, private val configuration: Configuration) : ContextWrapper(base),
+class TextToSpeechModule( base: Context?) : ContextWrapper(base),
         TextToSpeech.OnInitListener, LifecycleObserver {
 
     private var textToSpeech: TextToSpeech? = null
@@ -48,7 +46,7 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {
-        if(configuration.hasTssModule() && textToSpeech == null) {
+        if(textToSpeech == null) {
             Timber.i( "TTS initializing")
             textToSpeech = TextToSpeech(baseContext, this)
         }
@@ -80,11 +78,9 @@ class TextToSpeechModule( base: Context?, private val configuration: Configurati
     }
 
     fun speakText(message: String) {
-        if(configuration.hasTssModule()) {
-            if (textToSpeech != null && isInitialized) {
-                Timber.d("Speak this: " + message)
-                textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
-            }
+        if (textToSpeech != null && isInitialized) {
+            Timber.d("Speak this: " + message)
+            textToSpeech?.speak(message, TextToSpeech.QUEUE_ADD, null, UTTERANCE_ID)
         }
     }
 

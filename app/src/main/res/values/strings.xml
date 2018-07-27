@@ -1,5 +1,22 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
     <string name="app_name">Alarm Panel</string>
+
 
     <!-- Menus -->
     <string name="action_settings">Settings</string>
@@ -80,7 +97,7 @@
     <string name="preference_title_image_rotation">Image Rotation Interval</string>
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
-    <string name="preference_title_web_settings">HASS</string>
+    <string name="preference_title_web_settings">Browser</string>
     <string name="preference_summary_web_settings">Allows you to load external web page to access your home automation platform interface.</string>
     <string name="preference_title_web">Home Automation Page</string>
     <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
@@ -102,7 +119,7 @@
 
     <string name="preference_title_alert">Alert Notifications</string>
     <string name="preference_title_system_notifications">System Notifications</string>
-    <string name="preference_summary_alert">Use an alert dialog to show the notification content.</string>
+    <string name="preference_summary_alert">Example format for the message topic and payload to display alert dialog: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice">TTS Voice</string>
     <string name="preference_tts">TTS Notifications</string>
@@ -110,12 +127,13 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_topic_title">Set Topic Value</string>
-    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken (note that externally powered speakers are required for TTS): \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
 
+
+    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken: \n\n"{\"topic\":\"alarmpanel/speak\", \"payload\":\"Hello!\"}"</string>
 
     <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera Capture</string>
-    <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled. (Note: Requires Android Lollipop or above.)</string>
+    <string name="preference_camera_summary">Use the camera to capture an image and email it when the alarm is disabled.</string>
 
     <string name="preference_camera_flip_title">Rotate Camera</string>
     <string name="preference_camera_flip_summary">Depending on your camera, you may need to rotate or flip the camera. Currently %1$s.</string>
@@ -179,7 +197,7 @@
     <string name="text_alarm_settings">Alarm Settings</string>
     <string name="text_mqtt_settings">MQTT Settings</string>
     <string name="notification_channel_name">Entry Detection / Alarm Triggered</string>
-    <string name="text_channel_description">Alarm Panel Notifications</string>
+    <string name="text_channel_description">Alarm Panel Notification</string>
     <string name="text_notification_entry_title">Entry Detected</string>
     <string name="text_notification_entry_description">An entry has been detected, take the necessary action.</string>
     <string name="text_notification_trigger_title">Alarm Triggered</string>
@@ -253,7 +271,7 @@
     <string name="pref_fingerprint_summary">User fingerprint unlock for alarm system. The alarm code will be used as backup.</string>
     <string name="pref_fingerprint_error">First you must setup your device fingerprint unlock feature.</string>
     <string name="pref_fingerprint_title">Fingerprint Unlock</string>
-    <string name="pref_hass_settings">Home Assistant Settings</string>
+    <string name="pref_hass_settings">Experimental Settings</string>
     <string name="pref_hide_menu_title">Hide Menu</string>
     <string name="pref_hide_menu_summary">Hides the administrator menu items.</string>
     <string name="pref_back_behavior_title">Override Back Behavior</string>
@@ -279,7 +297,71 @@
     <string name="pref_night_mode_end_description">Night Mode End Time</string>
     <string name="pref_fullscreen_title">Fullscreen Mode</string>
     <string name="pref_fullscreen_description">Display application in fullscreen mode.</string>
+    <string name="notification_title">Notification</string>
 
+    <string name="summary_setting_sensors_default">Not available</string>
+    <string name="title_setting_sensors_temperature">Temperature</string>
+    <string name="title_setting_sensors_light">Light</string>
+    <string name="title_setting_sensors_magneticField">Magnetic Field</string>
+    <string name="title_setting_sensors_pressure">Pressure</string>
+    <string name="title_setting_sensors_humidity">Humidity</string>
+    <string name="summary_notification_topic">Example format for the message topic and payload: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="title_sensor_settings">Sensor Settings</string>
+    <string name="title_enable_sensor_data">Enable Sensor Publishing</string>
+    <string name="summary_enable_sensor_data">Publishes available device sensor data over MQTT</string>
+    <string name="pref_sensor_list_summary">Below is a list of sensor data available on this device to be published as MQTT data.</string>
+    <string name="pref_qr_code_summary">Will scan QR codes using the device\'s camera and publish the scanned code over MQTT.</string>
+    <string name="title_setting_mqtt_sensorfrequency">Publish Frequency (in seconds)</string>
+    <string name="summary_setting_mqtt_basetopic">Identifier to receive MQTT commands for this panel. Each panel should have a unique identifier.</string>
+    <string name="title_setting_mqtt_basetopic">Base Topic</string>
+    <string name="service_notification_message">Alarm Panel Running…</string>
+    <string name="toast_camera_source_error">Could not start camera source, you may want to try again.</string>
+    <string name="pref_user_agent_title">User Agent String (Optional)</string>
+    <string name="pref_user_agent_summary">Set the browser user agent stream if needed to load the dashboard (leave blank otherwise)</string>
+    <string name="pref_camera_fps_title">Camera FPS</string>
+    <string name="pref_camera_fps_summary">Set the camera speed, use lower value for older devices, currently %1$s.</string>
+    <string name="pref_motion_reset_title">Motion Reset Time</string>
+    <string name="pref_motion_reset_description">The time (in seconds) before resetting the motion detector.</string>
+    <string name="text_front">Front</string>
+    <string name="text_back">Back</string>
+    <string name="text_camera_pattern">{0}: {1} Camera {3}x{4} {2}º</string>
+    <string name="pref_camera_test_title">Camera Test</string>
+    <string name="pref_camera_test_button_title">Camera Test</string>
+    <string name="title_setting_http_port">HTTP Listening Port</string>
+    <string name="title_setting_http_mjpegenabled">MJPEG Camera Streaming</string>
+    <string name="title_setting_http_mjpegmaxstreams">MJPEG Camera Max Streams</string>
+    <string name="pref_face_detection_title">Face Detection</string>
+    <string name="pref_motion_leniency_description">The maximum tolerance of the difference between images. A lower tolerance means motion is more sensitive (1 – 20).</string>
+    <string name="pref_motion_luma_description">Minimum brightness level to detect motion. No motion will be detected if brightness falls below this value (1 – 1000).</string>
+    <string name="pref_mjpeg_streaming_description">Use the device camera as a live MJPEG stream. Connect to the stream using the device IP address, HTTP Port, and end point: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_title">MJPEG Streaming</string>
+    <string name="pref_mjpeg_streaming_summary">Use the device camera as a live MJPEG stream.</string>
+    <string name="title_setting_camera_enabled">Camera Enabled</string>
+    <string name="title_setting_camera_cameraid">Selected Camera</string>
+    <string name="title_setting_camera_motionenabled">Motion Detection Enabled</string>
+    <string name="title_setting_camera_motionleniency">Maximum Leniency</string>
+    <string name="title_setting_camera_motionminluma">Minimum Luma</string>
+    <string name="title_setting_camera_motionwake">Wakes Screen</string>
+    <string name="title_setting_camera_faceenabled">Face Detection Enabled</string>
+    <string name="title_setting_camera_facewake">Wakes Screen</string>
+    <string name="title_setting_camera_qrcodeenabled">QR Code Reader</string>
+    <string name="pref_motion_detection_summary">Detects motion using the device\'s camera.</string>
+    <string name="pref_motion_wake_summary">Wakes the device screen when motion detected.</string>
+    <string name="pref_motion_detection_title">Motion Detection</string>
+    <string name="pref_motion_adjustments_title">Motion Adjustments</string>
+    <string name="pref_face_detection_summary">Detects faces using the device\'s camera.</string>
+    <string name="pref_face_wake_summary">Turns on the screen when face detected.</string>
+    <string name="pref_button_camera_test">Test the camera settings.</string>
+    <string name="toast_qr_code_read">QR Code Read....</string>
+    <string name="toast_too_dark_motion">Too dark for motion detection</string>
+    <string name="toast_motion_detected">Motion Detected!</string>
+    <string name="toast_face_detected">Face Detected!</string>
+    <string name="toast_qrcode_read">QR Code %1$s</string>
+    <string name="title_setting_app_showactivity">Show Browser Activity</string>
+    <string name="pref_show_browser_activity_summary">Display browser loading progress.</string>
+    <string name="pref_zoom_level_summary">Zooms the browser level (experimental).</string>
+    <string name="title_setting_test_zoomlevel">Browser Zoom Level</string>
+    <string name="progress_loading">Loading %1$s &#37;</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. ThanksMister LLC
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
@@ -48,24 +48,14 @@ class MainFragment : BaseFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
-
     @Inject lateinit var configuration: Configuration;
     @Inject lateinit var dialogUtils: DialogUtils;
     private var listener: OnMainFragmentListener? = null
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
+
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
         fun publishDisarmed()
         fun navigatePlatformPanel()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onAttach(context: Context?) {
@@ -87,10 +77,10 @@ class MainFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         buttonSettings.setOnClickListener({showSettingsCodeDialog()})
         buttonSleep.setOnClickListener({listener?.manuallyLaunchScreenSaver()})
-        buttonLogs.setOnClickListener({
+        /*buttonLogs.setOnClickListener {
             val intent = LogActivity.createStartIntent(activity!!.applicationContext)
             startActivity(intent)
-        })
+        }*/
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -117,8 +107,8 @@ class MainFragment : BaseFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
-                    Timber.d("Alarm state: " + state)
-                    Timber.d("Alarm mode: " + viewModel.getAlarmMode())
+                    Timber.d("Alarm state: $state")
+                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}" )
                     activity?.runOnUiThread {
                         when (state) {
                             AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
@@ -224,12 +214,8 @@ class MainFragment : BaseFragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         @JvmStatic fun newInstance(): MainFragment {
             return MainFragment()
         }
     }
-} // Required empty public constructor
+}

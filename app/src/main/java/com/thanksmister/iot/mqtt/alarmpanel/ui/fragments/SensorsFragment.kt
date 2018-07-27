@@ -32,8 +32,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SensorAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditTextDialogView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_DEVICE_SENSOR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.SENSOR_GENERIC_TYPE
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.sensorTypes
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -56,16 +56,16 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val context = view.getContext()
+        val context = view.context
         view.sensorList.layoutManager = LinearLayoutManager(context)
-        view.sensorList.adapter =  SensorAdapter(ArrayList<Sensor>(), mqttOptions.getSensorTopic(), this)
+        view.sensorList.adapter =  SensorAdapter(ArrayList<Sensor>(), COMMAND_DEVICE_SENSOR, this)
         addSensorButton.setOnClickListener {
             showAddSensorDialog(Sensor())
         }
         sensorTopic.setOnClickListener {
-            showTopicDialog(mqttOptions.getSensorTopic())
+            showTopicDialog(COMMAND_DEVICE_SENSOR)
         }
-        sensorTopicPrefixValue.text = mqttOptions.getSensorTopic()
+        sensorTopicPrefixValue.text = COMMAND_DEVICE_SENSOR
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,7 +77,7 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
                .subscribeOn(Schedulers.io())
                .observeOn(AndroidSchedulers.mainThread())
                .subscribe({items ->
-                   sensorList.adapter = SensorAdapter(items, mqttOptions.getSensorTopic(), this)
+                   sensorList.adapter = SensorAdapter(items, COMMAND_DEVICE_SENSOR, this)
                    sensorList.invalidate()
                }, { error -> Timber.e("Unable to get sensors: " + error)}))
     }
@@ -110,7 +110,7 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
 
     private fun showAddSensorDialog(sensor: Sensor) {
         if (isAdded) {
-            dialogUtils.showSensorDialog(activity as BaseActivity, sensor, mqttOptions.getSensorTopic(), object : SensorDialogView.ViewListener {
+            dialogUtils.showSensorDialog(activity as BaseActivity, sensor, COMMAND_DEVICE_SENSOR, object : SensorDialogView.ViewListener {
                 override fun onComplete(sensor: Sensor) {
                     verifySensorAndCommit(sensor)
                 }

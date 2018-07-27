@@ -16,16 +16,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import android.app.AlarmManager
 import android.app.PendingIntent
 import android.arch.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import timber.log.Timber
 import java.util.*

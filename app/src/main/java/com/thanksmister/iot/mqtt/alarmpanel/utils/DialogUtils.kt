@@ -1,19 +1,17 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.utils
@@ -88,6 +86,14 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
     fun showAlertDialog(activity: AppCompatActivity, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+    }
+
+    fun showAlertDialog(context: Context, message: String) {
+        hideAlertDialog()
+        alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
@@ -289,6 +295,26 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
             screenSaverDialog!!.window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
         }
     }
+
+    /*fun showCameraTestView(activity: AppCompatActivity, cameraId: Int, processingInterval: Long, motionDetection: Boolean,
+                           faceDetection: Boolean, qrCodeEnabled: Boolean, motionMinLuma: Int, motionLeniency: Int) {
+        clearDialogs() // clear any alert dialogs
+        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_camera_test, null, false)
+        val cameraTestView = view.findViewById<CameraDialogView>(R.id.cameraTestView)
+        cameraTestView.init(cameraId, processingInterval, motionDetection ,faceDetection, qrCodeEnabled,
+                motionMinLuma, motionLeniency, object: CameraDialogView.OnCameraDialogListener{
+            override fun onClose() {
+                clearDialogs()
+            }
+        })
+        val displayRectangle = Rect()
+        val window = activity.window
+        window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
+        //view.minimumWidth = (displayRectangle.width() * 0.9f).toInt()
+        view.minimumHeight = (displayRectangle.height() * 0.8f).toInt()
+        dialog = buildImmersiveDialog(activity, true, cameraTestView, false)
+    }*/
 
     // immersive dialogs without navigation
     // https://stackoverflow.com/questions/22794049/how-do-i-maintain-the-immersive-mode-in-dialogs

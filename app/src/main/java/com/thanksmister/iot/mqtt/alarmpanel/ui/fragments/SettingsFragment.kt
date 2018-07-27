@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 ThanksMister LLC
+ * Copyright (c) 2018 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
@@ -21,7 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.navigation.Navigation
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -30,22 +30,8 @@ class SettingsFragment : BaseFragment() {
 
     private var listener: SettingsFragmentListener? = null
 
-    private val ALARM_SETTINGS = 1
-    private val MQTT_SETTINGS = 2
-    private val SENSOR_SETTINGS = 3
-    private val NOTIFICATIONS_SETTINGS = 4
-    private val CAMERA_SETTINGS = 5
-    private val SCREEN_SAVER_SETTINGS = 6
-    private val WEATHER_SETTINGS = 7
-    private val PLATFORM_SETTINGS = 8
-    private val ABOUT_SETTINGS = 9
-
     interface SettingsFragmentListener {
         fun navigatePageNumber(page:Int)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -63,22 +49,15 @@ class SettingsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonAlarmSettings.setOnClickListener { listener?.navigatePageNumber(ALARM_SETTINGS) }
-        buttonMqttSettings.setOnClickListener { listener?.navigatePageNumber(MQTT_SETTINGS) }
-        buttonNotificationSettings.setOnClickListener { listener?.navigatePageNumber(NOTIFICATIONS_SETTINGS) }
-        buttonCameraSettings.setOnClickListener { listener?.navigatePageNumber(CAMERA_SETTINGS) }
-        buttonScreenSaverSettings.setOnClickListener { listener?.navigatePageNumber(SCREEN_SAVER_SETTINGS) }
-        buttonWeatherSettings.setOnClickListener { listener?.navigatePageNumber(WEATHER_SETTINGS) }
-        buttonPlatformSettings.setOnClickListener { listener?.navigatePageNumber(PLATFORM_SETTINGS) }
-        buttonAboutSettings.setOnClickListener { listener?.navigatePageNumber(ABOUT_SETTINGS) }
-        buttonSensorSettings.setOnClickListener {
-            //listener?.navigatePageNumber(SENSOR_SETTINGS)
-            Toast.makeText(context, "The ability to display sensor states is coming soon...", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
+        buttonAlarmSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.alarm_action) }}
+        buttonMqttSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.mqtt_action) } }
+        buttonNotificationSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.notifications_action) }}
+        buttonCameraSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.camera_action) }}
+        buttonScreenSaverSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.screen_action) }}
+        buttonWeatherSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.weather_action) }}
+        buttonPlatformSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.platform_action) } }
+        buttonAboutSettings.setOnClickListener {view.let { Navigation.findNavController(it).navigate(R.id.about_action) } }
+        buttonSensorSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.sensors_action) }}
     }
 
     companion object {

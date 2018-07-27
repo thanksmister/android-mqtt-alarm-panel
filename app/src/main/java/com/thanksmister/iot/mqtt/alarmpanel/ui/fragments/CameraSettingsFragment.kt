@@ -1,31 +1,30 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v14.preference.SwitchPreference
 import android.support.v4.app.ActivityCompat
-import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
@@ -33,13 +32,15 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
-
+import androidx.navigation.Navigation
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraModule
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LiveCameraActivity
+import com.thanksmister.iot.mqtt.alarmpanel.utils.CameraUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import javax.inject.Inject
 
 class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -47,16 +48,10 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
 
-    private var tolPreference: EditTextPreference? = null
-    private var fromPreference: EditTextPreference? = null
-    private var domainPreference: EditTextPreference? = null
-    private var keyPreference: EditTextPreference? = null
-    private var activePreference: CheckBoxPreference? = null
-    private var descriptionPreference: Preference? = null
-    private var rotatePreference: ListPreference? = null
-    private var telegramTokenPreference: EditTextPreference? = null
-    private var telegramChatIdPreference: EditTextPreference? = null
-    private var notesPreference: Preference? = null
+    private var cameraListPreference: ListPreference? = null
+    private var cameraTestPreference: Preference? = null
+    private var cameraPreference: SwitchPreference? = null
+    private var fpsPreference: EditTextPreference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -77,127 +72,137 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
 
-        telegramChatIdPreference = findPreference(Configuration.PREF_TELEGRAM_CHAT_ID) as EditTextPreference
-        telegramTokenPreference = findPreference(Configuration.PREF_TELEGRAM_TOKEN) as EditTextPreference
-        tolPreference = findPreference(Configuration.PREF_MAIL_TO) as EditTextPreference
-        fromPreference = findPreference(Configuration.PREF_MAIL_FROM) as EditTextPreference
-        domainPreference = findPreference(Configuration.PREF_MAIL_URL) as EditTextPreference
-        keyPreference = findPreference(Configuration.PREF_MAIL_API_KEY) as EditTextPreference
-        activePreference = findPreference(Configuration.PREF_MODULE_CAMERA) as CheckBoxPreference
-        rotatePreference = findPreference(Configuration.PREF_CAMERA_ROTATE) as ListPreference
-        descriptionPreference = findPreference("pref_mail_description")
-        notesPreference = findPreference("pref_description")
+        cameraPreference = findPreference(getString(R.string.key_setting_camera_enabled)) as SwitchPreference
+        cameraPreference!!.isChecked = configuration.cameraEnabled
+
+        fpsPreference = findPreference(getString(R.string.key_setting_camera_fps)) as EditTextPreference
+        fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
+        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toInt().toString())
+
+        cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference
+        cameraListPreference!!.isEnabled = false
+        cameraListPreference!!.setOnPreferenceChangeListener { preference, newValue ->
+            if (preference is ListPreference) {
+                val index = preference.findIndexOfValue(newValue.toString())
+                preference.setSummary(
+                        if (index >= 0)
+                            preference.entries[index]
+                        else
+                            "")
+
+                if(index >= 0) {
+                    configuration.cameraId = index
+                    Timber.d("Camera Id: " + configuration.cameraId)
+                }
+            }
+            true;
+        }
+
+        createCameraList()
+
+        cameraTestPreference = findPreference("button_key_camera_test")
+        cameraTestPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            startCameraTest(preference.context)
+            false
+        }
+
+        val motionPreference = findPreference("button_key_motion")
+        motionPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            view.let { Navigation.findNavController(it).navigate(R.id.motion_action) }
+            false
+        }
+
+        val facePreference = findPreference("button_key_face")
+        facePreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            view.let { Navigation.findNavController(it).navigate(R.id.face_action) }
+            false
+        }
+
+        val qrPreference = findPreference("button_key_qr")
+        qrPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            view.let { Navigation.findNavController(it).navigate(R.id.qrcode_action) }
+            false
+        }
+
+        val mjpegPreference = findPreference("button_key_mjpeg")
+        mjpegPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            view.let { Navigation.findNavController(it).navigate(R.id.mjpeg_action) }
+            false
+        }
+
+        val capturePreference = findPreference("button_key_capture")
+        capturePreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            view.let { Navigation.findNavController(it).navigate(R.id.capture_action) }
+            false
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                telegramChatIdPreference!!.isEnabled = false
-                telegramTokenPreference!!.isEnabled = false
-                tolPreference!!.isEnabled = false
-                fromPreference!!.isEnabled = false
-                domainPreference!!.isEnabled = false
-                activePreference!!.isEnabled = false
-                keyPreference!!.isEnabled = false
-                rotatePreference!!.isEnabled = false
-                descriptionPreference!!.isEnabled = false
-                notesPreference!!.isEnabled = false
-                configuration.setHasCamera(false)
-
+                configuration.cameraEnabled = false
                 dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.dialog_no_camera_permissions))
                 return
             }
         }
-
-        activePreference!!.isChecked = configuration.hasCamera()
-
-        if (!TextUtils.isEmpty(configuration.getMailTo())) {
-            tolPreference!!.text = configuration.getMailTo()
-            tolPreference!!.summary = configuration.getMailTo()
-        }
-
-        if (!TextUtils.isEmpty(configuration.getMailFrom())) {
-            fromPreference!!.text = configuration.getMailFrom()
-            fromPreference!!.summary = configuration.getMailFrom()
-        }
-
-        if (!TextUtils.isEmpty(configuration.getMailGunUrl())) {
-            domainPreference!!.text = configuration.getMailGunUrl()
-            domainPreference!!.summary = configuration.getMailGunUrl()
-        }
-
-        if (!TextUtils.isEmpty(configuration.getMailGunApiKey())) {
-            keyPreference!!.text = configuration.getMailGunApiKey()
-            keyPreference!!.summary = configuration.getMailGunApiKey()
-        }
-
-        if (!TextUtils.isEmpty(configuration.telegramChatId)) {
-            telegramChatIdPreference!!.text = configuration.telegramChatId
-            telegramChatIdPreference!!.summary = configuration.telegramChatId
-        }
-
-        if (!TextUtils.isEmpty(configuration.telegramToken)) {
-            telegramTokenPreference!!.text = configuration.telegramToken
-            telegramTokenPreference!!.summary = configuration.telegramToken
-        }
-
-        rotatePreference!!.setDefaultValue(configuration.getCameraRotate())
-        rotatePreference!!.value = configuration.getCameraRotate().toString()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        val value: String
+
         when (key) {
-            Configuration.PREF_MAIL_TO -> {
-                value = tolPreference!!.text
-                configuration.setMailTo(value)
-                tolPreference!!.summary = value
+            getString(R.string.key_setting_camera_enabled) -> {
+                configuration.cameraEnabled = cameraPreference!!.isChecked
             }
-            Configuration.PREF_MAIL_FROM -> {
-                value = fromPreference!!.text
-                configuration.setMailFrom(value)
-                fromPreference!!.summary = value
-            }
-            Configuration.PREF_MAIL_URL -> {
-                value = domainPreference!!.text
-                configuration.setMailGunUrl(value)
-                domainPreference!!.summary = value
-            }
-            Configuration.PREF_MAIL_API_KEY -> {
-                value = keyPreference!!.text
-                configuration.setMailGunApiKey(value)
-                keyPreference!!.summary = value
-            }
-            Configuration.PREF_TELEGRAM_CHAT_ID -> {
-                value = telegramChatIdPreference!!.text
-                configuration.telegramChatId = value
-                telegramChatIdPreference!!.summary = value
-            }
-            Configuration.PREF_TELEGRAM_TOKEN -> {
-                value = telegramTokenPreference!!.text
-                configuration.telegramToken = value
-                telegramTokenPreference!!.summary = value
-            }
-            Configuration.PREF_MODULE_CAMERA -> {
-                val checked = activePreference!!.isChecked
-                configuration.setHasCamera(checked)
-            }
-            Configuration.PREF_CAMERA_ROTATE -> {
-                val valueFloat = rotatePreference!!.value
-                val valueName = rotatePreference!!.entry.toString()
-                rotatePreference!!.summary = getString(R.string.preference_camera_flip_summary, valueName)
-                configuration.setCameraRotate(valueFloat)
+            getString(R.string.key_setting_camera_fps) -> {
+                try {
+                    val value = fpsPreference!!.text
+                    if(!TextUtils.isEmpty(value)) {
+                        configuration.cameraFPS = value.toFloat()
+                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
+                    } else if (isAdded) {
+                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                        fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
+                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
+                    }
+                } catch (e : Exception) {
+                    if(isAdded) {
+                        Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                        fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
+                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
+                    }
+                }
             }
         }
+    }
+
+    private fun createCameraList() {
+        Timber.d("createCameraList")
+        try {
+            val cameraList = CameraUtils.getCameraList(activity!!)
+            cameraListPreference!!.entries = cameraList.toTypedArray<CharSequence>()
+            val vals = arrayOfNulls<CharSequence>(cameraList.size)
+            for (i in cameraList.indices) {
+                vals[i] = Integer.toString(i)
+            }
+            cameraListPreference?.entryValues = vals
+            val index = cameraListPreference!!.findIndexOfValue(configuration.cameraId.toString())
+            cameraListPreference!!.summary = if (index >= 0)
+                cameraListPreference!!.entries[index]
+            else
+                ""
+            cameraListPreference!!.isEnabled = true
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            cameraListPreference!!.isEnabled = false
+            if(activity != null) {
+                Toast.makeText(activity!!, getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun startCameraTest(c: Context) {
+        startActivity(Intent(c, LiveCameraActivity::class.java))
     }
 }

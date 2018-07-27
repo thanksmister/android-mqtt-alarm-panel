@@ -1,52 +1,47 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
 import android.app.Dialog
-import android.app.KeyguardManager
 import android.arch.lifecycle.Observer
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.PowerManager
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -54,8 +49,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
-
-    private val REQUEST_PERMISSIONS = 88
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
@@ -66,32 +59,17 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
-    private var wakeLock: PowerManager.WakeLock? = null
-    private var decorView: View? = null
     private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
 
     val disposable = CompositeDisposable()
     private var screenSaverDialog : Dialog? = null
 
-    abstract fun getLayoutId(): Int
-
     private val inactivityCallback = Runnable {
         Timber.d("inactivityCallback")
         dialogUtils.clearDialogs()
         userPresent = false
         showScreenSaver()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(getLayoutId())
-
-        this.window.setFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-
-        decorView = window.decorView
     }
 
     override fun onStart(){
@@ -104,43 +82,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 handleNetworkDisconnect()
             }
         })
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        val visibility: Int
-        if (hasFocus && configuration.fullScreen) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
-
-            } else {
-                visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
-                window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            }
-            decorView?.systemUiVisibility = visibility
-        } else if (hasFocus) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_VISIBLE)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_VISIBLE)
-            } else {
-                visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
-            }
-            decorView?.systemUiVisibility = visibility
-        }
     }
 
     private fun checkPermissions() {
@@ -160,10 +101,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         when (requestCode) {
             REQUEST_PERMISSIONS -> {
                 if (grantResults.isNotEmpty()) {
-                    var permissionsDenied = false
                     for (permission in grantResults) {
                         if (permission != PackageManager.PERMISSION_GRANTED) {
-                            permissionsDenied = true
+                            Toast.makeText(this@BaseActivity, getString(R.string.dialog_no_camera_permissions), Toast.LENGTH_SHORT).show()
                             break
                         }
                     }
@@ -198,50 +138,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         resetInactivityTimer()
     }
 
-    public override fun onStop() {
-        super.onStop()
-    }
-
     public override fun onResume() {
         super.onResume()
-        releaseTemporaryWakeLock()
         checkPermissions()
-
         if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false // reset
             dayNightModeChanged() // reset screen brightness if day/night mode inactive
-        }
-    }
-
-    /**
-     * Wakes the device temporarily (or always if triggered) when the alarm requires attention.
-     */
-    fun acquireTemporaryWakeLock(timeout: Long) {
-        Timber.d("acquireTemporaryWakeLock")
-        if (wakeLock == null) {
-            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "alarm:ALARM_TEMPORARY_WAKE_TAG")
-        }
-        if (wakeLock != null && !wakeLock!!.isHeld) {  // but we don't hold it
-            wakeLock!!.acquire(timeout)
-        }
-
-        // Some Amazon devices are not seeing this permission so we are trying to check
-        val permission = "android.permission.DISABLE_KEYGUARD"
-        val checkSelfPermission = ContextCompat.checkSelfPermission(this@BaseActivity, permission)
-        if (checkSelfPermission == PackageManager.PERMISSION_GRANTED) {
-            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            val keyguardLock = keyguardManager.newKeyguardLock("ALARM_KEYBOARD_LOCK_TAG")
-            keyguardLock.disableKeyguard()
-        }
-    }
-
-    /**
-     * Wakelock used to temporarily bring application to foreground if alarm needs attention.
-     */
-    fun releaseTemporaryWakeLock() {
-        if (wakeLock != null && wakeLock!!.isHeld) {
-            wakeLock!!.release()
         }
     }
 
@@ -258,11 +160,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
         if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
             Timber.d("Tis the night!")
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
         } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
             Timber.d("Tis the day!")
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }
     }
@@ -272,7 +174,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
         if (!configuration.useNightDayMode && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
             Timber.d("Tis the day!")
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }
     }
@@ -308,16 +210,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * into foreground.
      */
     open fun handleNetworkDisconnect() {
-        if(configuration.hasNotifications()) {
-            val notifications = NotificationUtils(this@BaseActivity)
-            notifications.createAlarmNotification(getString(R.string.text_notification_network_title), getString(R.string.text_notification_network_description))
-        } else {
-            acquireTemporaryWakeLock(10000)
-            hideScreenSaver()
-            bringApplicationToForegroundIfNeeded()
-            dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
-                    getString(R.string.text_notification_network_description))
-        }
+        hideScreenSaver()
+        bringApplicationToForegroundIfNeeded()
+        dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
+                getString(R.string.text_notification_network_description))
         hasNetwork.set(false)
     }
 
@@ -327,8 +223,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      */
     open fun handleNetworkConnect() {
         dialogUtils.hideAlertDialog()
-        val notifications = NotificationUtils(this@BaseActivity)
-        notifications.clearNotification()
         hasNetwork.set(true)
     }
 
@@ -344,5 +238,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
+    }
+
+    companion object {
+        const val REQUEST_PERMISSIONS = 88
     }
 }

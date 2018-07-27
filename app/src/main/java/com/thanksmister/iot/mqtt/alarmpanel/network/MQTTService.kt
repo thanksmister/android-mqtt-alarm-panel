@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.thanksmister.iot.mqtt.alarmpanel.network
 
 
@@ -65,7 +81,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         mReady.set(false)
     }
 
-    override fun publish(payload: String) {
+    override fun publishAlarm(payload: String) {
         try {
             if (isReady) {
                 if (mqttClient != null && !mqttClient!!.isConnected) {
@@ -89,18 +105,55 @@ class MQTTService(private var context: Context, options: MQTTOptions,
 
                 }
                 Timber.d("Publishing: " + payload)
-                Timber.d("Command Topic: " + mqttOptions?.getCommandTopic())
+                Timber.d("Command Topic: " + mqttOptions?.getAlarmCommandTopic())
                 val mqttMessage = MqttMessage()
                 mqttMessage.payload = payload.toByteArray()
                 mqttMessage.isRetained = true // we want to remember last state
-                sendMessage(mqttOptions?.getCommandTopic(), mqttMessage)
+                sendMessage(mqttOptions?.getAlarmCommandTopic(), mqttMessage)
             }
         } catch (e: MqttException) {
             if (listener != null) {
                 listener!!.handleMqttException("Exception while subscribing: " + e.message)
             }
         }
+    }
 
+    override fun publishState(command: String, payload: String) {
+        try {
+            if (isReady) {
+                if (mqttClient != null && !mqttClient!!.isConnected) {
+                    // if for some reason the mqtt client has disconnected, we should try to connect
+                    // it again.
+                    try {
+                        initializeMqttClient()
+                    } catch (e: MqttException) {
+                        if (listener != null) {
+                            listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
+                        }
+                    } catch (e: IOException) {
+                        if (listener != null) {
+                            listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
+                        }
+                    } catch (e: GeneralSecurityException) {
+                        if (listener != null) {
+                            listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
+                        }
+                    }
+                }
+                // TODO append the "command" part
+                Timber.d("Publishing: $payload")
+                Timber.d("Base Topic: ${mqttOptions?.getBaseTopic()}")
+                Timber.d("Command Topic: $command")
+                val mqttMessage = MqttMessage()
+                mqttMessage.payload = payload.toByteArray()
+                mqttMessage.isRetained = false
+                sendMessage( mqttOptions?.getBaseTopic() + "/" + command, mqttMessage)
+            }
+        } catch (e: MqttException) {
+            if (listener != null) {
+                listener!!.handleMqttException("Exception while subscribing: " + e.message)
+            }
+        }
     }
 
     /**
@@ -118,8 +171,9 @@ class MQTTService(private var context: Context, options: MQTTOptions,
             Timber.i("TslConnect: " + mqttOptions!!.getTlsConnection())
             Timber.i("MQTT Configuration:")
             Timber.i("Broker: " + mqttOptions?.brokerUrl)
-            Timber.i("Subscribed to topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
-            Timber.i("Publishing to topic: " + mqttOptions!!.getCommandTopic())
+            Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
+            Timber.i("Publishing to alarm topic: " + mqttOptions!!.getAlarmCommandTopic())
+            Timber.i("Publishing to command topic: " + mqttOptions!!.getBaseTopic())
             if (mqttOptions!!.isValid) {
                 initializeMqttClient()
             } else {

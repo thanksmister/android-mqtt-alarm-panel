@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  ~ Copyright (c) 2018 ThanksMister LLC
   ~
-  ~   ~ Copyright (c) 2017. ThanksMister LLC
-  ~   ~
-  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~   ~ you may not use this file except in compliance with the License. 
-  ~   ~ You may obtain a copy of the License at
-  ~   ~
-  ~   ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~   ~
-  ~   ~ Unless required by applicable law or agreed to in writing, software distributed 
-  ~   ~ under the License is distributed on an "AS IS" BASIS, 
-  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-  ~   ~ See the License for the specific language governing permissions and 
-  ~   ~ limitations under the License.
-  ~   
--->
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thanksmister.iot.mqtt.alarmpanel">
@@ -36,6 +34,7 @@
     <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
@@ -49,7 +48,8 @@
             tools:ignore="GoogleAppIndexingWarning">
         
         <activity
-                android:name=".ui.activities.MainActivity">
+            android:name=".ui.activities.MainActivity"
+               android:theme="@style/AppThemeFullScreen">
 
             <!-- Launch activity as default from Android Studio -->
             <intent-filter>
@@ -63,7 +63,7 @@
             android:configChanges="orientation|screenSize"/>
 
         <activity android:name=".ui.activities.LogActivity"/>
-        <activity android:name=".ui.activities.ScreenSaverActivity" />
+        <activity android:name=".ui.activities.LiveCameraActivity"/>
 
         <!-- Preference Provider -->
         <provider
@@ -74,7 +74,12 @@
         
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
-        
+
+        <service android:name=".network.AlarmPanelService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="true"/>
+
         <!-- Your Crashlytics key here, you also need the secret in a fabric.properties -->
         <meta-data
             android:name="io.fabric.ApiKey"

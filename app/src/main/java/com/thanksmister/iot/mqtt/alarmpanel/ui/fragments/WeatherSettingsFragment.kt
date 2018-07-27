@@ -1,26 +1,23 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.Manifest
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -43,18 +40,17 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.LocationUtils
 
 import timber.log.Timber
 
 import com.thanksmister.iot.mqtt.alarmpanel.R.xml.preferences_weather
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_API_KEY
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LATITUDE
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_LONGITUDE
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_UNITS
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_WEATHER_WEATHER
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_API_KEY
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_LATITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_LONGITUDE
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_UNITS
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_WEATHER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject

@@ -1,24 +1,24 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui
+package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
+import android.content.Context
 import android.text.TextUtils
+import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
 
@@ -29,7 +29,7 @@ import javax.inject.Inject
  * Store configurations
  */
 class Configuration @Inject
-constructor(private val sharedPreferences: DPreference) {
+constructor(private val context: Context, private val sharedPreferences: DPreference) {
 
     var webUrl: String?
         get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
@@ -139,9 +139,102 @@ constructor(private val sharedPreferences: DPreference) {
         get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_TOKEN, "")
         set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_TOKEN, value)
 
-    var telegramModule: Boolean
-        get() = sharedPreferences.getPrefBoolean(PREF_TELEGRAM_MODULE, true)
-        set(value) = sharedPreferences.setPrefBoolean(PREF_TELEGRAM_MODULE, value)
+    var cameraMotionWake: Boolean
+        get() = sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
+        set(value) = sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
+
+    var cameraFaceWake: Boolean
+        get() = sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_facewake), false)
+        set(value) = sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_facewake), value)
+
+    var cameraFPS: Float
+        get() = this.sharedPreferences.getPrefString(context.getString(R.string.key_setting_camera_fps), "15f").toFloat()
+        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_camera_fps), value.toString())
+
+    var cameraId: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_cameraid), 0)
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_cameraid), value)
+
+    var cameraMotionMinLuma: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionminluma),
+                context.getString(R.string.default_setting_camera_motionminluma).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_motionminluma), value)
+
+    var mqttSensorFrequency: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
+                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value)
+
+    var httpPort: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_http_port),
+                context.getString(R.string.default_setting_http_port).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_http_port), value)
+
+    var cameraMotionLeniency: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionleniency),
+                context.getString(R.string.default_setting_camera_motionleniency).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_motionleniency), value)
+
+    var httpMJPEGMaxStreams: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_http_mjpegmaxstreams),
+                context.getString(R.string.default_setting_http_mjpegmaxstreams).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_http_mjpegmaxstreams), value)
+
+    var motionResetTime: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_motion_clear),
+                context.getString(R.string.default_motion_clear).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_motion_clear), value)
+
+    var cameraEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_enabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_enabled), value)
+
+    var cameraMotionEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionenabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionenabled), value)
+
+    var cameraMotionWakeEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
+
+    var sensorsEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SENSOR_ENABLED, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SENSOR_ENABLED, value)
+
+    var cameraFaceEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), value)
+
+    var cameraQRCodeEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), value)
+
+    var httpMJPEGEnabled: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_http_mjpegenabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_http_mjpegenabled), value)
+
+    var deviceSensors: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_sensors_enabled), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_sensors_enabled), value)
+
+    var deviceSensorFrequency: Int
+        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
+                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
+        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value)
+
+    var appShowActivity: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_showactivity), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_app_showactivity), value)
+
+    var testZoomLevel: Float
+        get() = this.sharedPreferences.getPrefString(context.getString(R.string.key_setting_test_zoomlevel),
+                context.getString(R.string.default_setting_test_zoomlevel)).toFloat()
+        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_test_zoomlevel), value.toString())
+
+    var browserUserAgent: String
+        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_browser_user_agent),
+                context.getString(R.string.default_browser_user_agent))
+        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_browser_user_agent), value)
 
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
@@ -153,6 +246,14 @@ constructor(private val sharedPreferences: DPreference) {
 
     fun hasTssModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_TSS, false)
+    }
+
+    fun hasPlatformChange(): Boolean {
+        return sharedPreferences.getPrefBoolean(PREF_PLATFORM_CHANGED, false)
+    }
+
+    fun setHasPlatformChange(value: Boolean) {
+        sharedPreferences.setPrefBoolean(PREF_PLATFORM_CHANGED, value)
     }
 
     fun setTssModule(value: Boolean) {
@@ -244,12 +345,20 @@ constructor(private val sharedPreferences: DPreference) {
         return !TextUtils.isEmpty(telegramChatId) && !TextUtils.isEmpty(telegramToken)
     }
 
-    fun hasCamera(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_CAMERA, false)
+    fun hasCameraCapture(): Boolean {
+        return sharedPreferences.getPrefBoolean(PREF_CAMERA_CAPTURE, false)
     }
 
-    fun setHasCamera(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_CAMERA, value)
+    fun setHasCameraCapture(value: Boolean) {
+        this.sharedPreferences.setPrefBoolean(PREF_CAMERA_CAPTURE, value)
+    }
+
+    fun captureCameraImage() : Boolean {
+        return cameraEnabled && hasCameraCapture() && (hasTelegramCredentials() || hasMailGunCredentials())
+    }
+
+    fun hasCameraDetections() : Boolean {
+        return cameraEnabled && (cameraMotionEnabled || cameraQRCodeEnabled || cameraFaceEnabled || httpMJPEGEnabled)
     }
 
     fun getCameraRotate(): Float? {
@@ -301,7 +410,7 @@ constructor(private val sharedPreferences: DPreference) {
         sharedPreferences.removePreference(PREF_FIRST_TIME)
         sharedPreferences.removePreference(PREF_MAIL_TO)
         sharedPreferences.removePreference(PREF_MAIL_FROM)
-        sharedPreferences.removePreference(PREF_MODULE_CAMERA)
+        sharedPreferences.removePreference(PREF_CAMERA_CAPTURE)
         sharedPreferences.removePreference(PREF_MAIL_API_KEY)
         sharedPreferences.removePreference(PREF_MAIL_URL)
         sharedPreferences.removePreference(PREF_CAMERA_ROTATE)
@@ -360,7 +469,7 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_MAIL_API_KEY = "pref_mail_api_key"
         const val PREF_MAIL_URL = "pref_mail_url"
         const val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
-        const val PREF_MODULE_CAMERA = "pref_module_camera"
+        const val PREF_CAMERA_CAPTURE = "pref_module_camera"
         const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
         const val PREF_MODULE_WEATHER = "pref_module_weather"
         const val PREF_MODULE_WEB = "pref_module_web"
@@ -385,11 +494,13 @@ constructor(private val sharedPreferences: DPreference) {
         const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
         const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
         const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
-        private const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
-        private const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
+        const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
+        const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
         const val DISPLAY_MODE_DAY = "mode_day"
         const val DISPLAY_MODE_NIGHT = "mode_night"
         const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
         const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
+        const val PREF_SENSOR_ENABLED = "pref_device_sensors_enabled"
+        const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
     }
 }

@@ -1,19 +1,17 @@
 /*
- * <!--
- *   ~ Copyright (c) 2017. ThanksMister LLC
- *   ~
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License. 
- *   ~ You may obtain a copy of the License at
- *   ~
- *   ~ http://www.apache.org/licenses/LICENSE-2.0
- *   ~
- *   ~ Unless required by applicable law or agreed to in writing, software distributed 
- *   ~ under the License is distributed on an "AS IS" BASIS, 
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- *   ~ See the License for the specific language governing permissions and 
- *   ~ limitations under the License.
- *   -->
+ * Copyright (c) 2018 ThanksMister LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
@@ -22,10 +20,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
-import android.hardware.fingerprint.FingerprintManager
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
@@ -35,24 +30,19 @@ import android.view.View
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_AWAY_DELAY_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_AWAY_PENDING_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_DELAY_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_FINGERPRINT
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_HOME_DELAY_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_HOME_PENDING_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.ui.Configuration.Companion.PREF_PENDING_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_AWAY_DELAY_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_AWAY_PENDING_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_DELAY_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_FINGERPRINT
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_DELAY_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_PENDING_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
-import com.samsung.android.sdk.SsdkUnsupportedException
-import com.samsung.android.sdk.pass.Spass
-import com.samsung.android.sdk.SsdkVendorCheck
 import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
-import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
-import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompatApi23.isHardwareDetected
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint
 import timber.log.Timber
 

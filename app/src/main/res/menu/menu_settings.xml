@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 ThanksMister LLC
+  ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License. 
@@ -21,6 +21,11 @@
     <item android:id="@+id/action_help"
           android:title="@string/menu_item_help"
           android:icon="@drawable/ic_help_black"
-          thanksmister:showAsAction="always"/>
+          thanksmister:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_logs"
+        android:title="@string/menu_item_help"
+        android:icon="@drawable/ic_log_list_black"
+        thanksmister:showAsAction="ifRoom"/>
     
 </menu>

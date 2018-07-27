@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
     <string name="app_name">Alarm Panel</string>
 
@@ -102,7 +118,7 @@
 
     <string name="preference_title_alert">Alert notificaties</string>
     <string name="preference_title_system_notifications">Systeem notificaties</string>
-    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen.</string>
+    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
 
     <string name="preference_tts_voice">TTS stem</string>
     <string name="preference_tts">TTS notificaties</string>
@@ -110,12 +126,12 @@
 
     <string name="preference_tts_topic">TTS onderwerp</string>
     <string name="preference_topic_title">Zet onderwerp waarde</string>
-    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden. (Let op: externe luidsprekers zijn nodig voor TTS): \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden: \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
 
 
     <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera opname</string>
-    <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt. Let op: Werkt alleen op Android Lollipop of hoger.)</string>
+    <string name="preference_camera_summary">Gebruik de camera om een foto te nemen en te mailen wanneer het alarm gedeactiveerd wordt.</string>
 
     <string name="preference_camera_flip_title">Rotate Camera</string>
     <string name="preference_camera_flip_summary">Afhankelijk van je camera, moet je misschien het beeld draaien. Momenteel %1$s.</string>
@@ -277,6 +293,71 @@
     <string name="pref_night_mode_end_description">Eindtijd nachtmodus</string>
     <string name="pref_fullscreen_title">Volledig scherm</string>
     <string name="pref_fullscreen_description">Geef de app weer in de modus voor volledig scherm.</string>
+    <string name="notification_title">Notificatie</string>
+
+    <string name="summary_setting_sensors_default">Niet beschikbaar</string>
+    <string name="title_setting_sensors_temperature">Temperatuur</string>
+    <string name="title_setting_sensors_light">Licht</string>
+    <string name="title_setting_sensors_magneticField">Magnetisch veld</string>
+    <string name="title_setting_sensors_pressure">Druk</string>
+    <string name="title_setting_sensors_humidity">Vochtigheid</string>
+    <string name="summary_notification_topic">Voorbeeldindeling voor het berichtonderwerp en de payload: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="title_sensor_settings">Sensorinstellingen</string>
+    <string name="title_enable_sensor_data">Schakel Sensor publiceren in</string>
+    <string name="summary_enable_sensor_data">Publiceert beschikbare apparaatsensorgegevens via MQTT</string>
+    <string name="pref_sensor_list_summary">Hieronder vindt u een lijst met sensorgegevens die beschikbaar zijn op dit apparaat en die als MQTT-gegevens moeten worden gepubliceerd.</string>
+    <string name="pref_qr_code_summary">Scant QR-codes met behulp van de camera van het apparaat en publiceert de gescande code via MQTT.</string>
+    <string name="title_setting_mqtt_sensorfrequency">Publiceer frequentie (in seconden)</string>
+    <string name="summary_setting_mqtt_basetopic">Identifier om MQTT-opdrachten voor dit paneel te ontvangen. Elk panel moet een unieke ID hebben.</string>
+    <string name="title_setting_mqtt_basetopic">Base-onderwerp</string>
+    <string name="service_notification_message">Alarmpaneel loopt ...</string>
+    <string name="toast_camera_source_error">Kon de camera niet starten, probeer het misschien opnieuw.</string>
+    <string name="pref_user_agent_title">User Agent String (optioneel)</string>
+    <string name="pref_user_agent_summary">Stel indien nodig de browser user agent stream in om het dashboard te laden (laat anders niets invullen)</string>
+    <string name="pref_camera_fps_title">Camera FPS</string>
+    <string name="pref_camera_fps_summary">Stel de camerasnelheid in, gebruik op dit moment een lagere waarde voor oudere apparaten %1$s.</string>
+    <string name="pref_motion_reset_title">Reset tijdbeweging</string>
+    <string name="pref_motion_reset_description">De tijd (in seconden) voordat de bewegingsdetector wordt gereset.</string>
+    <string name="text_front">Voorkant</string>
+    <string name="text_back">Terug</string>
+    <string name="text_camera_pattern">{0}: {1} Camera {3}x{4} {2}º</string>
+    <string name="pref_camera_test_title">Cameratest</string>
+    <string name="pref_camera_test_button_title">Cameratest</string>
+    <string name="title_setting_http_port">HTTP Luisterpoort</string>
+    <string name="title_setting_http_mjpegenabled">MJPEG Camerastreaming</string>
+    <string name="title_setting_http_mjpegmaxstreams">MJPEG Maximale streams van camera</string>
+    <string name="pref_face_detection_title">Gezichtsherkenning</string>
+    <string name="pref_motion_leniency_description">De maximale tolerantie van het verschil tussen afbeeldingen. Een lagere tolerantie betekent dat de beweging gevoeliger is (1 - 20).</string>
+    <string name="pref_motion_luma_description">Minimaal helderheidsniveau om beweging te detecteren. Er wordt geen beweging gedetecteerd als de helderheid onder deze waarde valt (1 - 1000).</string>
+    <string name="pref_mjpeg_streaming_description">Gebruik de camera van het apparaat als een live MJPEG-stream. Maak verbinding met de stream met behulp van het IP-adres, de HTTP-poort en het eindpunt van het apparaat: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_title">MJPEG streaming</string>
+    <string name="pref_mjpeg_streaming_summary">Gebruik de camera van het apparaat als een live MJPEG-stream.</string>
+    <string name="title_setting_camera_enabled">Camera Ingeschakeld</string>
+    <string name="title_setting_camera_cameraid">Geselecteerde Camera</string>
+    <string name="title_setting_camera_motionenabled">Bewegingsdetectie ingeschakeld</string>
+    <string name="title_setting_camera_motionleniency">Maximale Clementie</string>
+    <string name="title_setting_camera_motionminluma">Minimale Luma</string>
+    <string name="title_setting_camera_motionwake">Wekt het scherm</string>
+    <string name="title_setting_camera_faceenabled">Gezichtsdetectie ingeschakeld</string>
+    <string name="title_setting_camera_facewake">Wekt het scherm</string>
+    <string name="title_setting_camera_qrcodeenabled">QR-codelezer</string>
+    <string name="pref_motion_detection_summary">Detecteert beweging met behulp van de camera van het apparaat.</string>
+    <string name="pref_motion_wake_summary">Wekt het scherm van het apparaat wanneer beweging wordt gedetecteerd.</string>
+    <string name="pref_motion_detection_title">Bewegingsdetectie</string>
+    <string name="pref_motion_adjustments_title">Bewegingsaanpassingen</string>
+    <string name="pref_face_detection_summary">Detecteert gezichten met behulp van de camera van het apparaat.</string>
+    <string name="pref_face_wake_summary">Schakelt het scherm in wanneer het gezicht wordt gedetecteerd.</string>
+    <string name="pref_button_camera_test">Test de camera-instellingen.</string>
+    <string name="toast_qr_code_read">QR-code lezen ....</string>
+    <string name="toast_too_dark_motion">Te donker voor bewegingsdetectie</string>
+    <string name="toast_motion_detected">Beweging gedetecteerd!</string>
+    <string name="toast_face_detected">Gezicht gedetecteerd!</string>
+    <string name="toast_qrcode_read">QR Code %1$s</string>
+    <string name="title_setting_app_showactivity">Toon browseractiviteit</string>
+    <string name="pref_show_browser_activity_summary">Toon browser laden voortgang.</string>
+    <string name="pref_zoom_level_summary">Zoomt in op browserniveau (experimenteel).</string>
+    <string name="title_setting_test_zoomlevel">Browser zoomniveau</string>
+    <string name="progress_loading">Bezig met laden %1$s &#37;</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>
