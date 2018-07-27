@@ -361,7 +361,7 @@
     <string name="pref_show_browser_activity_summary">Display browser loading progress.</string>
     <string name="pref_zoom_level_summary">Zooms the browser level (experimental).</string>
     <string name="title_setting_test_zoomlevel">Browser Zoom Level</string>
-    <string name="progress_loading">Loading %1$s&#37;</string>
+    <string name="progress_loading">Loading %1$s &#37;</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

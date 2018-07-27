@@ -357,7 +357,7 @@
     <string name="pref_show_browser_activity_summary">Toon browser laden voortgang.</string>
     <string name="pref_zoom_level_summary">Zoomt in op browserniveau (experimenteel).</string>
     <string name="title_setting_test_zoomlevel">Browser zoomniveau</string>
-    <string name="progress_loading">Bezig met laden %1$s&#37;</string>
+    <string name="progress_loading">Bezig met laden %1$s &#37;</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

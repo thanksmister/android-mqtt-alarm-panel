@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -27,11 +28,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.dialog_progress.*
 import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
@@ -43,8 +46,9 @@ class PlatformFragment : BaseFragment(){
     @Inject lateinit var dialogUtils: DialogUtils
     private var listener: OnPlatformFragmentListener? = null
     private var currentUrl:String? = null
-    var displayProgress = true
-    var zoomLevel = 1.0f
+    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
+    private var displayProgress = true
+    private var zoomLevel = 1.0f
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -64,11 +68,9 @@ class PlatformFragment : BaseFragment(){
         super.onResume()
         Timber.d("onResume")
         if (configuration.platformBar) {
-            settingsContainer.visibility = View.VISIBLE;
-            checkbox_hide.isChecked = false
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED;
         } else {
-            settingsContainer.visibility = View.GONE;
-            checkbox_hide.isChecked = true
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN;
         }
         if(configuration.hasPlatformChange()) {
             configuration.setHasPlatformChange(false)
@@ -91,22 +93,17 @@ class PlatformFragment : BaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         button_alarm.setOnClickListener {
             if(listener != null) {
-                webView.closeMoreInfoDialog()
                 listener!!.navigateAlarmPanel()
             }
         }
         button_refresh.setOnClickListener {
             loadWebPage()
         }
-        checkbox_hide.setOnClickListener { v ->
-            if ((v as CheckBox).isChecked) {
-                settingsContainer.visibility = View.GONE;
-            } else {
-                settingsContainer.visibility = View.VISIBLE;
-            }
-            configuration.platformBar = !v.isChecked
+        button_hide.setOnClickListener { v ->
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN;
         }
         loadWebPage()
     }
@@ -172,17 +169,6 @@ class PlatformFragment : BaseFragment(){
             webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
         Timber.d(webSettings.userAgentString)
-    }
-
-    override fun onBackPressed() : Boolean{
-        if (webView == null) {
-            return super.onBackPressed()
-        }
-        val handled = webView.onBackPressed()
-        if (!handled){
-            webView.closeMoreInfoDialog()
-        }
-        return handled;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
