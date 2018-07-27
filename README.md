@@ -66,9 +66,9 @@ You can clone the repository and compile the APK using Andoid Studio, then side 
 
 ### Supported Command and Publish States
 
-- Command topic:  alarmpanel/alarm/set
+- Command topic:  home/alarm/set
 - Command payloads: ARM_HOME, ARM_AWAY, DISARM
-- Publish topic: alarmpanel/alarm
+- Publish topic: home/alarm
 - Publish payloads: disarmed, armed_away, armed_home, pending, triggered (armed_night not currently supported).
 
 ### Example Home Assistant Setup
@@ -76,8 +76,8 @@ You can clone the repository and compile the APK using Andoid Studio, then side 
 ```
 alarm_control_panel:
   - platform: manual_mqtt
-    state_topic: alarmpanel/alarm
-    command_topic: alarmpanel/alarm/set
+    state_topic: home/alarm
+    command_topic: home/alarm/set
     pending_time: 60
     trigger_time: 1800
     disarm_after_trigger: false
