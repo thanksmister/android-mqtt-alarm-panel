@@ -34,7 +34,7 @@
             android:summary="@string/preference_summary_broker"
             android:textColor="@color/light_gray"
             android:textSize="12sp"
-            android:dependency="pref_module_camera"/>
+            android:dependency="pref_broker"/>
 
         <CheckBoxPreference
             android:key="pref_tls_connection"
@@ -64,7 +64,7 @@
             android:summary="@string/summary_setting_mqtt_basetopic"
             android:textColor="@color/light_gray"
             android:textSize="12sp"
-            android:dependency="pref_module_camera"/>
+            android:dependency="pref_broker"/>
 
         <EditTextPreference
             android:key="pref_username"

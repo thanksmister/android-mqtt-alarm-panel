@@ -25,10 +25,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v14.preference.SwitchPreference
 import android.support.v4.app.ActivityCompat
-import android.support.v7.preference.EditTextPreference
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import android.support.v7.preference.*
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
@@ -84,7 +81,6 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toInt().toString())
 
         cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference
-        cameraListPreference!!.isEnabled = false
         cameraListPreference!!.setOnPreferenceChangeListener { preference, newValue ->
             if (preference is ListPreference) {
                 val index = preference.findIndexOfValue(newValue.toString())
@@ -95,14 +91,23 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                             "")
 
                 if(index >= 0) {
-                    configuration.cameraId = index
+                    //configuration.cameraId = index
                     Timber.d("Camera Id: " + configuration.cameraId)
                 }
             }
             true;
         }
+        cameraListPreference!!.isEnabled = false
 
-        createCameraList()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (ActivityCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                createCameraList()
+            }
+        } else {
+            createCameraList()
+        }
+
+        bindPreferenceSummaryToValue(cameraListPreference!!);
 
         cameraTestPreference = findPreference("button_key_camera_test")
         cameraTestPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
@@ -199,6 +204,37 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             if(activity != null) {
                 Toast.makeText(activity!!, getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
             }
+        }
+    }
+
+    private val bindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
+        val stringValue = value.toString()
+        if (preference is SwitchPreference) {
+            return@OnPreferenceChangeListener true
+        }else if (preference is ListPreference) {
+            val index = preference.findIndexOfValue(stringValue)
+            preference.setSummary(
+                    if (index >= 0)
+                        preference.entries[index]
+                    else null)
+        } else {
+            preference.summary = stringValue
+        }
+        true
+    }
+
+    fun bindPreferenceSummaryToValue(preference: Preference) {
+        preference.onPreferenceChangeListener = bindPreferenceSummaryToValueListener
+        if (preference is SwitchPreference) {
+            bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getBoolean(preference.getKey(), false))
+        } else {
+            bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.context)
+                            .getString(preference.key, "")!!)
         }
     }
 

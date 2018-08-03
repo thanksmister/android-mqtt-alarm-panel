@@ -41,7 +41,7 @@ class CameraUtils {
                 val info = Camera.CameraInfo()
                 Camera.getCameraInfo(i, info)
                 val patternString = context.getString(R.string.text_camera_pattern)
-                val facing=
+                val facing =
                         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
                             context.getString(R.string.text_front)
                         else

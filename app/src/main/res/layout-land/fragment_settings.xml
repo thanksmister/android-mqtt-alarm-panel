@@ -31,6 +31,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -63,6 +64,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -95,6 +97,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -124,6 +127,8 @@
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_columnWeight="1"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
@@ -156,6 +161,8 @@
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_columnWeight="1"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
@@ -189,6 +196,8 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -221,6 +230,8 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -253,6 +264,8 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 
@@ -285,6 +298,8 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical"
         grid:layout_columnWeight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         grid:layout_gravity="center"
         grid:layout_rowWeight="1">
 

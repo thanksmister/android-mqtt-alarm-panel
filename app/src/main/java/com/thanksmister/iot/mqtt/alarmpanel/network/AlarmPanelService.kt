@@ -167,7 +167,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        reconnectHandler.removeCallbacks(restartMqttRunnable)
         if (!disposable.isDisposed) {
             disposable.clear()
         }
@@ -182,6 +181,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         sensorReader.stopReadings()
         stopHttp()
         stopPowerOptions()
+        reconnectHandler.removeCallbacks(restartMqttRunnable)
     }
 
     override fun onBind(intent: Intent): IBinder? {

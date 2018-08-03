@@ -38,7 +38,7 @@ repositories {
 def versionMajor = 0
 def versionMinor = 8
 def versionPatch = 1
-def versionBuild = 1 // bump for dog food builds, public betas, etc.
+def versionBuild = 4 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -278,9 +278,6 @@ dependencies {
     // 3rd party
     implementation 'io.github.silvaren:easyrs:0.5.3'
     implementation 'com.koushikdutta.async:androidasync:2.1.9'
-
-    // Home Assistant WebView
-    implementation 'com.github.sjvc:Home-Assistant-WebView:master-SNAPSHOT'
 
     implementation 'joda-time:joda-time:2.9.9'
 

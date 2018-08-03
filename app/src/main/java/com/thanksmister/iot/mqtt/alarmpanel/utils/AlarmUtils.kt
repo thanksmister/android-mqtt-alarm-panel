@@ -52,8 +52,8 @@ class AlarmUtils {
         const val COMMAND_ARM_AWAY = "ARM_AWAY"
         const val COMMAND_DISARM = "DISARM"
 
-        const val ALARM_COMMAND_TOPIC = "myalarmpanel/alarm/set"
-        const val ALARM_STATE_TOPIC = "myalarmpanel/alarm"
+        const val ALARM_COMMAND_TOPIC = "home/alarm/set"
+        const val ALARM_STATE_TOPIC = "home/alarm"
 
         const val STATE_DISARM = "disarmed"
         const val STATE_ARM_AWAY = "armed_away"
