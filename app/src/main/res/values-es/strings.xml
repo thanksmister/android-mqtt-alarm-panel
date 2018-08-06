@@ -358,7 +358,10 @@
     <string name="pref_show_browser_activity_summary">Mostrar el progreso de carga del navegador.</string>
     <string name="pref_zoom_level_summary">Acerca el nivel del navegador (experimental).</string>
     <string name="title_setting_test_zoomlevel">Nivel de zoom del navegador</string>
-    <string name="progress_loading">Cargando %1$s &#37;</string>
+    <string name="progress_loading">Cargando %1$s %%</string>
+
+    <string name="pref_title_prevent_sleep">Prevenga el sueño de la pantalla</string>
+    <string name="pref_summary_prevent_sleep">Cuando está activo, mantiene la pantalla encendida.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

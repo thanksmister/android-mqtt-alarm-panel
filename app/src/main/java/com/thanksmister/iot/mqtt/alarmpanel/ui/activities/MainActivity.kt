@@ -97,7 +97,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
             darkSkyOptions.setIsCelsius(true)
             configuration.isFirstTime = false
-            configuration.setHasNotifications(true)
+
             configuration.setClockScreenSaverModule(true)
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)
@@ -131,6 +131,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
+        Timber.d("Prevent Sleep ${configuration.appPreventSleep}")
+        if (configuration.appPreventSleep) {
+            window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

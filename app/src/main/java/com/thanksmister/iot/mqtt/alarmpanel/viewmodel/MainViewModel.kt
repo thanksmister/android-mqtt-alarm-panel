@@ -30,7 +30,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_TYPE
 
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
@@ -156,10 +155,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     fun insertMessage(messageId: String,topic: String, payload: String) {
         Timber.d("insertMessage: " + topic)
         Timber.d("insertMessage: " + payload)
-        val type = when (topic) {
-            mqttOptions.getNotificationTopic() -> NOTIFICATION_TYPE
-            else -> ALARM_TYPE
-        }
+        val type = ALARM_TYPE
         disposable.add(Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()
             val message = MessageMqtt()

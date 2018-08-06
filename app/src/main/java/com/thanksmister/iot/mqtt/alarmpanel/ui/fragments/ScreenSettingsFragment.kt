@@ -48,6 +48,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var rotationPreference: EditTextPreference? = null
     private var inactivityPreference: ListPreference? = null
     private var dayNightPreference: CheckBoxPreference? = null
+    private var preventSleepPreference: CheckBoxPreference? = null
     private var startTimePreference: Preference? = null
     private var endTimePreference: Preference? = null
 
@@ -86,10 +87,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         rotationPreference = findPreference(Configuration.PREF_IMAGE_ROTATION) as EditTextPreference
         inactivityPreference = findPreference(Configuration.PREF_INACTIVITY_TIME) as ListPreference
         fullScreenPreference = findPreference(Configuration.PREF_FULL_SCXREEN) as CheckBoxPreference
+        preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as CheckBoxPreference
 
         dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as CheckBoxPreference
         dayNightPreference!!.isChecked = configuration.useNightDayMode
-        
 
         startTimePreference = findPreference(Configuration.PREF_MODE_DAY_NIGHT_START) as Preference
         startTimePreference!!.isPersistent = false
@@ -249,6 +250,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
                 configuration.nightModeChanged = true
+            }
+            getString(R.string.key_setting_app_preventsleep) -> {
+                val checked = preventSleepPreference!!.isChecked
+                configuration.appPreventSleep = checked
             }
         }
     }

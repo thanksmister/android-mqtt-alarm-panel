@@ -60,6 +60,8 @@
     <string name="default_camera_fps" translatable="false">15</string>
     <string name="key_setting_motion_clear" translatable="false">setting_motion_clear</string>
     <string name="default_motion_clear" translatable="false">30</string>
+    <string name="key_setting_app_preventsleep" translatable="false">setting_app_preventsleep</string>
+    <string name="default_setting_app_preventsleep" translatable="false">false</string>
 
     <string name="license" translatable="false"><![CDATA[
         <br><b>Copyright 2017 ThanksMister LLC</b><br>
@@ -123,6 +125,5 @@
         <item>1.5</item>
         <item>2.0</item>
     </string-array>
-
 
 </resources>

@@ -16,6 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -26,9 +27,11 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.webkit.*
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
@@ -40,7 +43,7 @@ import kotlinx.android.synthetic.main.fragment_platform.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class PlatformFragment : BaseFragment(){
+class PlatformFragment : BaseFragment() {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
@@ -49,6 +52,7 @@ class PlatformFragment : BaseFragment(){
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
     private var zoomLevel = 1.0f
+    private val mOnScrollChangedListener: ViewTreeObserver.OnScrollChangedListener? = null
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -76,6 +80,14 @@ class PlatformFragment : BaseFragment(){
             configuration.setHasPlatformChange(false)
             loadWebPage()
         }
+        swipeContainer.viewTreeObserver.addOnScrollChangedListener {
+            swipeContainer?.isEnabled = webView.scrollY == 0
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +105,9 @@ class PlatformFragment : BaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        swipeContainer.setOnRefreshListener {loadWebPage()}
+
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         button_alarm.setOnClickListener {
             if(listener != null) {
@@ -108,22 +123,30 @@ class PlatformFragment : BaseFragment(){
         loadWebPage()
     }
 
+    private fun complete() {
+        if(swipeContainer.isRefreshing) {
+            swipeContainer.isRefreshing = false
+        }
+    }
+
     private fun loadWebPage() {
         Timber.d("loadWebPage url ${configuration.webUrl}")
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
             configureWebSettings(configuration.browserUserAgent)
             webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView, newProgress: Int) {
-                    if (!displayProgress) return
                     if (newProgress == 100) {
                         prgressDialog.visibility = View.GONE
                         pageLoadComplete(view.url)
                         return
                     }
-                    prgressDialog.visibility = View.VISIBLE
-                    progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
+                    if(displayProgress) {
+                        prgressDialog.visibility = View.VISIBLE
+                        progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
+                    } else {
+                        prgressDialog.visibility = View.GONE
+                    }
                 }
-
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
                     dialogUtils.showAlertDialog(view.context, message)
                     return true
@@ -131,17 +154,28 @@ class PlatformFragment : BaseFragment(){
             }
             webView.webViewClient = object : WebViewClient() {
                 //If you will not use this method url links are open in new browser not in webview
-                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                    webView.loadUrl(configuration.webUrl)
+                override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                    view.loadUrl(url)
                     return true
+                }
+                override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
+                    if(activity != null) {
+                        Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             if (zoomLevel.toDouble() != 1.0) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
+            clearCache()
             webView.loadUrl(configuration.webUrl)
-        } else if (webView != null) {
-            webView.loadUrl(WEBSITE)
+        }
+    }
+
+    private fun clearCache() {
+        webView.clearCache(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().removeAllCookies(null)
         }
     }
 
@@ -153,8 +187,10 @@ class PlatformFragment : BaseFragment(){
             val bm = LocalBroadcastManager.getInstance(activity!!)
             bm.sendBroadcast(intent)
         }
+        complete()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebSettings(userAgent: String) {
         val webSettings = webView!!.settings
         webSettings.javaScriptEnabled = true

@@ -35,13 +35,9 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
         set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
 
-    var hideAdminMenu: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_ADMIN_MENU, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_ADMIN_MENU, value)
-
-    var adjustBackBehavior: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BACK_BEHAVIOR, value)
+    var appPreventSleep: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), value)
 
     var useNightDayMode: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_DAY_NIGHT_MODE, true)
@@ -244,10 +240,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         this.sharedPreferences.setPrefBoolean(PREF_MODULE_WEB, value)
     }
 
-    fun hasTssModule(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_TSS, false)
-    }
-
     fun hasPlatformChange(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_PLATFORM_CHANGED, false)
     }
@@ -260,16 +252,8 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         this.sharedPreferences.setPrefBoolean(PREF_MODULE_TSS, value)
     }
 
-    fun hasAlertsModule(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_ALERTS, false)
-    }
-
     fun hasSystemAlerts(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
-    }
-
-    fun setAlertsModule(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_ALERTS, value)
     }
 
     fun showClockScreenSaverModule(): Boolean {
@@ -294,14 +278,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
 
     fun showWeatherModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEATHER, false)
-    }
-
-    fun hasNotifications(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_NOTIFICATION, false)
-    }
-
-    fun setHasNotifications(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_NOTIFICATION, value)
     }
 
     fun getMailTo(): String? {
@@ -359,14 +335,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
 
     fun hasCameraDetections() : Boolean {
         return cameraEnabled && (cameraMotionEnabled || cameraQRCodeEnabled || cameraFaceEnabled || httpMJPEGEnabled)
-    }
-
-    fun getCameraRotate(): Float? {
-        return sharedPreferences.getPrefString(PREF_CAMERA_ROTATE, "0f").toFloat()
-    }
-
-    fun setCameraRotate(value: String) {
-        sharedPreferences.setPrefString(PREF_CAMERA_ROTATE, value)
     }
 
     fun hasScreenSaver() : Boolean {

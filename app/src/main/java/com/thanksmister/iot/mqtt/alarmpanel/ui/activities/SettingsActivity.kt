@@ -55,11 +55,6 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
 
         val alarmPanelService = Intent(this, AlarmPanelService::class.java)
         stopService(alarmPanelService)
-
-        // TODO better handle browser error (refresh option needed)
-        // It's possible to have the browser window stuck if it encounters an error
-        // for now let's assume going to settings resets it to load again
-        configuration.setHasPlatformChange(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

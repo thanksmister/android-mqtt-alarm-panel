@@ -27,8 +27,7 @@ class ComponentUtils {
 
     companion object {
 
-        @Deprecated("Moving to command")
-        val NOTIFICATION_STATE_TOPIC = "myalarmpanel/notification"
+        val NOTIFICATION_STATE_TOPIC = "home/notification"
         val NOTIFICATION_TYPE = "NOTIFICATION"
 
         const val BASE_TOPIC = "alarmpanel"
