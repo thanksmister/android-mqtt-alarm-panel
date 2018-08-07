@@ -126,6 +126,18 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
+    fun showAlertDialog(context: Context, title: String, message: String, onPositiveButton: DialogInterface.OnClickListener,
+                        onNegativeButton: DialogInterface.OnClickListener) {
+        hideAlertDialog()
+        Timber.d("showAlertDialog")
+        alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, onPositiveButton)
+                .setNegativeButton(android.R.string.cancel, onNegativeButton)
+                .show()
+    }
+
     fun showAlertDialogCancel(context: Context, message: String, onClickListener: DialogInterface.OnClickListener) {
         hideAlertDialog()
         Timber.d("showAlertDialog")

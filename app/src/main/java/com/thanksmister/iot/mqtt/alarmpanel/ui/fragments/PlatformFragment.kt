@@ -18,11 +18,14 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -148,7 +151,9 @@ class PlatformFragment : BaseFragment() {
                     }
                 }
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                    dialogUtils.showAlertDialog(view.context, message)
+                    if(view.context != null) {
+                        dialogUtils.showAlertDialog(view.context, message)
+                    }
                     return true
                 }
             }
@@ -162,6 +167,24 @@ class PlatformFragment : BaseFragment() {
                     if(activity != null) {
                         Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
                     }
+                }
+                override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
+                    super.onReceivedSslError(view, handler, error)
+                    var message = getString(R.string.dialog_message_ssl_generic)
+                    when (error?.primaryError) {
+                        SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
+                        SslError.SSL_EXPIRED -> message = getString(R.string.dialog_message_ssl_expired)
+                        SslError.SSL_IDMISMATCH -> message = getString(R.string.dialog_message_ssl_mismatch)
+                        SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
+                    }
+                    message += getString(R.string.dialog_message_ssl_continue)
+                    dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
+                            DialogInterface.OnClickListener { _, _ ->
+                                handler?.proceed()
+                            },
+                            DialogInterface.OnClickListener { _, _ ->
+                                handler?.cancel()
+                            })
                 }
             }
             if (zoomLevel.toDouble() != 1.0) {

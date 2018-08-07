@@ -358,9 +358,14 @@
     <string name="pref_zoom_level_summary">Zoomt in op browserniveau (experimenteel).</string>
     <string name="title_setting_test_zoomlevel">Browser zoomniveau</string>
     <string name="progress_loading">Bezig met laden %1$s %%</string>
-
     <string name="pref_title_prevent_sleep">Voorkom scherm slaap</string>
     <string name="pref_summary_prevent_sleep">Wanneer deze actief is, blijft het scherm ingeschakeld.</string>
+    <string name="dialog_message_ssl_continue">Wil je toch doorgaan?</string>
+    <string name="dialog_message_ssl_not_yet_valid">Het certificaat is nog niet geldig.</string>
+    <string name="dialog_message_ssl_mismatch">Het certificaat Hostnaam komt niet overeen.</string>
+    <string name="dialog_message_ssl_expired">Het certificaat is verlopen.</string>
+    <string name="dialog_message_ssl_untrusted">De certificeringsinstantie wordt niet vertrouwd.</string>
+    <string name="dialog_message_ssl_generic">SSL-certificaatfout.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>
@@ -405,5 +410,6 @@
         <item>Motion</item>
         <item>Camera</item>
     </string-array>
+    <string name="dialog_title_ssl_error">SSL-certificaatfout</string>
 
 </resources>

@@ -219,7 +219,11 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                         disconnectedBufferOptions.isPersistBuffer = false
                         disconnectedBufferOptions.isDeleteOldestMessages = false
                         if (mqttClient != null) {
-                            mqttClient!!.setBufferOpts(disconnectedBufferOptions)
+                            try {
+                                mqttClient!!.setBufferOpts(disconnectedBufferOptions)
+                            } catch (e: NullPointerException) {
+                                Timber.e(e.message)
+                            }
                         }
                         if (mqttOptions != null) {
                             subscribeToTopics(mqttOptions!!.getStateTopics())
@@ -234,6 +238,9 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                         }
                     }
                 })
+            } catch (e: NullPointerException) {
+                Timber.e(e, e.message)
+                e.printStackTrace()
             } catch (e: MqttException) {
                 Timber.e(e, "MqttException")
                 if (listener != null) {

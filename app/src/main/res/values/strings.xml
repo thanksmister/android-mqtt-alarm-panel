@@ -362,9 +362,15 @@
     <string name="pref_zoom_level_summary">Zooms the browser level (experimental).</string>
     <string name="title_setting_test_zoomlevel">Browser Zoom Level</string>
     <string name="progress_loading">Loading %1$s %%</string>
-
     <string name="pref_title_prevent_sleep">Prevent Screen Sleep</string>
     <string name="pref_summary_prevent_sleep">When active, keeps the screen on.</string>
+    <string name="dialog_title_ssl_error">SSL Certificate Error</string>
+    <string name="dialog_message_ssl_continue">Do you want to continue anyway?</string>
+    <string name="dialog_message_ssl_not_yet_valid">The certificate is not yet valid.</string>
+    <string name="dialog_message_ssl_mismatch">The certificate Hostname is mismatched.</string>
+    <string name="dialog_message_ssl_expired">The certificate has expired.</string>
+    <string name="dialog_message_ssl_untrusted">The certificate authority is not trusted.</string>
+    <string name="dialog_message_ssl_generic">SSL certificate error.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

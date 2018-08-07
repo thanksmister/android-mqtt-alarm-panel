@@ -359,9 +359,15 @@
     <string name="pref_zoom_level_summary">Acerca el nivel del navegador (experimental).</string>
     <string name="title_setting_test_zoomlevel">Nivel de zoom del navegador</string>
     <string name="progress_loading">Cargando %1$s %%</string>
-
     <string name="pref_title_prevent_sleep">Prevenga el sueño de la pantalla</string>
     <string name="pref_summary_prevent_sleep">Cuando está activo, mantiene la pantalla encendida.</string>
+    <string name="dialog_title_ssl_error">Error de certificado SSL</string>
+    <string name="dialog_message_ssl_continue">¿Quieres continuar de todos modos?</string>
+    <string name="dialog_message_ssl_not_yet_valid">El certificado aún no es válido.</string>
+    <string name="dialog_message_ssl_mismatch">El nombre de host del certificado no coincide.</string>
+    <string name="dialog_message_ssl_expired">El certificado ha expirado.</string>
+    <string name="dialog_message_ssl_untrusted">La autoridad de certificación no es de confianza.</string>
+    <string name="dialog_message_ssl_generic">Error de certificado SSL.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>
