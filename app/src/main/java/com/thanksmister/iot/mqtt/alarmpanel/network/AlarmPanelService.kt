@@ -158,9 +158,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         val filter = IntentFilter()
         filter.addAction(BROADCAST_EVENT_URL_CHANGE)
         filter.addAction(BROADCAST_EVENT_SCREEN_TOUCH)
+        filter.addAction(BROADCAST_EVENT_ALARM_MODE)
         filter.addAction(Intent.ACTION_SCREEN_ON)
         filter.addAction(Intent.ACTION_SCREEN_OFF)
         filter.addAction(Intent.ACTION_USER_PRESENT)
+
         localBroadCastManager= LocalBroadcastManager.getInstance(this)
         localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
     }

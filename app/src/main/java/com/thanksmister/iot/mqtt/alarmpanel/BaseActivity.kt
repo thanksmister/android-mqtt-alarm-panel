@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
@@ -41,6 +42,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
@@ -136,6 +138,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         onWindowFocusChanged(true)
         userPresent = true
         resetInactivityTimer()
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     public override fun onResume() {
