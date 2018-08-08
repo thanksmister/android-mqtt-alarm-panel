@@ -100,9 +100,9 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     fun getAlarmDelayTime(): Int {
-        if(getAlarmMode() == MODE_ARM_AWAY || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING) {
+        if(getAlarmMode() == MODE_ARM_AWAY || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING) {
             return configuration.delayAwayTime
-        } else if (getAlarmMode() == MODE_ARM_HOME || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING) {
+        } else if (getAlarmMode() == MODE_ARM_HOME || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING) {
             return configuration.delayHomeTime
         }
         return configuration.delayTime
