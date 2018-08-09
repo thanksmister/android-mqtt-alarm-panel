@@ -282,16 +282,6 @@ constructor(private val context: Context) {
                 object : Tracker<Stream>() {
                     override fun onUpdate(p0: Detector.Detections<Stream>?, stream: Stream?) {
                         super.onUpdate(p0, stream)
-                        if (stream?.byteArray != null && bitmapComplete && configuration.httpMJPEGEnabled) {
-                            byteArrayCreateTask = ByteArrayTask(context, renderScript, object : OnCompleteListener {
-                                override fun onComplete(byteArray: ByteArray?) {
-                                    bitmapComplete = true
-                                    setJpeg(byteArray!!)
-                                }
-                            })
-                            bitmapComplete = false
-                            byteArrayCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation)
-                        }
                     }
                 }
             }).build()
@@ -441,7 +431,11 @@ constructor(private val context: Context) {
                 .setFacing(camerId)
                 .build()
 
-        cameraSource!!.start()
+        try {
+            cameraSource!!.start()
+        } catch (e: RuntimeException) {
+            throw e
+        }
     }
 
     @SuppressLint("MissingPermission")

@@ -57,7 +57,7 @@ constructor(application: Application, private val configuration: Configuration,
         cameraReader.stopCamera()
     }
 
-    @Suppress("DEPRECATION")
+    /*@Suppress("DEPRECATION")
     private fun getCameraList() {
         val cameraList: ArrayList<String> = ArrayList()
         for (i in 0 until Camera.getNumberOfCameras()) {
@@ -86,7 +86,7 @@ constructor(application: Application, private val configuration: Configuration,
             cameraList.add(description)
         }
         setCameras(cameraList)
-    }
+    }*/
 
     fun startCameraPreview(callback: CameraCallback, preview: CameraSourcePreview?) {
         Timber.d("startCameraPreview")
