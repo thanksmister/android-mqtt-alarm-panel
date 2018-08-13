@@ -139,15 +139,21 @@ class PlatformFragment : BaseFragment() {
             webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView, newProgress: Int) {
                     if (newProgress == 100) {
-                        prgressDialog.visibility = View.GONE
+                        if(progressDialog != null) {
+                            progressDialog.visibility = View.GONE
+                        }
                         pageLoadComplete(view.url)
                         return
                     }
                     if(displayProgress) {
-                        prgressDialog.visibility = View.VISIBLE
+                        if(progressDialog != null) {
+                            progressDialog.visibility = View.VISIBLE
+                        }
                         progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                     } else {
-                        prgressDialog.visibility = View.GONE
+                        if(progressDialog != null) {
+                            progressDialog.visibility = View.GONE
+                        }
                     }
                 }
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {

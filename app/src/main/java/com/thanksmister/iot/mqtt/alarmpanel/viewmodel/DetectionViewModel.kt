@@ -20,11 +20,9 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.hardware.Camera
-import android.util.Log
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraCallback
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraReader
+import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraCallback
+import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraReader
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.CameraSourcePreview
 import timber.log.Timber
 import java.util.*

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui.modules
+package com.thanksmister.iot.mqtt.alarmpanel.modules
 
 import android.util.SparseArray
 

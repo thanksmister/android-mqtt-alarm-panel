@@ -29,12 +29,9 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.CameraCallback
+import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraCallback
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.CameraSourcePreview
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.DetectionViewModel
-import dagger.android.support.DaggerAppCompatActivity
 
 import timber.log.Timber
 import javax.inject.Inject

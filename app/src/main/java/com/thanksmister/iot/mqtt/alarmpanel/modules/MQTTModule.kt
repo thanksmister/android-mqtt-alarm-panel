@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui.modules
+package com.thanksmister.iot.mqtt.alarmpanel.modules
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
@@ -23,8 +23,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
 
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber

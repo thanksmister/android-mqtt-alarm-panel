@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui.modules
+package com.thanksmister.iot.mqtt.alarmpanel.modules
 
 import android.util.SparseArray
 
@@ -22,9 +22,10 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Frame
 import com.jjoe64.motiondetection.motiondetection.AggregateLumaMotionDetection
 import com.jjoe64.motiondetection.motiondetection.ImageProcessing
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.Motion.Companion.MOTION_DETECTED
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.Motion.Companion.MOTION_NOT_DETECTED
-import com.thanksmister.iot.mqtt.alarmpanel.ui.modules.Motion.Companion.MOTION_TOO_DARK
+import com.thanksmister.iot.mqtt.alarmpanel.modules.Motion.Companion.MOTION_DETECTED
+import com.thanksmister.iot.mqtt.alarmpanel.modules.Motion.Companion.MOTION_NOT_DETECTED
+import com.thanksmister.iot.mqtt.alarmpanel.modules.Motion.Companion.MOTION_TOO_DARK
+import timber.log.Timber
 
 
 /**
@@ -64,13 +65,16 @@ class MotionDetector private constructor(private val minLuma: Int, private val m
                 return sparseArray
             }
 
-            val motionDetected = aggregateLumaMotionDetection!!.detect(img, w, h)
-            if (motionDetected) {
-                motion.type = MOTION_DETECTED
-                //Timber.d("MOTION_DETECTED")
-            } else {
+            try {
+                val motionDetected = aggregateLumaMotionDetection!!.detect(img, w, h)
+                if (motionDetected) {
+                    motion.type = MOTION_DETECTED
+                } else {
+                    motion.type = MOTION_NOT_DETECTED
+                }
+            } catch (e: Exception) {
+                Timber.e(e.message)
                 motion.type = MOTION_NOT_DETECTED
-                //Timber.d("MOTION_NOT_DETECTED")
             }
             sparseArray.put(0, motion)
             return sparseArray
