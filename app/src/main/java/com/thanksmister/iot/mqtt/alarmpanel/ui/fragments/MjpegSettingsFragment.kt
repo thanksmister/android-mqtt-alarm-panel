@@ -63,9 +63,11 @@ class MjpegSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         super.onViewCreated(view, savedInstanceState)
         httpMjpegPreference = findPreference(getString(R.string.key_setting_http_mjpegenabled)) as SwitchPreference
         httpMjpegPreference!!.isChecked = configuration.httpMJPEGEnabled
+
         httpMjpegStreamsPreference = findPreference(getString(R.string.key_setting_http_mjpegmaxstreams)) as EditTextPreference
         httpMjpegStreamsPreference!!.setDefaultValue(configuration.httpMJPEGMaxStreams.toString())
         httpMjpegStreamsPreference!!.summary = configuration.httpMJPEGMaxStreams.toString()
+
         httpPortPreference = findPreference(getString(R.string.key_setting_http_port)) as EditTextPreference
         httpPortPreference!!.setDefaultValue(configuration.httpPort.toString())
         httpPortPreference!!.summary = configuration.httpPort.toString()
@@ -80,7 +82,7 @@ class MjpegSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                 try {
                     val value = httpMjpegStreamsPreference!!.text
                     if(!TextUtils.isEmpty(value)) {
-                        configuration.motionResetTime = value.toInt()
+                        configuration.httpMJPEGMaxStreams = value.toInt()
                         httpMjpegStreamsPreference!!.summary = value
                     } else if (isAdded) {
                         Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
