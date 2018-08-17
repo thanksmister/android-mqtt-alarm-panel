@@ -712,7 +712,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     }
                 }
             })
-            bitmapTask.execute(cameraReader.getJpeg())
+            bitmapTask.execute(cameraReader.getJpeg().value)
         }
     }
 

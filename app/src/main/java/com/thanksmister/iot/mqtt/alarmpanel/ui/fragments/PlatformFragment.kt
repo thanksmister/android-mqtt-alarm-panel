@@ -62,6 +62,10 @@ class PlatformFragment : BaseFragment() {
         fun setPagingEnabled(value: Boolean)
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_platform, container, false)
+    }
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is OnPlatformFragmentListener) {
@@ -83,14 +87,18 @@ class PlatformFragment : BaseFragment() {
             configuration.setHasPlatformChange(false)
             loadWebPage()
         }
-        swipeContainer.viewTreeObserver.addOnScrollChangedListener {
-            swipeContainer?.isEnabled = webView.scrollY == 0
+        if(swipeContainer != null) {
+            swipeContainer.viewTreeObserver.addOnScrollChangedListener {
+                swipeContainer?.isEnabled = webView.scrollY == 0
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
+        if(swipeContainer != null) {
+            swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +117,9 @@ class PlatformFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        swipeContainer.setOnRefreshListener {loadWebPage()}
+        if(swipeContainer != null) {
+            swipeContainer.setOnRefreshListener { loadWebPage() }
+        }
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         button_alarm.setOnClickListener {
@@ -127,7 +137,7 @@ class PlatformFragment : BaseFragment() {
     }
 
     private fun complete() {
-        if(swipeContainer.isRefreshing) {
+        if(swipeContainer != null && swipeContainer.isRefreshing) {
             swipeContainer.isRefreshing = false
         }
     }
@@ -212,11 +222,11 @@ class PlatformFragment : BaseFragment() {
         Timber.d("pageLoadComplete currentUrl $url")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE, url)
-        if(activity != null) {
+        if(activity != null && isAdded) {
             val bm = LocalBroadcastManager.getInstance(activity!!)
             bm.sendBroadcast(intent)
+            complete()
         }
-        complete()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -234,10 +244,6 @@ class PlatformFragment : BaseFragment() {
             webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
         Timber.d(webSettings.userAgentString)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_platform, container, false)
     }
 
     companion object {

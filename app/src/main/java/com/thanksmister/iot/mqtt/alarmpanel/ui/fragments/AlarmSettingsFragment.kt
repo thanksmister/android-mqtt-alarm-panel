@@ -241,7 +241,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     private fun showAlarmCodeDialog() {
         // store the default alarm code
         defaultCode = configuration.alarmCode
-        if (isAdded) {
+        if (activity != null && isAdded) {
             dialogUtils.showCodeDialog(activity as BaseActivity, confirmCode, object : AlarmCodeView.ViewListener {
                 override fun onComplete(code: Int) {
                     if (code == defaultCode) {
@@ -252,7 +252,9 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                         tempCode = code
                         confirmCode = true
                         dialogUtils.clearDialogs()
-                        showAlarmCodeDialog()
+                        if (activity != null && isAdded) {
+                            showAlarmCodeDialog()
+                        }
                     } else if (code == tempCode) {
                         configuration.isFirstTime = false;
                         configuration.alarmCode = tempCode
