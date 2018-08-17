@@ -712,7 +712,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     }
                 }
             })
-            bitmapTask.execute(cameraReader.getJpeg().value)
+            if(cameraReader.getJpeg().value != null) {
+                bitmapTask.execute(cameraReader.getJpeg().value)
+            }
         }
     }
 
@@ -873,9 +875,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             if (isCancelled) {
                 return null
             }
-            val byteArray = params[0] as ByteArray
-            val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size);
-            return bitmap
+            try {
+                val byteArray = params[0] as ByteArray
+                val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size);
+                return bitmap
+            } catch (e: Exception) {
+                return null
+            }
         }
         override fun onPostExecute(result: Bitmap?) {
             super.onPostExecute(result)
