@@ -131,6 +131,10 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         delayHomePreference!!.summary = getString(R.string.pref_home_delay_summary, configuration.delayHomeTime.toString())
         delayAwayPreference!!.summary = getString(R.string.pref_away_delay_summary, configuration.delayAwayTime.toString())
 
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         // the first time we need to set the alarm code
         if(configuration.isFirstTime) {
             showAlarmCodeDialog();
@@ -232,6 +236,8 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             Timber.w("Fingerprint Error: " + it.message)
         })
 
+        Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
+        Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
         if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
             return true
         }

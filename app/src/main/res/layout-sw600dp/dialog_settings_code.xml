@@ -54,6 +54,7 @@
 
         <TextView
             android:id="@+id/settings_fingerprint_layout"
+            android:textColor="@color/body_text_1"
             android:textSize="18sp"
             tools:visibility="visible"
             android:visibility="invisible"

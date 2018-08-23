@@ -31,6 +31,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.lang.Math.round
@@ -115,8 +116,12 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
     public override fun onCleared() {
         Timber.d("onCleared")
         //prevents memory leaks by disposing pending observable objects
-        if ( !disposable.isDisposed) {
-            disposable.clear()
+        if (!disposable.isDisposed) {
+            try {
+                disposable.clear()
+            } catch (e: UndeliverableException) {
+                Timber.e(e.message)
+            }
         }
     }
 
