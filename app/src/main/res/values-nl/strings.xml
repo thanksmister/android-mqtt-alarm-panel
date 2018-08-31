@@ -366,6 +366,8 @@
     <string name="dialog_message_ssl_expired">Het certificaat is verlopen.</string>
     <string name="dialog_message_ssl_untrusted">De certificeringsinstantie wordt niet vertrouwd.</string>
     <string name="dialog_message_ssl_generic">SSL-certificaatfout.</string>
+    <string name="dialog_missing_webview_warning">Op dit apparaat is de WebView-component niet geïnstalleerd. Installeer het onderdeel van de Google Play Store.</string>
+
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

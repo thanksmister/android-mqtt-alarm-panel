@@ -56,6 +56,7 @@ class PlatformFragment : BaseFragment() {
     private var displayProgress = true
     private var zoomLevel = 1.0f
     private val mOnScrollChangedListener: ViewTreeObserver.OnScrollChangedListener? = null
+    private var hasWebView:Boolean = true;
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -63,7 +64,13 @@ class PlatformFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_platform, container, false)
+        try {
+            return inflater.inflate(R.layout.fragment_platform, container, false)
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            hasWebView = true;
+            return inflater.inflate(R.layout.fragment_platform_no_webview, container, false)
+        }
     }
 
     override fun onAttach(context: Context?) {
@@ -144,7 +151,8 @@ class PlatformFragment : BaseFragment() {
 
     private fun loadWebPage() {
         Timber.d("loadWebPage url ${configuration.webUrl}")
-        if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl) && webView != null) {
+        if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl)
+                && webView != null && hasWebView) {
             configureWebSettings(configuration.browserUserAgent)
             webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView, newProgress: Int) {
@@ -194,13 +202,15 @@ class PlatformFragment : BaseFragment() {
                         SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
                     }
                     message += getString(R.string.dialog_message_ssl_continue)
-                    dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
-                            DialogInterface.OnClickListener { _, _ ->
-                                handler?.proceed()
-                            },
-                            DialogInterface.OnClickListener { _, _ ->
-                                handler?.cancel()
-                            })
+                    if(isAdded && activity != null) {
+                        dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
+                                DialogInterface.OnClickListener { _, _ ->
+                                    handler?.proceed()
+                                },
+                                DialogInterface.OnClickListener { _, _ ->
+                                    handler?.cancel()
+                                })
+                    }
                 }
             }
             if (zoomLevel.toDouble() != 1.0) {
@@ -237,7 +247,7 @@ class PlatformFragment : BaseFragment() {
         webSettings.databaseEnabled = true
         webSettings.setAppCacheEnabled(true)
         webSettings.javaScriptCanOpenWindowsAutomatically = true
-        if(!TextUtils.isEmpty(userAgent)) {
+        if (!TextUtils.isEmpty(userAgent)) {
             webSettings.userAgentString = userAgent
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

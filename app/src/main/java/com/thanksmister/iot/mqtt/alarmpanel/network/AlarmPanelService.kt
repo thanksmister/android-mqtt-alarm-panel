@@ -272,7 +272,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     @SuppressLint("WakelockTimeout")
     private fun configurePowerOptions() {
         Timber.d("configurePowerOptions")
-        if (!partialWakeLock!!.isHeld) {
+        if (partialWakeLock != null && !partialWakeLock!!.isHeld) {
             partialWakeLock!!.acquire(3000)
         }
         if (!wifiLock!!.isHeld) {
@@ -605,10 +605,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     @SuppressLint("WakelockTimeout")
     private fun switchScreenOn(awakeTime: Long) {
         Timber.d("switchScreenOn")
-        if (!partialWakeLock!!.isHeld) {
+        if (partialWakeLock != null && !partialWakeLock!!.isHeld) {
             Timber.d("partialWakeLock")
             partialWakeLock!!.acquire(awakeTime)
-        } else {
+        } else if (partialWakeLock != null && partialWakeLock!!.isHeld) {
             Timber.d("new partialWakeLock")
             partialWakeLock!!.release()
             partialWakeLock!!.acquire(awakeTime)

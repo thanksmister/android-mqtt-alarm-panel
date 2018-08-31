@@ -367,6 +367,8 @@
     <string name="dialog_message_ssl_expired">O certificado expirou.</string>
     <string name="dialog_message_ssl_untrusted">A autoridade de certificação não é confiável.</string>
     <string name="dialog_message_ssl_generic">Erro de certificado SSL.</string>
+    <string name="dialog_missing_webview_warning">Este dispositivo não possui o componente WebView instalado. Instale o componente na loja do Google Play.</string>
+
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

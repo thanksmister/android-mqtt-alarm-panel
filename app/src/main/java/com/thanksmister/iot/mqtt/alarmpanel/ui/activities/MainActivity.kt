@@ -145,7 +145,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         super.onStart()
         Timber.d("onStart")
         alarmPanelService = Intent(this, AlarmPanelService::class.java)
-        startService(alarmPanelService)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(alarmPanelService)
+        } else {
+            startService(alarmPanelService)
+        }
     }
 
     override fun onStop() {
