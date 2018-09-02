@@ -66,6 +66,7 @@
 
         <TextView
             android:id="@+id/disable_fingerprint_layout"
+            android:textColor="@color/body_text_1"
             tools:visibility="visible"
             android:visibility="invisible"
             android:layout_width="wrap_content"
@@ -75,9 +76,6 @@
             android:drawableLeft="@drawable/ic_fingerprint"
             android:drawableStart="@drawable/ic_fingerprint"
             android:paddingBottom="8dp"
-            android:paddingEnd="4dp"
-            android:paddingRight="4dp"
-            android:paddingTop="8dp"
             android:text="@string/text_touch_sensor"/>
 
         <LinearLayout

@@ -26,8 +26,8 @@
         android:orientation="horizontal">
 
     <include layout="@layout/view_keypad"
-             android:layout_width="300dp"
-             android:layout_height="360dp"/>
+             android:layout_width="320dp"
+             android:layout_height="400dp"/>
 
     <android.support.v4.widget.Space
             android:layout_width="8dp"
@@ -36,7 +36,7 @@
     <RelativeLayout
             android:layout_width="320dp"
             android:paddingTop="16dp"
-            android:layout_height="360dp"
+            android:layout_height="400dp"
             android:orientation="vertical">
 
         <TextView
