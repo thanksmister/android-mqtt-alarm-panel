@@ -80,7 +80,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         view_pager.addOnPageChangeListener(this)
         view_pager.setPagingEnabled(false)
 
-        if(BuildConfig.DEBUG) {
+       /* if(BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
             darkSkyOptions.darkSkyKey = BuildConfig.DARK_SKY_KEY
             darkSkyOptions.latitude = BuildConfig.LATITUDE
@@ -104,7 +104,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.setWebModule(true)
             configuration.setShowWeatherModule(true)
             configuration.setTssModule(true)
-        }
+        }*/
 
         if (configuration.isFirstTime) {
             alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)

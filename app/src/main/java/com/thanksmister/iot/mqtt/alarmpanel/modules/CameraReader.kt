@@ -135,52 +135,23 @@ constructor(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun startCamera(callback: CameraCallback, configuration: Configuration) {
         Timber.d("startCamera")
+        Timber.d("FPS: " + configuration.cameraFPS)
         this.cameraCallback = callback
         if (configuration.cameraEnabled) {
-            buildCameraDetector(configuration)
-            if(multiDetector != null) {
-                try {
-                    cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
-                    cameraSource?.start()
-                } catch (e : IOException) {
-                    Timber.e(e.message)
-                    try {
-                        if(configuration.cameraId == CAMERA_FACING_FRONT) {
-                            cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
-                            cameraSource?.start()
-                        } else {
-                            cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS)
-                            cameraSource?.start()
-                        }
-                    } catch (e : IOException) {
-                        Timber.e(e.message)
-                        cameraSource!!.stop()
-                        cameraCallback?.onCameraError()
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    fun startCameraDetector(callback: CameraCallback, configuration: Configuration) {
-        Timber.d("startCameraDetector")
-        this.cameraCallback = callback
-        if (configuration.cameraEnabled && configuration.captureCameraImage()) {
             buildDetectors(configuration)
             if(multiDetector != null) {
                 try {
                     cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
-                    cameraSource?.start()
+                    cameraSource!!.start()
                 } catch (e : Exception) {
                     Timber.e(e.message)
                     try {
                         if(configuration.cameraId == CAMERA_FACING_FRONT) {
                             cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
-                            cameraSource?.start()
+                            cameraSource!!.start()
                         } else {
                             cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS)
-                            cameraSource?.start()
+                            cameraSource!!.start()
                         }
                     } catch (e : Exception) {
                         Timber.e(e.message)
@@ -194,12 +165,13 @@ constructor(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     @Throws(IOException::class)
-    fun startCameraPreviewSolo(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
-        Timber.d("startCameraPreviewSolo")
+    fun startCameraPreview(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
+        Timber.d("startCameraPreview")
+        Timber.d("FPS: " + configuration.cameraFPS)
         if (configuration.cameraEnabled && preview != null) {
             this.cameraCallback = callback
             this.cameraPreview = preview
-            buildCameraDetector(configuration)
+            buildDetectors(configuration)
             if(multiDetector != null) {
                 cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
                 cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
@@ -233,12 +205,13 @@ constructor(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     @Throws(IOException::class)
-    fun startCameraPreview(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
-        Timber.d("startCameraPreview")
+    fun startCameraPreviewSolo(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
+        Timber.d("startCameraPreviewSolo")
+        Timber.d("FPS: " + configuration.cameraFPS)
         if (configuration.cameraEnabled && preview != null) {
             this.cameraCallback = callback
             this.cameraPreview = preview
-            buildDetectors(configuration)
+            buildCameraDetector(configuration)
             if(multiDetector != null) {
                 cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
                 cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
@@ -316,13 +289,13 @@ constructor(private val context: Context) {
         val multiDetectorBuilder = MultiDetector.Builder()
         var detectorAdded = false
 
-        if(configuration.cameraEnabled && configuration.cameraMotionEnabled) {
+        if(configuration.cameraEnabled && (configuration.httpMJPEGEnabled || configuration.captureCameraImage())) {
             streamDetector = StreamingDetector.Builder().build()
             streamDetectorProcessor = MultiProcessor.Builder<Stream>(MultiProcessor.Factory<Stream> {
                 object : Tracker<Stream>() {
                     override fun onUpdate(p0: Detector.Detections<Stream>?, stream: Stream?) {
                         super.onUpdate(p0, stream)
-                        if (stream?.byteArray != null && bitmapComplete && configuration.httpMJPEGEnabled) {
+                        if (stream?.byteArray != null && bitmapComplete) {
                             byteArrayCreateTask = ByteArrayTask(context, renderScript, object : OnCompleteListener {
                                 override fun onComplete(byteArray: ByteArray?) {
                                     bitmapComplete = true

@@ -94,7 +94,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     fun getStateTopics(): Array<String> {
         val topics = ArrayList<String>()
         topics.add(getCommandTopic())
-        topics.add(sharedPreferences.getPrefString(PREF_STATE_TOPIC, ALARM_STATE_TOPIC))
+        topics.add(getAlarmStateTopic())
         return topics.toArray(arrayOf<String>())
     }
 

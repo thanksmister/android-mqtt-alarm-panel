@@ -258,15 +258,19 @@
                 android:layout_gravity="center"
                 android:layout_weight="1">
 
-            <TextView
-                    style="?android:textAppearanceLarge"
-                    android:textSize="16sp"
-                    android:background="@drawable/background_left_bottom_border"
-                    android:textColor="@color/dark_gray_color"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@android:string/cancel"/>
+            <FrameLayout
+                android:background="@drawable/background_left_bottom_border"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/dark_gray"
+                    android:src="@drawable/ic_arrow_back"/>
+
+            </FrameLayout>
 
         </FrameLayout>
         

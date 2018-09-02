@@ -409,9 +409,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
      */
     private fun configureCamera() {
         Timber.d("configureCamera ${configuration.cameraEnabled}")
-        if (configuration.hasCameraDetections()) {
-            cameraReader.startCameraDetector(cameraDetectorCallback, configuration)
-        } else if (configuration.captureCameraImage()) {
+        if (configuration.hasCameraDetections() || configuration.captureCameraImage()) {
             cameraReader.startCamera(cameraDetectorCallback, configuration)
         }
     }

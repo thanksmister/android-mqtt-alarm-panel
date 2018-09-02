@@ -135,6 +135,7 @@ class PlatformFragment : BaseFragment() {
             }
         }
         button_refresh.setOnClickListener {
+            clearCache()
             loadWebPage()
         }
         button_hide.setOnClickListener { v ->
@@ -216,7 +217,6 @@ class PlatformFragment : BaseFragment() {
             if (zoomLevel.toDouble() != 1.0) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
-            clearCache()
             webView.loadUrl(configuration.webUrl)
         }
     }
