@@ -367,7 +367,6 @@ constructor(private val context: Context) {
             barcodeDetector = BarcodeDetector.Builder(context)
                     .setBarcodeFormats(Barcode.QR_CODE)
                     .build()
-
             barCodeDetectorProcessor = MultiProcessor.Builder<Barcode>(MultiProcessor.Factory<Barcode> {
                 object : Tracker<Barcode>() {
                     override fun onUpdate(p0: Detector.Detections<Barcode>?, p1: Barcode?) {
@@ -387,6 +386,10 @@ constructor(private val context: Context) {
 
         if(detectorAdded) {
             multiDetector = multiDetectorBuilder.build()
+            if(!multiDetector!!.isOperational) {
+                cameraCallback!!.onDetectorError()
+                return
+            }
         }
     }
 

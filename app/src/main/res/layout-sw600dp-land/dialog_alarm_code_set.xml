@@ -22,19 +22,21 @@
         android:id="@+id/alarmCodeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
         android:padding="16dp"
         android:orientation="horizontal">
 
     <include layout="@layout/view_keypad"
-             android:layout_width="320dp"
+             android:layout_width="240dp"
              android:layout_height="400dp"/>
     
     <android.support.v4.widget.Space
-            android:layout_width="8dp"
+            android:layout_width="16dp"
             android:layout_height="match_parent"/>
     
     <RelativeLayout
-            android:layout_width="320dp"
+            android:layout_width="240dp"
             android:paddingTop="16dp"
             android:layout_height="400dp"
             android:orientation="vertical">

@@ -369,6 +369,7 @@
     <string name="dialog_message_ssl_untrusted">La autoridad de certificación no es de confianza.</string>
     <string name="dialog_message_ssl_generic">Error de certificado SSL.</string>
     <string name="dialog_missing_webview_warning">Este dispositivo no tiene instalado el componente WebView. Instale el componente en Google Play Store.</string>
+    <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
 
 
     <string-array name="inactivity_times">

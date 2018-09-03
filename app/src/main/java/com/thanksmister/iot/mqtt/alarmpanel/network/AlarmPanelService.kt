@@ -31,6 +31,7 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
+import android.widget.Toast
 import com.koushikdutta.async.AsyncServer
 import com.koushikdutta.async.ByteBufferList
 import com.koushikdutta.async.http.server.AsyncHttpServer
@@ -770,6 +771,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private val cameraDetectorCallback = object : CameraCallback {
+        override fun onDetectorError() {
+            sendToastMessage(getString(R.string.error_missing_vision_lib))
+        }
         override fun onCameraError() {
             sendToastMessage(getString(R.string.toast_camera_source_error))
         }

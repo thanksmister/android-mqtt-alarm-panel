@@ -15,74 +15,48 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/alarmDisableView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/alarmCodeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:padding="16dp"
         android:orientation="horizontal">
 
     <include layout="@layout/view_keypad"
-             android:layout_width="240dp"
-             android:layout_height="400dp"
-            android:layout_weight="1"/>
-
+             android:layout_width="310dp"
+             android:layout_height="400dp"/>
+    
     <android.support.v4.widget.Space
             android:layout_width="16dp"
             android:layout_height="match_parent"/>
-
+    
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="400dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:gravity="center_horizontal|top"
-            android:layout_above="@+id/disable_fingerprint_layout"
-            android:padding="8dp">
-
-            <com.todddavies.components.progressbar.ProgressWheel
-                android:id="@+id/countDownProgressWheel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                ProgressWheel:barColor="@color/green"
-                ProgressWheel:barWidth="12dp"
-                ProgressWheel:contourColor="@color/gray_color"
-                ProgressWheel:rimColor="@color/gray_color"
-                ProgressWheel:rimWidth="12dp"
-                ProgressWheel:textColor="@color/text"
-                ProgressWheel:textSize="32sp" />
-
-        </LinearLayout>
+            android:layout_width="310dp"
+            android:paddingTop="16dp"
+            android:layout_height="400dp"
+            android:orientation="vertical">
 
         <TextView
-            android:id="@+id/disable_fingerprint_layout"
-            android:textColor="@color/body_text_1"
-            tools:visibility="visible"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/imageLayout"
-            android:layout_centerHorizontal="true"
-            android:drawableLeft="@drawable/ic_fingerprint"
-            android:drawableStart="@drawable/ic_fingerprint"
-            android:paddingBottom="8dp"
-            android:text="@string/text_touch_sensor"/>
+                android:id="@+id/codeTitle"
+                style="@style/WizardPageTitle"
+                android:textSize="18sp"
+                android:textAllCaps="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Please enter the new alarm code."/>
+
         <LinearLayout
-                android:id="@+id/imageLayout"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:padding="6dp"
+                android:padding="12dp"
                 android:gravity="center">
 
             <ImageView
@@ -132,5 +106,5 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-</com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView>
+    
+</com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView>

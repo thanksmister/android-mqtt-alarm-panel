@@ -414,5 +414,6 @@
         <item>Camera</item>
     </string-array>
     <string name="text_front">Frente</string>
+    <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
 
 </resources>

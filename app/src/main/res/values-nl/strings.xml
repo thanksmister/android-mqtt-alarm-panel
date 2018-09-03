@@ -413,5 +413,6 @@
         <item>Camera</item>
     </string-array>
     <string name="dialog_title_ssl_error">SSL-certificaatfout</string>
+    <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
 
 </resources>
