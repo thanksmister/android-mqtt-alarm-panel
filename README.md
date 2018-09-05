@@ -255,7 +255,7 @@ Key | Value | Example Payload | Description
 audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
 wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
 speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
-alert | data | ```{"notification": "Hello!"}``` | Displays an alert dialog within the application
+alert | data | ```{"alert": "Hello!"}``` | Displays an alert dialog within the application
 notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the devie
 
 * The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
