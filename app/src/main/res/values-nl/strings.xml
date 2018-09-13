@@ -118,7 +118,7 @@
 
     <string name="preference_title_alert">Alert notificaties</string>
     <string name="preference_title_system_notifications">Systeem notificaties</string>
-    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
+    <string name="preference_summary_alert">Gebruikt een alert melding om de inhoud van een notificatie te tonen: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"alert\":\"Hallo!\"}\"}"</string>
 
     <string name="preference_tts_voice">TTS stem</string>
     <string name="preference_tts">TTS notificaties</string>
@@ -126,7 +126,7 @@
 
     <string name="preference_tts_topic">TTS onderwerp</string>
     <string name="preference_topic_title">Zet onderwerp waarde</string>
-    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden: \n\n"{'topic':'home/notification', 'alarmState':'Hello!'}"</string>
+    <string name="preference_tts_topic_summary">Voorbeeld formaat van het bericht onderwerp van notifcatie en alarm status die uitgesproken moeten worden: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hallo!\"}\"}"</string>
 
 
     <string name="preference_camera">Camera</string>
@@ -301,7 +301,7 @@
     <string name="title_setting_sensors_magneticField">Magnetisch veld</string>
     <string name="title_setting_sensors_pressure">Druk</string>
     <string name="title_setting_sensors_humidity">Vochtigheid</string>
-    <string name="summary_notification_topic">Voorbeeldindeling voor het berichtonderwerp en de payload: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="summary_notification_topic">Voorbeeldindeling voor het berichtonderwerp en de payload: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"notification\":\"Hallo!\"}\"}"</string>
     <string name="title_sensor_settings">Sensorinstellingen</string>
     <string name="title_enable_sensor_data">Schakel Sensor publiceren in</string>
     <string name="summary_enable_sensor_data">Publiceert beschikbare apparaatsensorgegevens via MQTT</string>

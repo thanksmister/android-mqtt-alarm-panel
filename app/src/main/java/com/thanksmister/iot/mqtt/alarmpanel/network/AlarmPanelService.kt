@@ -232,8 +232,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startForeground() {
         Timber.d("startForeground")
-        val notificationUtils = NotificationUtils(applicationContext)
-        val notification = notificationUtils.createOngoingNotification(getString(R.string.app_name),
+        val notification = notifications.createOngoingNotification(getString(R.string.app_name),
                 getString(R.string.service_notification_message))
 
         startForeground(ONGOING_NOTIFICATION_ID, notification)

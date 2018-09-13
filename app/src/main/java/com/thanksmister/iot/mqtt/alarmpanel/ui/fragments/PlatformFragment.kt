@@ -176,7 +176,7 @@ class PlatformFragment : BaseFragment() {
                     }
                 }
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                    if(view.context != null) {
+                    if(isAdded && activity != null && view.context != null) {
                         dialogUtils.showAlertDialog(view.context, message)
                     }
                     return true

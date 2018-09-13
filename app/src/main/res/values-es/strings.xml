@@ -118,7 +118,7 @@
 
     <string name="preference_title_alert">Notificaciones de alertas</string>
     <string name="preference_title_system_notifications">Notificaciones del sistema</string>
-    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
+    <string name="preference_summary_alert">Usa un cuadro de diálogo para mostrar las notificaciones del sistema: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"alert\":\"Hola!}\"}"</string>
 
     <string name="preference_tts_voice"> Voz TTS</string>
     <string name="preference_tts">Notificaciones TTS</string>
@@ -126,7 +126,7 @@
 
     <string name="preference_tts_topic">TTS Topic</string>
     <string name="preference_topic_title">Esteblece el "Topic Value"</string>
-    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido: \n\n"{\"topic\":\"home/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="preference_tts_topic_summary">Formato de ejemplo para el "message topic" y "alarmState" que será reproducido: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hola!}\"}"</string>
 
 
     <string name="preference_camera">Cámara</string>
@@ -302,7 +302,7 @@
     <string name="title_setting_sensors_magneticField">Campo magnético</string>
     <string name="title_setting_sensors_pressure">Presión</string>
     <string name="title_setting_sensors_humidity">Humedad</string>
-    <string name="summary_notification_topic">Formato de ejemplo para el tema del mensaje y la carga útil: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="summary_notification_topic">Formato de ejemplo para el tema del mensaje y la carga útil: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"notification\":\"Hola!}\"}"</string>
     <string name="title_sensor_settings">Configuración del sensor</string>
     <string name="title_enable_sensor_data">Habilitar publicación de sensores</string>
     <string name="summary_enable_sensor_data">Publica los datos disponibles del sensor del dispositivo sobre MQTT</string>

@@ -119,7 +119,7 @@
 
     <string name="preference_title_alert">Alert Notifications</string>
     <string name="preference_title_system_notifications">System Notifications</string>
-    <string name="preference_summary_alert">Example format for the message topic and payload to display alert dialog: \n\n"{\"topic\":\"alarmpanel/alert\", \"payload\":\"Hello!\"}</string>
+    <string name="preference_summary_alert">Example format for the message topic and payload to display alert dialog: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"alert\":\"Hello!\"}\"}"</string>
 
     <string name="preference_tts_voice">TTS Voice</string>
     <string name="preference_tts">TTS Notifications</string>
@@ -129,7 +129,7 @@
     <string name="preference_topic_title">Set Topic Value</string>
 
 
-    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken: \n\n"{\"topic\":\"alarmpanel/speak\", \"payload\":\"Hello!\"}"</string>
+    <string name="preference_tts_topic_summary">Example format for the message topic and payload to be spoken: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hello!\"}\"}"</string>
 
     <string name="preference_camera">Camera</string>
     <string name="preference_camera_title">Camera Capture</string>
@@ -305,7 +305,7 @@
     <string name="title_setting_sensors_magneticField">Magnetic Field</string>
     <string name="title_setting_sensors_pressure">Pressure</string>
     <string name="title_setting_sensors_humidity">Humidity</string>
-    <string name="summary_notification_topic">Example format for the message topic and payload: \n\n"{\"topic\":\"alarmpanel/notification\", \"payload\":\"Hello!\"}"</string>
+    <string name="summary_notification_topic">Example format for the message topic and payload: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hello!\"}\"}"</string>
     <string name="title_sensor_settings">Sensor Settings</string>
     <string name="title_enable_sensor_data">Enable Sensor Publishing</string>
     <string name="summary_enable_sensor_data">Publishes available device sensor data over MQTT</string>
