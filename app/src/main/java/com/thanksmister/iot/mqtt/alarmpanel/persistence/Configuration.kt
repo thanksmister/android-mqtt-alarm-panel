@@ -123,6 +123,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BAR, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BAR, value)
 
+    var platformRefresh: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_REFRESH, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_REFRESH, value)
+
     var systemSounds: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_SOUNDS, true)
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_SOUNDS, value)
@@ -470,5 +474,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
         const val PREF_SENSOR_ENABLED = "pref_device_sensors_enabled"
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
+        const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
     }
 }

@@ -58,6 +58,11 @@
             android:summary="@string/pref_description_show_platform_bar"
             android:key="pref_platform_bar"/>
 
+        <CheckBoxPreference
+            android:title="@string/pref_platform_title_refresh"
+            android:summary="@string/pref_platform_refresh_summary"
+            android:key="pref_platform_pull_refresh"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

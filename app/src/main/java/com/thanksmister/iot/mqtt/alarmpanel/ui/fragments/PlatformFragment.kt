@@ -55,8 +55,8 @@ class PlatformFragment : BaseFragment() {
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
     private var zoomLevel = 1.0f
-    private val mOnScrollChangedListener: ViewTreeObserver.OnScrollChangedListener? = null
     private var hasWebView:Boolean = true;
+    private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -94,15 +94,19 @@ class PlatformFragment : BaseFragment() {
             configuration.setHasPlatformChange(false)
             loadWebPage()
         }
-        if(swipeContainer != null) {
-            swipeContainer.viewTreeObserver.addOnScrollChangedListener {
-                swipeContainer?.isEnabled = webView.scrollY == 0
-            }
+        Timber.d("configuration.platformRefresh: ${configuration.platformRefresh}")
+        if(swipeContainer != null && configuration.platformRefresh) {
+            swipeContainer.viewTreeObserver.addOnScrollChangedListener(mOnScrollChangedListener)
+            swipeContainer.setOnRefreshListener { loadWebPage() }
+        } else if (swipeContainer != null) {
+            swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
+            swipeContainer?.isEnabled = false
         }
     }
 
     override fun onPause() {
         super.onPause()
+        Timber.d("onPause")
         if(swipeContainer != null) {
             swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
         }
@@ -124,8 +128,10 @@ class PlatformFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(swipeContainer != null) {
+        if(swipeContainer != null && configuration.platformRefresh) {
             swipeContainer.setOnRefreshListener { loadWebPage() }
+        } else if (swipeContainer != null) {
+            swipeContainer.isEnabled = false
         }
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)

@@ -105,12 +105,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private var httpServer: AsyncHttpServer? = null
     private val mBinder = WallPanelServiceBinder()
     private val motionClearHandler = Handler()
+    private val qrCodeClearHandler = Handler()
     private val faceClearHandler = Handler()
     private var textToSpeechModule: TextToSpeechModule? = null
     private var mqttModule: MQTTModule? = null
     private var connectionLiveData: ConnectionLiveData? = null
     private var hasNetwork = AtomicBoolean(true)
     private var motionDetected: Boolean = false
+    private var qrCodeRead: Boolean = false
     private var faceDetected: Boolean = false
     private var currentUrl: String? = null
     private val reconnectHandler = Handler()
@@ -665,15 +667,26 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         publishState(COMMAND_SENSOR_FACE, data)
     }
 
-    private fun publishQrCode(data: String) {
-        Timber.d("publishQrCode")
-        val jdata = JSONObject()
-        try {
-            jdata.put(VALUE, data)
-        } catch (ex: JSONException) {
-            ex.printStackTrace()
+    private fun clearQrCodeRead() {
+        if(qrCodeRead) {
+            qrCodeRead = false
         }
-        publishState(COMMAND_SENSOR_QR_CODE, jdata)
+    }
+
+    private fun publishQrCode(data: String) {
+        if (!qrCodeRead) {
+            Timber.d("publishQrCode")
+            val jdata = JSONObject()
+            try {
+                jdata.put(VALUE, data)
+            } catch (ex: JSONException) {
+                ex.printStackTrace()
+            }
+            qrCodeRead = true
+            sendToastMessage(getString(R.string.toast_qr_code_read))
+            publishState(COMMAND_SENSOR_QR_CODE, jdata)
+            qrCodeClearHandler.postDelayed({ clearQrCodeRead() }, 5000)
+        }
     }
 
     private fun insertMessage(messageId: String,topic: String, payload: String) {

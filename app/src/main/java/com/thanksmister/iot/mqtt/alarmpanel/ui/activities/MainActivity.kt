@@ -366,10 +366,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         override fun onReceive(context: Context, intent: Intent) {
             if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
-                dialogUtils.showAlertDialog(this@MainActivity, message)
+                dialogUtils.showAlertDialog(applicationContext, message)
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
-                val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
-                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+                val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
             } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action) {
                 resetInactivityTimer()
             }

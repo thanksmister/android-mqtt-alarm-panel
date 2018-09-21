@@ -88,7 +88,6 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
         return true
     }
 
-
     override fun onResume() {
         super.onResume()
         inactivityHandler.postDelayed(inactivityCallback, 300000)

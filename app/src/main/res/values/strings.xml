@@ -98,11 +98,11 @@
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
     <string name="preference_title_web_settings">Browser</string>
-    <string name="preference_summary_web_settings">Allows you to load external web page to access your home automation platform interface.</string>
-    <string name="preference_title_web">Home Automation Page</string>
-    <string name="preference_summary_web">Displays your home automation web page by swiping main screen.</string>
-    <string name="preference_title_web_url">Platform Address</string>
-    <string name="preference_summary_web_url">Enter the IP address of your home automation web page with prefix and port if needed (example: http://ipaddress:port).</string>
+    <string name="preference_summary_web_settings">Allows you to load external home automation dashboard.</string>
+    <string name="preference_title_web">Home Automation Dashboard</string>
+    <string name="preference_summary_web">Displays your home automation dashboard by swiping main screen.</string>
+    <string name="preference_title_web_url">Dashboard Address</string>
+    <string name="preference_summary_web_url">Enter the IP address of your home automation dashboard with prefix and port if needed (example: http://ipaddress:port).</string>
     <string name="preference_web_description">This is an experimental feature. The web page is rendered with Android\'s version of the Chrome Browser and may render differently depending on your Android SDK and WebView versions.</string>
 
     <string name="preference_title_notification">Notifications</string>
@@ -352,7 +352,7 @@
     <string name="pref_face_detection_summary">Detects faces using the device\'s camera.</string>
     <string name="pref_face_wake_summary">Turns on the screen when face detected.</string>
     <string name="pref_button_camera_test">Test the camera settings.</string>
-    <string name="toast_qr_code_read">QR Code Read....</string>
+    <string name="toast_qr_code_read">QR Code Read...</string>
     <string name="toast_too_dark_motion">Too dark for motion detection</string>
     <string name="toast_motion_detected">Motion Detected!</string>
     <string name="toast_face_detected">Face Detected!</string>
@@ -373,6 +373,11 @@
     <string name="dialog_message_ssl_generic">SSL certificate error.</string>
     <string name="dialog_missing_webview_warning">This device does not have the WebView component installed, please install the component from the Google Play store.</string>
     <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
+    <string name="pref_platform_title_refresh">Browser Refresh</string>
+    <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
+    <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
+    <string name="pref_title_battery">Battery</string>
+    <string name="pref_title_sensor_list">Sensor List</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>
