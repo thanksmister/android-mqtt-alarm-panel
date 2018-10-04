@@ -37,6 +37,13 @@
         android:title="@string/pref_camera_fps_title"
         android:dependency="@string/key_setting_camera_enabled"/>
 
+    <ListPreference
+        android:key="pref_camera_rotate"
+        android:title="@string/preference_camera_flip_title"
+        android:summary="@string/preference_camera_flip_summary"
+        android:entries="@array/flip_directions"
+        android:entryValues="@array/flip_values"/>
+
     <Preference
         android:key="button_key_camera_test"
         android:title="@string/pref_camera_test_button_title"

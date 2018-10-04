@@ -153,10 +153,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
     override fun onStop() {
         super.onStop()
-        Timber.d("onStop")
-        if(alarmPanelService != null) {
-            //stopService(alarmPanelService)
-        }
     }
 
     private fun observeViewModel() {

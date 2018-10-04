@@ -160,6 +160,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
                 context.getString(R.string.default_setting_camera_motionminluma).toInt())
         set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_motionminluma), value)
 
+    var cameraRotate: Float
+        get() = this.sharedPreferences.getPrefString(PREF_CAMERA_ROTATE, "0f").toFloat()
+        set(value) = this.sharedPreferences.setPrefString(PREF_CAMERA_ROTATE, value.toString())
+
     var mqttSensorFrequency: Int
         get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
                 context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())

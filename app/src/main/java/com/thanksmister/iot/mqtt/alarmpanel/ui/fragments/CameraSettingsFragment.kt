@@ -51,6 +51,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var cameraTestPreference: Preference? = null
     private var cameraPreference: SwitchPreference? = null
     private var fpsPreference: EditTextPreference? = null
+    private var rotatePreference: ListPreference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -82,6 +83,18 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
         fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toInt().toString())
 
+        rotatePreference = findPreference(Configuration.PREF_CAMERA_ROTATE) as ListPreference
+        rotatePreference!!.setDefaultValue(configuration.cameraRotate)
+        rotatePreference!!.value = configuration.cameraRotate.toString()
+        if(configuration.cameraRotate == 0f) {
+            rotatePreference!!.setValueIndex(0)
+        } else if (configuration.cameraRotate == -360f) {
+            rotatePreference!!.setValueIndex(1)
+        } else if (configuration.cameraRotate == 180f) {
+            rotatePreference!!.setValueIndex(2)
+        } else if (configuration.cameraRotate == -270f) {
+            rotatePreference!!.setValueIndex(3)
+        }
         cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference
         cameraListPreference!!.setOnPreferenceChangeListener { preference, newValue ->
             if (preference is ListPreference) {
@@ -206,6 +219,12 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                         fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
                     }
                 }
+            }
+            Configuration.PREF_CAMERA_ROTATE -> {
+                val valueFloat = rotatePreference!!.value
+                val valueName = rotatePreference!!.entry.toString()
+                rotatePreference!!.summary = getString(R.string.preference_camera_flip_summary, valueName)
+                configuration.cameraRotate = valueFloat.toFloat()
             }
         }
     }

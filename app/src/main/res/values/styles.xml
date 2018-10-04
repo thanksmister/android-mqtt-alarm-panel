@@ -537,7 +537,7 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="WizardPageTitle">
+    <style name="WizardPageTitle" parent="AppTextAppearance">
         <item name="android:id">@android:id/title</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

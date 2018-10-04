@@ -286,6 +286,9 @@ constructor(private val context: Context) {
             return
         }
         cameraOrientation = info.orientation
+        if(configuration.cameraRotate != 0f) {
+            cameraOrientation = configuration.cameraRotate.toInt()
+        }
         val multiDetectorBuilder = MultiDetector.Builder()
         var detectorAdded = false
 

@@ -44,11 +44,12 @@
         <TextView
                 android:id="@+id/codeTitle"
                 style="@style/WizardPageTitle"
-                android:textSize="18sp"
-                android:textAllCaps="true"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:textAllCaps="true"
+                android:textSize="18sp"
                 tools:text="Please enter the new alarm code."/>
 
         <LinearLayout
