@@ -120,14 +120,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         lifecycle.addObserver(dialogUtils)
         observeViewModel()
 
-        // Filter messages from service
-        val filter = IntentFilter()
-        filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
-        filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
-        filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
-        localBroadCastManager = LocalBroadcastManager.getInstance(this)
-        localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
-
         if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
@@ -149,10 +141,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         } else {
             startService(alarmPanelService)
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     private fun observeViewModel() {
@@ -205,6 +193,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         super.onResume()
         resetInactivityTimer()
         setViewPagerState()
+        // Filter messages from service
+        val filter = IntentFilter()
+        filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
+        localBroadCastManager = LocalBroadcastManager.getInstance(this)
+        localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(localBroadCastManager != null) {
+            localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
+        }
     }
 
     override fun onDestroy() {
@@ -214,9 +216,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             alertDialog?.dismiss()
             alertDialog = null
         }
-        if(localBroadCastManager != null) {
-            localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
-        }
+
         window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
     }
 
@@ -362,7 +362,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         override fun onReceive(context: Context, intent: Intent) {
             if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
-                dialogUtils.showAlertDialog(applicationContext, message)
+                try {
+                    AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
+                            .setMessage(message)
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                            }
+                            .show()
+                } catch (e: Exception) {
+
+                }
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()

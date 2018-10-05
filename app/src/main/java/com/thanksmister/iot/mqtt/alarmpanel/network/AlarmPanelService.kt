@@ -31,7 +31,6 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
-import android.widget.Toast
 import com.koushikdutta.async.AsyncServer
 import com.koushikdutta.async.ByteBufferList
 import com.koushikdutta.async.http.server.AsyncHttpServer
@@ -125,8 +124,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     override fun onCreate() {
         super.onCreate()
-
-        Timber.d("onCreate")
 
         AndroidInjection.inject(this)
 
@@ -322,7 +319,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     override fun onMQTTDisconnect() {
-        Timber.w("onMQTTDisconnect")
+        Timber.d("onMQTTDisconnect")
         if(hasNetwork()) {
             sendAlertMessage(getString(R.string.error_mqtt_connection))
             reconnectHandler.postDelayed(restartMqttRunnable, 3000)
@@ -330,7 +327,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     override fun onMQTTException(message: String) {
-        Timber.w("onMQTTException: $message")
+        Timber.d("onMQTTException: $message")
         if(hasNetwork()) {
             sendAlertMessage(message)
             reconnectHandler.postDelayed(restartMqttRunnable, 3000)
@@ -479,28 +476,32 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startMJPEG() {
         Timber.d("startMJPEG")
-        cameraReader.getJpeg().observe(this, Observer { jpeg ->
-            if (mJpegSockets.size > 0 && jpeg != null) {
-                var i = 0
-                while (i < mJpegSockets.size) {
-                    val s = mJpegSockets[i]
-                    val bb = ByteBufferList()
-                    if (s.isOpen) {
-                        bb.recycle()
-                        bb.add(ByteBuffer.wrap("--jpgboundary\r\nContent-Type: image/jpeg\r\n".toByteArray()))
-                        bb.add(ByteBuffer.wrap(("Content-Length: " + jpeg.size + "\r\n\r\n").toByteArray()))
-                        bb.add(ByteBuffer.wrap(jpeg))
-                        bb.add(ByteBuffer.wrap("\r\n".toByteArray()))
-                        s.write(bb)
-                    } else {
-                        mJpegSockets.removeAt(i)
-                        i--
-                        //Timber.i("MJPEG Session Count is " + mJpegSockets.size)
+        try {
+            cameraReader.getJpeg().observe(this, Observer { jpeg ->
+                if (mJpegSockets.size > 0 && jpeg != null) {
+                    var i = 0
+                    while (i < mJpegSockets.size) {
+                        val s = mJpegSockets[i]
+                        val bb = ByteBufferList()
+                        if (s.isOpen) {
+                            bb.recycle()
+                            bb.add(ByteBuffer.wrap("--jpgboundary\r\nContent-Type: image/jpeg\r\n".toByteArray()))
+                            bb.add(ByteBuffer.wrap(("Content-Length: " + jpeg.size + "\r\n\r\n").toByteArray()))
+                            bb.add(ByteBuffer.wrap(jpeg))
+                            bb.add(ByteBuffer.wrap("\r\n".toByteArray()))
+                            s.write(bb)
+                        } else {
+                            mJpegSockets.removeAt(i)
+                            i--
+                            //Timber.i("MJPEG Session Count is " + mJpegSockets.size)
+                        }
+                        i++
                     }
-                    i++
                 }
-            }
-        })
+            })
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
     }
 
     private fun stopMJPEG() {
