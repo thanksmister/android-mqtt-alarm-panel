@@ -1,6 +1,6 @@
 # Android MQTT Alarm Panel for Home Automation Platforms
 
-This project is an MQTT Alarm Control Panel was originally created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supprts MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
+This project is an MQTT Alarm Control Panel was originally created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ)
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
@@ -12,7 +12,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 
 ## Support
 
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Dsicussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
 - Stream video, detect motion, detect faces, and read QR Codes.
@@ -39,23 +39,23 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 
 ![alarm_triggered](https://user-images.githubusercontent.com/142340/29889462-9f6422dc-8d9a-11e7-923a-06cfcd6acff7.png)
 
-You can also load your home automation platfgorm website by entering the address with port into the settings.  It slides from the right on the main screen. 
+You can also load your home automation platform website by entering the address with port into the settings.  It slides from the right on the main screen. 
 
 ![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
 
-## Hardware & Softare 
+## Hardware & Software 
 
 - Android Device running Android OS 4.1 or greater.
 
 ## Installation
 
-You can clone the repository and compile the APK using Andoid Studio, then side load the APK file onto your device. You can also side load the built APK from from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
+You can clone the repository and compile the APK using Android Studio, then side load the APK file onto your device. You can also side load the built APK from from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 
 ## Home Assistant Setup
 
 - Setup [Home Assistant](https://home-assistant.io/getting-started/)
-- Configure the [MQTT service](https://home-assistant.io/components/mqtt/) note thr broker address and username/password if applicable.
-- Add the [MQTT Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuraiton with the default settings for now.
+- Configure the [MQTT service](https://home-assistant.io/components/mqtt/) note the broker address and username/password if applicable.
+- Add the [MQTT Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuration with the default settings for now.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
 
 ## Alarm Setup
@@ -116,13 +116,13 @@ To use a screen saver other than the digital clock, turn this feature on in the 
 
 ## Platform Screen
 
-You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address shuold be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
 ## MQTT Sensor and State Data
 If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
 
 ### Device Sensors
-The application will post device sensors data per the API description and Sensor Reading Frequency. Curerntly device sensors for Pressure, Temperature, Light, and Battery Level are published. 
+The application will post device sensors data per the API description and Sensor Reading Frequency. Currently device sensors for Pressure, Temperature, Light, and Battery Level are published. 
 
 #### Sensor Data
 Sensor | Keys | Example | Notes
