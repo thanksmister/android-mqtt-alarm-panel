@@ -1,4 +1,4 @@
-theme: jekyll-theme-slate
+theme: jekyll-theme-minimal
 title: "MQTT Alarm Panel"
 logo: "https://user-images.githubusercontent.com/142340/47177458-d5740500-d2ee-11e8-9434-ec095c4b6f0b.png"
 description: "Android Alarm Panel for Home Assistant and Home Automation Platforms"
