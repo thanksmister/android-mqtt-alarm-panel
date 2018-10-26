@@ -375,6 +375,7 @@
     <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
     <string name="pref_title_battery">Battery</string>
     <string name="pref_title_sensor_list">Sensor List</string>
+    <string name="error_mqtt_exception">Se produjo un error al inicializar el cliente MQTT, por favor verifique su configuración.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

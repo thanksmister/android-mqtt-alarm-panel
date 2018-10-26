@@ -38,7 +38,7 @@ repositories {
 def versionMajor = 0
 def versionMinor = 8
 def versionPatch = 4
-def versionBuild = 0 // bump for dog food builds, public betas, etc.
+def versionBuild = 2 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -216,7 +216,6 @@ dependencies {
     implementation "com.android.support:design:$versions.support"
     implementation "com.android.support:support-v13:$versions.support"
     implementation "com.android.support:preference-v14:$versions.support"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation "com.android.support:support-vector-drawable:$versions.support"
     implementation 'com.google.android.gms:play-services-vision:15.0.2'
     implementation 'com.android.support:multidex:1.0.3'

@@ -83,14 +83,6 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         }
     }
 
-    fun showAlertDialog(activity: AppCompatActivity, message: String) {
-        hideAlertDialog()
-        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-    }
-
     fun showAlertDialog(context: Context, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
@@ -99,7 +91,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showAlertDialogToDismiss(activity: AppCompatActivity, title: String, message: String) {
+    fun showAlertDialogToDismiss(activity: Context, title: String, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
                 .setTitle(title)
@@ -108,7 +100,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showAlertDialog(activity: AppCompatActivity, title: String, message: String) {
+    fun showAlertDialog(activity: Context, title: String, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
                 .setTitle(title)

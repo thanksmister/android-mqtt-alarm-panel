@@ -318,19 +318,20 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    // TODO test that MQTT reconnects on ts own
     override fun onMQTTDisconnect() {
         Timber.d("onMQTTDisconnect")
         if(hasNetwork()) {
             sendAlertMessage(getString(R.string.error_mqtt_connection))
-            reconnectHandler.postDelayed(restartMqttRunnable, 3000)
+            //reconnectHandler.postDelayed(restartMqttRunnable, 3000)
         }
     }
 
     override fun onMQTTException(message: String) {
         Timber.d("onMQTTException: $message")
         if(hasNetwork()) {
-            sendAlertMessage(message)
-            reconnectHandler.postDelayed(restartMqttRunnable, 3000)
+            sendAlertMessage(getString(R.string.error_mqtt_exception))
+            //reconnectHandler.postDelayed(restartMqttRunnable, 3000)
         }
     }
 

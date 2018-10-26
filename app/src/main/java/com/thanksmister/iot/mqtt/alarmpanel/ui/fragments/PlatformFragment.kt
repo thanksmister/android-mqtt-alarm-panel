@@ -171,10 +171,10 @@ class PlatformFragment : BaseFragment() {
                         return
                     }
                     if(displayProgress) {
-                        if(progressDialog != null) {
+                        if(progressDialog != null && progressDialogMessage != null) {
                             progressDialog.visibility = View.VISIBLE
+                            progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                         }
-                        progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                     } else {
                         if(progressDialog != null) {
                             progressDialog.visibility = View.GONE

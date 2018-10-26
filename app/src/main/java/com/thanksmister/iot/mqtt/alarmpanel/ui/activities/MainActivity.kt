@@ -117,14 +117,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         // We must be sure we have the instantiated the view model before we observe.
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-        lifecycle.addObserver(dialogUtils)
+
         observeViewModel()
 
         if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
 
-        Timber.d("Prevent Sleep ${configuration.appPreventSleep}")
         if (configuration.appPreventSleep) {
             window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
         } else {
@@ -210,13 +209,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onDestroy() {
-        Timber.d("onDestroy")
         super.onDestroy()
         if(alertDialog != null) {
             alertDialog?.dismiss()
             alertDialog = null
         }
-
         window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
     }
 
@@ -363,13 +360,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 try {
-                    AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
-                            .setMessage(message)
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                            }
-                            .show()
+                    dialogUtils.showAlertDialog(this@MainActivity, message)
                 } catch (e: Exception) {
-
+                    Timber.e(e.message) // getting crashes on some devices
                 }
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
