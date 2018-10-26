@@ -370,10 +370,10 @@
     <string name="dialog_message_ssl_generic">Error de certificado SSL.</string>
     <string name="dialog_missing_webview_warning">Este dispositivo no tiene instalado el componente WebView. Instale el componente en Google Play Store.</string>
     <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
-    <string name="pref_platform_title_refresh">Browser Refresh</string>
+    <string name="pref_platform_title_refresh">Actualizar el navegador</string>
     <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
-    <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
-    <string name="pref_title_battery">Battery</string>
+    <string name="pref_summary_battery">Nivel de batería, USB enchufado, CA enchufada, carga</string>
+    <string name="pref_title_battery">Batería</string>
     <string name="pref_title_sensor_list">Sensor List</string>
     <string name="error_mqtt_exception">Se produjo un error al inicializar el cliente MQTT, por favor verifique su configuración.</string>
 

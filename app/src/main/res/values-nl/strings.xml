@@ -367,8 +367,8 @@
     <string name="dialog_message_ssl_untrusted">De certificeringsinstantie wordt niet vertrouwd.</string>
     <string name="dialog_message_ssl_generic">SSL-certificaatfout.</string>
     <string name="dialog_missing_webview_warning">Op dit apparaat is de WebView-component niet geïnstalleerd. Installeer het onderdeel van de Google Play Store.</string>
-    <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
-    <string name="pref_title_battery">Battery</string>
+    <string name="pref_summary_battery">Batterijniveau, USB-stekker, AC-stekker, opladen</string>
+    <string name="pref_title_battery">Accu</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>
@@ -415,7 +415,7 @@
     </string-array>
     <string name="dialog_title_ssl_error">SSL-certificaatfout</string>
     <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
-    <string name="pref_platform_title_refresh">Browser Refresh</string>
+    <string name="pref_platform_title_refresh">Browser vernieuwen</string>
     <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
     <string name="pref_title_sensor_list">Sensor List</string>
     <string name="error_mqtt_exception">Er is een fout opgetreden bij het initialiseren van de MQTT-client. Controleer uw instellingen.</string>
