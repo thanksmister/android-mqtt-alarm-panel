@@ -190,7 +190,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     open fun showScreenSaver() {
-        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
+        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver() && !isFinishing() ) {
             inactivityHandler.removeCallbacks(inactivityCallback)
             val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             dialogUtils.showScreenSaver(this@BaseActivity,

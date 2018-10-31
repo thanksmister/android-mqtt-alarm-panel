@@ -415,8 +415,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun configureTextToSpeech() {
-        Timber.d("configureTextToSpeech")
         if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("configureTextToSpeech")
             textToSpeechModule = TextToSpeechModule(this)
             lifecycle.addObserver(textToSpeechModule!!)
         }
@@ -545,7 +545,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 speakMessage(payload)
             }
             if (commandJson.has(COMMAND_NOTIFICATION)) {
-                payload = commandJson.getString(COMMAND_SPEAK)
+                payload = commandJson.getString(COMMAND_NOTIFICATION)
                 val title = getString(R.string.notification_title)
                 notifications.createAlarmNotification(title, payload)
             }
@@ -559,6 +559,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             insertMessage(id, topic, payload)
         } catch (ex: JSONException) {
+            Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid JSON passed as a command: " + commandJson.toString())
         }
     }
@@ -568,6 +569,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         return try {
             processCommand(id, topic, JSONObject(command))
         } catch (ex: JSONException) {
+            Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid JSON passed as a command: $command")
         }
     }

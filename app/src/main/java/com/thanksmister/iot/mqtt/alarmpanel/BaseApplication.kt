@@ -35,16 +35,12 @@ class BaseApplication : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
             Stetho.initialize(Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
-
-            Fabric.with(this, Crashlytics())
-            Timber.plant(CrashlyticsTree())
         } else {
             Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())

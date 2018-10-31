@@ -63,7 +63,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         }
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             screenSaverDialog!!.dismiss()
-            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+            screenSaverDialog!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
             screenSaverDialog = null
         }
     }
@@ -71,7 +71,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
     fun hideScreenSaverDialog() {
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             screenSaverDialog!!.dismiss()
-            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+            screenSaverDialog!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
             screenSaverDialog = null
         }
     }
@@ -316,8 +316,12 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         dialog.window!!.decorView.systemUiVisibility = context.window.decorView.systemUiVisibility
         dialog.show()
         dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        wm.updateViewLayout(context.window.decorView, context.window.attributes)
+        try {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.updateViewLayout(context.window.decorView, context.window.attributes)
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Problem starting window decor for screen saver.")
+        }
         return dialog
     }
 }
