@@ -60,6 +60,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         fun subscriptionMessage(id: String, topic: String, payload: String)
         fun handleMqttException(errorMessage: String)
         fun handleMqttDisconnected()
+        fun handleMqttConnected()
     }
 
     override fun isReady(): Boolean {
@@ -104,8 +105,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                     }
 
                 }
-                Timber.d("Publishing: " + payload)
-                Timber.d("Command Topic: " + mqttOptions?.getAlarmCommandTopic())
+
                 val mqttMessage = MqttMessage()
                 mqttMessage.payload = payload.toByteArray()
                 mqttMessage.isRetained = true // we want to remember last state
@@ -228,8 +228,8 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                         if (mqttOptions != null) {
                             subscribeToTopics(mqttOptions!!.getStateTopics())
                         }
+                        listener?.handleMqttConnected()
                     }
-
                     override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
                         if (listener != null && mqttOptions != null) {
                             Timber.e("Failed to connect to: " + mqttOptions?.brokerUrl + " exception: " + exception)
@@ -247,7 +247,6 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                     listener?.handleMqttException("" + e.message)
                 }
             }
-
             mReady.set(true)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()

@@ -96,8 +96,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
             darkSkyOptions.setIsCelsius(true)
             configuration.isFirstTime = false
-
-            configuration.setClockScreenSaverModule(true)
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)
             configuration.setWebModule(true)
@@ -195,6 +193,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         // Filter messages from service
         val filter = IntentFilter()
         filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
@@ -357,18 +356,22 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     // handler for received data from service
     private val mBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
+            if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action && !isFinishing) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 try {
+                    awakenDeviceForAction()
                     dialogUtils.showAlertDialog(this@MainActivity, message)
                 } catch (e: Exception) {
                     Timber.e(e.message) // getting crashes on some devices
                 }
-            } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
+            } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action && !isFinishing) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-            } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action) {
+            } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action && !isFinishing) {
                 resetInactivityTimer()
+            } else if (AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE == intent.action && !isFinishing) {
+                awakenDeviceForAction()
+                dialogUtils.clearDialogs()
             }
         }
     }
