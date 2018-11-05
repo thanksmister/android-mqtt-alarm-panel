@@ -10,10 +10,6 @@ The alarm panel acts as an interface for Home Assistant's manual alarm control p
 
 MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
 
-## Support
-
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
-
 ## Features
 - Stream video, detect motion, detect faces, and read QR Codes.
 - Capture and emailing images when the alarm is disabled.
@@ -24,6 +20,18 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 - Optional screensaver mode using a digital clock or Imgur images. 
 - Seven day Weather forecast (requires DarkSky api key).
 - Home Automation Platform webpage support for viewing home automation dashboards.
+
+## Hardware & Software 
+
+- Android Device running Android OS 4.1 or greater.  It'a also recommended that you use your own screensaver, like Daydream for Android so that your device does not go to sleep. You also want to disable your lock screen. The application will not work if your device sleeps (i.e. you need to unlock your device to open).  
+
+- There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream.  You will then need to use the built-in screensaver features or you need to install an alternative solution.   Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
+
+Android 4.0 devices use [WebView](https://developer.chrome.com/multidevice/webview/overview) to render webpages, The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.
+
+## Support
+
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Screen Shots:
 
@@ -42,14 +50,6 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 You can also load your home automation platform website by entering the address with port into the settings.  It slides from the right on the main screen. 
 
 ![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
-
-## Hardware & Software 
-
-- Android Device running Android OS 4.1 or greater.  It'a also recommended that you use your own screensaver, like Daydream for Android so that your device does not go to sleep. You also want to disable your lock screen. The application will not work if your device sleeps (i.e. you need to unlock your device to open).  
-
-There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream.  You will then need to use the built-in screensaver features or you need to install an alternative solution.   Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
-
-Android 4.0 devices use [WebView](https://developer.chrome.com/multidevice/webview/overview) to render webpages, The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.
 
 ## Installation
 
