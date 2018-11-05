@@ -47,7 +47,9 @@ You can also load your home automation platform website by entering the address 
 
 - Android Device running Android OS 4.1 or greater.  It'a also recommended that you use your own screensaver, like Daydream for Android so that your device does not go to sleep. You also want to disable your lock screen. The application will not work if your device sleeps (i.e. you need to unlock your device to open).  
 
-There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream.  You will then need to use the built-in screensaver features or you need to install an alternative solution.   Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound.  T
+There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream.  You will then need to use the built-in screensaver features or you need to install an alternative solution.   Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
+
+Android 4.0 devices use [WebView](https://developer.chrome.com/multidevice/webview/overview) to render webpages, The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.
 
 ## Installation
 
