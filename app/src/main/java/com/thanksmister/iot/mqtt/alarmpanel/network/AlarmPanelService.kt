@@ -330,9 +330,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     override fun onMQTTDisconnect() {
-        Timber.e("onMQTTDisconnect")
+        Timber.w("onMQTTDisconnect")
         if(hasNetwork()) {
-            if(!mqttAlertMessageShown) {
+            if(!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_connection))
             }
@@ -341,9 +341,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     override fun onMQTTException(message: String) {
-        Timber.e("onMQTTException: $message")
+        Timber.w("onMQTTException: $message")
         if(hasNetwork()) {
-            if(!mqttAlertMessageShown) {
+            if(!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_exception))
             }
@@ -351,11 +351,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
-    private val restartMqttRunnable = object: Runnable {
-        override fun run() {
-            if (mqttModule != null) {
-                mqttModule!!.restart()
-            }
+    private val restartMqttRunnable = Runnable {
+        if (mqttModule != null) {
+            mqttModule!!.restart()
         }
     }
 
