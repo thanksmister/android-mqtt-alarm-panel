@@ -157,7 +157,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             }
             PREF_PORT -> {
                 value = portPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
+                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value) && value.length < 5) {
                     mqttOptions.setPort(Integer.valueOf(value)!!)
                     portPreference!!.summary = value.toString()
                 } else if (isAdded) {
