@@ -167,7 +167,9 @@ class PlatformFragment : BaseFragment() {
                         if(progressDialog != null) {
                             progressDialog.visibility = View.GONE
                         }
-                        pageLoadComplete(view.url)
+                        if(view.url != null) {
+                            pageLoadComplete(view.url)
+                        }
                         return
                     }
                     if(displayProgress) {
@@ -199,6 +201,7 @@ class PlatformFragment : BaseFragment() {
                         Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
                     }
                 }
+                // TODO we need to load SSL certificates
                 override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
                     super.onReceivedSslError(view, handler, error)
                     var message = getString(R.string.dialog_message_ssl_generic)
@@ -234,7 +237,7 @@ class PlatformFragment : BaseFragment() {
         }
     }
 
-    private fun pageLoadComplete(url: String) {
+    private fun pageLoadComplete(url: String?) {
         Timber.d("pageLoadComplete currentUrl $url")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE, url)

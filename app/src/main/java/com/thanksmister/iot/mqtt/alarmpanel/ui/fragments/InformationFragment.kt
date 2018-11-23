@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper.getMainLooper
 import android.support.v4.content.res.ResourcesCompat
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +63,8 @@ class InformationFragment : BaseFragment() {
     private val timeRunnable = object : Runnable {
         override fun run() {
             val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
-            val currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(Date())
+            //val currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(Date())
+            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME);
             dateText.text = currentDateString
             timeText.text = currentTimeString
             if (timeHandler != null) {

@@ -77,6 +77,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.schedulers.Schedulers
 
 class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
@@ -152,12 +153,12 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         this.currentUrl = configuration.webUrl
 
+        startForeground()
         configureMqtt()
         configurePowerOptions()
         startHttp()
         configureCamera()
         configureAudioPlayer()
-        startForeground()
         configureTextToSpeech()
         startSensors()
 
@@ -312,7 +313,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun configureMqtt() {
         if (mqttModule == null && mqttOptions.isValid) {
-            Timber.d("configureMqtt")
             mqttModule = MQTTModule(this@AlarmPanelService.applicationContext, mqttOptions,this@AlarmPanelService)
             lifecycle.addObserver(mqttModule!!)
             publishState(COMMAND_STATE, state.toString())
@@ -336,7 +336,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_connection))
             }
-            reconnectHandler.postDelayed(restartMqttRunnable, 30000)
+            //reconnectHandler.postDelayed(restartMqttRunnable, 30000)
         }
     }
 
@@ -347,7 +347,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_exception))
             }
-            reconnectHandler.postDelayed(restartMqttRunnable, 30000)
+            //reconnectHandler.postDelayed(restartMqttRunnable, 30000)
         }
     }
 
@@ -887,7 +887,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     emitter.onNext(true)  // Pass on the data to subscriber
                 }
                 override fun onException(message: String?) {
-                    emitter.onError(Throwable(message))
+                    if(message != null) {
+                        try {
+                            emitter.onError(Throwable(message))
+                        } catch (e: UndeliverableException) {
+                            Timber.e(e.message)
+                        }
+                    }
                 }
             })
         }
