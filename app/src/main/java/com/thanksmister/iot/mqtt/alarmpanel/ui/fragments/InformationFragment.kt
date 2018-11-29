@@ -63,8 +63,7 @@ class InformationFragment : BaseFragment() {
     private val timeRunnable = object : Runnable {
         override fun run() {
             val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
-            //val currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(Date())
-            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME);
+            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
             dateText.text = currentDateString
             timeText.text = currentTimeString
             if (timeHandler != null) {

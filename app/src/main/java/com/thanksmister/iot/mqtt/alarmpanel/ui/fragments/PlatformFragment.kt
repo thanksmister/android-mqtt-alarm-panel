@@ -203,7 +203,7 @@ class PlatformFragment : BaseFragment() {
                 }
                 // TODO we need to load SSL certificates
                 override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
-                    super.onReceivedSslError(view, handler, error)
+
                     var message = getString(R.string.dialog_message_ssl_generic)
                     when (error?.primaryError) {
                         SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)

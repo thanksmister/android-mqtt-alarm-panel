@@ -22,6 +22,7 @@ import android.content.res.Configuration
 import android.os.Handler
 import android.support.v4.content.res.ResourcesCompat
 import android.text.TextUtils
+import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -74,7 +75,7 @@ class ScreenSaverView : RelativeLayout {
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentTimeString = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(Date())
+            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
             screenSaverClockSmall.text = currentTimeString
             screenSaverClock.text = currentTimeString
             if (timeHandler != null) {
