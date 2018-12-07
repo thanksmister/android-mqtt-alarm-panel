@@ -55,8 +55,9 @@ class PlatformFragment : BaseFragment() {
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
     private var zoomLevel = 1.0f
-    private var hasWebView:Boolean = true;
+    private var hasWebView:Boolean = true
     private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
+    private var certPermissionsShown = false
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -203,23 +204,29 @@ class PlatformFragment : BaseFragment() {
                 }
                 // TODO we need to load SSL certificates
                 override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
-
-                    var message = getString(R.string.dialog_message_ssl_generic)
-                    when (error?.primaryError) {
-                        SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
-                        SslError.SSL_EXPIRED -> message = getString(R.string.dialog_message_ssl_expired)
-                        SslError.SSL_IDMISMATCH -> message = getString(R.string.dialog_message_ssl_mismatch)
-                        SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
-                    }
-                    message += getString(R.string.dialog_message_ssl_continue)
-                    if(isAdded && activity != null) {
-                        dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
-                                DialogInterface.OnClickListener { _, _ ->
-                                    handler?.proceed()
-                                },
-                                DialogInterface.OnClickListener { _, _ ->
-                                    handler?.cancel()
-                                })
+                    if(!certPermissionsShown) {
+                        var message = getString(R.string.dialog_message_ssl_generic)
+                        when (error?.primaryError) {
+                            SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
+                            SslError.SSL_EXPIRED -> message = getString(R.string.dialog_message_ssl_expired)
+                            SslError.SSL_IDMISMATCH -> message = getString(R.string.dialog_message_ssl_mismatch)
+                            SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
+                        }
+                        message += getString(R.string.dialog_message_ssl_continue)
+                        if (isAdded && activity != null) {
+                            dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
+                                    DialogInterface.OnClickListener { _, _ ->
+                                        certPermissionsShown = true
+                                        handler?.proceed()
+                                    },
+                                    DialogInterface.OnClickListener { _, _ ->
+                                        certPermissionsShown = false
+                                        handler?.cancel()
+                                    })
+                        }
+                    } else {
+                        // we have already shown permissions, no need to show again on page refreshes or when page auto-refreshes itself
+                        handler?.proceed()
                     }
                 }
             }

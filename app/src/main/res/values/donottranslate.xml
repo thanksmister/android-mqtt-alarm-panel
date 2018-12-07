@@ -62,7 +62,7 @@
     <string name="default_motion_clear" translatable="false">30</string>
     <string name="key_setting_app_preventsleep" translatable="false">setting_app_preventsleep</string>
     <string name="default_setting_app_preventsleep" translatable="false">false</string>
-    <string name="key_setting_battery">setting_battery</string>
+    <string name="key_setting_battery" translatable="false">setting_battery</string>
 
     <string name="license" translatable="false"><![CDATA[
         <br><b>Copyright 2017 ThanksMister LLC</b><br>
