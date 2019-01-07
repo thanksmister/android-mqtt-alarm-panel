@@ -38,6 +38,7 @@ import java.lang.ref.WeakReference
 import javax.inject.Inject
 import android.graphics.Bitmap
 import android.support.v8.renderscript.RenderScript
+import android.util.DisplayMetrics
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -141,16 +142,16 @@ constructor(private val context: Context) {
             buildDetectors(configuration)
             if(multiDetector != null) {
                 try {
-                    cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
+                    cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                     cameraSource!!.start()
                 } catch (e : Exception) {
                     Timber.e(e.message)
                     try {
                         if(configuration.cameraId == CAMERA_FACING_FRONT) {
-                            cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
+                            cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                             cameraSource!!.start()
                         } else {
-                            cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS)
+                            cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                             cameraSource!!.start()
                         }
                     } catch (e : Exception) {
@@ -398,12 +399,14 @@ constructor(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     @Throws(Exception::class)
-    private fun initCamera(camerId: Int, fsp: Float): CameraSource {
-        Timber.d("initCamera camerId $camerId")
+    private fun initCamera(cameraId: Int, fsp: Float, widthPixels: Int = 640, heightPixels: Int = 480): CameraSource {
+        Timber.d("initCamera cameraId $cameraId")
+        Timber.d("initCamera widthPixels $widthPixels")
+        Timber.d("initCamera heightPixels $heightPixels")
         return CameraSource.Builder(context, multiDetector)
                 .setRequestedFps(fsp)
-                .setRequestedPreviewSize(640, 480)
-                .setFacing(camerId)
+                .setRequestedPreviewSize(widthPixels, heightPixels)
+                .setFacing(cameraId)
                 .build()
     }
 

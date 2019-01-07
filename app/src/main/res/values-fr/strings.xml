@@ -152,8 +152,8 @@
     <string name="preference_mail_title">Paramétres MailGun</string>
     <string name="preference_mail_description">Pour envoyer les captures par email, vous devez configurer un compte MailGun (mailgun.com) et renseigner les nom de domaine, clé d\'API, ainsi que les adresses de destinataires.</string>
 
-    <string name="text_title_system">SYSTEME</string>
-    <string name="text_titled_disarmed">DESACTIVEE</string>
+    <string name="text_title_system">SYSTÈME</string>
+    <string name="text_titled_disarmed">DÉSACTIVÉ</string>
     <string name="text_titled_armed_away">MODE ABSENT</string>
     <string name="toast_invalid_coordinates">Latitude et longitude invalides.</string>
     <string name="toast_invalid_latitude">La valeur doit être comprise entre -90 et 90.</string>
@@ -163,9 +163,9 @@
     <string name="toast_alarm_deactivated">Alarme désactivée!</string>
     <string name="activity_logs_title">Journal d\'évènements</string>
 
-    <string name="text_arm_home">MODE PRESENT</string>
-    <string name="text_arm_away">MODE ABSENT</string>
-    <string name="text_armed_home">MODE PRESENT</string>
+    <string name="text_arm_home">ACTIVER MODE PRESENT</string>
+    <string name="text_arm_away">ACTIVER MODE ABSENT</string>
+    <string name="text_armed_home">MODE PRÉSENT</string>
     <string name="text_armed_away">MODE ABSENT</string>
     <string name="text_system">SYSTEME</string>
     <string name="text_disarmed">DESACTIVEE</string>
@@ -282,8 +282,6 @@
     <string name="sensors_settings">Capteurs</string>
     <string name="button_add_sensor">+ AJOUTER CAPTEUR</string>
     <string name="pref_sensor_title">Ajouter capteur</string>
-    <string name="text_sensor_payload" translatable="false">%1$s / %2$s</string>
-    <string name="text_sensor_topic" translatable="false">%1$s</string>
     <string name="toast_changes_cancelled">Modifications annulées…</string>
     <string name="error_sensor_empty_data">Pour enregistrer un capteur, vous devez saisir le topic ET le payload.</string>
     <string name="add_sensor_description">Créer une liste de capteurs qui recevront les changements d\'état. Par exemple, créer une notification sonore si une porte est ouverte ou empêcher l\'activation de l\'alarme tant qu\'une fenêtre est ouverte.</string>

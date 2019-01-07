@@ -155,6 +155,18 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_cameraid), 0)
         set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_cameraid), value)
 
+    var cameraOrientation: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ORIENTATION, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ORIENTATION, value)
+
+    var cameraWidth: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_WIDTH, 640)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_WIDTH, value)
+
+    var cameraHeight: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_HEIGHT, 480)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_HEIGHT, value)
+
     var cameraMotionMinLuma: Int
         get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionminluma),
                 context.getString(R.string.default_setting_camera_motionminluma).toInt())
@@ -447,6 +459,9 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
         const val PREF_CAMERA_CAPTURE = "pref_module_camera"
         const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
+        const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
+        const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
+        const val PREF_CAMERA_HEIGHT = "pref_camera_height"
         const val PREF_MODULE_WEATHER = "pref_module_weather"
         const val PREF_MODULE_WEB = "pref_module_web"
         const val PREF_WEB_URL = "pref_web_url"

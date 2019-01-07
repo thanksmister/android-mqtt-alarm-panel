@@ -27,6 +27,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.CameraSourcePreview
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import android.util.DisplayMetrics
+
+
 
 /**
  * Created by Michael Ritchie on 6/28/18.
