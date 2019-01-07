@@ -106,7 +106,7 @@
     <string name="preference_web_description">Detta är en experimentell funktion. Webbsidan kommer att renderas med Androids version av Chrome och kan visas annorlunda beroende på Android SDK och WebView-version.</string>
 
     <string name="preference_title_notification">Notifieringar</string>
-    <string name="preference_summary_notification">Visar en systemnotifiering om larmet löser ut eller om en ingång detekteras.</string>
+    <string name="preference_summary_notification">Visar en systemnotifiering om larmet löser ut eller om en inpassering detekteras.</string>
 
     <string name="preference_title_inactivity">Starta skärmsläckare efter…</string>
     <string name="preference_summary_inactivity_seconds">Skärmen dimmas efter %1$s sekunder av inaktivitet.</string>
@@ -194,10 +194,10 @@
     <string name="text_about">Om</string>
     <string name="text_alarm_settings">Larminställningar</string>
     <string name="text_mqtt_settings">MQTT-inställningar</string>
-    <string name="notification_channel_name">Ingång detekterad / Larm aktiverat</string>
+    <string name="notification_channel_name">Inpassering detekterad / Larm aktiverat</string>
     <string name="text_channel_description">Larmpanelsnotifiering</string>
-    <string name="text_notification_entry_title">Ingång detekterad</string>
-    <string name="text_notification_entry_description">En ingång har detekterats, var god ta nödvändiga åtgärder.</string>
+    <string name="text_notification_entry_title">Inpassering detekterad</string>
+    <string name="text_notification_entry_description">En inpassering har detekterats, var god ta nödvändiga åtgärder.</string>
     <string name="text_notification_trigger_title">Larm utlöst</string>
     <string name="text_notification_trigger_description">Larmet har löst ut, var god ta nödvändiga åtgärder.</string>
     <string name="text_notification_network_title">Larm frånkopplat</string>
