@@ -90,11 +90,11 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         rotatePreference!!.value = configuration.cameraRotate.toString()
         if(configuration.cameraRotate == 0f) {
             rotatePreference!!.setValueIndex(0)
-        } else if (configuration.cameraRotate == -360f) {
+        } else if (configuration.cameraRotate == -90f) {
             rotatePreference!!.setValueIndex(1)
-        } else if (configuration.cameraRotate == 180f) {
+        } else if (configuration.cameraRotate == 90f) {
             rotatePreference!!.setValueIndex(2)
-        } else if (configuration.cameraRotate == -270f) {
+        } else if (configuration.cameraRotate == -180f) {
             rotatePreference!!.setValueIndex(3)
         }
         cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference

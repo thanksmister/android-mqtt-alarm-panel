@@ -49,6 +49,7 @@ import retrofit2.Response
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ScreenSaverView : RelativeLayout {
 
@@ -65,6 +66,9 @@ class ScreenSaverView : RelativeLayout {
     private var dataSource: DarkSkyDao? = null
     private var useImageSaver: Boolean = false
     private var hasWeather: Boolean = false
+    private var parentWidth: Int = 0
+    private var parentHeight: Int = 0
+    private val calendar: Calendar = Calendar.getInstance()
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -75,12 +79,27 @@ class ScreenSaverView : RelativeLayout {
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
-            screenSaverClockSmall.text = currentTimeString
+            val date = Date()
+            calendar.time = date
+            val currentTimeString = DateUtils.formatDateTime(context, date.time, DateUtils.FORMAT_SHOW_TIME)
             screenSaverClock.text = currentTimeString
-            if (timeHandler != null) {
-                timeHandler!!.postDelayed(this, 1000)
+
+            // use this only with the clock feature
+            if (!useImageSaver) {
+                val width = screenSaverClockLayout.width
+                val height = screenSaverClockLayout.height
+                parentWidth = screenSaverView.width
+                parentHeight = screenSaverView.height
+                if (width > 0 && height > 0) {
+                    val newX = Random().nextInt(parentWidth - width)
+                    val newY = Random().nextInt(parentHeight - height)
+                    screenSaverClockLayout.x = newX.toFloat()
+                    screenSaverClockLayout.y = newY.toFloat()
+                }
             }
+
+            val offset = 60L - calendar.get(Calendar.SECOND)
+            timeHandler?.postDelayed(this, TimeUnit.SECONDS.toMillis(offset))
         }
     }
 
