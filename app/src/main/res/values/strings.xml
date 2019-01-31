@@ -379,6 +379,8 @@
     <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
     <string name="pref_title_battery">Battery</string>
     <string name="error_mqtt_exception">There was an error initializing the MQTT client, please check your settings.</string>
+    <string name="pref_title_screen_brightness">Screen Brightness</string>
+    <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

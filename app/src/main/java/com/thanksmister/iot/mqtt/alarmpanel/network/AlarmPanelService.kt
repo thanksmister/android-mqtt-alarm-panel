@@ -103,7 +103,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private var audioPlayer: MediaPlayer? = null
     private var audioPlayerBusy: Boolean = false
     private var httpServer: AsyncHttpServer? = null
-    private val mBinder = WallPanelServiceBinder()
+    private val mBinder = AlarmPanelServiceBinder()
     private val motionClearHandler = Handler()
     private val qrCodeClearHandler = Handler()
     private val faceClearHandler = Handler()
@@ -119,7 +119,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var mqttAlertMessageShown = false
 
-    inner class WallPanelServiceBinder : Binder() {
+    inner class AlarmPanelServiceBinder : Binder() {
         val service: AlarmPanelService
             get() = this@AlarmPanelService
     }
@@ -166,6 +166,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         filter.addAction(BROADCAST_EVENT_URL_CHANGE)
         filter.addAction(BROADCAST_EVENT_SCREEN_TOUCH)
         filter.addAction(BROADCAST_EVENT_ALARM_MODE)
+        filter.addAction(BROADCAST_EVENT_USER_INACTIVE)
         filter.addAction(Intent.ACTION_SCREEN_ON)
         filter.addAction(Intent.ACTION_SCREEN_OFF)
         filter.addAction(Intent.ACTION_USER_PRESENT)
@@ -229,7 +230,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             return state
         }
-
 
     private fun startForeground() {
         Timber.d("startForeground")
@@ -296,7 +296,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             wifiLock!!.release()
         }
         try {
-            keyguardLock!!.reenableKeyguard()
+            if(keyguardLock != null) {
+                keyguardLock!!.reenableKeyguard()
+            }
         } catch (ex: Exception) {
             Timber.i("Enabling keyguard didn't work")
             ex.printStackTrace()
@@ -791,6 +793,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             } else if (BROADCAST_EVENT_SCREEN_TOUCH == intent.action) {
                 Timber.i("Screen touched")
                 publishState(COMMAND_STATE, state.toString())
+            } else if (BROADCAST_EVENT_USER_INACTIVE == intent.action) {
+                Timber.i("User Inactive")
             } else if (BROADCAST_EVENT_ALARM_MODE == intent.action) {
                 val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE)
                 Timber.i("Alarm Mode Changed $alarmMode")
@@ -816,7 +820,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
         override fun onMotionDetected() {
             if(!motionDetected) {
-                Timber.d("Motion detected")
+                Timber.d("Motion detected cameraMotionWake ${configuration.cameraMotionWake}")
                 if (configuration.cameraMotionWake) {
                     switchScreenOn(AWAKE_TIME)
                 }
@@ -953,10 +957,12 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val ONGOING_NOTIFICATION_ID = 1
         const val BROADCAST_EVENT_URL_CHANGE = "BROADCAST_EVENT_URL_CHANGE"
         const val BROADCAST_EVENT_SCREEN_TOUCH = "BROADCAST_EVENT_SCREEN_TOUCH"
+        const val BROADCAST_EVENT_USER_INACTIVE = "BROADCAST_EVENT_USER_INACTIVE"
         const val BROADCAST_EVENT_ALARM_MODE = "BROADCAST_EVENT_ALARM_MODE"
         const val BROADCAST_ALERT_MESSAGE = "BROADCAST_ALERT_MESSAGE"
         const val BROADCAST_TOAST_MESSAGE = "BROADCAST_TOAST_MESSAGE"
         const val BROADCAST_SCREEN_WAKE = "BROADCAST_SCREEN_WAKE"
         const val BROADCAST_CLEAR_ALERT_MESSAGE = "BROADCAST_CLEAR_ALERT_MESSAGE"
+
     }
 }

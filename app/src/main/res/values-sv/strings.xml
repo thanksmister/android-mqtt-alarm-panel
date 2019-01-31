@@ -375,6 +375,8 @@
     <string name="pref_summary_battery">Batterinivå, USB ansluten, Nätadapter ansluten, Laddar</string>
     <string name="pref_title_battery">Batteri</string>
     <string name="error_mqtt_exception">Fel vid initiering av MQTT, var god kontrollera dina intällningar.</string>
+    <string name="pref_title_screen_brightness">Screen Brightness</string>
+    <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

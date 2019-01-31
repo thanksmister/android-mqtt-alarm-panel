@@ -67,7 +67,7 @@ class LogActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     override fun onDestroy() {
@@ -77,7 +77,7 @@ class LogActivity : BaseActivity() {
 
     override fun onUserInteraction() {
         inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     companion object {

@@ -60,16 +60,24 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_END, value)
 
     var screenBrightness: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 5)
+        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 255)
         set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value)
+
+    var screenNightBrightness: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, 155)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, value)
+
+    var useScreenBrightness: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SCREEN_BRIGHTNESS, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SCREEN_BRIGHTNESS, value)
 
     var alarmMode: String
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
     var fullScreen: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCXREEN, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCXREEN, value)
+        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCREEN, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCREEN, value)
 
     var systemAlerts: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
@@ -252,6 +260,12 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
                 context.getString(R.string.default_browser_user_agent))
         set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_browser_user_agent), value)
 
+    var writeScreenPermissionsShown: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, false)
+        set(value) {
+            sharedPreferences.setPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, value)
+        }
+
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
     }
@@ -424,7 +438,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(PREF_FINGERPRINT)
         sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
         sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
-        sharedPreferences.removePreference(PREF_FULL_SCXREEN)
+        sharedPreferences.removePreference(PREF_FULL_SCREEN)
+        sharedPreferences.removePreference(PREF_SCREEN_BRIGHTNESS)
+        sharedPreferences.removePreference(PREF_WRITE_SCREEN_PERMISSIONS)
+        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS)
     }
 
     companion object {
@@ -446,7 +463,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_IMAGE_ROTATION = "pref_image_rotation"
         const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
-        const val PREF_FULL_SCXREEN = "pref_full_screen"
+        const val PREF_FULL_SCREEN = "pref_full_screen"
         const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
         const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         const val PREF_MODULE_TSS = "pref_module_tss"
@@ -472,6 +489,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
         const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
         const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
+        const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
         const val PREF_WEATHER_WEATHER = "pref_weather_module"
         const val PREF_WEATHER_UNITS = "pref_weather_units"
@@ -494,5 +512,8 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_SENSOR_ENABLED = "pref_device_sensors_enabled"
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
         const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
+        const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
+        const val PREF_CAMERA_PERMISSIONS = "pref_camera_permissions"
+        const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
     }
 }

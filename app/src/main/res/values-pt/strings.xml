@@ -420,5 +420,7 @@
     <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
     <string name="pref_title_sensor_list">Sensor List</string>
     <string name="error_mqtt_exception">Houve um erro ao inicializar o cliente MQTT, verifique suas configurações.</string>
+    <string name="pref_title_screen_brightness">Screen Brightness</string>
+    <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
 
 </resources>

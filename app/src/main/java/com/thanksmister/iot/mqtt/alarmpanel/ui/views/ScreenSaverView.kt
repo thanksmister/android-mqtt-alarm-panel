@@ -69,6 +69,7 @@ class ScreenSaverView : RelativeLayout {
     private var parentWidth: Int = 0
     private var parentHeight: Int = 0
     private val calendar: Calendar = Calendar.getInstance()
+    private var delayRotate = true
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -85,7 +86,7 @@ class ScreenSaverView : RelativeLayout {
             screenSaverClock.text = currentTimeString
 
             // use this only with the clock feature
-            if (!useImageSaver) {
+            if (!useImageSaver && !delayRotate) {
                 val width = screenSaverClockLayout.width
                 val height = screenSaverClockLayout.height
                 parentWidth = screenSaverView.width
@@ -100,6 +101,7 @@ class ScreenSaverView : RelativeLayout {
 
             val offset = 60L - calendar.get(Calendar.SECOND)
             timeHandler?.postDelayed(this, TimeUnit.SECONDS.toMillis(offset))
+            delayRotate = false
         }
     }
 

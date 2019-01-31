@@ -16,11 +16,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import android.app.PendingIntent
 import android.arch.lifecycle.MutableLiveData
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -31,9 +28,6 @@ import java.util.*
 
 class DayNightAlarmLiveData(private val context: Context, private val configuration: Configuration) : MutableLiveData<String>() {
 
-    //private var pendingIntent: PendingIntent? = null
-    //private val intentFilter = IntentFilter(ALARM_ACTION)
-    //private val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private var timeHandler: Handler? = null
 
     private val timeRunnable = object : Runnable {
@@ -49,13 +43,11 @@ class DayNightAlarmLiveData(private val context: Context, private val configurat
 
     override fun onActive() {
         super.onActive()
-        //context.registerReceiver(alarmReceiver, IntentFilter(intentFilter))
-        startDayNightMode()
+         startDayNightMode()
     }
 
     override fun onInactive() {
         super.onInactive()
-        //context.unregisterReceiver(alarmReceiver)
         cancelDayNightMode()
     }
 
@@ -65,13 +57,6 @@ class DayNightAlarmLiveData(private val context: Context, private val configurat
             timeHandler!!.removeCallbacks(timeRunnable)
             timeHandler = null
         }
-        /*if(pendingIntent != null) {
-            Timber.d("cancelDayNightMode")
-            pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, Intent(ALARM_ACTION), PendingIntent.FLAG_CANCEL_CURRENT);
-            alarmManager.cancel(pendingIntent)
-            pendingIntent?.cancel()
-            pendingIntent = null
-        }*/
     }
 
     private fun startDayNightMode() {
@@ -80,24 +65,6 @@ class DayNightAlarmLiveData(private val context: Context, private val configurat
             val firstTime = (5 * 1000).toLong();
             timeHandler = Handler(Looper.getMainLooper())
             timeHandler!!.postDelayed(timeRunnable, firstTime)
-        }
-        /*if(pendingIntent == null && configuration.useNightDayMode) {
-            configuration.dayNightMode = Configuration.DISPLAY_MODE_DAY
-            pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, Intent(ALARM_ACTION), PendingIntent.FLAG_UPDATE_CURRENT);
-            val firstTime = SystemClock.elapsedRealtime() + 30 * 1000;
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME, firstTime, INTERVAL_FIFTEEN_MINUTES, pendingIntent)
-        }*/
-    }
-
-    private fun getPendingIntent(): PendingIntent {
-        val pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, Intent(ALARM_ACTION), PendingIntent.FLAG_UPDATE_CURRENT);
-        return pendingIntent
-    }
-
-    private val alarmReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            Timber.d("alarmReceiver")
-            setNightDayMode()
         }
     }
 
@@ -135,7 +102,5 @@ class DayNightAlarmLiveData(private val context: Context, private val configurat
 
     companion object {
         const val INTERVAL_FIFTEEN_MINUTES = (15 * 60 * 1000).toLong()
-        const val ALARM_ACTION = "com.thanksmister.iot.mqtt.alarmpanel.DayNightAlarmReceiver"
-        const val REQUEST_CODE = 888
     }
 }

@@ -23,8 +23,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.LocalBroadcastManager
@@ -42,7 +42,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
@@ -59,20 +58,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var darkSkyDataSource: DarkSkyDao
 
-    private val inactivityHandler: Handler = Handler()
     private var hasNetwork = AtomicBoolean(true)
-    private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
 
     val disposable = CompositeDisposable()
-    private var screenSaverDialog : Dialog? = null
-
-    private val inactivityCallback = Runnable {
-        Timber.d("inactivityCallback")
-        dialogUtils.clearDialogs()
-        userPresent = false
-        showScreenSaver()
-    }
 
     override fun onStart(){
         super.onStart()
@@ -84,6 +73,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 handleNetworkDisconnect()
             }
         })
+        resetScreenBrightness()
     }
 
     private fun checkPermissions() {
@@ -117,31 +107,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        inactivityHandler.removeCallbacks(inactivityCallback)
+        Timber.d("onDestroy")
         disposable.dispose()
-    }
-
-    fun resetInactivityTimer() {
-        Timber.d("resetInactivityTimer")
-        hideScreenSaver()
-        inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
-    }
-
-    fun stopDisconnectTimer() {
-        hideScreenSaver()
-        inactivityHandler.removeCallbacks(inactivityCallback)
-    }
-
-    override fun onUserInteraction() {
-        Timber.d("onUserInteraction")
-        onWindowFocusChanged(true)
-        userPresent = true
-        resetInactivityTimer()
-        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
-        val bm = LocalBroadcastManager.getInstance(applicationContext)
-        bm.sendBroadcast(intent)
     }
 
     public override fun onResume() {
@@ -162,14 +129,17 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     open fun dayNightModeCheck(dayNightMode:String?) {
-        Timber.d("dayNightModeCheck")
-        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
-            Timber.d("Tis the night!")
+
+        Timber.d("dayNightModeCheck $dayNightMode")
+
+        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && tisTheDay()) {
+            hideScreenSaver()
+            resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            Timber.d("Tis the day!")
+        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && !tisTheDay()) {
+            hideScreenSaver()
+            resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }
@@ -177,11 +147,99 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private fun dayNightModeChanged() {
         Timber.d("dayNightModeChanged")
-        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        if (!configuration.useNightDayMode && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            Timber.d("Tis the day!")
+        if (!configuration.useNightDayMode && !tisTheDay()) {
+            hideScreenSaver()
+            resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
+        }
+    }
+
+    private fun tisTheDay(): Boolean {
+        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            Timber.d("Tis the night!")
+            return false
+        } else if (uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
+            Timber.d("Tis the day!")
+            return true
+        }
+        return true
+    }
+
+    open fun setScreenBrightness() {
+        Timber.d("changeScreenBrightness")
+        var brightness = configuration.screenBrightness
+        if (!tisTheDay()) {
+            brightness = configuration.screenNightBrightness
+        }
+        Timber.d("calculated brightness ${brightness}")
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext) && configuration.useScreenBrightness) {
+            var mode = -1
+            try {
+                mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
+            } catch (e: Settings.SettingNotFoundException) {
+                Timber.e(e.message)
+            }
+            try {
+                if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
+                    //Automatic mode, need to be in manual to change brightness
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                }
+                if (brightness in 1..255) {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e.message)
+            }
+        } else {
+            try {
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                if (brightness in 1..255) {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e.message)
+            }
+        }
+    }
+
+    open fun resetScreenBrightness() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
+            var mode = -1
+            try {
+                mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
+            } catch (e: Settings.SettingNotFoundException) {
+                Timber.e(e.message)
+            }
+            try {
+                if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
+                    //Automatic mode, need to be in manual to change brightness
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                }
+                if(tisTheDay() && configuration.screenBrightness in 1..255) {
+                    Timber.d("calculated brightness ${configuration.screenBrightness}")
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
+                } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
+                    Timber.d("calculated brightness ${configuration.screenNightBrightness}")
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e.message)
+            }
+        } else {
+            try {
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                if(tisTheDay() && configuration.screenBrightness in 1..255) {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
+                    Timber.d("calculated brightness ${configuration.screenBrightness}")
+                } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
+                    Timber.d("calculated brightness ${configuration.screenNightBrightness}")
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e.message)
+            }
         }
     }
 
@@ -189,9 +247,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue
      * with the alarm disabled because the disable time will be longer than this.
      */
-    open fun showScreenSaver() {
+    fun showScreenSaver() {
+        Timber.d("showScreenSaver")
         if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver() && !isFinishing) {
-            inactivityHandler.removeCallbacks(inactivityCallback)
             val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             try {
                 dialogUtils.showScreenSaver(this@BaseActivity,
@@ -199,7 +257,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                         imageOptions,
                         View.OnClickListener {
                             dialogUtils.hideScreenSaverDialog()
-                            resetInactivityTimer()
+                            onUserInteraction()
                         }, darkSkyDataSource, hasWeather)
             } catch (e: Exception) {
                 Timber.e(e.message)
@@ -208,8 +266,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     open fun hideScreenSaver() {
+        Timber.d("hideScreenSaver")
         dialogUtils.hideScreenSaverDialog()
-        screenSaverDialog = null
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
@@ -221,7 +279,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      */
     open fun handleNetworkDisconnect() {
         hideScreenSaver()
-        bringApplicationToForegroundIfNeeded()
         dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                 getString(R.string.text_notification_network_description))
         hasNetwork.set(false)
@@ -240,7 +297,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
-    fun bringApplicationToForegroundIfNeeded() {
+    /*fun bringApplicationToForegroundIfNeeded() {
         if (!LifecycleHandler.isApplicationInForeground()) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
@@ -248,7 +305,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
-    }
+    }*/
 
     companion object {
         const val REQUEST_PERMISSIONS = 88

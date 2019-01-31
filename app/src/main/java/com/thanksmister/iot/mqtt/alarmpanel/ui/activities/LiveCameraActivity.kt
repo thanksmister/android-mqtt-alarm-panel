@@ -124,12 +124,13 @@ class LiveCameraActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.removeCallbacks(inactivityCallback)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     override fun onUserInteraction() {
         inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     public override fun onDestroy() {

@@ -25,6 +25,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.Menu
@@ -60,6 +61,8 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
 
         val alarmPanelService = Intent(this, AlarmPanelService::class.java)
         stopService(alarmPanelService)
+
+        resetScreenBrightness()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -90,7 +93,7 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
 
     override fun onResume() {
         super.onResume()
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     override fun onDestroy() {
@@ -100,7 +103,7 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
 
     override fun onUserInteraction() {
         inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     private fun logs() {

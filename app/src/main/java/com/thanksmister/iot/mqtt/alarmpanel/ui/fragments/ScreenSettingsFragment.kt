@@ -18,8 +18,15 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.support.annotation.RequiresApi
+import android.support.v14.preference.SwitchPreference
+import android.support.v7.app.AlertDialog
 import android.support.v7.preference.*
 import android.text.TextUtils
 import android.view.View
@@ -49,6 +56,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var inactivityPreference: ListPreference? = null
     private var dayNightPreference: CheckBoxPreference? = null
     private var preventSleepPreference: CheckBoxPreference? = null
+    private var screenBrightness: SwitchPreference? = null
     private var startTimePreference: Preference? = null
     private var endTimePreference: Preference? = null
 
@@ -86,8 +94,9 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         imageFitPreference = findPreference(Configuration.PREF_IMAGE_FIT_SIZE) as CheckBoxPreference
         rotationPreference = findPreference(Configuration.PREF_IMAGE_ROTATION) as EditTextPreference
         inactivityPreference = findPreference(Configuration.PREF_INACTIVITY_TIME) as ListPreference
-        fullScreenPreference = findPreference(Configuration.PREF_FULL_SCXREEN) as CheckBoxPreference
+        fullScreenPreference = findPreference(Configuration.PREF_FULL_SCREEN) as CheckBoxPreference
         preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as CheckBoxPreference
+        screenBrightness = findPreference(Configuration.PREF_SCREEN_BRIGHTNESS) as SwitchPreference
 
         dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as CheckBoxPreference
         dayNightPreference!!.isChecked = configuration.useNightDayMode
@@ -136,6 +145,86 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         setClockScreenSaver(configuration.showClockScreenSaverModule())
 
         setInactivityPreference(configuration.showClockScreenSaverModule(), configuration.showPhotoScreenSaver() )
+
+        // check if we have screen brightness permissions and reset the screen brightness values
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val enabled = Settings.System.canWrite(activity!!.applicationContext)
+            screenBrightness!!.isEnabled = enabled
+            screenBrightness!!.isChecked = enabled
+            configuration.useScreenBrightness = enabled
+            try {
+                val brightness = Settings.System.getInt(activity!!.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                configuration.screenBrightness = brightness
+                configuration.screenNightBrightness = (brightness*.5).toInt()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        checkWriteSettings()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (requestCode == PERMISSIONS_REQUEST_WRITE_SETTINGS) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity != null) {
+                if (Settings.System.canWrite(activity!!.applicationContext)) {
+                    Toast.makeText(activity!!, "Write settings permission granted…", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(activity!!, "Write settings permission granted…", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val enabled = Settings.System.canWrite(activity!!.applicationContext)
+                screenBrightness!!.isEnabled = enabled
+                screenBrightness!!.isChecked = enabled
+                configuration.useScreenBrightness = enabled
+                try {
+                    val brightness = Settings.System.getInt(activity!!.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                    configuration.screenBrightness = brightness
+                    configuration.screenNightBrightness = (brightness*.5).toInt()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    private fun checkWriteSettings() {
+        if (!configuration.writeScreenPermissionsShown && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity != null) {
+            if (Settings.System.canWrite(activity!!.applicationContext)) {
+                val enabled = Settings.System.canWrite(activity!!.applicationContext)
+                screenBrightness!!.isEnabled = enabled
+                screenBrightness!!.isChecked = enabled
+                configuration.useScreenBrightness = enabled
+                try {
+                    val brightness = Settings.System.getInt(activity!!.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                    configuration.screenBrightness = brightness
+                    configuration.screenNightBrightness = (brightness*.5).toInt()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else if (!configuration.writeScreenPermissionsShown) {
+                // launch the dialog to provide permissions
+                configuration.writeScreenPermissionsShown = true
+                AlertDialog.Builder(activity!!)
+                        .setMessage("Do you want to grant permission to modify the system settings for screen brightness?")
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            launchWriteSettings()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ ->
+                            Toast.makeText(activity!!, "Write settings permission denied…", Toast.LENGTH_LONG).show()
+                        }.show()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun launchWriteSettings() {
+        if(activity != null) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:${activity!!.applicationContext.packageName}"))
+            startActivityForResult(intent, 200)
+        }
     }
 
     private fun setPhotoScreenSaver (value : Boolean) {
@@ -228,9 +317,20 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val fitScreen = imageFitPreference!!.isChecked
                 imageOptions.imageFitScreen = fitScreen
             }
-            Configuration.PREF_FULL_SCXREEN -> {
+            Configuration.PREF_FULL_SCREEN -> {
                 val fullscreen = fullScreenPreference!!.isChecked
                 configuration.fullScreen = fullscreen
+            }
+            Configuration.PREF_SCREEN_BRIGHTNESS -> {
+                val useBright = screenBrightness!!.isChecked
+                configuration.useScreenBrightness = useBright
+                try {
+                    val brightness = Settings.System.getInt(activity!!.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                    configuration.screenBrightness = brightness
+                    configuration.screenNightBrightness = (brightness*.4).toInt()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
             Configuration.PREF_IMAGE_ROTATION -> {
                 val rotation = Integer.valueOf(rotationPreference!!.text)!!
@@ -255,6 +355,11 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val checked = preventSleepPreference!!.isChecked
                 configuration.appPreventSleep = checked
             }
+
         }
+    }
+
+    companion object {
+        const val PERMISSIONS_REQUEST_WRITE_SETTINGS = 200
     }
 }

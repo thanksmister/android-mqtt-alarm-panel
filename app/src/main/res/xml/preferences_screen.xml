@@ -67,6 +67,12 @@
             android:entries="@array/inactivity_times"
             android:entryValues="@array/inactivity_values"/>
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_use_screen_brightness"
+            android:title="@string/pref_title_screen_brightness"
+            android:summary="@string/pref_description_screen_brightness"/>
+
         <EditTextPreference
             android:key="pref_image_source"
             android:enabled="false"

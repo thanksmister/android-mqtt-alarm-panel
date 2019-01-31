@@ -73,7 +73,8 @@
                     android:id="@+id/versionName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/TextAppearance.TextSmall.Secondary"
+                    style="@style/TextAppearance.TextSmall"
+                    tools:text="v5.8.5.1"
                     android:maxLines="2"/>
 
         </LinearLayout>
