@@ -379,6 +379,19 @@
     <string name="pref_title_screen_brightness">Screen Brightness</string>
     <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
 
+    <string name="summary_weather_topic">Example format for the command topic and payload for weather data: \n\n"{\"topic\": \"voicepanel/command\",\"payload\":\"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}\"}"</string>
+    <string name="preference_title_weather">Weather MQTT</string>
+    <string name="summary_sun_topic">Example format for the command topic and payload for sun data: \n\n"{\"topic\": \"voicepanel/command\",\"payload\":\"{'sun':'above_horizon'}\"}"</string>
+    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="pref_title_night_mode">Use Night Mode</string>
+    <string name="dialog_brightness_message">Do you want to grant permission to modify the system settings for screen brightness?</string>
+    <string name="toast_write_permissions_denied">Write settings permission denied…</string>
+    <string name="toast_write_permissions_granted">Write settings permission granted…</string>
+    <string name="pref_web_screensaver_title">Web Screensaver</string>
+    <string name="pref_web_screensaver_summary">Use a web page as a screensaver. (limted support)</string>
+    <string name="pref_web_screensaver_url_title">Web Screensaver Url</string>
+    <string name="pref_web_screensaver_url_summary">Enter the url to use as a web screensaver.</string>
+
     <string-array name="inactivity_times">
         <item>15 segundos</item>
         <item>30 segundos</item>

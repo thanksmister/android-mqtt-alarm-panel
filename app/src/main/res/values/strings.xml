@@ -84,11 +84,11 @@
     <string name="pref_title_image_client_id">Imgur Client Id</string>
     <string name="preference_summary_image_client_id">Enter the client id of the Imgur account from https://api.imgur.com.</string>
 
-    <string name="preference_title_screen_saver_photo_settings">Photo Screen Saver Settings</string>
-    <string name="preference_summary_screen_saver_photo_settings">When active, uses rotating Imgur images for the screen saver.</string>
-    <string name="preference_title_screen_saver_photo">Image Screen Saver</string>
+    <string name="preference_title_screen_saver_photo_settings">Photo Screensaver Settings</string>
+    <string name="preference_summary_screen_saver_photo_settings">When active, uses rotating Imgur images for the screensaver.</string>
+    <string name="preference_title_screen_saver_photo">Image Screensaver</string>
 
-    <string name="preference_summary_screen_saver">Use rotating images from Instagram as screen saver.</string>
+    <string name="preference_summary_screen_saver">Use rotating images from Instagram as screensaver.</string>
 
     <string name="preference_title_image_source">Imgur Tag</string>
     <string name="preference_summary_image_source">Enter an Imgur tag to use for images (example: space, architecture, flowers, or landscape).</string>
@@ -381,6 +381,19 @@
     <string name="error_mqtt_exception">There was an error initializing the MQTT client, please check your settings.</string>
     <string name="pref_title_screen_brightness">Screen Brightness</string>
     <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
+
+    <string name="summary_weather_topic">Example format for the command topic and payload for weather data: \n\n"{\"topic\": \"voicepanel/command\",\"payload\":\"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}\"}"</string>
+    <string name="preference_title_weather">Weather MQTT</string>
+    <string name="summary_sun_topic">Example format for the command topic and payload for sun data: \n\n"{\"topic\": \"voicepanel/command\",\"payload\":\"{'sun':'above_horizon'}\"}"</string>
+    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="pref_title_night_mode">Use Night Mode</string>
+    <string name="dialog_brightness_message">Do you want to grant permission to modify the system settings for screen brightness?</string>
+    <string name="toast_write_permissions_denied">Write settings permission denied…</string>
+    <string name="toast_write_permissions_granted">Write settings permission granted…</string>
+    <string name="pref_web_screensaver_title">Web Screensaver</string>
+    <string name="pref_web_screensaver_summary">Use a web page as a screensaver. (limted support)</string>
+    <string name="pref_web_screensaver_url_title">Web Screensaver Url</string>
+    <string name="pref_web_screensaver_url_summary">Enter the url to use as a web screensaver.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

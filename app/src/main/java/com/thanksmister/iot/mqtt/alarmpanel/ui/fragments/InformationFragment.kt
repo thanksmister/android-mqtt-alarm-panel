@@ -66,7 +66,9 @@ class InformationFragment : BaseFragment() {
             val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
             dateText.text = currentDateString
             timeText.text = currentTimeString
-            timeHandler?.postDelayed(this, 1000)
+            if (timeHandler != null) {
+                timeHandler!!.postDelayed(this, 1000)
+            }
         }
     }
 
@@ -79,7 +81,7 @@ class InformationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         timeHandler = Handler(getMainLooper())
-        timeHandler?.postDelayed(timeRunnable, 1000)
+        timeHandler!!.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
         weatherLayout.setOnClickListener {
             if (!forecastList.isEmpty()) {
@@ -95,7 +97,6 @@ class InformationFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         if (configuration.showWeatherModule() && darkSkyOptions.isValid) {
-            connectWeatherModule()
             weatherLayout.visibility = View.VISIBLE
         } else {
             weatherViewModel.onCleared()
@@ -110,51 +111,42 @@ class InformationFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        timeHandler?.removeCallbacks(timeRunnable)
-    }
-
-    private fun observeViewModel(viewModel: WeatherViewModel) {
-        activity?.let {
-            viewModel.getAlertMessage().observe(this, Observer { message ->
-                Timber.d("getAlertMessage")
-                dialogUtils.showAlertDialog(it, message!!)
-            })
-            viewModel.getToastMessage().observe(this, Observer { message ->
-                Timber.d("getToastMessage")
-                Toast.makeText(it, message, Toast.LENGTH_LONG).show()
-            })
-            disposable.add(
-                    viewModel.getLatestItem()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe ({ item ->
-                                if(item != null) {
-                                    weatherLayout.visibility = View.VISIBLE
-                                    outlookText.text = item.summary
-                                    val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
-                                    temperatureText.text = getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                    forecastList = Gson().fromJson(item.data, object : TypeToken<List<Datum>>(){}.type)
-                                    try {
-                                        if (item.umbrella) {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (it as BaseActivity).theme))
-                                        } else {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (it as BaseActivity).theme))
-                                        }
-                                    } catch (e : OutOfMemoryError) {
-                                        Timber.e(e.message)
-                                    }
-                                }
-                            }, { error -> Timber.e("weather drawable error" + error.message) })
-            )
+        if (timeHandler != null) {
+            timeHandler!!.removeCallbacks(timeRunnable)
         }
     }
 
-    private fun connectWeatherModule() {
-        val apiKey = darkSkyOptions.darkSkyKey
-        val units = darkSkyOptions.weatherUnits
-        val lat = darkSkyOptions.latitude
-        val lon = darkSkyOptions.longitude
-        weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units, lat!!, lon!!)
+    private fun observeViewModel(viewModel: WeatherViewModel) {
+        viewModel.getAlertMessage().observe(this, Observer { message ->
+            dialogUtils.showAlertDialog(activity as BaseActivity, message!!)
+        })
+        viewModel.getToastMessage().observe(this, Observer { message ->
+            Toast.makeText(activity as BaseActivity, message, Toast.LENGTH_LONG).show()
+        })
+        disposable.add(
+                viewModel.getLatestItem()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { item ->
+                            if(item != null) {
+                                (activity as BaseActivity).runOnUiThread {
+                                    //weatherLayout.visibility = View.VISIBLE
+                                    outlookText.text = item.summary
+                                    val displayUnits =  item.units
+                                    temperatureText.text = getString(R.string.text_temperature, item.temperature, displayUnits)
+                                    try {
+                                        if (viewModel.shouldTakeUmbrellaToday(item.precipitation)) {
+                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                        } else {
+                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
+                                        }
+                                    } catch (e : Exception) {
+                                        Timber.e(e.message)
+                                    }
+                                }
+                            }
+                        }
+        )
     }
 
     companion object {

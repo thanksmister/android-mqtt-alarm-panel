@@ -61,8 +61,11 @@
     <string name="key_setting_motion_clear" translatable="false">setting_motion_clear</string>
     <string name="default_motion_clear" translatable="false">30</string>
     <string name="key_setting_app_preventsleep" translatable="false">setting_app_preventsleep</string>
+    <string name="key_setting_web_screensaver" translatable="false">settings_screensaver_web</string>
+    <string name="key_setting_web_url" translatable="false">settings_screensaver_web_url</string>
     <string name="default_setting_app_preventsleep" translatable="false">false</string>
     <string name="key_setting_battery" translatable="false">setting_battery</string>
+    <string name="key_saver_photo" translatable="false">setting_saver_photo</string>
 
     <string name="license" translatable="false"><![CDATA[
         <br><b>Copyright 2017 ThanksMister LLC</b><br>

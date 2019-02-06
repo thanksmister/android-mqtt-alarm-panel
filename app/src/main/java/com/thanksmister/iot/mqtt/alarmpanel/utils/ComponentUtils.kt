@@ -50,6 +50,8 @@ class ComponentUtils {
         const val COMMAND_ALERT = "alert"
         const val COMMAND_DEVICE_SENSOR = "sensor"
         const val COMMAND_CAPTURE = "capture"
+        const val COMMAND_WEATHER = "weather"
+        const val COMMAND_SUN = "sun"
 
         val SESOR_TYPE = "SENSOR"
         val SENSOR_GENERIC_TYPE = "GENERIC"

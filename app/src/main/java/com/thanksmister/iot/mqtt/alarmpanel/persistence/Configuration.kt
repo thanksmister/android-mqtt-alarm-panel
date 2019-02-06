@@ -266,6 +266,15 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
             sharedPreferences.setPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, value)
         }
 
+    var webScreenSaver: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_web_screensaver), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_web_screensaver), value)
+
+    var webScreenSaverUrl: String
+        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_web_url), "https://lab.hakim.se/origami/")
+        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_web_url), value)
+
+
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
     }
@@ -299,11 +308,11 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun showPhotoScreenSaver(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_PHOTO_SAVER, false)
+        return sharedPreferences.getPrefBoolean(context.getString(R.string.key_saver_photo), false)
     }
 
     fun setPhotoScreenSaver(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_PHOTO_SAVER, value)
+        this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_saver_photo), value)
     }
 
     fun setShowWeatherModule(show: Boolean) {
@@ -372,7 +381,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun hasScreenSaver() : Boolean {
-        return (showPhotoScreenSaver() || showClockScreenSaverModule())
+        return (showPhotoScreenSaver() || showClockScreenSaverModule() || webScreenSaver)
     }
 
     fun isAlarmTriggeredMode(): Boolean {
@@ -403,7 +412,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     fun reset() {
         sharedPreferences.removePreference(PREF_PENDING_TIME)
         sharedPreferences.removePreference(PREF_MODULE_CLOCK_SAVER)
-        sharedPreferences.removePreference(PREF_MODULE_PHOTO_SAVER)
+        sharedPreferences.removePreference(context.getString(R.string.key_saver_photo))
         sharedPreferences.removePreference(PREF_INACTIVITY_TIME)
         sharedPreferences.removePreference(PREF_MODULE_WEATHER)
         sharedPreferences.removePreference(PREF_MODULE_WEB)
@@ -442,6 +451,8 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(PREF_SCREEN_BRIGHTNESS)
         sharedPreferences.removePreference(PREF_WRITE_SCREEN_PERMISSIONS)
         sharedPreferences.removePreference(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS)
+        sharedPreferences.removePreference(SUN_ABOVE_HORIZON)
+        sharedPreferences.removePreference(SUN_BELOW_HORIZON)
     }
 
     companion object {
@@ -457,7 +468,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_ALARM_MODE = "pref_alarm_mode"
         const val PREF_ALARM_CODE = "pref_alarm_code"
         const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        const val PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo"
         const val PREF_IMAGE_SOURCE = "pref_image_source"
         const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
         const val PREF_IMAGE_ROTATION = "pref_image_rotation"
@@ -515,5 +525,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
         const val PREF_CAMERA_PERMISSIONS = "pref_camera_permissions"
         const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
+        const val SUN_ABOVE_HORIZON = "above_horizon"
+        const val SUN_BELOW_HORIZON = "below_horizon"
     }
 }

@@ -31,6 +31,7 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
+import com.google.gson.GsonBuilder
 import com.koushikdutta.async.AsyncServer
 import com.koushikdutta.async.ByteBufferList
 import com.koushikdutta.async.http.server.AsyncHttpServer
@@ -39,9 +40,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.LifecycleHandler
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.modules.*
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils
@@ -55,7 +54,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMA
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_SENSOR_QR_CODE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_SPEAK
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_STATE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_SUN
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_WAKE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_WEATHER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE_BRIGHTNESS
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE_CURRENT_URL
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE_SCREEN_ON
@@ -93,6 +94,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     lateinit var notifications: NotificationUtils
     @Inject
     lateinit var messageDataSource: MessageDao
+    @Inject
+    lateinit var weatherDao: WeatherDao
+    @Inject
+    lateinit var sunDao: SunDao
 
     private val disposable = CompositeDisposable()
     private val mJpegSockets = ArrayList<AsyncHttpServerResponse>()
@@ -555,6 +560,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         try {
             if (commandJson.has(COMMAND_WAKE)) {
                 payload = commandJson.getString(COMMAND_WAKE)
+                insertMessage(id, topic, payload)
                 switchScreenOn(AWAKE_TIME)
             }
             if (commandJson.has(COMMAND_AUDIO)) {
@@ -563,22 +569,33 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             if (commandJson.has(COMMAND_SPEAK)) {
                 payload = commandJson.getString(COMMAND_SPEAK)
+                insertMessage(id, topic, payload)
                 speakMessage(payload)
             }
             if (commandJson.has(COMMAND_NOTIFICATION)) {
                 payload = commandJson.getString(COMMAND_NOTIFICATION)
+                insertMessage(id, topic, payload)
                 val title = getString(R.string.notification_title)
                 notifications.createAlarmNotification(title, payload)
             }
             if (commandJson.has(COMMAND_ALERT)) {
                 payload = commandJson.getString(COMMAND_ALERT)
+                insertMessage(id, topic, payload)
                 sendAlertMessage(payload)
             }
             if (commandJson.has(COMMAND_CAPTURE)) {
                 payload = commandJson.getString(COMMAND_CAPTURE)
+                insertMessage(id, topic, payload)
                 captureImageTask()
             }
-            insertMessage(id, topic, payload)
+            if (commandJson.has(COMMAND_WEATHER) && configuration.showWeatherModule()) {
+                payload = commandJson.getString(COMMAND_WEATHER)
+                insertWeather(payload)
+            }
+            if (commandJson.has(COMMAND_SUN)) {
+                payload = commandJson.getString(COMMAND_SUN)
+                insertSun(payload)
+            }
         } catch (ex: JSONException) {
             Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid JSON passed as a command: " + commandJson.toString())
@@ -716,6 +733,32 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    private fun insertSun(payload: String) {
+        Timber.d("insertSun $payload")
+        disposable.add(Completable.fromAction {
+            val sun = Sun()
+            sun.sun = payload
+            sun.createdAt = DateUtils.generateCreatedAtDate()
+            sunDao.updateItem(sun)
+        }.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
+    }
+
+    private fun insertWeather(payload: String) {
+        Timber.d("insertWeather")
+        val gson = GsonBuilder().serializeNulls().create()
+        val weather = gson.fromJson<Weather>(payload, Weather::class.java)
+        disposable.add(Completable.fromAction {
+            weather.createdAt = DateUtils.generateCreatedAtDate()
+            weatherDao.updateItem(weather)
+        }.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
+    }
+
     private fun insertMessage(messageId: String, topic: String, payload: String) {
         Timber.d("insertMessage: " + topic)
         Timber.d("insertMessage: " + payload)
@@ -732,10 +775,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             message.messageId = messageId
             message.createdAt = createdAt
             messageDataSource.insertMessage(message)
-        }
-                .subscribeOn(Schedulers.computation())
+        }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({}, { error -> Timber.e("Database error" + error.message) }))
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
     }
 
     /**
@@ -826,7 +869,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         override fun onCameraError() {
             sendToastMessage(getString(R.string.toast_camera_source_error))
         }
-
         override fun onMotionDetected() {
             if (!motionDetected) {
                 Timber.d("Motion detected cameraMotionWake ${configuration.cameraMotionWake}")
@@ -836,11 +878,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 publishMotionDetected()
             }
         }
-
         override fun onTooDark() {
             // Timber.i("Too dark for motion detection")
         }
-
         override fun onFaceDetected() {
             if (!faceDetected) {
                 Timber.d("Face detected")
@@ -850,7 +890,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 publishFaceDetected()
             }
         }
-
         override fun onQRCode(data: String) {
             Timber.i("QR Code Received: $data")
             sendToastMessage(getString(R.string.toast_qr_code_read))
@@ -877,7 +916,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 override fun onComplete() {
                     emitter.onNext(true)  // Pass on the data to subscriber
                 }
-
                 override fun onException(message: String?) {
                     emitter.onError(Throwable(message))
                 }
@@ -903,7 +941,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 override fun onComplete() {
                     emitter.onNext(true)  // Pass on the data to subscriber
                 }
-
                 override fun onException(message: String?) {
                     if (message != null) {
                         try {

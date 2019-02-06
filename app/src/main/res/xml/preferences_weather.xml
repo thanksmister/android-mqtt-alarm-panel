@@ -18,46 +18,18 @@
                   xmlns:tools="http://schemas.android.com/tools"
                   android:id="@+id/preferenceView">
 
-    <PreferenceCategory
-            android:title="@string/preference_title_weather_settings"
-            android:summary="@string/preference_summary_weather_settings">
-        
-        <CheckBoxPreference
-                android:title="@string/preference_title_darksky"
-                android:summary="@string/preference_summary_darksky"
-                android:key="pref_weather_module"/>
+    <PreferenceCategory android:title="@string/preference_title_weather_settings">
+
+        <SwitchPreference
+            android:key="pref_weather_module"
+            android:summary="@string/preference_summary_weather_settings"
+            android:title="@string/preference_title_weather_settings" />
 
         <EditTextPreference
-                android:key="pref_weather_api_key"
-                android:enabled="false"
-                android:title="@string/preference_title_darksky_api"
-                android:summary="@string/preference_summary_darksky_api"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-        
-        <EditTextPreference
-                android:key="pref_weather_latitude"
-                android:enabled="false"
-                android:title="@string/preference_title_latitude"
-                android:summary="@string/preference_summary_latitude_summary"
-                android:digits="-0123456789."
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-
-        <EditTextPreference
-                android:key="pref_weather_longitude"
-                android:enabled="false"
-                android:title="@string/preference_title_longitude"
-                android:summary="@string/preference_summary_longitude_summary"
-                android:digits="-0123456789."
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
-
-        <CheckBoxPreference
-                android:enabled="false"
-                android:title="@string/preference_title_units"
-                android:summary="@string/preference_summary_units"
-                android:key="pref_weather_units"/>
+            android:selectable="false"
+            android:summary="@string/summary_weather_topic"
+            android:title="@string/preference_title_weather"
+            android:textSize="12sp"/>
 
     </PreferenceCategory>
  

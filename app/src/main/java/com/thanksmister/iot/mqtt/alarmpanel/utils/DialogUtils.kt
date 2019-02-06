@@ -38,6 +38,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.*
 import timber.log.Timber
 
@@ -294,7 +296,8 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
      * with the alarm disabled because the disable time will be longer than this.
      */
     fun showScreenSaver(activity: AppCompatActivity, showPhotoScreenSaver: Boolean, options:ImageOptions,
-                        onClickListener: View.OnClickListener, dataSource: DarkSkyDao, hasWeather: Boolean) {
+                        onClickListener: View.OnClickListener, hasWeather: Boolean, dataSource: WeatherDao,
+                        hasWebScreensaver: Boolean, webUrl: String?) {
         if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
             return
         }
@@ -302,7 +305,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
         val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
-        screenSaverView.init(showPhotoScreenSaver, options, dataSource, hasWeather)
+        screenSaverView.init(showPhotoScreenSaver, options, hasWeather, dataSource, hasWebScreensaver, webUrl)
         screenSaverView.setOnClickListener(onClickListener)
         screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
         if (screenSaverDialog != null){

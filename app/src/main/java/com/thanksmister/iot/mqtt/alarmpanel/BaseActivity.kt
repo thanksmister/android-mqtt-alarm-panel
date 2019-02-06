@@ -41,6 +41,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.DaggerAppCompatActivity
@@ -56,7 +57,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var imageOptions: ImageOptions
     @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var darkSkyDataSource: DarkSkyDao
+    @Inject lateinit var weatherDao: WeatherDao
 
     private var hasNetwork = AtomicBoolean(true)
     private var connectionLiveData: ConnectionLiveData? = null
@@ -128,20 +129,18 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    open fun dayNightModeCheck(dayNightMode:String?) {
-
-        Timber.d("dayNightModeCheck $dayNightMode")
-
-        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && tisTheDay()) {
+    open fun dayNightModeCheck(sunValue:String?) {
+        Timber.d("dayNightModeCheck $sunValue")
+        if(sunValue == Configuration.SUN_BELOW_HORIZON && tisTheDay()) {
             hideScreenSaver()
-            resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && !tisTheDay()) {
+            bringApplicationToForegroundIfNeeded()
+        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !tisTheDay()) {
             hideScreenSaver()
-            resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
+            bringApplicationToForegroundIfNeeded()
         }
     }
 
@@ -152,6 +151,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             resetScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
+            bringApplicationToForegroundIfNeeded()
         }
     }
 
@@ -167,6 +167,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return true
     }
 
+    @Deprecated("Not used for brightness")
     open fun setScreenBrightness() {
         Timber.d("changeScreenBrightness")
         var brightness = configuration.screenBrightness
@@ -258,7 +259,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                         View.OnClickListener {
                             dialogUtils.hideScreenSaverDialog()
                             onUserInteraction()
-                        }, darkSkyDataSource, hasWeather)
+                        },  hasWeather, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
             } catch (e: Exception) {
                 Timber.e(e.message)
             }
@@ -297,7 +298,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
-    /*fun bringApplicationToForegroundIfNeeded() {
+    /**
+     * Attempts to bring the application to the foreground if needed.
+     */
+    private fun bringApplicationToForegroundIfNeeded() {
         if (!LifecycleHandler.isApplicationInForeground()) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
@@ -305,7 +309,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
-    }*/
+    }
 
     companion object {
         const val REQUEST_PERMISSIONS = 88

@@ -24,10 +24,12 @@ import android.content.Context
 /**
  * The Room database that contains the Sensors table
  */
-@Database(entities = arrayOf(Sensor::class), version = 2, exportSchema = false)
+@Database(entities = arrayOf(Sensor::class, Weather::class, Sun::class), version = 3, exportSchema = false)
 abstract class SensorDatabase : RoomDatabase() {
 
     abstract fun sensorDao(): SensorDao
+    abstract fun weatherDao(): WeatherDao
+    abstract fun sunDao(): SunDao
 
     companion object {
 

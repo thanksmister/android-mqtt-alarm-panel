@@ -34,10 +34,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
-import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
-import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
-import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.*
 import com.thanksmister.iot.mqtt.alarmpanel.managers.DayNightAlarmLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
@@ -59,7 +56,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     lateinit var viewModel: MainViewModel
     private lateinit var pagerAdapter: PagerAdapter
     private var alertDialog: AlertDialog? = null
-    private var alarmLiveData: DayNightAlarmLiveData? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var decorView: View? = null
     private var alarmPanelService: Intent? = null
@@ -195,6 +191,19 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     }
                 }, { error -> Timber.e("Unable to get message: " + error)}))
 
+        disposable.add(viewModel.getSun()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({sun ->
+                    Timber.d("sun: " + sun)
+                    this@MainActivity.runOnUiThread {
+                        if (configuration.useNightDayMode) {
+                            dayNightModeCheck(sun.sun)
+                        }
+                    }
+                }, { error -> Timber.e("Sun Data error: " + error)}))
+
+
         viewModel.getAlertMessage().observe(this, Observer { message ->
             Timber.d("getAlertMessage")
             dialogUtils.showAlertDialog(this@MainActivity, message!!)
@@ -203,11 +212,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         viewModel.getToastMessage().observe(this, Observer { message ->
             Timber.d("getToastMessage")
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
-        })
-
-        alarmLiveData = DayNightAlarmLiveData(this@MainActivity, configuration)
-        alarmLiveData?.observe(this, Observer { dayNightMode ->
-            dayNightModeCheck(dayNightMode)
         })
     }
 
@@ -429,6 +433,19 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 resetInactivityTimer()
                 dialogUtils.clearDialogs()
             }
+        }
+    }
+
+    /**
+     * Attempts to bring the application to the foreground if needed.
+     */
+    private fun bringApplicationToForegroundIfNeeded() {
+        if (!LifecycleHandler.isApplicationInForeground()) {
+            Timber.d("bringApplicationToForegroundIfNeeded")
+            val intent = Intent("intent.alarm.action")
+            intent.component = ComponentName(this@MainActivity.packageName, MainActivity::class.java.name)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }
