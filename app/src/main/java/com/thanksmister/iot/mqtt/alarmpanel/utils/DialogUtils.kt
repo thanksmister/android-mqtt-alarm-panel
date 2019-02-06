@@ -44,7 +44,7 @@ import timber.log.Timber
 /**
  * Dialog utils
  */
-class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
+class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
 
     private var alertDialog: AlertDialog? = null
     private var dialog: Dialog? = null
@@ -52,26 +52,44 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun clearDialogs() {
-        if (dialog != null && dialog!!.isShowing) {
-            dialog!!.dismiss()
-            dialog = null
+        try {
+            dialog?.let {
+                if (it.isShowing) {
+                    it.dismiss()
+                    dialog = null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
         }
         hideAlertDialog()
         hideScreenSaverDialog()
     }
 
     fun hideScreenSaverDialog() {
-        if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
-            screenSaverDialog!!.dismiss()
-            screenSaverDialog!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
-            screenSaverDialog = null
+        try {
+            screenSaverDialog?.let {
+                if (it.isShowing) {
+                    it.dismiss()
+                    it.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    screenSaverDialog = null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
         }
     }
 
     fun hideAlertDialog() {
-        if (alertDialog != null && alertDialog!!.isShowing) {
-            alertDialog!!.dismiss()
-            alertDialog = null
+        try {
+            alertDialog?.let {
+                if(it.isShowing) {
+                    it.dismiss()
+                    alertDialog = null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
         }
     }
 

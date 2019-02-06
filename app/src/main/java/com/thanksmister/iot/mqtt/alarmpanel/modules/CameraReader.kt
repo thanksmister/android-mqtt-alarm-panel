@@ -447,13 +447,17 @@ constructor(private val context: Context) {
 
             val matrix = Matrix()
             matrix.postRotate(rotate.toFloat())
-            val bitmap =  Bitmap.createBitmap(nv21Bitmap, 0, 0, width, height, matrix, true)
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-            val byteArrayOut = stream.toByteArray()
-            bitmap.recycle()
-
-            return byteArrayOut
+            return try {
+                val bitmap = Bitmap.createBitmap(nv21Bitmap, 0, 0, width, height, matrix, true)
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+                val byteArrayOut = stream.toByteArray()
+                bitmap.recycle()
+                byteArrayOut
+            } catch (e: OutOfMemoryError) {
+                Timber.e(e.message)
+                null
+            }
         }
 
         override fun onPostExecute(result: ByteArray?) {

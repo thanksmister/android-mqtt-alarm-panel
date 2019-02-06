@@ -66,9 +66,7 @@ class InformationFragment : BaseFragment() {
             val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
             dateText.text = currentDateString
             timeText.text = currentTimeString
-            if (timeHandler != null) {
-                timeHandler!!.postDelayed(this, 1000)
-            }
+            timeHandler?.postDelayed(this, 1000)
         }
     }
 
@@ -81,7 +79,7 @@ class InformationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         timeHandler = Handler(getMainLooper())
-        timeHandler!!.postDelayed(timeRunnable, 1000)
+        timeHandler?.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
         weatherLayout.setOnClickListener {
             if (!forecastList.isEmpty()) {
@@ -112,27 +110,25 @@ class InformationFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        if (timeHandler != null) {
-            timeHandler!!.removeCallbacks(timeRunnable)
-        }
+        timeHandler?.removeCallbacks(timeRunnable)
     }
 
     private fun observeViewModel(viewModel: WeatherViewModel) {
-        viewModel.getAlertMessage().observe(this, Observer { message ->
-            Timber.d("getAlertMessage")
-            dialogUtils.showAlertDialog(activity as BaseActivity, message!!)
-        })
-        viewModel.getToastMessage().observe(this, Observer { message ->
-            Timber.d("getToastMessage")
-            Toast.makeText(activity as BaseActivity, message, Toast.LENGTH_LONG).show()
-        })
-        disposable.add(
-                viewModel.getLatestItem()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { item ->
-                            if(item != null) {
-                                (activity as BaseActivity).runOnUiThread {
+        activity?.let {
+            viewModel.getAlertMessage().observe(this, Observer { message ->
+                Timber.d("getAlertMessage")
+                dialogUtils.showAlertDialog(it, message!!)
+            })
+            viewModel.getToastMessage().observe(this, Observer { message ->
+                Timber.d("getToastMessage")
+                Toast.makeText(it, message, Toast.LENGTH_LONG).show()
+            })
+            disposable.add(
+                    viewModel.getLatestItem()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe ({ item ->
+                                if(item != null) {
                                     weatherLayout.visibility = View.VISIBLE
                                     outlookText.text = item.summary
                                     val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
@@ -140,17 +136,17 @@ class InformationFragment : BaseFragment() {
                                     forecastList = Gson().fromJson(item.data, object : TypeToken<List<Datum>>(){}.type)
                                     try {
                                         if (item.umbrella) {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (it as BaseActivity).theme))
                                         } else {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
+                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (it as BaseActivity).theme))
                                         }
-                                    } catch (e : Exception) {
+                                    } catch (e : OutOfMemoryError) {
                                         Timber.e(e.message)
                                     }
                                 }
-                            }
-                        }
-        )
+                            }, { error -> Timber.e("weather drawable error" + error.message) })
+            )
+        }
     }
 
     private fun connectWeatherModule() {
@@ -162,13 +158,8 @@ class InformationFragment : BaseFragment() {
     }
 
     companion object {
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         fun newInstance(): InformationFragment {
             return InformationFragment()
         }
     }
-}// Required empty public constructor
+}
