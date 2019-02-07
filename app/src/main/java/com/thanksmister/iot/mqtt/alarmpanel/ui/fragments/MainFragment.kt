@@ -60,6 +60,7 @@ class MainFragment : BaseFragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+        Timber.d("onAttach")
         if (context is OnMainFragmentListener) {
             listener = context
         } else {
@@ -69,18 +70,20 @@ class MainFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Timber.d("onActivityCreated")
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         observeViewModel(viewModel)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonSettings.setOnClickListener({showSettingsCodeDialog()})
-        buttonSleep.setOnClickListener({listener?.manuallyLaunchScreenSaver()})
-        /*buttonLogs.setOnClickListener {
-            val intent = LogActivity.createStartIntent(activity!!.applicationContext)
-            startActivity(intent)
-        }*/
+        Timber.d("onViewCreated")
+        buttonSettings.setOnClickListener {
+            showSettingsCodeDialog()
+        }
+        buttonSleep.setOnClickListener {
+            listener?.manuallyLaunchScreenSaver()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,17 +92,29 @@ class MainFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        Timber.d("onResume")
         if (viewModel.hasPlatform()) {
             platformButton.visibility = View.VISIBLE;
-            platformButton.setOnClickListener(View.OnClickListener {listener?.navigatePlatformPanel() })
+            platformButton.setOnClickListener {
+                listener?.navigatePlatformPanel()
+            }
         } else {
             platformButton.visibility = View.INVISIBLE;
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Timber.d("onPause")
+    }
+
     override fun onDetach() {
         super.onDetach()
+        buttonSleep?.let {
+            it.setOnTouchListener(null)
+        }
         listener = null
+        Timber.d("onDetach")
     }
 
     private fun observeViewModel(viewModel: MainViewModel) {

@@ -37,6 +37,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.WEB_SCREEN_SAVER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.SECONDS_VALUE
 import dagger.android.support.AndroidSupportInjection
@@ -332,9 +333,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 if(!TextUtils.isEmpty(url) &&  URLUtil.isValidUrl(url)) {
                     configuration.webScreenSaverUrl = url!!
                 } else {
-                    activity?.let {
-                        Toast.makeText(it, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    }
+                    configuration.webScreenSaverUrl = WEB_SCREEN_SAVER
+                    webUrlPreference?.text = configuration.webScreenSaverUrl
                 }
             }
             getString(R.string.key_setting_web_screensaver) -> {

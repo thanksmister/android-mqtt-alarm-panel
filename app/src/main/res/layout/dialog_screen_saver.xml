@@ -78,7 +78,7 @@
         android:id="@+id/screenSaverImageLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:visibility="visible">
 
         <ImageView
@@ -140,19 +140,19 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/screenSaverWebViewLayout"
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/screenSaverWebViewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <WebView
+            android:id="@+id/screenSaverWebView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <WebView
-                android:id="@+id/screenSaverWebView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </RelativeLayout>
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 

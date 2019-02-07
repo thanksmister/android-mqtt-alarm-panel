@@ -28,6 +28,7 @@ import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
 import android.webkit.*
 import android.widget.RelativeLayout
@@ -39,6 +40,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.ImageFetcher
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Item
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
@@ -73,7 +75,7 @@ class ScreenSaverView : RelativeLayout {
     private var parentHeight: Int = 0
     private val calendar: Calendar = Calendar.getInstance()
     private var delayRotate = true
-    private var webUrl = "https://lab.hakim.se/origami/"
+    private var webUrl = Configuration.WEB_SCREEN_SAVER
     private var certPermissionsShown = false
 
     private val delayRotationRunnable = object : Runnable {
@@ -154,6 +156,7 @@ class ScreenSaverView : RelativeLayout {
         if (useImageSaver && options!!.isValid) {
             screenSaverImageLayout.visibility = View.VISIBLE
             screenSaverClockLayout.visibility = View.GONE
+            screenSaverWebViewLayout.visibility = View.GONE
             if (!hasWeather) {
                 screenSaverWeatherSmallLayout.visibility = View.GONE
             } else {
@@ -161,8 +164,13 @@ class ScreenSaverView : RelativeLayout {
             }
             startImageScreenSavor()
         } else if (useWebScreenSaver && webUrl.isNotEmpty()) {
+            screenSaverWebViewLayout.visibility = View.VISIBLE
+            screenSaverImageLayout.visibility = View.GONE
+            screenSaverClockLayout.visibility = View.GONE
             startWebScreenSaver(webUrl)
         } else { // use clock
+            Timber.d("startClockScreenSavor")
+            screenSaverWebViewLayout.visibility = View.GONE
             screenSaverImageLayout.visibility = View.GONE
             screenSaverClockLayout.visibility = View.VISIBLE
             if(!hasWeather) {
@@ -226,6 +234,7 @@ class ScreenSaverView : RelativeLayout {
 
     fun init(useImageScreenSaver: Boolean, options:ImageOptions, hasWeather: Boolean,
              weatherDao: WeatherDao, hasWebScreenSaver: Boolean, webUrl: String?) {
+        Timber.d("ScreenSaverView $hasWebScreenSaver")
         this.weatherSource = weatherDao
         this.options = options
         this.rotationInterval = (options.imageRotation * 60 * 1000).toLong() // convert to milliseconds
@@ -238,14 +247,17 @@ class ScreenSaverView : RelativeLayout {
         setScreenSaverView()
     }
 
+    private fun closeView() {
+        this.callOnClick()
+    }
+
     private fun startWebScreenSaver(url: String) {
-        screenSaverWebViewLayout?.let {
-            it.visibility = View.VISIBLE
-            loadWebPage(url)
-        }
+        Timber.d("startWebScreenSaver $url")
+        loadWebPage(url)
     }
 
     private fun startImageScreenSavor() {
+        Timber.d("startImageScreenSavor")
         if (itemList == null || itemList!!.isEmpty()) {
             fetchMediaData()
         } else {
@@ -316,6 +328,7 @@ class ScreenSaverView : RelativeLayout {
     private fun loadWebPage(url: String) {
         Timber.d("loadWebPage url ${url}")
         configureWebSettings("")
+        clearCache()
         screenSaverWebView?.webChromeClient = object : WebChromeClient() {
             override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
                 AlertDialog.Builder(view.context, R.style.CustomAlertDialog)
@@ -323,10 +336,16 @@ class ScreenSaverView : RelativeLayout {
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok, null)
                         .show()
-
                 return true
             }
         }
+        screenSaverWebView?.setOnTouchListener(object: View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                v?.performClick()
+                closeView()
+                return false
+            }
+        })
         screenSaverWebView?.webViewClient = object : WebViewClient() {
             //If you will not use this method url links are open in new browser not in webview
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -383,6 +402,13 @@ class ScreenSaverView : RelativeLayout {
             webSettings?.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
         Timber.d(webSettings?.userAgentString)
+    }
+
+    private fun clearCache() {
+        screenSaverWebView?.clearCache(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().removeAllCookies(null)
+        }
     }
 
     companion object {

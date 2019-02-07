@@ -271,7 +271,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_web_screensaver), value)
 
     var webScreenSaverUrl: String
-        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_web_url), "https://lab.hakim.se/origami/")
+        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_web_url), WEB_SCREEN_SAVER)
         set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_web_url), value)
 
 
@@ -453,6 +453,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS)
         sharedPreferences.removePreference(SUN_ABOVE_HORIZON)
         sharedPreferences.removePreference(SUN_BELOW_HORIZON)
+        sharedPreferences.removePreference(context.getString(R.string.key_setting_web_url))
     }
 
     companion object {
@@ -523,9 +524,9 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
         const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
         const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
-        const val PREF_CAMERA_PERMISSIONS = "pref_camera_permissions"
         const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"
+        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
     }
 }

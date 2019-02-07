@@ -241,12 +241,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
+        window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        hideScreenSaver()
         clearInactivityTimer()
-        if(alertDialog != null) {
-            alertDialog?.dismiss()
+        alertDialog?.let {
+            it.dismiss()
             alertDialog = null
         }
-        window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
     }
 
     override fun onBackPressed() {

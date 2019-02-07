@@ -249,8 +249,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     fun showScreenSaver() {
-        Timber.d("showScreenSaver")
-        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver() && !isFinishing) {
+        Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
+        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
             val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
             try {
                 dialogUtils.showScreenSaver(this@BaseActivity,

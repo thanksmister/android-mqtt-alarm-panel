@@ -298,18 +298,15 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
     fun showScreenSaver(activity: AppCompatActivity, showPhotoScreenSaver: Boolean, options:ImageOptions,
                         onClickListener: View.OnClickListener, hasWeather: Boolean, dataSource: WeatherDao,
                         hasWebScreensaver: Boolean, webUrl: String?) {
-        if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
-            return
-        }
-        clearDialogs() // clear any alert dialogs
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
-        val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
-        screenSaverView.init(showPhotoScreenSaver, options, hasWeather, dataSource, hasWebScreensaver, webUrl)
-        screenSaverView.setOnClickListener(onClickListener)
-        screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
-        if (screenSaverDialog != null){
-            screenSaverDialog!!.window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+        if (screenSaverDialog == null) {
+            clearDialogs() // clear any alert dialogs
+            val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
+            val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
+            screenSaverView.init(showPhotoScreenSaver, options, hasWeather, dataSource, hasWebScreensaver, webUrl)
+            screenSaverView.setOnClickListener(onClickListener)
+            screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
+            screenSaverDialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
@@ -325,10 +322,10 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         dialog.setCancelable(cancelable)
         dialog.setContentView(view)
         //Set the dialog to not focusable (makes navigation ignore us adding the window)
-        dialog.window!!.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-        dialog.window!!.decorView.systemUiVisibility = context.window.decorView.systemUiVisibility
+        dialog.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        dialog.window?.decorView?.systemUiVisibility = context.window.decorView.systemUiVisibility
         dialog.show()
-        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
         try {
             val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.updateViewLayout(context.window.decorView, context.window.attributes)
