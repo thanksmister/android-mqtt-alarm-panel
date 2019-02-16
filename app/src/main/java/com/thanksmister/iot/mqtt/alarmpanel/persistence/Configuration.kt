@@ -221,9 +221,9 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
         set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
 
-    var sensorsEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_SENSOR_ENABLED, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SENSOR_ENABLED, value)
+    var weatherUnitsImperial: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_WEATHER_UNITS, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_WEATHER_UNITS, value)
 
     var cameraFaceEnabled: Boolean
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), false)
@@ -454,6 +454,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(SUN_ABOVE_HORIZON)
         sharedPreferences.removePreference(SUN_BELOW_HORIZON)
         sharedPreferences.removePreference(context.getString(R.string.key_setting_web_url))
+        sharedPreferences.removePreference(PREF_WEATHER_UNITS)
     }
 
     companion object {
@@ -503,10 +504,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
         const val PREF_WEATHER_WEATHER = "pref_weather_module"
-        const val PREF_WEATHER_UNITS = "pref_weather_units"
-        const val PREF_WEATHER_API_KEY = "pref_weather_api_key"
-        const val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
-        const val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
+        const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
         const val PREF_PLATFORM_BAR = "pref_platform_bar"
         const val PREF_TELEGRAM_MODULE = "pref_telegram_module"
         const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"

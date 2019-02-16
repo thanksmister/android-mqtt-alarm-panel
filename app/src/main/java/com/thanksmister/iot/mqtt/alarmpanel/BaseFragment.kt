@@ -16,19 +16,12 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
-
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
-import javax.inject.Inject
 
 open class BaseFragment : DaggerFragment() {
 

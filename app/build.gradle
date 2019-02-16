@@ -58,12 +58,6 @@ def TELEGRAM_CHAT_ID() {
     return properties.getProperty("telegramChatId");
 }
 
-def DARK_SKY_KEY() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("darkSkyKey");
-}
-
 def MAIL_GUN_KEY() {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -158,7 +152,6 @@ android {
             applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}-DEV"
             buildConfigField 'Integer', 'ALARM_CODE', ALARM_CODE()
-            buildConfigField 'String', 'DARK_SKY_KEY', "\"" + DARK_SKY_KEY() +"\""
             buildConfigField 'String', 'MAIL_GUN_KEY', "\"" + MAIL_GUN_KEY() +"\""
             buildConfigField 'String', 'MAIL_GUN_URL', "\"" + MAIL_GUN_URL() +"\""
             buildConfigField 'String', 'IMGUR_CLIENT_ID', "\"" + IMGUR_CLIENT_ID() +"\""
@@ -184,7 +177,6 @@ android {
             applicationId "com.thanksmister.iot.mqtt.alarmpanel"
             versionName "${versionMajor}.${versionMinor}.${versionPatch} Build ${versionBuild}"
             buildConfigField 'Integer', 'ALARM_CODE', '1234'
-            buildConfigField 'String', 'DARK_SKY_KEY', '""'
             buildConfigField 'String', 'MAIL_GUN_KEY', '""'
             buildConfigField 'String', 'MAIL_GUN_URL','""'
             buildConfigField 'String', 'IMGUR_CLIENT_ID', '""'

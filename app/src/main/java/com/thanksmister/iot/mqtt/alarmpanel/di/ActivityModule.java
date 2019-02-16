@@ -25,7 +25,6 @@ import android.location.LocationManager;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
@@ -90,10 +89,5 @@ class ActivityModule {
     @Provides
     static ImageOptions provideImageOptions(DPreference preference) {
         return new ImageOptions(preference);
-    }
-
-    @Provides
-    static DarkSkyOptions provideDarkSkyOptions(DPreference preference) {
-        return new DarkSkyOptions(preference);
     }
 }

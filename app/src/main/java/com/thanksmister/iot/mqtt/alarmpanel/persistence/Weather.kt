@@ -19,37 +19,56 @@ package com.thanksmister.iot.mqtt.alarmpanel.persistence
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.TypeConverters
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.Expose
 
 @Entity(tableName = "Weather")
 class Weather {
+
     @PrimaryKey(autoGenerate = true)
     var uid: Int = 0
 
-    @SerializedName("temperature")
-    @ColumnInfo(name = "temperature")
-    var temperature: String? = null
-
-    @SerializedName("units")
-    @ColumnInfo(name = "units")
-    var units: String? = null
-
-    @SerializedName("summary")
-    @ColumnInfo(name = "summary")
-    var summary: String? = null
-
-    @SerializedName("forecast")
-    @ColumnInfo(name = "forecast")
-    var forecast: String? = null
-
-    @SerializedName("icon")
-    @ColumnInfo(name = "icon")
-    var icon: String? = null
-
-    @SerializedName("precipitation")
-    @ColumnInfo(name = "precipitation")
-    var precipitation: Double? = null
-
     @ColumnInfo(name = "createdAt")
     var createdAt: String? = null
+
+    @ColumnInfo(name = "temperature")
+    @SerializedName("temperature")
+    var temperature: Double? = null
+
+    @ColumnInfo(name = "humidity")
+    @SerializedName("humidity")
+    var humidity: Double? = null
+
+    @ColumnInfo(name = "ozone")
+    @SerializedName("ozone")
+    var ozone: Double? = null
+
+    @ColumnInfo(name = "pressure")
+    @SerializedName("pressure")
+    var pressure: Double? = null
+
+    @ColumnInfo(name = "wind_bearing")
+    @SerializedName("wind_bearing")
+    var windBearing: Double? = null
+
+    @ColumnInfo(name = "wind_speed")
+    @SerializedName("wind_speed")
+    var windSpeed: Double? = null
+
+    @ColumnInfo(name = "visibility")
+    @SerializedName("visibility")
+    var visibility: Double? = null
+
+    @ColumnInfo(name = "attribution")
+    @SerializedName("attribution")
+    var attribution: String? = null
+
+    @ColumnInfo(name = "forecast")
+    @SerializedName("forecast")
+    @TypeConverters(ForecastConverter::class)
+    var forecast: ArrayList<Forecast>? = null
+
+    @SerializedName("friendly_name")
+    var friendlyName: String? = null
 }

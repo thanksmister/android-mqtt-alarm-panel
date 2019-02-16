@@ -27,7 +27,6 @@ import android.os.Handler
 import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
@@ -35,12 +34,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
-import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
@@ -55,7 +51,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
     @Inject lateinit var imageOptions: ImageOptions
-    @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var weatherDao: WeatherDao
 
@@ -251,7 +246,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     fun showScreenSaver() {
         Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
         if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
-            val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
+            val hasWeather = configuration.showWeatherModule()
+            val isImperial = configuration.weatherUnitsImperial
             try {
                 dialogUtils.showScreenSaver(this@BaseActivity,
                         configuration.showPhotoScreenSaver(),
@@ -259,7 +255,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                         View.OnClickListener {
                             dialogUtils.hideScreenSaverDialog()
                             onUserInteraction()
-                        },  hasWeather, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
+                        },  hasWeather, isImperial, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
             } catch (e: Exception) {
                 Timber.e(e.message)
             }

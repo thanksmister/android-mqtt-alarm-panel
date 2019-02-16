@@ -34,8 +34,8 @@ import android.webkit.*
 import android.widget.RelativeLayout
 import android.widget.Toast
 import com.squareup.picasso.Picasso
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.ImageFetcher
@@ -44,13 +44,13 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dialog_progress.*
 import kotlinx.android.synthetic.main.dialog_screen_saver.view.*
-import kotlinx.android.synthetic.main.fragment_platform.*
+import kotlinx.android.synthetic.main.fragment_information.*
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -71,6 +71,7 @@ class ScreenSaverView : RelativeLayout {
     private var useImageSaver: Boolean = false
     private var useWebScreenSaver: Boolean = false
     private var hasWeather: Boolean = false
+    private var useImperial: Boolean = false
     private var parentWidth: Int = 0
     private var parentHeight: Int = 0
     private val calendar: Calendar = Calendar.getInstance()
@@ -197,30 +198,40 @@ class ScreenSaverView : RelativeLayout {
     }
 
     private fun setDisplayData(item: Weather) {
-        val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
+        val displayUnits =  if(useImperial) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
         if (useImageSaver) {
-            temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.temperature, displayUnits)
-            try {
-                if (shouldTakeUmbrellaToday(item.precipitation)) {
-                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                } else {
-                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+            item.takeIf{ saverContext != null }?.forecast?.let { it ->
+                temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
+                if(it.size > 0) {
+                    val forecast = it[0]
+                    try {
+                        val precipitation = forecast.precipitation
+                        if(StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+                        } else {
+                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
+                        }
+                    } catch (e : Exception) {
+                        Timber.e(e.message)
+                    }
                 }
-            } catch (e : Exception) {
-                Timber.e(e.message)
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
         } else {
-            temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.temperature, displayUnits)
-            try {
-                if (shouldTakeUmbrellaToday(item.precipitation)) {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                } else {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+            item.takeIf{ saverContext != null }?.forecast?.let { it ->
+                temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
+                if(it.size > 0) {
+                    val forecast = it[0]
+                    try {
+                        val precipitation = forecast.precipitation
+                        if(StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+                        } else {
+                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
+                        }
+                    } catch (e : Exception) {
+                        Timber.e(e.message)
+                    }
                 }
-            } catch (e : Exception) {
-                Timber.e(e.message)
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -232,17 +243,18 @@ class ScreenSaverView : RelativeLayout {
         return false
     }
 
-    fun init(useImageScreenSaver: Boolean, options:ImageOptions, hasWeather: Boolean,
-             weatherDao: WeatherDao, hasWebScreenSaver: Boolean, webUrl: String?) {
+    fun init(useImageScreenSaver: Boolean = false, options: ImageOptions, hasWeather: Boolean = false, useImperial: Boolean = false,
+             weatherDao: WeatherDao, hasWebScreenSaver: Boolean = false, webUrl: String = "") {
         Timber.d("ScreenSaverView $hasWebScreenSaver")
         this.weatherSource = weatherDao
         this.options = options
         this.rotationInterval = (options.imageRotation * 60 * 1000).toLong() // convert to milliseconds
         this.hasWeather = hasWeather
+        this.useImperial = useImperial
         this.useImageSaver = (useImageScreenSaver && options.isValid)
         this.useWebScreenSaver = hasWebScreenSaver
         if(!TextUtils.isEmpty(webUrl)) {
-            this.webUrl = webUrl!!
+            this.webUrl = webUrl
         }
         setScreenSaverView()
     }

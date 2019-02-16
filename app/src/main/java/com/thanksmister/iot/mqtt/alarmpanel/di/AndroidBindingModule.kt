@@ -52,11 +52,6 @@ internal abstract class AndroidBindingModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ScreenSaverViewModel::class)
-    abstract fun bindsScreenSaverViewModel(mainViewModel: ScreenSaverViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(DetectionViewModel::class)
     abstract fun bindsDetectionViewModel(mainViewModel: DetectionViewModel): ViewModel
 

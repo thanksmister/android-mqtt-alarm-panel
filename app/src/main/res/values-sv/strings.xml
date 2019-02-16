@@ -390,6 +390,21 @@
     <string name="pref_web_screensaver_summary">Use a web page as a screensaver. (limted support)</string>
     <string name="pref_web_screensaver_url_title">Web Screensaver Url</string>
     <string name="pref_web_screensaver_url_summary">Enter the url to use as a web screensaver.</string>
+    <string name="pref_weather_units_summary">Displays temperature in °F</string>
+    <string name="pref_weather_units_title">Temperature Unit</string>
+    <string name="weather_beautiful">Beautiful</string>
+    <string name="weather_sunny">Sunny</string>
+    <string name="weather_clear_night">Clear Night</string>
+    <string name="weather_stormy">Thunderstorms</string>
+    <string name="weather_sleet">Sleet</string>
+    <string name="weather_partly_cloudy">Partly Cloudy</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_fog">Fog</string>
+    <string name="weather_hail">Hail</string>
+    <string name="weather_snow">Snow</string>
+    <string name="weather_windy">Windy</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_pouring_rain">Pouring Rain</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

@@ -24,6 +24,7 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_UNITS
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_WEATHER
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
@@ -36,7 +37,7 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
     @Inject lateinit var configuration: Configuration
 
     private var weatherModulePreference: SwitchPreference? = null
-
+    private var weatherUnitsPreference: SwitchPreference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -66,14 +67,12 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         weatherModulePreference = findPreference(PREF_WEATHER_WEATHER) as SwitchPreference
+        weatherUnitsPreference = findPreference(PREF_WEATHER_UNITS) as SwitchPreference
         weatherModulePreference!!.isChecked = configuration.showWeatherModule()
+        weatherUnitsPreference!!.isChecked = configuration.weatherUnitsImperial
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -81,6 +80,10 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
             PREF_WEATHER_WEATHER -> {
                 val checked = weatherModulePreference!!.isChecked
                 configuration.setWebModule(checked)
+            }
+            PREF_WEATHER_UNITS -> {
+                val checked = weatherUnitsPreference!!.isChecked
+                configuration.weatherUnitsImperial = checked
             }
         }
     }

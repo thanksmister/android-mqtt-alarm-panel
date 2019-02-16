@@ -23,13 +23,12 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ForecastDisplay
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 
 import kotlinx.android.synthetic.main.adapter_forcast_card.view.*
 
-class ForecastCardAdapter(private val items: List<Datum>?) : RecyclerView.Adapter<ForecastCardAdapter.ViewHolder>() {
+class ForecastCardAdapter(private val items: List<ForecastDisplay>?) : RecyclerView.Adapter<ForecastCardAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastCardAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.adapter_forcast_card, parent, false)
@@ -46,14 +45,13 @@ class ForecastCardAdapter(private val items: List<Datum>?) : RecyclerView.Adapte
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(datum: Datum) {
-            val highTemp = Math.round(datum.apparentTemperatureMax!!).toString()
-            val lowTemp = Math.round(datum.apparentTemperatureMin!!).toString()
+        fun bindItems(forecast: ForecastDisplay) {
+            val highTemp = Math.round(forecast.temperatureHigh).toString()
+            val lowTemp = Math.round(forecast.temperatureLow).toString()
             itemView.temperatureText.text = itemView.context.getString(R.string.text_temperature_range, highTemp, lowTemp)
-            itemView.dayText.text = DateUtils.dayOfWeek(datum.time!!)
-            itemView.outlookText.text = datum.summary
-            itemView.iconImage.setImageDrawable(ResourcesCompat.getDrawable(itemView.context.resources,
-                    WeatherUtils.getIconForWeatherCondition(datum.icon), itemView.context.theme))
+            itemView.dayText.text = forecast.day
+            itemView.outlookText.text = forecast.condition
+            itemView.iconImage.setImageDrawable(ResourcesCompat.getDrawable(itemView.context.resources, forecast.conditionImage, itemView.context.theme))
         }
     }
 }

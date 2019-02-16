@@ -20,8 +20,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseApplication;
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao;
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao;
@@ -69,18 +67,6 @@ abstract class ApplicationModule {
     @Provides
     static SensorDao provideSensorDao(SensorDatabase database) {
         return database.sensorDao();
-    }
-
-    @Singleton
-    @Provides
-    static DarkSkyDatabase provideDarkSkyDatabase(Application app) {
-        return DarkSkyDatabase.getInstance(app);
-    }
-
-    @Singleton
-    @Provides
-    static DarkSkyDao provideDarkSkyDao(DarkSkyDatabase database) {
-        return database.darkSkyDao();
     }
 
     @Singleton

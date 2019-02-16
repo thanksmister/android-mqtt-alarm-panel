@@ -21,11 +21,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.widget.FrameLayout
 
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Daily
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.ForecastCardAdapter
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 
 import kotlinx.android.synthetic.main.dialog_extended_forecast.view.*
+import timber.log.Timber
+import java.util.*
 
 class ExtendedForecastView : FrameLayout {
 
@@ -37,14 +41,138 @@ class ExtendedForecastView : FrameLayout {
         super.onFinishInflate()
     }
 
-    fun setExtendedForecast(data: List<Datum>?) {
-        if (data != null) {
-            recycleView.setHasFixedSize(true)
-            val linearLayoutManager = LinearLayoutManager(context)
-            linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-            recycleView.layoutManager = linearLayoutManager
-            val forecastCardAdapter = ForecastCardAdapter(data)
-            recycleView.adapter = forecastCardAdapter
+    fun setExtendedForecast(forecastList: List<Forecast>) {
+        if(forecastList.isNotEmpty()) {
+            val groupedForecastList = ArrayList<ForecastDisplay>()
+            var groupDay = DateUtils.dayOfWeek(forecastList[0].datetime)
+            Timber.d(" group day start ${forecastList[0].datetime}")
+            Timber.d(" forecast list ${forecastList.size}")
+            var group = ArrayList<Forecast>()
+            var count = 0
+            for (forecast in forecastList) {
+                val day = DateUtils.dayOfWeek(forecast.datetime)
+                if (day == groupDay) {
+                    group.add(forecast)
+                } else {
+                    if(!group.isEmpty()){
+                        val today = (count == 0)
+                        val forecastDisplay = groupForecastsByDay(today, group)
+                        Timber.d(" add today ${today}")
+                        Timber.d(" add forecastDisplay ${forecastDisplay.day}")
+                        groupedForecastList.add(forecastDisplay)
+                        count++
+                    }
+                    groupDay = day
+                    group = ArrayList()
+                    group.add(forecast)
+                }
+            }
+            if(!group.isEmpty()){
+                val forecastDisplay = groupForecastsByDay(false, group)
+                Timber.d(" add forecastDisplay ${forecastDisplay.day}")
+                groupedForecastList.add(forecastDisplay)
+            }
+
+            recycleView.apply {
+                setHasFixedSize(true)
+                val linearLayoutManager = LinearLayoutManager(context)
+                linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+                layoutManager = linearLayoutManager
+                forecastList.let {
+                    val forecastCardAdapter = ForecastCardAdapter(groupedForecastList)
+                    recycleView.adapter = forecastCardAdapter
+                }
+            }
         }
+    }
+
+    private fun groupForecastsByDay(today: Boolean = false, group: ArrayList<Forecast>): ForecastDisplay {
+        val forecastDisplay = ForecastDisplay()
+        if(group.isNotEmpty()) {
+            forecastDisplay.condition = calculateCurrentConditionString(today, group, context)
+            forecastDisplay.conditionImage = calculateCurrentConditionImage(today, group)
+            forecastDisplay.day = DateUtils.dayOfWeek(group[0].datetime)
+            forecastDisplay.precipitation = calculatePrecipitation(group)
+            forecastDisplay.temperatureLow = calculateLowTemperature(group)
+            forecastDisplay.temperatureHigh = calculateHighTemperature(group)
+        }
+        return forecastDisplay
+    }
+
+    private fun calculatePrecipitation(forecastList: ArrayList<Forecast>): Double {
+        var precip = 0.0
+        for(forecast in forecastList) {
+            forecast.precipitation?.let {
+                val doubleValue = StringUtils.stringToDouble(it)
+                if(doubleValue > precip) {
+                    precip = doubleValue
+                }
+            }
+        }
+        return precip
+    }
+
+    private fun calculateLowTemperature(forecastList: ArrayList<Forecast>): Double {
+        var temp = 0.0
+        for(forecast in forecastList) {
+            forecast.temperature?.let {
+                if(temp == 0.0) {
+                    temp = it
+                }
+                if(it < temp) {
+                    temp = it
+                }
+            }
+        }
+        return temp
+    }
+
+    private fun calculateHighTemperature(forecastList: ArrayList<Forecast>): Double {
+        var temp = 0.0
+        for(forecast in forecastList) {
+            forecast.temperature?.let {
+                if(it > temp) {
+                    temp = it
+                }
+            }
+        }
+        return temp
+    }
+
+    private fun calculateCurrentConditionString(today: Boolean = false, forecastList: ArrayList<Forecast>, context: Context): String {
+        if(forecastList.isNotEmpty()) {
+            Timber.d("calculateCurrentConditionString -------------------")
+            val condition = getCondition(today, forecastList)
+            return WeatherUtils.getOutlookForWeatherCondition(condition, context)
+        }
+        return WeatherUtils.getOutlookForWeatherCondition(forecastList[0].condition, context)
+    }
+
+    private fun calculateCurrentConditionImage(today: Boolean = false, forecastList: ArrayList<Forecast>): Int {
+        if(forecastList.isNotEmpty()) {
+            Timber.d("calculateCurrentConditionImage -------------------")
+            val condition = getCondition(today, forecastList)
+            return WeatherUtils.getIconForWeatherCondition(condition)
+        }
+        return WeatherUtils.getIconForWeatherCondition(forecastList[0].condition)
+    }
+
+    private fun getCondition(today: Boolean, forecastList: ArrayList<Forecast>): String? {
+        val rightNow = Calendar.getInstance()
+        val currentHourIn24Format = if (today) rightNow.get(Calendar.HOUR_OF_DAY) else 14
+        Timber.d("currentHourIn24Format ${currentHourIn24Format}")
+        var condition = forecastList[forecastList.size - 1].condition
+        for(forecast in forecastList) {
+            val day = DateUtils.dayOfWeek(forecast.datetime)
+            Timber.d("Current Day ${day}")
+            val hour = DateUtils.hourOfDay(forecast.datetime)
+            Timber.d("Current Hour ${hour}")
+            if(currentHourIn24Format <= hour) {
+                condition = forecast.condition
+                Timber.d("Current condition ${condition} -----------------------")
+                break
+            }
+        }
+        return condition
     }
 }

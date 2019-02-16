@@ -90,9 +90,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
        if(BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
-            darkSkyOptions.darkSkyKey = BuildConfig.DARK_SKY_KEY
-            darkSkyOptions.latitude = BuildConfig.LATITUDE
-            darkSkyOptions.longitude = BuildConfig.LONGITUDE
             mqttOptions.setBroker(BuildConfig.BROKER)
             configuration.webUrl = BuildConfig.HASS_URL
             configuration.setMailFrom(BuildConfig.MAIL_FROM)
@@ -103,7 +100,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
             imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
             imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
-            darkSkyOptions.setIsCelsius(true)
             configuration.isFirstTime = false
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)

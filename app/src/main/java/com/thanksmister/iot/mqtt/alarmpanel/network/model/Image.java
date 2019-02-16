@@ -32,7 +32,7 @@ public class Image {
     @SerializedName("description")
     @Expose
     private String description;
-    @SerializedName("datetime")
+    @SerializedName("day")
     @Expose
     private Integer datetime;
     @SerializedName("type")

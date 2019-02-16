@@ -33,7 +33,7 @@ public class Item {
     @SerializedName("description")
     @Expose
     private Object description;
-    @SerializedName("datetime")
+    @SerializedName("day")
     @Expose
     private Integer datetime;
     @SerializedName("cover")

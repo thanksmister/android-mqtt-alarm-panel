@@ -31,22 +31,20 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.stringToDouble
+import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_information.*
+import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
-import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
-import timber.log.Timber
 
 class InformationFragment : BaseFragment() {
 
@@ -55,9 +53,8 @@ class InformationFragment : BaseFragment() {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
-    private var forecastList: List<Datum> = Collections.emptyList()
+    private var forecastList: List<Forecast> = Collections.emptyList()
     private var timeHandler: Handler? = null
 
     private val timeRunnable = object : Runnable {
@@ -96,7 +93,7 @@ class InformationFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (configuration.showWeatherModule() && darkSkyOptions.isValid) {
+        if (configuration.showWeatherModule()) {
             weatherLayout.visibility = View.VISIBLE
         } else {
             weatherViewModel.onCleared()
@@ -129,19 +126,26 @@ class InformationFragment : BaseFragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { item ->
                             if(item != null) {
-                                (activity as BaseActivity).runOnUiThread {
-                                    //weatherLayout.visibility = View.VISIBLE
-                                    outlookText.text = item.summary
-                                    val displayUnits =  item.units
-                                    temperatureText.text = getString(R.string.text_temperature, item.temperature, displayUnits)
-                                    try {
-                                        if (viewModel.shouldTakeUmbrellaToday(item.precipitation)) {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
-                                        } else {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
+                                weatherLayout.visibility = View.VISIBLE
+                                val displayUnits =  if(configuration.weatherUnitsImperial) getString(R.string.text_f) else getString(R.string.text_c)
+                                temperatureText.text = getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
+                                item.forecast?.let { it ->
+                                    if(it.size > 0) {
+                                        forecastList = it
+                                        val forecast = it[0]
+                                        try {
+                                            val precipitation = forecast.precipitation
+                                            if(isDouble(precipitation) && viewModel.shouldTakeUmbrellaToday(stringToDouble(precipitation))) {
+                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                            } else {
+                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (activity as BaseActivity).theme))
+                                            }
+                                            context?.let { context ->
+                                                outlookText.text = WeatherUtils.getOutlookForWeatherCondition(forecast.condition, context)
+                                            }
+                                        } catch (e : Exception) {
+                                            Timber.e(e.message)
                                         }
-                                    } catch (e : Exception) {
-                                        Timber.e(e.message)
                                     }
                                 }
                             }

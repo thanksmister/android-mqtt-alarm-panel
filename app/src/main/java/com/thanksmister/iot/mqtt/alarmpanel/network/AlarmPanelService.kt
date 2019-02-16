@@ -122,6 +122,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private val reconnectHandler = Handler()
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var mqttAlertMessageShown = false
+    private var mqttConnected = false
 
     inner class AlarmPanelServiceBinder : Binder() {
         val service: AlarmPanelService
@@ -335,12 +336,15 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     override fun onMQTTConnect() {
         Timber.w("onMQTTConnect")
-        if (mqttAlertMessageShown) {
-            clearAlertMessage() // clear any dialogs
-            mqttAlertMessageShown = false
+        if (!mqttConnected) {
+            if (mqttAlertMessageShown) {
+                clearAlertMessage() // clear any dialogs
+                mqttAlertMessageShown = false
+            }
+            clearFaceDetected()
+            clearMotionDetected()
+            mqttConnected = true
         }
-        clearFaceDetected()
-        clearMotionDetected()
     }
 
     override fun onMQTTDisconnect() {
@@ -350,8 +354,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_connection))
             }
-            //reconnectHandler.postDelayed(restartMqttRunnable, 30000)
         }
+        mqttConnected = false
     }
 
     override fun onMQTTException(message: String) {
@@ -361,8 +365,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_exception))
             }
-            //reconnectHandler.postDelayed(restartMqttRunnable, 30000)
         }
+        mqttConnected = true
     }
 
     private val restartMqttRunnable = Runnable {
@@ -371,7 +375,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
         Timber.i("onMQTTMessage topic: $topic")
-        Timber.i("onMQTTMessage payload: $payload")
+        //Timber.i("onMQTTMessage payload: $payload")
         // TODO this is deprecated as we've moved this to commands but we will keep for backwards compatibility
         if (mqttOptions.getNotificationTopic() == topic) {
             speakMessage(payload)
@@ -423,8 +427,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun publishState(command: String, message: String) {
         mqttModule?.let {
-            Timber.d("publishState command $command")
-            Timber.d("publishState message $message")
+            //Timber.d("publishState command $command")
+            //Timber.d("publishState message $message")
             it.publishState(command, message)
         }
     }
@@ -555,7 +559,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun processCommand(id: String, topic: String, commandJson: JSONObject) {
-        Timber.d("processCommand ${commandJson}")
+        // Timber.d("processCommand ${commandJson}")
         var payload: String = ""
         try {
             if (commandJson.has(COMMAND_WAKE)) {
@@ -749,14 +753,18 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun insertWeather(payload: String) {
         Timber.d("insertWeather")
         val gson = GsonBuilder().serializeNulls().create()
-        val weather = gson.fromJson<Weather>(payload, Weather::class.java)
-        disposable.add(Completable.fromAction {
-            weather.createdAt = DateUtils.generateCreatedAtDate()
-            weatherDao.updateItem(weather)
-        }.subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                }, { error -> Timber.e("Database error" + error.message) }))
+        try {
+            val weather = gson.fromJson<Weather>(payload, Weather::class.java)
+            disposable.add(Completable.fromAction {
+                weather.createdAt = DateUtils.generateCreatedAtDate()
+                weatherDao.updateItem(weather)
+            }.subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                    }, { error -> Timber.e("Weather insert error" + error.message) }))
+        } catch (error: Exception) {
+            Timber.e("Weather parsing error" + error.message)
+        }
     }
 
     private fun insertMessage(messageId: String, topic: String, payload: String) {
