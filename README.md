@@ -110,27 +110,37 @@ You can also interact and control the application and device remotely using eith
 
 ![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-You can also use MQTT to publish the weather to the Voice Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the weather feature. Here is a sample automation that uses Dark Sky data to publish an MQTT message: 
+You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky: 
 
 ```
 - id: '1538595661244'
   alias: MQTT Weather
   trigger:
-  - minutes: '/15'
-    platform: time
+  - minutes: /30
+    platform: time_pattern
   condition: []
   action:
   - data:
-      payload_template: '{''weather'':{''summary'':''{{states(''sensor.dark_sky_summary'')}}'',''precipitation'':''{{states(''sensor.dark_sky_precip_probability'')}}'',''icon'':''{{states(''sensor.dark_sky_icon'')}}'',''temperature'':''{{states(''sensor.dark_sky_apparent_temperature'')}}'',''units'':''{{states.sensor.dark_sky_apparent_temperature.attributes.unit_of_measurement}}''}}'
-      topic: voicepanel/command
+      payload_template: '{''weather'':{{states.weather.dark_sky.attributes}}}'
       retain: true
+      topic: alarmpanel/command
     service: mqtt.publish
 ```
 
 The resulting payload will look like this:
 
 ```
-{"topic": "voicepanel/command","payload":"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
+{"topic": "alarmpanel/command","payload":"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
+```
+
+You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
+
+```
+{
+  "payload_template": "{'weather':{{states.weather.dark_sky.attributes}}}",
+  "retain": true,
+  "topic": "alarmpanel/command"
+}
 ```
 
 ### MQTT Day/Night Mode
@@ -148,7 +158,7 @@ Similar to how weather works, you can control the Voice Panel to display the day
   - data:
       payload_template: '{''sun'':''{{states(''sun.sun'')}}''}'
       retain: true
-      topic: voicepanel/command
+      topic: alarmpanel/command
     service: mqtt.publish
 ```
 
@@ -161,12 +171,12 @@ The resulting payload will look like this:
 }
 ```
 
-You can also test this from the using the "mqtt.publish" service under the Home Assistant Developer Tools:
+You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
 
 ```
 {
   "payload_template": "{'sun':'{{states('sun.sun') }}'}",
-  "topic": "voicepanel/command"
+  "topic": "alarmpanel/command"
 }
 ```
 
