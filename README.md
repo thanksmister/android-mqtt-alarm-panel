@@ -100,6 +100,28 @@ alarm_control_panel:
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
+## Capture Images (Telegram/Mailgun)
+
+If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
+
+You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+
+The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
+
+## Screensaver, Image, Clock, Webpage
+
+To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/).  You will need a valid web page URL to use the a webpage as screensaver.  Note that the application offers limited webpage support and some web animations may slow down your device.
+
+## Platform Screen or Webpage View
+
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+
+## MQTT Communication
+
+The Alarm Panel application can display and control components using the MQTT protocal. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day/Night mode, and send various remote commands to the application.
+
+You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices. 
+
 ### MQTT Weather
 
 ![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
@@ -164,23 +186,31 @@ You can also test this from the using the "mqtt.publish" service under the Home 
 }
 ```
 
-If you wish, you can use an offset to change the day or night mode values or send a MQTT message at the desired time with "above_horizon" to show day mode or "below_horizon" to show night mode.  If you wish to always be night, you need only send one MQTT message with "below_horizon" and the app will not switch back to day mode.  Be sure to turn on the Day/Night mode under the Display settings in the application.  
+If you wish, you can use an offset to change the day or night mode values or send a MQTT message at the desired time with "above_horizon" to show day mode or "below_horizon" to show night mode.  If you wish to always be night, you need only send one MQTT message with "below_horizon" and the app will not switch back to day mode.  Be sure to turn on the Day/Night mode under the Display settings in the application.
 
-### Capture Images (Telegram/Mailgun)
+### MQTT Commands
+Key | Value | Example Payload | Description
+-|-|-|-
+audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
+wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
+speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
+alert | data | ```{"alert": "Hello!"}``` | Displays an alert dialog within the application
+notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the devie
 
-If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
+* The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
+* Commands are constructed via valid JSON. It is possible to string multiple commands together:
+  * eg, ```{"clearCache":true, "relaunch":true}```
+* MQTT
+  * WallPanel subscribes to topic ```[alarmpanel]/command```
+    * Default Topic: ```alarmpanel/command```
+  * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
 
-You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+### Google Text-To-Speach Command
+You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
 
-The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
+Example format for the message topic and payload: 
 
-### Screensaver
-
-To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/)
-
-### Platform Screen
-
-You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+```{"topic":"alarmpanel/command", "payload":"{'speak':'Hello!'}"}```
 
 ### MQTT Sensor and State Data
 If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
@@ -310,32 +340,6 @@ camera:
     mjpeg_url: http://192.168.1.1:2971/camera/stream
     name: Alarm Panel Camera
 ```
-## MQTT Commands
-Interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
-
-### Commands
-Key | Value | Example Payload | Description
--|-|-|-
-audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
-wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
-speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
-alert | data | ```{"alert": "Hello!"}``` | Displays an alert dialog within the application
-notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the devie
-
-* The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
-* Commands are constructed via valid JSON. It is possible to string multiple commands together:
-  * eg, ```{"clearCache":true, "relaunch":true}```
-* MQTT
-  * WallPanel subscribes to topic ```[alarmpanel]/command```
-    * Default Topic: ```alarmpanel/command```
-  * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
-
-### Google Text-To-Speach Command
-You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
-
-Example format for the message topic and payload: 
-
-```{"topic":"alarmpanel/command", "payload":"{'speak':'Hello!'}"}```
 
 ## Notes
 
