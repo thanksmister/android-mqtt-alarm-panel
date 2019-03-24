@@ -4,7 +4,7 @@ This project is an MQTT Alarm Control Panel was originally created for use with 
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ)
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
-- [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel).   
+- [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
 
 The alarm panel acts as an interface for Home Assistant's manual alarm control panel component. You can set the alarm state to away or home, or disarm the alarm using a code. In addition it has some nice features such as weather forecast and screen saver mode.
 
@@ -15,10 +15,10 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 - Capture and emailing images when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
-- Day/Night mode themes based on set start and end times.
+- Day/Night mode themes based on MQTT sun values.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
 - Optional screensaver mode using a digital clock or Imgur images. 
-- Seven day Weather forecast (requires DarkSky api key).
+- Three day Weather forecast using MQTT.
 - Home Automation Platform webpage support for viewing home automation dashboards.
 
 ## Hardware & Software 
@@ -100,13 +100,73 @@ alarm_control_panel:
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
-## Weather Updates (Darksky)
+### MQTT Weather
 
-If you would like to get weather updates, create and enter a [Dark Sky API](https://darksky.net/dev/) key and your current latitude and longitude into the weather setting screen. You can get your current location by using maps.google.com in a web browser and copying the lat/lon from the url (they look like -34.6156624,-58.5035102 in the url).
+![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-To use a photo screensaver rather than the digital clock, turn this feature on, using the screen saver settings screen. You can load other Instagram images by changing the Instagram profile name in the settings.
+You can also use MQTT to publish the weather to the Voice Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the weather feature. Here is a sample automation that uses Dark Sky data to publish an MQTT message: 
 
-## Capture Images (Telegram/Mailgun)
+```
+- id: '1538595661244'
+  alias: MQTT Weather
+  trigger:
+  - minutes: '/15'
+    platform: time
+  condition: []
+  action:
+  - data:
+      payload_template: '{''weather'':{''summary'':''{{states(''sensor.dark_sky_summary'')}}'',''precipitation'':''{{states(''sensor.dark_sky_precip_probability'')}}'',''icon'':''{{states(''sensor.dark_sky_icon'')}}'',''temperature'':''{{states(''sensor.dark_sky_apparent_temperature'')}}'',''units'':''{{states.sensor.dark_sky_apparent_temperature.attributes.unit_of_measurement}}''}}'
+      topic: voicepanel/command
+      retain: true
+    service: mqtt.publish
+```
+
+The resulting payload will look like this:
+
+```
+{"topic": "voicepanel/command","payload":"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
+```
+
+### MQTT Day/Night Mode
+
+Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon).  To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish an MQTT message on an interval:
+
+```
+- id: '1539017708085'
+  alias: MQTT Sun
+  trigger:
+  - minutes: '/5'
+    platform: time
+  condition: []
+  action:
+  - data:
+      payload_template: '{''sun'':''{{states(''sun.sun'')}}''}'
+      retain: true
+      topic: voicepanel/command
+    service: mqtt.publish
+```
+
+The resulting payload will look like this:
+
+```
+{
+  "payload": "{'sun':'below_horizon'}",
+  "topic": "alarmpanel/command"
+}
+```
+
+You can also test this from the using the "mqtt.publish" service under the Home Assistant Developer Tools:
+
+```
+{
+  "payload_template": "{'sun':'{{states('sun.sun') }}'}",
+  "topic": "voicepanel/command"
+}
+```
+
+If you wish, you can use an offset to change the day or night mode values or send a MQTT message at the desired time with "above_horizon" to show day mode or "below_horizon" to show night mode.  If you wish to always be night, you need only send one MQTT message with "below_horizon" and the app will not switch back to day mode.  Be sure to turn on the Day/Night mode under the Display settings in the application.  
+
+### Capture Images (Telegram/Mailgun)
 
 If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
 
@@ -114,15 +174,15 @@ You may also use Telegram to recieve a notification with the image when the alar
 
 The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
 
-## Screensaver
+### Screensaver
 
 To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/)
 
-## Platform Screen
+### Platform Screen
 
 You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
-## MQTT Sensor and State Data
+### MQTT Sensor and State Data
 If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
 
 ### Device Sensors
