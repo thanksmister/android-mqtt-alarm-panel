@@ -17,7 +17,7 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
 - Day/Night mode themes based on MQTT sun values.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
-- Optional screensaver mode using a digital clock or Imgur images. 
+- Optional screensaver mode using a digital clock, Imgur images or webpage. 
 - Three day Weather forecast using MQTT.
 - Home Automation Platform webpage support for viewing home automation dashboards.
 
@@ -99,22 +99,6 @@ alarm_control_panel:
 -- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it    stops and it doesn't reset after its triggerd. 
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
-
-## Capture Images (Telegram/Mailgun)
-
-If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
-
-You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
-
-The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
-
-## Screensaver, Image, Clock, Webpage
-
-To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/).  You will need a valid web page URL to use the a webpage as screensaver.  Note that the application offers limited webpage support and some web animations may slow down your device.
-
-## Platform Screen or Webpage View
-
-You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
 ## MQTT Communication
 
@@ -323,6 +307,22 @@ screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
 * MQTT
   * WallPanel publishes state to topic ```[alarmpanel]/state```
     * Default Topic: ```alarmpanel/state```
+
+## Capture Images (Telegram/Mailgun)
+
+If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
+
+You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+
+The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
+
+## Screensaver, Image, Clock, Webpage
+
+To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/).  You will need a valid web page URL to use the a webpage as screensaver.  Note that the application offers limited webpage support and some web animations may slow down your device.
+
+## Platform Screen or Webpage View
+
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
 
 ## MJPEG Video Streaming
 
