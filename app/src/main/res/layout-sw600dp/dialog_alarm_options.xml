@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:gravity="center"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
     <LinearLayout

@@ -58,7 +58,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     private var alertDialog: AlertDialog? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var decorView: View? = null
-    private var alarmPanelService: Intent? = null
+
     private val inactivityHandler: Handler = Handler()
 
     val inactivityCallback = Runnable {
@@ -134,12 +134,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             decorView?.keepScreenOn = false
         }
+
+        resetScreenBrightness(tisTheDay())
     }
 
     override fun onStart() {
         super.onStart()
         Timber.d("onStart")
-        alarmPanelService = Intent(this, AlarmPanelService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(alarmPanelService)
         } else {

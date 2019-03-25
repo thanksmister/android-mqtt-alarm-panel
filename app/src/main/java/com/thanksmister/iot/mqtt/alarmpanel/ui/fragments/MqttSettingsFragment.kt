@@ -34,6 +34,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_C
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PASSWORD
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PORT
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_RETAIN
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -52,6 +53,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var stateTopicPreference: EditTextPreference? = null
     private var userNamePreference: EditTextPreference? = null
     private var sslPreference: CheckBoxPreference? = null
+    private var retainPreference: CheckBoxPreference? = null
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
@@ -94,6 +96,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
+        retainPreference = findPreference(PREF_RETAIN) as CheckBoxPreference
         baseTopicPreference = findPreference(PREF_BASE_TOPIC) as EditTextPreference
 
         baseTopicPreference!!.text = mqttOptions.getBaseTopic()
@@ -105,6 +108,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference!!.text = mqttOptions.getUsername()
         passwordPreference!!.text = mqttOptions.getPassword()
         sslPreference!!.isChecked = mqttOptions.getTlsConnection()
+        retainPreference!!.isChecked = mqttOptions.getRetain()
 
         if (!TextUtils.isEmpty(mqttOptions.getBroker())) {
             brokerPreference!!.summary = mqttOptions.getBroker()
@@ -209,6 +213,10 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             PREF_TLS_CONNECTION -> {
                 val checked = sslPreference!!.isChecked
                 mqttOptions.setTlsConnection(checked)
+            }
+            PREF_RETAIN -> {
+                val checked = sslPreference!!.isChecked
+                mqttOptions.setRetain(checked)
             }
         }
     }

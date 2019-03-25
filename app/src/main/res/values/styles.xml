@@ -358,6 +358,10 @@
         <item name="android:textSize">@dimen/text_size_headline</item>
     </style>
 
+    <style name="TextAppearance.TextExtraLarge.SmallAction">
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+    </style>
+
     <style name="TextAppearance.TextExtraLarge.Bold" >
         <item name="android:textStyle">bold</item>
     </style>

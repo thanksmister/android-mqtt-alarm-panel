@@ -67,7 +67,7 @@ class Weather {
     @ColumnInfo(name = "forecast")
     @SerializedName("forecast")
     @TypeConverters(ForecastConverter::class)
-    var forecast: ArrayList<Forecast>? = null
+    var forecast: ArrayList<Forecast> = ArrayList<Forecast>()
 
     @SerializedName("friendly_name")
     var friendlyName: String? = null

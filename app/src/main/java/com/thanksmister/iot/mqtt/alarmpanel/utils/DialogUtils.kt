@@ -37,6 +37,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.*
 import timber.log.Timber
@@ -265,7 +266,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showExtendedForecastDialog(activity: AppCompatActivity, data: List<Forecast>) {
+    fun showExtendedForecastDialog(activity: AppCompatActivity, weather: Weather) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_extended_forecast, null, false)
@@ -284,7 +285,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
             view.minimumHeight = (displayRectangle.height() * 0.45f).toInt()
         }
         val extendedForecastView = view.findViewById<ExtendedForecastView>(R.id.extendedForecastView)
-        extendedForecastView.setExtendedForecast(data)
+        extendedForecastView.setExtendedForecast(weather)
         dialog = buildImmersiveDialog(activity, true, view, false)
     }
 

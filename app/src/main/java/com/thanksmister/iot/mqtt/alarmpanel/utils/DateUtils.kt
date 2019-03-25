@@ -123,6 +123,18 @@ object DateUtils {
         return 12
     }
 
+    fun minuteOfDay(dateTime: String?): Int {
+        try {
+            val parsed = Instant.parse(dateTime)
+            val formatter = DateTimeFormat.forPattern("m")
+            val hour = formatter.print(parsed)
+            return hour.toInt()
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+        return 0
+    }
+
     fun convertInactivityTime(inactivityValue: Long): String {
         return if (inactivityValue < SECONDS_VALUE) {
             TimeUnit.MILLISECONDS.toSeconds(inactivityValue).toString()

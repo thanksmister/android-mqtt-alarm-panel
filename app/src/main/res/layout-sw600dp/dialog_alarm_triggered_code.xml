@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,11 +24,10 @@
     android:layout_gravity="center"
     android:background="@color/red"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="16dp">
 
     <RelativeLayout
-        android:layout_width="480dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:paddingBottom="32dp">
@@ -61,8 +61,9 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="480dp"
-        android:layout_height="520dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:background="@drawable/background_square_border_red"
         android:orientation="vertical">
 
@@ -295,6 +296,7 @@
 
         <View
             style="@style/DividerHorizontal"
+            android:layout_width="match_parent"
             android:layout_weight="0" />
 
         <LinearLayout
@@ -375,14 +377,14 @@
 
     <LinearLayout
         android:id="@+id/triggered_fingerprint_layout"
-        android:layout_width="480dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="32dp"
+        android:layout_weight="0"
+        android:padding="48dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
-        android:visibility="invisible"
-        tools:ignore="UseCompoundDrawables"
+        android:visibility="gone"
         android:gravity="center"
         tools:visibility="visible">
 

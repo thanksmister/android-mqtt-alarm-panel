@@ -51,7 +51,9 @@ class ForecastCardAdapter(private val items: List<ForecastDisplay>?) : RecyclerV
             itemView.temperatureText.text = itemView.context.getString(R.string.text_temperature_range, highTemp, lowTemp)
             itemView.dayText.text = forecast.day
             itemView.outlookText.text = forecast.condition
-            itemView.iconImage.setImageDrawable(ResourcesCompat.getDrawable(itemView.context.resources, forecast.conditionImage, itemView.context.theme))
+            if(forecast.conditionImage > 0) {
+                itemView.iconImage.setImageDrawable(ResourcesCompat.getDrawable(itemView.context.resources, forecast.conditionImage, itemView.context.theme))
+            }
         }
     }
 }

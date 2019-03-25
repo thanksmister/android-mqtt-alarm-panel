@@ -52,7 +52,7 @@
 
         <TextView
                 android:id="@+id/dayText"
-                style="@style/TextAppearance.TextLarge"
+                style="@style/TextAppearance.TextExtraLarge"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,27 +61,26 @@
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="8dp"/>
+                android:layout_height="4dp"/>
 
         <TextView
                 android:id="@+id/outlookText"
-                style="@style/TextAppearance.TextLarge"
+                style="@style/TextAppearance.TextExtraLarge.SmallAction"
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
                 android:gravity="center"
-                android:lines="2"
                 android:ellipsize="end"
                 tools:text="Light rain starting in the morning and breezy until the afternoon."/>
 
         <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="8dp"/>
+                android:layout_height="4dp"/>
 
         <TextView
                 android:id="@+id/temperatureText"
-                style="@style/TextAppearance.TextLarge"
+                style="@style/TextAppearance.TextExtraLarge.SmallAction"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

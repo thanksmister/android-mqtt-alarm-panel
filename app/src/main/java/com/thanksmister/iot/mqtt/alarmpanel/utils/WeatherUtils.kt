@@ -32,7 +32,7 @@ object WeatherUtils {
             "fog" -> return R.drawable.ic_fog
             "hail" -> return R.drawable.ic_hail
             "snow" -> return R.drawable.ic_snow
-            "windy-variant", "wind" -> return R.drawable.ic_wind
+            "windy-variant", "windy" -> return R.drawable.ic_wind
             "pouring", "rainy" -> return R.drawable.ic_rain
             else -> return 0
         }
@@ -50,7 +50,7 @@ object WeatherUtils {
             "fog" -> return context.getString(R.string.weather_fog) 
             "hail" -> return context.getString(R.string.weather_hail)   
             "snow" -> return context.getString(R.string.weather_snow)   
-            "windy-variant", "wind" -> return context.getString(R.string.weather_windy) 
+            "windy-variant", "windy" -> return context.getString(R.string.weather_windy)
             "rainy" -> return context.getString(R.string.weather_rain)  
             "pouring"-> return context.getString(R.string.weather_pouring_rain)
             else -> return ""

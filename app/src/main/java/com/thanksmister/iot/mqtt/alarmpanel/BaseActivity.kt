@@ -34,6 +34,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -54,10 +55,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var weatherDao: WeatherDao
 
+    val disposable = CompositeDisposable()
+    val alarmPanelService: Intent by lazy {
+        Intent(this, AlarmPanelService::class.java)
+    }
+
     private var hasNetwork = AtomicBoolean(true)
     private var connectionLiveData: ConnectionLiveData? = null
-
-    val disposable = CompositeDisposable()
 
     override fun onStart(){
         super.onStart()
@@ -69,20 +73,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                 handleNetworkDisconnect()
             }
         })
-        resetScreenBrightness()
-    }
-
-    private fun checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
-                return
-            }
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
@@ -127,30 +117,21 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     open fun dayNightModeCheck(sunValue:String?) {
         Timber.d("dayNightModeCheck $sunValue")
         if(sunValue == Configuration.SUN_BELOW_HORIZON && tisTheDay()) {
+            stopService(alarmPanelService)
             hideScreenSaver()
+            resetScreenBrightness(false)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-            bringApplicationToForegroundIfNeeded()
         } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !tisTheDay()) {
+            stopService(alarmPanelService)
             hideScreenSaver()
+            resetScreenBrightness(true)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
-            bringApplicationToForegroundIfNeeded()
         }
     }
 
-    private fun dayNightModeChanged() {
-        Timber.d("dayNightModeChanged")
-        if (!configuration.useNightDayMode && !tisTheDay()) {
-            hideScreenSaver()
-            resetScreenBrightness()
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            recreate()
-            bringApplicationToForegroundIfNeeded()
-        }
-    }
-
-    private fun tisTheDay(): Boolean {
+   fun tisTheDay(): Boolean {
         val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
         if (uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
             Timber.d("Tis the night!")
@@ -200,7 +181,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         }
     }
 
-    open fun resetScreenBrightness() {
+    open fun resetScreenBrightness(isTheDay: Boolean = true) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
             var mode = -1
             try {
@@ -213,10 +194,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                     //Automatic mode, need to be in manual to change brightness
                     Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
                 }
-                if(tisTheDay() && configuration.screenBrightness in 1..255) {
+                if(isTheDay && configuration.screenBrightness in 1..255) {
                     Timber.d("calculated brightness ${configuration.screenBrightness}")
                     Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
+                } else if (!isTheDay && configuration.screenNightBrightness in 1..255) {
                     Timber.d("calculated brightness ${configuration.screenNightBrightness}")
                     Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
                 }
@@ -292,6 +273,30 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     fun hasNetworkConnectivity(): Boolean {
         return hasNetwork.get()
+    }
+
+    private fun dayNightModeChanged() {
+        Timber.d("dayNightModeChanged")
+        if (!configuration.useNightDayMode && !tisTheDay()) {
+            stopService(alarmPanelService)
+            hideScreenSaver()
+            resetScreenBrightness(true)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            recreate()
+        }
+    }
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+                return
+            }
+        }
     }
 
     /**

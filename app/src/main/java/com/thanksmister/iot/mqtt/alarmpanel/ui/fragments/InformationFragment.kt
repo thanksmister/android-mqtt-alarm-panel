@@ -33,6 +33,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.stringToDouble
@@ -54,7 +55,7 @@ class InformationFragment : BaseFragment() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
 
-    private var forecastList: List<Forecast> = Collections.emptyList()
+    private var weather: Weather? = null
     private var timeHandler: Handler? = null
 
     private val timeRunnable = object : Runnable {
@@ -81,8 +82,8 @@ class InformationFragment : BaseFragment() {
         timeHandler!!.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
         weatherLayout.setOnClickListener {
-            if (!forecastList.isEmpty()) {
-                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, forecastList)
+            if (weather != null) {
+                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, weather!!)
             }
         }
     }
@@ -126,12 +127,12 @@ class InformationFragment : BaseFragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { item ->
                             if(item != null) {
+                                weather = item
                                 weatherLayout.visibility = View.VISIBLE
                                 val displayUnits =  if(configuration.weatherUnitsImperial) getString(R.string.text_f) else getString(R.string.text_c)
-                                temperatureText.text = getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
-                                item.forecast?.let { it ->
+                                temperatureText.text = getString(R.string.text_temperature, weather?.temperature.toString(), displayUnits)
+                                weather?.forecast?.let { it ->
                                     if(it.size > 0) {
-                                        forecastList = it
                                         val forecast = it[0]
                                         try {
                                             val precipitation = forecast.precipitation

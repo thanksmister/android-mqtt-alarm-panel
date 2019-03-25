@@ -15,8 +15,6 @@
   -->
 
 <com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,31 +29,31 @@
         android:layout_weight="0"
         android:paddingBottom="16dp">
 
-    <TextView
-        android:id="@+id/codeTitle"
-        style="@style/TextAppearance.AppCompat.Large.Inverse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/text_alarm"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="64sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/codeTitle"
+            style="@style/TextAppearance.AppCompat.Large.Inverse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/text_alarm"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="64sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/codeDescription"
-        style="@style/TextAppearance.AppCompat.Large.Inverse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/codeTitle"
-        android:gravity="center_horizontal"
-        android:text="@string/dialog_alarm_triggered"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="Enter code to dismiss" />
+        <TextView
+            android:id="@+id/codeDescription"
+            style="@style/TextAppearance.AppCompat.Large.Inverse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/codeTitle"
+            android:gravity="center_horizontal"
+            android:text="@string/dialog_alarm_triggered"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Enter code to dismiss" />
 
     </RelativeLayout>
 
@@ -377,7 +375,8 @@
         android:id="@+id/triggered_fingerprint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_weight="0"
+        android:padding="48dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"

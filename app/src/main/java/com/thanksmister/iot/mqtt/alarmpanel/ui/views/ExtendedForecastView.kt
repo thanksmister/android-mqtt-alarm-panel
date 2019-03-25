@@ -22,6 +22,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.ForecastCardAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
@@ -41,7 +42,8 @@ class ExtendedForecastView : FrameLayout {
         super.onFinishInflate()
     }
 
-    fun setExtendedForecast(forecastList: List<Forecast>) {
+    fun setExtendedForecast(weather: Weather) {
+        val forecastList = weather.forecast
         if(forecastList.isNotEmpty()) {
             val groupedForecastList = ArrayList<ForecastDisplay>()
             var groupDay = DateUtils.dayOfWeek(forecastList[0].datetime)
@@ -152,6 +154,7 @@ class ExtendedForecastView : FrameLayout {
         if(forecastList.isNotEmpty()) {
             Timber.d("calculateCurrentConditionImage -------------------")
             val condition = getCondition(today, forecastList)
+            Timber.d("Current condition ${condition} -----------------------")
             return WeatherUtils.getIconForWeatherCondition(condition)
         }
         return WeatherUtils.getIconForWeatherCondition(forecastList[0].condition)
@@ -159,17 +162,17 @@ class ExtendedForecastView : FrameLayout {
 
     private fun getCondition(today: Boolean, forecastList: ArrayList<Forecast>): String? {
         val rightNow = Calendar.getInstance()
-        val currentHourIn24Format = if (today) rightNow.get(Calendar.HOUR_OF_DAY) else 14
-        Timber.d("currentHourIn24Format ${currentHourIn24Format}")
+        val currentHourIn24Format = if (today) (rightNow.get(Calendar.HOUR_OF_DAY) + .5) else 14.5
+        Timber.d("currentHourIn24Format $currentHourIn24Format")
         var condition = forecastList[forecastList.size - 1].condition
         for(forecast in forecastList) {
             val day = DateUtils.dayOfWeek(forecast.datetime)
-            Timber.d("Current Day ${day}")
-            val hour = DateUtils.hourOfDay(forecast.datetime)
-            Timber.d("Current Hour ${hour}")
+            Timber.d("Current Day $day")
+            val hour = DateUtils.hourOfDay(forecast.datetime).toDouble()
+            Timber.d("Current Hour $hour")
             if(currentHourIn24Format <= hour) {
+                Timber.d("Current Condition ${forecast.condition}")
                 condition = forecast.condition
-                Timber.d("Current condition ${condition} -----------------------")
                 break
             }
         }
