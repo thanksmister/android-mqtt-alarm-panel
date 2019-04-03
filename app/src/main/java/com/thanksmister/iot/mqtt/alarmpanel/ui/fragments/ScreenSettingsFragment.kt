@@ -37,6 +37,7 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_BRIGHTNESS_FACTOR
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.WEB_SCREEN_SAVER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.SECONDS_VALUE
@@ -141,7 +142,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 try {
                     val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
                     configuration.screenBrightness = brightness
-                    configuration.screenNightBrightness = (brightness * .5).toInt()
+                    configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -170,7 +171,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     try {
                         val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
                         configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness*.5).toInt()
+                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -190,7 +191,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     try {
                         val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
                         configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness * .5).toInt()
+                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -299,7 +300,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     try {
                         val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
                         configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness * .4).toInt()
+                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

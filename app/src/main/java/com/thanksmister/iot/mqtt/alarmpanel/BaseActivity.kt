@@ -27,6 +27,7 @@ import android.os.Handler
 import android.provider.Settings
 import android.support.annotation.NonNull
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
@@ -143,79 +144,43 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return true
     }
 
-    @Deprecated("Not used for brightness")
-    open fun setScreenBrightness() {
-        Timber.d("changeScreenBrightness")
-        var brightness = configuration.screenBrightness
-        if (!tisTheDay()) {
-            brightness = configuration.screenNightBrightness
-        }
-        Timber.d("calculated brightness ${brightness}")
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext) && configuration.useScreenBrightness) {
-            var mode = -1
-            try {
-                mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
-            } catch (e: Settings.SettingNotFoundException) {
-                Timber.e(e.message)
-            }
-            try {
-                if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-                    //Automatic mode, need to be in manual to change brightness
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-                }
-                if (brightness in 1..255) {
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
-                }
-            } catch (e: SecurityException) {
-                Timber.e(e.message)
-            }
-        } else {
-            try {
-                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-                if (brightness in 1..255) {
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
-                }
-            } catch (e: SecurityException) {
-                Timber.e(e.message)
-            }
-        }
-    }
-
     open fun resetScreenBrightness(isTheDay: Boolean = true) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
-            var mode = -1
-            try {
-                mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
-            } catch (e: Settings.SettingNotFoundException) {
-                Timber.e(e.message)
-            }
-            try {
-                if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-                    //Automatic mode, need to be in manual to change brightness
+        if(!isFinishing) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
+                var mode = -1
+                try {
+                    mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
+                } catch (e: Settings.SettingNotFoundException) {
+                    Timber.e(e.message)
+                }
+                try {
+                    if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
+                        //Automatic mode, need to be in manual to change brightness
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                    }
+                    if (isTheDay && configuration.screenBrightness in 1..255) {
+                        Timber.d("calculated brightness ${configuration.screenBrightness}")
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
+                    } else if (!isTheDay && configuration.screenNightBrightness in 1..255) {
+                        Timber.d("calculated brightness ${configuration.screenNightBrightness}")
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
+                    }
+                } catch (e: SecurityException) {
+                    Timber.e(e.message)
+                }
+            } else {
+                try {
                     Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+                    if (tisTheDay() && configuration.screenBrightness in 1..255) {
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
+                        Timber.d("calculated brightness ${configuration.screenBrightness}")
+                    } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
+                        Timber.d("calculated brightness ${configuration.screenNightBrightness}")
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
+                    }
+                } catch (e: SecurityException) {
+                    Timber.e(e.message)
                 }
-                if(isTheDay && configuration.screenBrightness in 1..255) {
-                    Timber.d("calculated brightness ${configuration.screenBrightness}")
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                } else if (!isTheDay && configuration.screenNightBrightness in 1..255) {
-                    Timber.d("calculated brightness ${configuration.screenNightBrightness}")
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
-                }
-            } catch (e: SecurityException) {
-                Timber.e(e.message)
-            }
-        } else {
-            try {
-                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-                if(tisTheDay() && configuration.screenBrightness in 1..255) {
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                    Timber.d("calculated brightness ${configuration.screenBrightness}")
-                } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
-                    Timber.d("calculated brightness ${configuration.screenNightBrightness}")
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
-                }
-            } catch (e: SecurityException) {
-                Timber.e(e.message)
             }
         }
     }
@@ -288,13 +253,18 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private fun checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            if (ContextCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
-                return
+                 try {
+                     ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                             Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+
+                 } catch (e: RuntimeException) {
+                     Timber.e("Permissions error: ${e.message}")
+                 }
+                 return
             }
         }
     }

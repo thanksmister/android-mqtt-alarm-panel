@@ -526,5 +526,6 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"
         const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
+        const val PREF_BRIGHTNESS_FACTOR = .10
     }
 }

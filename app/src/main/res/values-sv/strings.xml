@@ -376,11 +376,11 @@
     <string name="pref_title_battery">Batteri</string>
     <string name="error_mqtt_exception">Fel vid initiering av MQTT, var god kontrollera dina intällningar.</string>
     <string name="pref_title_screen_brightness">Skärmens ljusstyrka</string>
-    <string name="pref_description_screen_brightness">pref_night_mode_description</string>
+    <string name="pref_description_screen_brightness">Minska skärmens ljusstyrka när du är i nattläge. Var noga med att ställa in skärmens ljusstyrka till önskad nivå innan du aktiverar den här funktionen.</string>
     <string name="summary_weather_topic">Se MQTT Weather-dokumentationen på projektsidan</string>
     <string name="preference_title_weather">Väder MQTT</string>
     <string name="summary_sun_topic">Se MQTT Sun-dokumentationen på projektsidan</string>
-    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="preference_title_sun">Sol MQTT</string>
     <string name="pref_title_night_mode">Använd nattläge</string>
     <string name="dialog_brightness_message">Vill du bevilja tillstånd att ändra systeminställningarna för skärmens ljusstyrka?</string>
     <string name="toast_write_permissions_denied">Skriv inställningsbehörighet nekad…</string>
@@ -406,6 +406,7 @@
     <string name="weather_pouring_rain">Ösregn</string>
     <string name="pref_retrain_title">Behåll MQTT-meddelande</string>
     <string name="pref_retain_summary">När det är aktivt lagrar mäklare det sista meddelandet.</string>
+    <string name="toast_connect_retry">Reconnecting...</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

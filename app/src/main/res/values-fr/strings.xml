@@ -382,7 +382,7 @@
     <string name="summary_weather_topic">Exemple de format de sujet de commande et de données utiles pour les données météorologiques: </string>
     <string name="preference_title_weather">Météo MQTT</string>
     <string name="summary_sun_topic">Exemple de format pour le sujet de commande et la charge utile pour les données sun: </string>
-    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="preference_title_sun">Soleil MQTT</string>
     <string name="pref_title_night_mode">Utiliser le mode nuit</string>
     <string name="dialog_brightness_message">Voulez-vous accorder l\'autorisation de modifier les paramètres système pour la luminosité de l\'écran?</string>
     <string name="toast_write_permissions_denied">Autorisation d\'écriture des paramètres refusée…</string>
@@ -408,6 +408,7 @@
     <string name="weather_pouring_rain">Pluie battante</string>
     <string name="pref_retrain_title">Conserver le message MQTT</string>
     <string name="pref_retain_summary">Lorsqu\'il est actif, le courtier stocke le dernier message.</string>
+    <string name="toast_connect_retry">Reconnexion...</string>
 
     <string-array name="inactivity_times">
         <item>15 secondes</item>

@@ -377,11 +377,11 @@
     <string name="pref_title_sensor_list">Sensor List</string>
     <string name="error_mqtt_exception">Houve um erro ao inicializar o cliente MQTT, verifique suas configurações.</string>
     <string name="pref_title_screen_brightness">Brilho do ecrã</string>
-    <string name="pref_description_screen_brightness">pref_night_mode_description</string>
+    <string name="pref_description_screen_brightness">Diminua o brilho da tela quando estiver no modo noturno. Certifique-se de ajustar o brilho da tela para o nível desejado antes de ativar esse recurso.</string>
     <string name="summary_weather_topic">Por favor, veja a documentação do MQTT Weather na página do projeto</string>
     <string name="preference_title_weather">Tempo MQTT</string>
     <string name="summary_sun_topic">Por favor, veja a documentação do MQTT Sun na página do projeto</string>
-    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="preference_title_sun">Sol MQTT</string>
     <string name="pref_title_night_mode">Use o modo noturno</string>
     <string name="dialog_brightness_message">Você deseja conceder permissão para modificar as configurações do sistema para o brilho da tela?</string>
     <string name="toast_write_permissions_denied">Permissão de gravação de configurações negada…</string>
@@ -407,6 +407,7 @@
     <string name="weather_pouring_rain">Chuva torrencial</string>
     <string name="pref_retrain_title">Retenha a mensagem MQTT</string>
     <string name="pref_retain_summary">Quando ativo, o corretor armazena a última mensagem.</string>
+    <string name="toast_connect_retry">Reconectando...</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

@@ -353,6 +353,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             if (!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_connection))
+                reconnectHandler.postDelayed(restartMqttRunnable, 180000)
             }
         }
         mqttConnected = false
@@ -364,13 +365,17 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             if (!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 mqttAlertMessageShown = true
                 sendAlertMessage(getString(R.string.error_mqtt_exception))
+                reconnectHandler.postDelayed(restartMqttRunnable, 180000)
             }
         }
         mqttConnected = true
     }
 
     private val restartMqttRunnable = Runnable {
-        mqttModule?.restart()
+        sendToastMessage(getString(R.string.toast_connect_retry))
+        mqttAlertMessageShown = false
+        clearAlertMessage()
+        //mqttModule?.restart()
     }
 
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
