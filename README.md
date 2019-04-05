@@ -121,7 +121,7 @@ You can also use MQTT to publish the weather to the Alarm Panel application, whi
   condition: []
   action:
   - data:
-      payload_template: "{'weather':{{states.weather.dark_sky.attributes}}}"
+      payload_template: "{'weather':{ {states.weather.dark_sky.attributes} } }"
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
@@ -137,7 +137,7 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 
 ```
 {
-  "payload_template": "{'weather':{{states.weather.dark_sky.attributes}}}",
+  "payload_template": "{'weather':{ {states.weather.dark_sky.attributes} } }",
   "retain": true,
   "topic": "alarmpanel/command"
 }
@@ -156,7 +156,7 @@ Similar to how weather works, you can control the Voice Panel to display the day
   condition: []
   action:
   - data:
-      payload_template: "{'sun':'{{states('sun.sun') }}'}"
+      payload_template: "{'sun':'{ {states('sun.sun') } }'}"
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
@@ -175,7 +175,7 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 
 ```
 {
-  "payload_template": "{'sun':'{{states('sun.sun') }}'}",
+  "payload_template": "{'sun':'{ {states('sun.sun') } }'}",
   "topic": "alarmpanel/command"
 }
 ```
