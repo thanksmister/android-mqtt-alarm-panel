@@ -151,8 +151,8 @@ Similar to how weather works, you can control the Voice Panel to display the day
 - id: '1539017708085'
   alias: MQTT Sun
   trigger:
-  - minutes: '/5'
-    platform: time
+  - minutes: '/30'
+    platform: time_pattern
   condition: []
   action:
   - data:
