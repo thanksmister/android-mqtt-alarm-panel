@@ -156,7 +156,7 @@ Similar to how weather works, you can control the Voice Panel to display the day
   condition: []
   action:
   - data:
-      payload_template: "{'sun':'{{states('sun.sun')}}'}"
+      payload_template: {% raw %} "{'sun':'{{states('sun.sun')}}'}" {% endraw %}
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
