@@ -158,7 +158,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         this.currentUrl = configuration.webUrl
 
-        startForeground()
+        startForegroundService()
         configureMqtt()
         configurePowerOptions()
         startHttp()
@@ -234,11 +234,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             return state
         }
 
-    private fun startForeground() {
-        Timber.d("startForeground")
-        val notification = notifications.createOngoingNotification(getString(R.string.app_name),
-                getString(R.string.service_notification_message))
-
+    private fun startForegroundService() {
+        Timber.d("startForegroundService")
+        val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
         startForeground(ONGOING_NOTIFICATION_ID, notification)
 
         // listen for network connectivity changes
@@ -250,6 +248,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 handleNetworkDisconnect()
             }
         })
+
+        sendServiceStarted()
     }
 
     private fun handleNetworkConnect() {
@@ -820,6 +820,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         bm.sendBroadcast(intent)
     }
 
+    private fun sendServiceStarted() {
+        Timber.d("clearAlertMessage")
+        val intent = Intent(BROADCAST_SERVICE_STARTED)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
     private fun clearAlertMessage() {
         Timber.d("clearAlertMessage")
         val intent = Intent(BROADCAST_CLEAR_ALERT_MESSAGE)
@@ -1028,6 +1035,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_TOAST_MESSAGE = "BROADCAST_TOAST_MESSAGE"
         const val BROADCAST_SCREEN_WAKE = "BROADCAST_SCREEN_WAKE"
         const val BROADCAST_CLEAR_ALERT_MESSAGE = "BROADCAST_CLEAR_ALERT_MESSAGE"
+        const val BROADCAST_SERVICE_STARTED = "BROADCAST_SERVICE_STARTED"
 
     }
 }

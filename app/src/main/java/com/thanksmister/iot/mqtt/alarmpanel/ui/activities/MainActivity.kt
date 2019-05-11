@@ -41,6 +41,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -135,7 +136,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             decorView?.keepScreenOn = false
         }
 
-        resetScreenBrightness(tisTheDay())
     }
 
     override fun onStart() {
@@ -192,10 +192,12 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({sun ->
-                    Timber.d("sun: " + sun)
                     this@MainActivity.runOnUiThread {
                         if (configuration.useNightDayMode) {
                             dayNightModeCheck(sun.sun)
+                        }
+                        sun.sun?.let {
+                            configuration.dayNightMode = it
                         }
                     }
                 }, { error -> Timber.e("Sun Data error: " + error)}))
@@ -223,6 +225,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         filter.addAction(AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
+        filter.addAction(AlarmPanelService.BROADCAST_SERVICE_STARTED)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
         localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
     }
@@ -430,6 +433,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             } else if (AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE == intent.action && !isFinishing) {
                 resetInactivityTimer()
                 dialogUtils.clearDialogs()
+            } else if (AlarmPanelService.BROADCAST_SERVICE_STARTED == intent.action && !isFinishing) {
+                serviceStarted = true
             }
         }
     }

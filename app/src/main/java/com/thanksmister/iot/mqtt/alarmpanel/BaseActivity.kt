@@ -42,6 +42,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -55,7 +56,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var imageOptions: ImageOptions
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var weatherDao: WeatherDao
+    @Inject lateinit var screenUtils: ScreenUtils
 
+    var serviceStarted: Boolean = false
     val disposable = CompositeDisposable()
     val alarmPanelService: Intent by lazy {
         Intent(this, AlarmPanelService::class.java)
@@ -104,6 +107,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false // reset
             dayNightModeChanged() // reset screen brightness if day/night mode inactive
+        } else {
+            screenUtils.resetScreenBrightness(configuration.dayNightMode == Configuration.SUN_ABOVE_HORIZON)
         }
     }
 
@@ -115,73 +120,22 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    open fun dayNightModeCheck(sunValue:String?) {
+    fun dayNightModeCheck(sunValue:String?) {
         Timber.d("dayNightModeCheck $sunValue")
-        if(sunValue == Configuration.SUN_BELOW_HORIZON && tisTheDay()) {
+        if(sunValue == Configuration.SUN_BELOW_HORIZON && screenUtils.tisTheDay() && serviceStarted) {
             stopService(alarmPanelService)
+            serviceStarted = false
             hideScreenSaver()
-            resetScreenBrightness(false)
+            screenUtils.resetScreenBrightness(false)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !tisTheDay()) {
+        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !screenUtils.tisTheDay() && serviceStarted) {
             stopService(alarmPanelService)
+            serviceStarted = false
             hideScreenSaver()
-            resetScreenBrightness(true)
+            screenUtils.resetScreenBrightness(true)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
-        }
-    }
-
-   fun tisTheDay(): Boolean {
-        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        if (uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            Timber.d("Tis the night!")
-            return false
-        } else if (uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
-            Timber.d("Tis the day!")
-            return true
-        }
-        return true
-    }
-
-    open fun resetScreenBrightness(isTheDay: Boolean = true) {
-        if(!isFinishing) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
-                var mode = -1
-                try {
-                    mode = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) //this will return integer (0 or 1)
-                } catch (e: Settings.SettingNotFoundException) {
-                    Timber.e(e.message)
-                }
-                try {
-                    if (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-                        //Automatic mode, need to be in manual to change brightness
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-                    }
-                    if (isTheDay && configuration.screenBrightness in 1..255) {
-                        Timber.d("calculated brightness ${configuration.screenBrightness}")
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                    } else if (!isTheDay && configuration.screenNightBrightness in 1..255) {
-                        Timber.d("calculated brightness ${configuration.screenNightBrightness}")
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
-                    }
-                } catch (e: SecurityException) {
-                    Timber.e(e.message)
-                }
-            } else {
-                try {
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-                    if (tisTheDay() && configuration.screenBrightness in 1..255) {
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                        Timber.d("calculated brightness ${configuration.screenBrightness}")
-                    } else if (!tisTheDay() && configuration.screenNightBrightness in 1..255) {
-                        Timber.d("calculated brightness ${configuration.screenNightBrightness}")
-                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
-                    }
-                } catch (e: SecurityException) {
-                    Timber.e(e.message)
-                }
-            }
         }
     }
 
@@ -202,13 +156,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                             dialogUtils.hideScreenSaverDialog()
                             onUserInteraction()
                         },  hasWeather, isImperial, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Timber.e(e.message)
             }
         }
     }
 
-    open fun hideScreenSaver() {
+    fun hideScreenSaver() {
         Timber.d("hideScreenSaver")
         dialogUtils.hideScreenSaverDialog()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -231,7 +185,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * On network connect hide any alert dialogs generated by
      * the network disconnect and clear any notifications.
      */
-    open fun handleNetworkConnect() {
+    private fun handleNetworkConnect() {
         dialogUtils.hideAlertDialog()
         hasNetwork.set(true)
     }
@@ -242,10 +196,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private fun dayNightModeChanged() {
         Timber.d("dayNightModeChanged")
-        if (!configuration.useNightDayMode && !tisTheDay()) {
+        if (!configuration.useNightDayMode && !screenUtils.tisTheDay() && serviceStarted) {
             stopService(alarmPanelService)
             hideScreenSaver()
-            resetScreenBrightness(true)
+            screenUtils.resetScreenBrightness(true)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }

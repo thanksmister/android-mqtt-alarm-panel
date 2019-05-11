@@ -30,6 +30,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils;
 
 import javax.inject.Singleton;
 
@@ -84,6 +85,11 @@ class ActivityModule {
     @Provides
     static NotificationUtils notificationUtils(Application application) {
         return new NotificationUtils(application);
+    }
+
+    @Provides
+    static ScreenUtils screenUtils(Application application, Configuration configuration) {
+        return new ScreenUtils(application, configuration);
     }
 
     @Provides

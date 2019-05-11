@@ -62,7 +62,7 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
         val alarmPanelService = Intent(this, AlarmPanelService::class.java)
         stopService(alarmPanelService)
 
-        resetScreenBrightness(true)
+        screenUtils.resetScreenBrightness(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

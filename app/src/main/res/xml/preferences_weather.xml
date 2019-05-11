@@ -21,13 +21,13 @@
     <PreferenceCategory android:title="@string/preference_title_weather_settings">
 
         <SwitchPreference
-            android:key="pref_weather_module"
+            android:key="pref_module_weather"
             android:summary="@string/preference_summary_weather_settings"
             android:title="@string/preference_title_weather_settings" />
 
         <SwitchPreference
             android:key="pref_weather_units_imperial"
-            android:dependency="pref_weather_module"
+            android:dependency="pref_module_weather"
             android:defaultValue="false"
             android:summary="@string/pref_weather_units_summary"
             android:title="@string/pref_weather_units_title" />

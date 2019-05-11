@@ -24,6 +24,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 
 import timber.log.Timber
+import java.lang.Exception
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean>() {
@@ -43,12 +44,20 @@ class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean
 
     override fun onActive() {
         super.onActive()
-        context.registerReceiver(connectionReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        try {
+            context.registerReceiver(connectionReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
     }
 
     override fun onInactive() {
         super.onInactive()
-        context.unregisterReceiver(connectionReceiver)
+        try {
+            context.unregisterReceiver(connectionReceiver)
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
     }
 
     private val connectionReceiver = object : BroadcastReceiver() {

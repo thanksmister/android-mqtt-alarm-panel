@@ -492,6 +492,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
         const val PREF_CAMERA_HEIGHT = "pref_camera_height"
         const val PREF_MODULE_WEATHER = "pref_module_weather"
+
         const val PREF_MODULE_WEB = "pref_module_web"
         const val PREF_WEB_URL = "pref_web_url"
         const val PREF_FIRST_TIME = "pref_first_time"
@@ -503,7 +504,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
         const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
-        const val PREF_WEATHER_WEATHER = "pref_weather_module"
+
         const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
         const val PREF_PLATFORM_BAR = "pref_platform_bar"
         const val PREF_TELEGRAM_MODULE = "pref_telegram_module"

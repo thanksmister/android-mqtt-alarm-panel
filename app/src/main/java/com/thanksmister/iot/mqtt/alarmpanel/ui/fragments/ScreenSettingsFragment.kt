@@ -41,13 +41,16 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.WEB_SCREEN_SAVER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.SECONDS_VALUE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 import javax.inject.Inject
 
 class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var imageOptions: ImageOptions
+    @Inject lateinit var screenUtils: ScreenUtils
  
     private var clockSaverPreference: SwitchPreference? = null
     private var photoSaverPreference: SwitchPreference? = null
@@ -132,91 +135,53 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         setClockScreenSaver(configuration.showClockScreenSaverModule())
         setWebScreenSaver(configuration.webScreenSaver)
 
-        // check if we have screen brightness permissions and reset the screen brightness values
-        activity?.let {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val enabled = Settings.System.canWrite(it.applicationContext)
-                screenBrightness?.isEnabled = enabled
-                screenBrightness?.isChecked = enabled
-                configuration.useScreenBrightness = enabled
-                try {
-                    val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                    configuration.screenBrightness = brightness
-                    configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-
         checkWriteSettings()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == PERMISSIONS_REQUEST_WRITE_SETTINGS) {
-            activity?.let {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (Settings.System.canWrite(it.applicationContext)) {
-                        Toast.makeText(it, getString(R.string.toast_write_permissions_granted), Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(it, getString(R.string.toast_write_permissions_denied), Toast.LENGTH_LONG).show()
-                    }
-                }
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    val enabled = Settings.System.canWrite(it.applicationContext)
-                    screenBrightness?.isEnabled = enabled
-                    screenBrightness?.isChecked = enabled
-                    configuration.useScreenBrightness = enabled
-                    try {
-                        val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                        configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.System.canWrite(requireActivity().applicationContext)) {
+                    Toast.makeText(requireActivity(), getString(R.string.toast_write_permissions_granted), Toast.LENGTH_LONG).show()
+                    screenBrightness?.isChecked = true
+                    configuration.useScreenBrightness = true
+                } else {
+                    Toast.makeText(requireActivity(), getString(R.string.toast_write_permissions_denied), Toast.LENGTH_LONG).show()
+                    configuration.useScreenBrightness = false
                 }
             }
+            screenUtils.setScreenBrightnessLevels()
         }
     }
 
     private fun checkWriteSettings() {
-        activity?.let {
-            if (!configuration.writeScreenPermissionsShown && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (Settings.System.canWrite(it.applicationContext)) {
-                    val enabled = Settings.System.canWrite(it.applicationContext)
-                    screenBrightness?.isEnabled = enabled
-                    screenBrightness?.isChecked = enabled
-                    configuration.useScreenBrightness = enabled
-                    try {
-                        val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                        configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                } else if (!configuration.writeScreenPermissionsShown) {
-                    // launch the dialog to provide permissions
-                    configuration.writeScreenPermissionsShown = true
-                    AlertDialog.Builder(it)
-                            .setMessage(getString(R.string.dialog_brightness_message))
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                launchWriteSettings()
-                            }
-                            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                                Toast.makeText(it, getString(R.string.toast_write_permissions_denied), Toast.LENGTH_LONG).show()
-                            }.show()
-                }
+        Timber.d("checkWriteSettings")
+        if (!configuration.writeScreenPermissionsShown && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.System.canWrite(requireActivity().applicationContext)) {
+                screenUtils.setScreenBrightnessLevels()
+            } else if (!configuration.writeScreenPermissionsShown) {
+                // launch the dialog to provide permissions
+                configuration.writeScreenPermissionsShown = true
+                AlertDialog.Builder(requireActivity())
+                        .setMessage(getString(R.string.dialog_brightness_message))
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            launchWriteSettings()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ ->
+                            Toast.makeText(requireActivity(), getString(R.string.toast_write_permissions_denied), Toast.LENGTH_LONG).show()
+                        }.show()
             }
+        } else if (configuration.useScreenBrightness) {
+            // rewrite the screen brightness levels until we have a slider in placeß
+            screenUtils.setScreenBrightnessLevels()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun launchWriteSettings() {
-        activity?.let {
-            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:${it.applicationContext.packageName}"))
-            startActivityForResult(intent, 200)
-        }
+        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:${requireActivity().applicationContext.packageName}"))
+        startActivityForResult(intent, 200)
     }
 
     private fun setPhotoScreenSaver (value : Boolean) {
@@ -265,24 +230,20 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 }
             }
             Configuration.PREF_IMAGE_SOURCE -> {
-                activity?.let {
-                    val value = urlPreference!!.text
-                    if(TextUtils.isEmpty(value)) {
-                        Toast.makeText(it, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        urlPreference?.text = imageOptions.imageSource
-                    } else {
-                        imageOptions.imageSource = value
-                    }
+                val value = urlPreference!!.text
+                if(TextUtils.isEmpty(value)) {
+                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                    urlPreference?.text = imageOptions.imageSource
+                } else {
+                    imageOptions.imageSource = value
                 }
             }
             Configuration.PREF_IMAGE_CLIENT_ID -> {
-                activity?.let {
-                    val value = clientIdPreference!!.text
-                    if (TextUtils.isEmpty(value)) {
-                        Toast.makeText(it, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    } else {
-                        imageOptions.imageClientId = value
-                    }
+                val value = clientIdPreference!!.text
+                if (TextUtils.isEmpty(value)) {
+                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                } else {
+                    imageOptions.imageClientId = value
                 }
             }
             Configuration.PREF_IMAGE_FIT_SIZE -> {
@@ -296,14 +257,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             Configuration.PREF_SCREEN_BRIGHTNESS -> {
                 val useBright = screenBrightness!!.isChecked
                 configuration.useScreenBrightness = useBright
-                activity?.let {
-                    try {
-                        val brightness = Settings.System.getInt(it.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                        configuration.screenBrightness = brightness
-                        configuration.screenNightBrightness = (brightness * PREF_BRIGHTNESS_FACTOR).toInt()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                if(useBright) {
+                    checkWriteSettings()
+                } else {
+                    screenUtils.restoreDeviceBrightnessControl()
                 }
             }
             Configuration.PREF_IMAGE_ROTATION -> {
