@@ -134,8 +134,6 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         setPhotoScreenSaver(configuration.showPhotoScreenSaver())
         setClockScreenSaver(configuration.showClockScreenSaverModule())
         setWebScreenSaver(configuration.webScreenSaver)
-
-        checkWriteSettings()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

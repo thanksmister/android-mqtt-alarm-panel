@@ -442,6 +442,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     /**
      * Attempts to bring the application to the foreground if needed.
      */
+    // TODO let's make this a setting we can turn on and off
     private fun bringApplicationToForegroundIfNeeded() {
         if (!LifecycleHandler.isApplicationInForeground()) {
             Timber.d("bringApplicationToForegroundIfNeeded")

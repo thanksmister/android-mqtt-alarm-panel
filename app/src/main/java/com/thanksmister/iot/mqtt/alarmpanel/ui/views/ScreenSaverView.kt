@@ -99,11 +99,19 @@ class ScreenSaverView : RelativeLayout {
                 val height = screenSaverClockLayout.height
                 parentWidth = screenSaverView.width
                 parentHeight = screenSaverView.height
-                if (width > 0 && height > 0 && parentWidth > 0 && parentHeight > 0) {
-                    val newX = Random().nextInt(parentWidth - width)
-                    val newY = Random().nextInt(parentHeight - height)
-                    screenSaverClockLayout.x = newX.toFloat()
-                    screenSaverClockLayout.y = newY.toFloat()
+                try {
+                    if (width > 0 && height > 0 && parentWidth > 0 && parentHeight > 0) {
+                        if(parentHeight - width > 0) {
+                            val newX = Random().nextInt(parentWidth - width)
+                            screenSaverClockLayout.x = newX.toFloat()
+                        }
+                        if(parentHeight - height > 0) {
+                            val newY = Random().nextInt(parentHeight - height)
+                            screenSaverClockLayout.y = newY.toFloat()
+                        }
+                    }
+                } catch (e: IllegalArgumentException) {
+                    Timber.e(e.message)
                 }
             }
 

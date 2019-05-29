@@ -164,7 +164,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     fun hideScreenSaver() {
         Timber.d("hideScreenSaver")
-        dialogUtils.hideScreenSaverDialog()
+        val hasScreenSaver = dialogUtils.hideScreenSaverDialog()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 

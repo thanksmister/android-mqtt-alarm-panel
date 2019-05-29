@@ -1,44 +1,20 @@
-/*
- * Copyright (c) 2018 ThanksMister LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     mavenCentral()
 }
 
+
 def versionMajor = 0
 def versionMinor = 8
 def versionPatch = 6
-def versionBuild = 4 // bump for dog food builds, public betas, etc.
+def versionBuild = 5 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -209,7 +185,7 @@ dependencies {
     implementation "com.android.support:support-v13:$versions.support"
     implementation "com.android.support:preference-v14:$versions.support"
     implementation "com.android.support:support-vector-drawable:$versions.support"
-    implementation 'com.google.android.gms:play-services-vision:15.0.2'
+    implementation 'com.google.android.gms:play-services-vision:17.0.2'
     implementation 'com.android.support:multidex:1.0.3'
 
     // Navigation
@@ -272,7 +248,11 @@ dependencies {
 
     implementation 'joda-time:joda-time:2.9.9'
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    // Fabric
+    compile('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true;
     }
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.9'
 }
