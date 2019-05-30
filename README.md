@@ -182,6 +182,22 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 
 If you wish, you can use an offset to change the day or night mode values or send a MQTT message at the desired time with "above_horizon" to show day mode or "below_horizon" to show night mode.  If you wish to always be night, you need only send one MQTT message with "below_horizon" and the app will not switch back to day mode.  Be sure to turn on the Day/Night mode under the Display settings in the application.
 
+### MQTT Alarm Commands with Mosquitto 
+
+Sending command to your MQTT Broker to arm or disarm the alarm, include your MQTT Broker IP address, port, and optionally the username and password if needed.  The "-d" is to get the debug information. 
+```
+mosquitto_pub -h 192.168.1.2  -t home/alarm/set -m "ARM_HOME" -d -p 1883 -u username -P password
+mosquitto_pub -h 192.168.1.2 -t home/alarm/set -m "DISARM" -d -p 1883 -u username -P password
+```
+Publish a message from your MQTT Broker to your MQTT client (the Android application):
+```
+mosquitto_pub -h localhost -t home/alarm -m "armed_home" 
+mosquitto_pub -h localhost -t home/alarm -m "disarmed" 
+```
+
+Note that the application when sending a command expects an MQTT response. If you use the application to set the alarm to be armed home, the MQTT Broker should respond with the message that the alarm was set to armed home.  The application is just an interface for the MQTT service, its not the alarm system, the alarm system is your server, either Home Assistant or your MQTT Broker and server. 
+
+
 ### MQTT Commands
 Key | Value | Example Payload | Description
 -|-|-|-
