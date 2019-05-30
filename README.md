@@ -189,10 +189,10 @@ Sending command to your MQTT Broker to arm or disarm the alarm, include your MQT
 mosquitto_pub -h 192.168.1.2  -t home/alarm/set -m "ARM_HOME" -d -p 1883 -u username -P password
 mosquitto_pub -h 192.168.1.2 -t home/alarm/set -m "DISARM" -d -p 1883 -u username -P password
 ```
-Publish a message from your MQTT Broker to your MQTT client (the Android application):
+Publish a message from your MQTT Broker to your MQTT client (the Android application).  You may need to add `-h localhost`, but you shouldn't since you are publishing directly from your MQTT broker. 
 ```
-mosquitto_pub -h localhost -t home/alarm -m "armed_home" 
-mosquitto_pub -h localhost -t home/alarm -m "disarmed" 
+mosquitto_pub -t home/alarm -m "armed_home" 
+mosquitto_pub -t home/alarm -m "disarmed" 
 ```
 
 Note that the application when sending a command expects an MQTT response. If you use the application to set the alarm to be armed home, the MQTT Broker should respond with the message that the alarm was set to armed home.  The application is just an interface for the MQTT service, its not the alarm system, the alarm system is your server, either Home Assistant or your MQTT Broker and server. 
