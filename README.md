@@ -113,6 +113,7 @@ You can also interact and control the application and device remotely using eith
 You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky: 
 
 ```
+
 - id: '1538595661244'
   alias: MQTT Weather
   trigger:
@@ -148,18 +149,18 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon).  To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish an MQTT message on an interval:
 
 ```
-- id: '1539017708085'
-  alias: MQTT Sun
+- alias: MQTT Sun
+  id: '1539017708085'
   trigger:
-  - minutes: '/30'
     platform: time_pattern
-  condition: []
+    minutes: '/30'
+      #  condition: []
   action:
-  - data:
+    service: mqtt.publish
+    data:
       payload_template: {% raw %}"{'sun':'{{states('sun.sun')}}'}"{% endraw %}
       retain: true
       topic: alarmpanel/command
-    service: mqtt.publish
 ```
 
 The resulting payload will look like this:
