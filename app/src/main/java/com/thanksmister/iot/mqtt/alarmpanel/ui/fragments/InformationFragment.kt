@@ -16,13 +16,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper.getMainLooper
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +32,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
@@ -60,12 +59,16 @@ class InformationFragment : BaseFragment() {
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
-            val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
-            dateText.text = currentDateString
-            timeText.text = currentTimeString
-            if (timeHandler != null) {
-                timeHandler!!.postDelayed(this, 1000)
+            try {
+                val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
+                val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
+                dateText.text = currentDateString
+                timeText.text = currentTimeString
+                if (timeHandler != null) {
+                    timeHandler?.postDelayed(this, 1000)
+                }
+            } catch (e: IllegalArgumentException) {
+                Timber.e(e.message)
             }
         }
     }

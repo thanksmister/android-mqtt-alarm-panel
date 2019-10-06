@@ -17,23 +17,21 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
-import android.app.Dialog
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Handler
-import android.provider.Settings
-import android.support.annotation.NonNull
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatDelegate
+import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
@@ -69,14 +67,14 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onStart(){
         super.onStart()
-        connectionLiveData = ConnectionLiveData(this)
+        /*connectionLiveData = ConnectionLiveData(this)
         connectionLiveData?.observe(this, Observer { connected ->
             if(connected!!) {
                 handleNetworkConnect()
             } else {
                 handleNetworkDisconnect()
             }
-        })
+        })*/
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {

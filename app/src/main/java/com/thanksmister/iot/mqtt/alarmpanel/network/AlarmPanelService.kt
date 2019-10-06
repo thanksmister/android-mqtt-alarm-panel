@@ -18,8 +18,8 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.annotation.SuppressLint
 import android.app.KeyguardManager
-import android.arch.lifecycle.LifecycleService
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.Observer
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -28,9 +28,9 @@ import android.media.MediaPlayer
 import android.net.wifi.WifiManager
 import android.os.*
 import android.provider.Settings
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.content.ContextCompat
 import android.text.TextUtils
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.GsonBuilder
 import com.koushikdutta.async.AsyncServer
 import com.koushikdutta.async.ByteBufferList
@@ -134,6 +134,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         AndroidInjection.inject(this)
 
+        // this must start immediately or there is a crash due to Androids new requirements for this type of service
+        val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
+        startForeground(ONGOING_NOTIFICATION_ID, notification)
+
         // prepare the lock types we may use
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         //noinspection deprecation
@@ -236,8 +240,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startForegroundService() {
         Timber.d("startForegroundService")
-        val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
-        startForeground(ONGOING_NOTIFICATION_ID, notification)
 
         // listen for network connectivity changes
         connectionLiveData = ConnectionLiveData(this)

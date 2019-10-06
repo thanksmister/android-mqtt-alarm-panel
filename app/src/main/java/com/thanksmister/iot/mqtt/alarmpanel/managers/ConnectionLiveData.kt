@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -44,20 +44,12 @@ class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean
 
     override fun onActive() {
         super.onActive()
-        try {
-            context.registerReceiver(connectionReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-        } catch (e: Exception) {
-            Timber.e(e.message)
-        }
+        context.registerReceiver(connectionReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }
 
     override fun onInactive() {
         super.onInactive()
-        try {
-            context.unregisterReceiver(connectionReceiver)
-        } catch (e: Exception) {
-            Timber.e(e.message)
-        }
+        context.unregisterReceiver(connectionReceiver)
     }
 
     private val connectionReceiver = object : BroadcastReceiver() {
@@ -85,3 +77,4 @@ class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean
         var hasNetwork = AtomicBoolean(true)
     }
 }
+

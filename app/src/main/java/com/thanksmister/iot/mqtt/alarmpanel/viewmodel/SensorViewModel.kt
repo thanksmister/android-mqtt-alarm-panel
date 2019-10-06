@@ -17,7 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import androidx.lifecycle.AndroidViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration

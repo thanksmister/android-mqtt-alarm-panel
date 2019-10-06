@@ -17,9 +17,9 @@
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraCallback
 import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraReader

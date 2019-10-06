@@ -62,9 +62,10 @@ class TelegramModule(base: Context?) : Closeable, ContextWrapper(base) {
         sendMessage(token, chat_id, bitmap)
     }
 
+    // TODO move this over to RxJava
     private fun sendMessage(token:String, chat_id: String, bitmap: Bitmap) {
 
-        if (task != null && task!!.status == AsyncTask.Status.RUNNING) {
+        if (task?.status == AsyncTask.Status.RUNNING) {
             return  // we have a running task already
         }
 
@@ -72,23 +73,19 @@ class TelegramModule(base: Context?) : Closeable, ContextWrapper(base) {
         val fetcher = TelegramFetcher(api)
 
         task = TelegramTask(fetcher)
-        task!!.setOnExceptionListener(object : NetworkTask.OnExceptionListener {
+        task?.setOnExceptionListener(object : NetworkTask.OnExceptionListener {
             override fun onException(paramException: Exception) {
                 Timber.e("Telegram Exception: " + paramException.message)
-                if(callback != null) {
-                    callback!!.onException(paramException.message)
-                }
+                callback?.onException(paramException.message)
             }
         })
-        task!!.setOnCompleteListener(object : NetworkTask.OnCompleteListener<Response<JSONObject>> {
+        task?.setOnCompleteListener(object : NetworkTask.OnCompleteListener<Response<JSONObject>> {
             override fun onComplete(paramResult: Response<JSONObject>) {
                 Timber.d("Response: " + paramResult.body())
-                if(callback != null) {
-                    callback!!.onComplete()
-                }
+                callback?.onComplete()
             }
         })
 
-        task!!.execute(getString(R.string.text_alarm_disabled_email), bitmap)
+        task?.execute(getString(R.string.text_alarm_disabled_email), bitmap)
     }
 }

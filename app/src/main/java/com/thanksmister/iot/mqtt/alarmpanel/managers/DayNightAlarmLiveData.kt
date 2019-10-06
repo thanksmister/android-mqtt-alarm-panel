@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.Context
 import android.os.Handler
 import android.os.Looper

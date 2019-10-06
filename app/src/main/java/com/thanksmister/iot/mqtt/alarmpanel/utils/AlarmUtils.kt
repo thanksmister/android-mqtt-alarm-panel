@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.utils
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

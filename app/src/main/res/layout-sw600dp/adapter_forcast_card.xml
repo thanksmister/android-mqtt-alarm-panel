@@ -38,7 +38,7 @@
                 android:tint="@color/gray"
                 tools:src="@drawable/ic_thunderstorm"/>
 
-        <android.support.v4.widget.Space
+        <Space
                 android:layout_width="match_parent"
                 android:layout_weight="2"
                 android:layout_height="16dp"/>
@@ -59,7 +59,7 @@
                 android:textAllCaps="true"
                 tools:text="MONDAY"/>
 
-        <android.support.v4.widget.Space
+        <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp"/>
 
@@ -74,7 +74,7 @@
                 android:ellipsize="end"
                 tools:text="Light rain starting in the morning and breezy until the afternoon."/>
 
-        <android.support.v4.widget.Space
+        <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp"/>
 

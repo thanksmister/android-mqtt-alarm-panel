@@ -22,8 +22,7 @@ import android.content.DialogInterface
 import android.net.http.SslError
 import android.os.Build
 import android.os.Handler
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.AttributeSet
@@ -33,6 +32,7 @@ import android.view.View
 import android.webkit.*
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.squareup.picasso.Picasso
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R

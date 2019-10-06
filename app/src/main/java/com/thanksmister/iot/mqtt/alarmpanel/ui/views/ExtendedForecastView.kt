@@ -17,9 +17,9 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather

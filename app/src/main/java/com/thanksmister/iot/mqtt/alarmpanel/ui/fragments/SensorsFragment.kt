@@ -17,18 +17,19 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SensorAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditTextDialogView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
@@ -52,6 +53,11 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         observeViewModel(sensorViewModel)
+        if((activity as AppCompatActivity).supportActionBar != null) {
+            (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as AppCompatActivity).supportActionBar!!.title = (getString(R.string.sensors_settings))
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -134,7 +140,7 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
 
         // if not valid show error and make no changes
         if(!valid) {
-            dialogUtils.showAlertDialog(activity as AppCompatActivity, getString(R.string.error_sensor_empty_data))
+            dialogUtils.showAlertDialog(requireActivity(), getString(R.string.error_sensor_empty_data))
             return;
         }
 

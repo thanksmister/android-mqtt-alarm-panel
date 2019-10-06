@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 import io.reactivex.Flowable
 

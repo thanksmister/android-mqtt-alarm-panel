@@ -17,10 +17,10 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.adapters
 
 import android.annotation.SuppressLint
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils

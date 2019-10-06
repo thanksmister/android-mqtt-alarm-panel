@@ -16,15 +16,15 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
@@ -107,7 +107,7 @@ class LogFragment : BaseFragment() {
 
     private fun clearMessages() {
         if(isAdded && activity != null) {
-            dialogUtils.showAlertDialogCancel(activity!!, getString(R.string.dialog_clear_logs), DialogInterface.OnClickListener { _, _ ->
+            dialogUtils.showAlertDialogCancel(requireActivity(), getString(R.string.dialog_clear_logs), DialogInterface.OnClickListener { _, _ ->
                 disposable.add(viewModel.clearMessages()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

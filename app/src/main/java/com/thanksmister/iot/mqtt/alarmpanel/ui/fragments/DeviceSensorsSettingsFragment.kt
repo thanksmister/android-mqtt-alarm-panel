@@ -21,8 +21,8 @@ import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v7.preference.*
+import androidx.preference.SwitchPreference
+import androidx.preference.*
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast

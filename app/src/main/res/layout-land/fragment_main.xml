@@ -65,7 +65,7 @@
                 android:src="@drawable/ic_home"
                 tools:ignore="ContentDescription"/>
 
-            <android.support.v4.widget.Space
+            <Space
                 android:layout_width="16dp"
                 android:layout_height="24dp"/>
 
@@ -80,7 +80,7 @@
                     android:src="@drawable/ic_sleep"
                     tools:ignore="ContentDescription"/>
 
-            <android.support.v4.widget.Space
+            <Space
                     android:layout_width="16dp"
                     android:layout_height="24dp"/>
 

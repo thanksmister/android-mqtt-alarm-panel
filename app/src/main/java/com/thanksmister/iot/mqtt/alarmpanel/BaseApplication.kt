@@ -17,7 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.content.Context
-import android.support.multidex.MultiDex
+import androidx.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import com.facebook.stetho.Stetho
 import com.thanksmister.iot.mqtt.alarmpanel.di.DaggerApplicationComponent

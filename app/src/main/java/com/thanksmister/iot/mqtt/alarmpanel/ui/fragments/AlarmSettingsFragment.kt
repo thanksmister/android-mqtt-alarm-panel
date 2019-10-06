@@ -21,13 +21,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v7.preference.CheckBoxPreference
-import android.support.v7.preference.EditTextPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.preference.*
+import androidx.preference.PreferenceFragmentCompat
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -38,6 +36,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PENDING_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
@@ -67,6 +66,11 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_alarm))
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey : String?) {
@@ -232,14 +236,15 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
 
     @SuppressLint("InlinedApi")
     private fun isFingerprintSupported(): Boolean {
-        val fingerPrintIdentity = FingerprintIdentify(context, BaseFingerprint.FingerprintIdentifyExceptionListener {
-            Timber.w("Fingerprint Error: " + it.message)
-        })
-
-        Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
-        Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
-        if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
-            return true
+        try {
+            val fingerPrintIdentity = FingerprintIdentify(context)
+            Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
+            Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
+            if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
+                return true
+            }
+        } catch (e: ClassNotFoundException) {
+            Timber.w("Fingerprint: " + e.message)
         }
         return false
     }
