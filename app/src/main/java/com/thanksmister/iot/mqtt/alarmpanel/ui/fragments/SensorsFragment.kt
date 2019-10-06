@@ -51,8 +51,11 @@ class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
     @Inject lateinit var mqttOptions: MQTTOptions
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+
         super.onActivityCreated(savedInstanceState)
+
         observeViewModel(sensorViewModel)
+
         if((activity as AppCompatActivity).supportActionBar != null) {
             (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
