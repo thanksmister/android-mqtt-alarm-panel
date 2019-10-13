@@ -120,7 +120,6 @@ abstract class BaseAlarmView : LinearLayout {
             } catch (e: ClassNotFoundException) {
                 Timber.w("Fingerprint: " + e.message)
             }
-
             if (fingerPrintIdentity != null) {
                 if (fingerPrintIdentity!!.isFingerprintEnable && fingerPrintIdentity!!.isHardwareEnable) {
                     if (!this.isShown) {
@@ -143,6 +142,7 @@ abstract class BaseAlarmView : LinearLayout {
     private fun startFingerprintIdentity(){
         Timber.d("Fingerprint identity start");
         fingerPrintIdentity?.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.IdentifyListener{
+
             override fun onSucceed(){
                 Timber.d("Fingerprint identity success");
                 codeComplete = false;

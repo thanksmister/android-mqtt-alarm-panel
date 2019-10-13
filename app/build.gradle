@@ -13,7 +13,7 @@ repositories {
 def versionMajor = 0
 def versionMinor = 8
 def versionPatch = 7
-def versionBuild = 0 // bump for dog food builds, public betas, etc.
+def versionBuild = 1 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -109,8 +109,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
-        renderscriptTargetApi 19
-        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {

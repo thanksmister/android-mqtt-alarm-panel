@@ -37,7 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import android.graphics.Bitmap
-import androidx.renderscript.*
+import android.renderscript.*
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -48,7 +48,6 @@ import java.io.IOException
 class CameraReader @Inject
 constructor(private val context: Context) {
 
-    private val renderScript: RenderScript = RenderScript.create(context)
     private var cameraCallback: CameraCallback? = null
     private var faceDetector: FaceDetector? = null
     private var barcodeDetector: BarcodeDetector? = null
@@ -290,6 +289,7 @@ constructor(private val context: Context) {
         var detectorAdded = false
 
         if(configuration.cameraEnabled && (configuration.httpMJPEGEnabled || configuration.captureCameraImage())) {
+            val renderScript = RenderScript.create(context)
             streamDetector = StreamingDetector.Builder().build()
             streamDetectorProcessor = MultiProcessor.Builder<Stream>(MultiProcessor.Factory<Stream> {
                 object : Tracker<Stream>() {
@@ -410,7 +410,7 @@ constructor(private val context: Context) {
         fun onComplete(byteArray: ByteArray?)
     }
 
-    class ByteArrayTask(context: Context, private val renderScript: RenderScript, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
+    class ByteArrayTask(context: Context, private val renderScript: RenderScript?, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
 
         private val contextRef: WeakReference<Context> = WeakReference(context)
 
@@ -468,7 +468,7 @@ constructor(private val context: Context) {
         }
 
 
-        private fun nv21ToBitmap(rs: RenderScript, yuvByteArray: ByteArray, width: Int, height: Int): Bitmap {
+        private fun nv21ToBitmap(rs: RenderScript?, yuvByteArray: ByteArray, width: Int, height: Int): Bitmap {
 
             val yuvToRgbIntrinsic = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs))
 

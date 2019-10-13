@@ -85,8 +85,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     @Inject
     lateinit var configuration: Configuration
     @Inject
-    lateinit var cameraReader: CameraReader
-    @Inject
     lateinit var sensorReader: SensorReader
     @Inject
     lateinit var mqttOptions: MQTTOptions
@@ -99,6 +97,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     @Inject
     lateinit var sunDao: SunDao
 
+    private var cameraReader: CameraReader? = null
     private val disposable = CompositeDisposable()
     private val mJpegSockets = ArrayList<AsyncHttpServerResponse>()
     private var partialWakeLock: PowerManager.WakeLock? = null
@@ -194,7 +193,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             it.pause()
             mqttModule = null
         }
-        cameraReader.stopCamera()
+        cameraReader?.stopCamera()
         sensorReader.stopReadings()
         stopHttp()
         stopPowerOptions()
@@ -447,7 +446,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun configureCamera() {
         Timber.d("configureCamera ${configuration.cameraEnabled}")
         if (configuration.hasCameraDetections() || configuration.captureCameraImage()) {
-            cameraReader.startCamera(cameraDetectorCallback, configuration)
+            cameraReader = CameraReader(this.applicationContext)
+            cameraReader?.startCamera(cameraDetectorCallback, configuration)
         }
     }
 
@@ -515,28 +515,31 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun startMJPEG() {
         Timber.d("startMJPEG")
         try {
-            cameraReader.getJpeg().observe(this, Observer { jpeg ->
-                if (mJpegSockets.size > 0 && jpeg != null) {
-                    var i = 0
-                    while (i < mJpegSockets.size) {
-                        val s = mJpegSockets[i]
-                        val bb = ByteBufferList()
-                        if (s.isOpen) {
-                            bb.recycle()
-                            bb.add(ByteBuffer.wrap("--jpgboundary\r\nContent-Type: image/jpeg\r\n".toByteArray()))
-                            bb.add(ByteBuffer.wrap(("Content-Length: " + jpeg.size + "\r\n\r\n").toByteArray()))
-                            bb.add(ByteBuffer.wrap(jpeg))
-                            bb.add(ByteBuffer.wrap("\r\n".toByteArray()))
-                            s.write(bb)
-                        } else {
-                            mJpegSockets.removeAt(i)
-                            i--
-                            //Timber.i("MJPEG Session Count is " + mJpegSockets.size)
+            cameraReader?.let {
+                it.getJpeg().observe(this, Observer { jpeg ->
+                    if (mJpegSockets.size > 0 && jpeg != null) {
+                        var i = 0
+                        while (i < mJpegSockets.size) {
+                            val s = mJpegSockets[i]
+                            val bb = ByteBufferList()
+                            if (s.isOpen) {
+                                bb.recycle()
+                                bb.add(ByteBuffer.wrap("--jpgboundary\r\nContent-Type: image/jpeg\r\n".toByteArray()))
+                                bb.add(ByteBuffer.wrap(("Content-Length: " + jpeg.size + "\r\n\r\n").toByteArray()))
+                                bb.add(ByteBuffer.wrap(jpeg))
+                                bb.add(ByteBuffer.wrap("\r\n".toByteArray()))
+                                s.write(bb)
+                            } else {
+                                mJpegSockets.removeAt(i)
+                                i--
+                                //Timber.i("MJPEG Session Count is " + mJpegSockets.size)
+                            }
+                            i++
                         }
-                        i++
                     }
-                }
-            })
+                })
+            }
+
         } catch (e: Exception) {
             Timber.e(e.message)
         }
@@ -808,8 +811,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     }
                 }
             })
-            if (cameraReader.getJpeg().value != null) {
-                bitmapTask.execute(cameraReader.getJpeg().value)
+            cameraReader?.getJpeg()?.let {
+                bitmapTask.execute(it.value)
             }
         }
     }
