@@ -48,7 +48,8 @@
             android:usesCleartextTraffic="true"
             android:allowBackup="true"
             android:fullBackupContent="true"
-            tools:ignore="GoogleAppIndexingWarning">
+            tools:ignore="GoogleAppIndexingWarning"
+            tools:targetApi="m">
         
         <activity
             android:name=".ui.activities.MainActivity"

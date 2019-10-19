@@ -51,6 +51,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
  
     private var clockSaverPreference: SwitchPreference? = null
     private var photoSaverPreference: SwitchPreference? = null
+    private var hardwareAcceleration: SwitchPreference? = null
     private var webSaverPreference: SwitchPreference? = null
     private var urlPreference: EditTextPreference? = null
     private var clientIdPreference: EditTextPreference? = null
@@ -97,6 +98,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         clockSaverPreference = findPreference(Configuration.PREF_MODULE_CLOCK_SAVER) as SwitchPreference
         photoSaverPreference = findPreference(getString(R.string.key_saver_photo)) as SwitchPreference
+        hardwareAcceleration = findPreference(Configuration.PREF_HARDWARE_ACCELERATION) as SwitchPreference
         webSaverPreference = findPreference(getString(R.string.key_setting_web_screensaver)) as SwitchPreference
         clientIdPreference = findPreference(Configuration.PREF_IMAGE_CLIENT_ID) as EditTextPreference
         urlPreference = findPreference(Configuration.PREF_IMAGE_SOURCE) as EditTextPreference
@@ -110,8 +112,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as SwitchPreference
 
         webUrlPreference?.text = configuration.webScreenSaverUrl
-
         dayNightPreference?.isChecked = configuration.useNightDayMode
+        hardwareAcceleration?.isChecked = configuration.userHardwareAcceleration
 
         rotationPreference?.text = imageOptions.imageRotation.toString()
         rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, imageOptions.imageRotation.toString())
@@ -268,9 +270,11 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 }
             }
             Configuration.PREF_IMAGE_ROTATION -> {
-                val rotation = Integer.valueOf(rotationPreference?.text)!!
-                imageOptions.imageRotation = rotation
-                rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotation.toString())
+                rotationPreference?.text?.let {
+                    val rotation = Integer.valueOf(it)
+                    imageOptions.imageRotation = rotation
+                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotation.toString())
+                }
             }
             Configuration.PREF_INACTIVITY_TIME -> {
                 val inactivity = inactivityPreference?.value!!.toLong()
@@ -285,6 +289,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
                 configuration.nightModeChanged = true
+            }
+            Configuration.PREF_HARDWARE_ACCELERATION -> {
+                val checked = hardwareAcceleration!!.isChecked
+                configuration.userHardwareAcceleration = checked
             }
             getString(R.string.key_setting_app_preventsleep) -> {
                 val checked = preventSleepPreference!!.isChecked

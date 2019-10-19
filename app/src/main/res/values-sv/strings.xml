@@ -407,6 +407,8 @@
     <string name="pref_retrain_title">Behåll MQTT-meddelande</string>
     <string name="pref_retain_summary">När det är aktivt lagrar mäklare det sista meddelandet.</string>
     <string name="toast_connect_retry">Reconnecting...</string>
+    <string name="pref_title_acceleration">Hårdvaruacceleration</string>
+    <string name="pref_summary_acceleration">På vissa enheter kommer detta att påskynda webb- eller kamerav rendering.</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

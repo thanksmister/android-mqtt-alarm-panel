@@ -408,6 +408,8 @@
     <string name="pref_retrain_title">Retener mensaje MQTT</string>
     <string name="pref_retain_summary">Cuando está activo, el corredor almacena el último mensaje.</string>
     <string name="toast_connect_retry">Reconectando...</string>
+    <string name="pref_title_acceleration">Aceleracion de hardware</string>
+    <string name="pref_summary_acceleration">En algunos dispositivos, esto acelerará el procesamiento web o de la cámara.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

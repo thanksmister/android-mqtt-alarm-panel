@@ -80,6 +80,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
 
+        if(configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
         decorView = window.decorView
 
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)

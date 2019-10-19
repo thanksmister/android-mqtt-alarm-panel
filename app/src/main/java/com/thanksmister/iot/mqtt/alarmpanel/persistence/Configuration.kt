@@ -91,6 +91,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = sharedPreferences.getPrefBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.setPrefBoolean(PREF_FIRST_TIME, value)
 
+    var userHardwareAcceleration: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_HARDWARE_ACCELERATION, false)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_HARDWARE_ACCELERATION, value)
+
     var fingerPrint: Boolean
         get() = sharedPreferences.getPrefBoolean(PREF_FINGERPRINT, false)
         set(value) = sharedPreferences.setPrefBoolean(PREF_FINGERPRINT, value)
@@ -528,5 +532,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val SUN_BELOW_HORIZON = "below_horizon"
         const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
         const val PREF_BRIGHTNESS_FACTOR = .10
+
+        const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
     }
 }

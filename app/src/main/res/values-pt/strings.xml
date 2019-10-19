@@ -408,6 +408,8 @@
     <string name="pref_retrain_title">Retenha a mensagem MQTT</string>
     <string name="pref_retain_summary">Quando ativo, o corretor armazena a última mensagem.</string>
     <string name="toast_connect_retry">Reconectando...</string>
+    <string name="pref_title_acceleration">Aceleraçao do hardware</string>
+    <string name="pref_summary_acceleration">Em alguns dispositivos, isso acelera a renderização na web ou na câmera.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

@@ -407,6 +407,8 @@
     <string name="pref_retrain_title">Behoud MQTT-bericht</string>
     <string name="pref_retain_summary">Indien actief, slaat de makelaar het laatste bericht op.</string>
     <string name="toast_connect_retry">Opnieuw verbinding maken...</string>
+    <string name="pref_title_acceleration">Hardware acceleratie</string>
+    <string name="pref_summary_acceleration">Op sommige apparaten versnelt dit het renderen van het web of de camera.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

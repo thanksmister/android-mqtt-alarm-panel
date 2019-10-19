@@ -409,6 +409,8 @@
     <string name="pref_retrain_title">Conserver le message MQTT</string>
     <string name="pref_retain_summary">Lorsqu\'il est actif, le courtier stocke le dernier message.</string>
     <string name="toast_connect_retry">Reconnexion...</string>
+    <string name="pref_title_acceleration">Accélération matérielle</string>
+    <string name="pref_summary_acceleration">Sur certains appareils, cela accélérera le rendu Web ou par caméra.</string>
 
     <string-array name="inactivity_times">
         <item>15 secondes</item>

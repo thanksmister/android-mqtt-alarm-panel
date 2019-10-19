@@ -411,6 +411,8 @@
     <string name="pref_retrain_title">Retain MQTT Message</string>
     <string name="pref_retain_summary">When active, the broker stores the last message.</string>
     <string name="toast_connect_retry">Reconnecting...</string>
+    <string name="pref_title_acceleration">Hardware Acceleration</string>
+    <string name="pref_summary_acceleration">On some devices this will speed up web or camera rendering.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

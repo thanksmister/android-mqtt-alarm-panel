@@ -161,11 +161,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         this.currentUrl = configuration.webUrl
 
+        configureCamera()
         startForegroundService()
         configureMqtt()
         configurePowerOptions()
         startHttp()
-        configureCamera()
         configureAudioPlayer()
         configureTextToSpeech()
         startSensors()

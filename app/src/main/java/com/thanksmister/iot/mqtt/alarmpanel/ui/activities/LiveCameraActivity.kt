@@ -19,6 +19,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 import android.Manifest
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
@@ -81,7 +82,10 @@ class LiveCameraActivity : BaseActivity() {
             supportActionBar!!.title = getString(R.string.pref_camera_test_title)
         }
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        if(configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
         preview = findViewById<CameraSourcePreview>(R.id.imageView_preview)
         detectionViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetectionViewModel::class.java)
 

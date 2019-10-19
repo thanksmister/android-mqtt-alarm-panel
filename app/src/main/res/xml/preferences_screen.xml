@@ -21,6 +21,11 @@
     <PreferenceCategory android:title="@string/preference_title_display">
 
         <SwitchPreference
+            android:title="@string/pref_title_acceleration"
+            android:summary="@string/pref_summary_acceleration"
+            android:key="pref_hardware_acceleration"/>
+
+        <SwitchPreference
             android:title="@string/pref_fullscreen_title"
             android:summary="@string/pref_fullscreen_description"
             android:key="pref_full_screen"/>
