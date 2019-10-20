@@ -31,8 +31,8 @@ constructor(private val sharedPreferences: DPreference) {
         get() = !TextUtils.isEmpty(imageSource) && !TextUtils.isEmpty(imageClientId)
 
     var imageClientId: String?
-        get() = sharedPreferences.getPrefString(PREF_IMAGE_CLIENT_ID, null)
-        set(value) = this.sharedPreferences.setPrefString(PREF_IMAGE_CLIENT_ID, value)
+        get() = sharedPreferences.getPrefString(PREF_IMAGE_CLIENT_ID, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_IMAGE_CLIENT_ID, value.orEmpty())
 
     var imageRotation: Int
         get() = sharedPreferences.getPrefInt(PREF_IMAGE_ROTATION, ROTATE_TIME_IN_MINUTES)

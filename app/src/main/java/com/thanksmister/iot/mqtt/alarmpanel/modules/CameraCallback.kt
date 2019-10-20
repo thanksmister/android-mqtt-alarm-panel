@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.modules;
+package com.thanksmister.iot.mqtt.alarmpanel.modules
 
-public interface CameraCallback {
-    void onMotionDetected();
-    void onTooDark();
-    void onFaceDetected();
-    void onQRCode(String data);
-    void onCameraError();
-    void onDetectorError();
+interface CameraCallback {
+    fun onMotionDetected()
+    fun onTooDark()
+    fun onFaceDetected()
+    fun onQRCode(data: String)
+    fun onCameraError()
+    fun onDetectorError()
 }

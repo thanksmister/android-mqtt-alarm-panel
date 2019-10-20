@@ -32,8 +32,8 @@ class Configuration @Inject
 constructor(private val context: Context, private val sharedPreferences: DPreference) {
 
     var webUrl: String?
-        get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
-        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
+        get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, "")
 
     var appPreventSleep: Boolean
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
@@ -328,7 +328,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailTo(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_TO, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_TO, "")
     }
 
     fun setMailTo(value: String) {
@@ -336,7 +336,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailFrom(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_FROM, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_FROM, "")
     }
 
     fun setMailFrom(value: String) {
@@ -344,7 +344,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailGunApiKey(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_API_KEY, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_API_KEY, "")
     }
 
     fun setMailGunApiKey(value: String) {
@@ -352,7 +352,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailGunUrl(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_URL, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_URL, "")
     }
 
     fun setMailGunUrl(value: String) {

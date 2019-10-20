@@ -75,7 +75,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getClientId(): String {
-        var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, null)
+        var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, "")
         if (TextUtils.isEmpty(clientId)) {
             clientId = DeviceUtils.uuIdHash
         }

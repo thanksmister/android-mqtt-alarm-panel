@@ -372,8 +372,10 @@ constructor(private val context: Context) {
                     override fun onUpdate(p0: Detector.Detections<Barcode>?, p1: Barcode?) {
                         super.onUpdate(p0, p1)
                         if (cameraCallback != null && configuration.cameraQRCodeEnabled) {
-                            Timber.d("Barcode: " + p1?.displayValue)
-                            cameraCallback!!.onQRCode(p1?.displayValue)
+                            p1?.let {
+                                Timber.d("Barcode: " + p1.displayValue)
+                                cameraCallback?.onQRCode(p1.displayValue)
+                            }
                         }
                     }
                 }

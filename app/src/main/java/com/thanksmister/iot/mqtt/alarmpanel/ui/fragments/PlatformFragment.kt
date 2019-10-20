@@ -53,7 +53,7 @@ class PlatformFragment : BaseFragment() {
     private var currentUrl:String? = null
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
-    private var zoomLevel = 1.0f
+    private var zoomLevel = 0.0f
     private var hasWebView:Boolean = true
     private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
     private var certPermissionsShown = false
@@ -157,7 +157,6 @@ class PlatformFragment : BaseFragment() {
     }
 
     private fun loadWebPage() {
-        Timber.d("loadWebPage url ${configuration.webUrl}")
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl)
                 && webView != null && hasWebView) {
             configureWebSettings(configuration.browserUserAgent)
@@ -229,7 +228,14 @@ class PlatformFragment : BaseFragment() {
                     }
                 }
             }
-            if (zoomLevel.toDouble() != 1.0) {
+            if (configuration.userHardwareAcceleration && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // chromium, enable hardware acceleration
+                webView?.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            } else  {
+                // older android version, disable hardware acceleration
+                webView?.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+            if (zoomLevel != 0.0f) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
             webView.loadUrl(configuration.webUrl)
