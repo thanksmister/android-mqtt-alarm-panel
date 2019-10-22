@@ -18,3 +18,5 @@ npm-debug.log
 crashlytics.properties
 app-prod-release.apk
 fabric.properties
+
+*.secret
