@@ -16,8 +16,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,7 +29,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
@@ -60,6 +59,7 @@ class MainFragment : BaseFragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+        Timber.d("onAttach")
         if (context is OnMainFragmentListener) {
             listener = context
         } else {
@@ -69,18 +69,20 @@ class MainFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Timber.d("onActivityCreated")
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
         observeViewModel(viewModel)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonSettings.setOnClickListener({showSettingsCodeDialog()})
-        buttonSleep.setOnClickListener({listener?.manuallyLaunchScreenSaver()})
-        /*buttonLogs.setOnClickListener {
-            val intent = LogActivity.createStartIntent(activity!!.applicationContext)
-            startActivity(intent)
-        }*/
+        Timber.d("onViewCreated")
+        buttonSettings.setOnClickListener {
+            showSettingsCodeDialog()
+        }
+        buttonSleep.setOnClickListener {
+            listener?.manuallyLaunchScreenSaver()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,17 +91,29 @@ class MainFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        Timber.d("onResume")
         if (viewModel.hasPlatform()) {
             platformButton.visibility = View.VISIBLE;
-            platformButton.setOnClickListener(View.OnClickListener {listener?.navigatePlatformPanel() })
+            platformButton.setOnClickListener {
+                listener?.navigatePlatformPanel()
+            }
         } else {
             platformButton.visibility = View.INVISIBLE;
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        Timber.d("onPause")
+    }
+
     override fun onDetach() {
         super.onDetach()
+        buttonSleep?.let {
+            it.setOnTouchListener(null)
+        }
         listener = null
+        Timber.d("onDetach")
     }
 
     private fun observeViewModel(viewModel: MainViewModel) {
@@ -135,13 +149,15 @@ class MainFragment : BaseFragment() {
 
     private fun showSettingsCodeDialog() {
         if (configuration.isFirstTime) {
-            val intent = SettingsActivity.createStartIntent(activity!!.applicationContext)
-            startActivity(intent)
+            activity?.let {
+                val intent = SettingsActivity.createStartIntent(it.applicationContext)
+                startActivity(intent)
+            }
         } else {
             dialogUtils.showSettingsCodeDialog(activity as MainActivity, configuration.alarmCode, object : SettingsCodeView.ViewListener {
                 override fun onComplete(code: Int) {
                     if (code == configuration.alarmCode) {
-                        if(isAdded && activity != null) {
+                        activity?.let {
                             val intent = SettingsActivity.createStartIntent(activity!!.applicationContext)
                             startActivity(intent)
                         }
@@ -149,8 +165,8 @@ class MainFragment : BaseFragment() {
                     dialogUtils.clearDialogs()
                 }
                 override fun onError() {
-                    if(isAdded && activity != null) {
-                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    activity?.let {
+                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onCancel() {
@@ -166,42 +182,40 @@ class MainFragment : BaseFragment() {
      * alarm will trigger immediately.
      */
     private fun showAlarmDisableDialog(delayTime: Int) {
-        if(isAdded && delayTime > 0 && activity != null) {
-            dialogUtils.showAlarmDisableDialog(activity as BaseActivity, object : AlarmDisableView.ViewListener {
-                override fun onComplete(code: Int) {
-                    listener?.publishDisarmed()
-                    dialogUtils.clearDialogs()
-                }
-                override fun onError() {
-                    if(activity != null) {
-                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+        activity.takeIf { isAdded }?.let {
+            if(delayTime > 0) {
+                dialogUtils.showAlarmDisableDialog(it as BaseActivity, object : AlarmDisableView.ViewListener {
+                    override fun onComplete(code: Int) {
+                        listener?.publishDisarmed()
+                        dialogUtils.clearDialogs()
                     }
-                }
-                override fun onCancel() {
-                    dialogUtils.clearDialogs()
-                }
-            }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
+                    override fun onError() {
+                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onCancel() {
+                        dialogUtils.clearDialogs()
+                    }
+                }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
+            }
         }
     }
 
     private fun showAlarmTriggered() {
-        if (isAdded && activity != null) {
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
+        activity.takeIf { isAdded }?.let {
+            it.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
             mainView.visibility = View.GONE
             triggeredView.visibility = View.VISIBLE
             val code = configuration.alarmCode
-            val disarmView = activity!!.findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
+            val disarmView = it.findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
             disarmView.setCode(code)
             disarmView.setUseSound(configuration.systemSounds)
             disarmView.useFingerprint = configuration.fingerPrint
             disarmView.listener = object : AlarmTriggeredView.ViewListener {
                 override fun onComplete() {
-                    listener!!.publishDisarmed()
+                    listener?.publishDisarmed()
                 }
                 override fun onError() {
-                    if(activity != null) {
-                        Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
                 }
             }
         }

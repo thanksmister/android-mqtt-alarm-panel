@@ -65,7 +65,7 @@
                 android:src="@drawable/ic_home"
                 tools:ignore="ContentDescription"/>
 
-            <android.support.v4.widget.Space
+            <Space
                 android:layout_width="16dp"
                 android:layout_height="24dp"/>
 
@@ -80,7 +80,7 @@
                     android:src="@drawable/ic_sleep"
                     tools:ignore="ContentDescription"/>
 
-            <android.support.v4.widget.Space
+            <Space
                     android:layout_width="16dp"
                     android:layout_height="24dp"/>
 
@@ -95,21 +95,6 @@
                     android:src="@drawable/ic_settings_black"
                     tools:ignore="ContentDescription"/>
 
-           <!-- <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="24dp"/>
-
-            <ImageButton
-                    android:id="@+id/buttonLogs"
-                    style="@style/BorderlessButtonStyle"
-                    android:padding="8dp"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:tint="@color/dark_gray"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_log_list_black"
-                    tools:ignore="ContentDescription"/>
--->
         </LinearLayout>
 
     </LinearLayout>

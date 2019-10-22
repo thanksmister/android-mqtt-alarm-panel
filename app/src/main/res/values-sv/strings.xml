@@ -1,0 +1,457 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Alarm Panel</string>
+
+
+    <!-- Menus -->
+    <string name="action_settings">Inställningar</string>
+    <string name="action_publish">Publicera</string>
+
+    <!-- Buttons -->
+
+    <!-- Toasts, Alerts, Errors -->
+    <string name="toast_code_match">Du har angivit aktuell larmkod, ange en annan kod.</string>
+    <string name="toast_code_alarm_set">Larmet har slagits på!</string>
+    <string name="toast_code_unchanged">Larmkod oförändrad!</string>
+    <string name="toast_code_changed">Larmkoden är ändrad!</string>
+    <string name="toast_code_not_match">Koden är inte samma, försök igen.</string>
+    <string name="toast_code_invalid">Fel kod, försök igen.</string>
+
+    <!-- Text Content -->
+    <string name="text_enter_alarm_code_title">Ange en ny kod</string>
+    <string name="text_renter_alarm_code_title">Ange koden igen för att verifiera</string>
+
+    <!-- Preferences -->
+    <string name="preference_summary_security_code">Ange ny systemkod (standard är 1234).</string>
+    <string name="preference_title_security_code">Systemkod</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
+    <string name="preference_summary_mqtt_server">Ange värden för MQTT-tjänsten</string>
+    <string name="preference_title_broker">MQTT Broker</string>
+    <string name="preference_summary_broker">Ange adress till MQTT-broker. För tcp/ssl ange utan prefix (192.168.1.1). För andra, inkludera prefix (http://192.168.1.1).</string>
+    <string name="preference_client_id">KlientId</string>
+    <string name="preference_summary_client_id">Sätt KlientId om det krävs av tjänsten.</string>
+    <string name="preference_tls_connection">SSL/TLS-anslutning</string>
+    <string name="preference_summary_tls_connection">Lyssna till brokern på port 8883 med SSL/TLS.</string>
+    <string name="preference_title_port">Service Port</string>
+    <string name="preference_summary_port">Ange serviceport, normalt 8123 om den inte är säker.</string>
+    <string name="preference_title_command_topic">Alarm Command</string>
+    <string name="preference_title_state_topic">Alarm Topic</string>
+    <string name="preference_summary_command_topic">Ange Command topic att skicka till MQTT-tjänsten.</string>
+    <string name="preference_summary_state_topic">Ange state topic för att ta emot meddelanden från MQTT-tjänsten.</string>
+    <string name="preference_title_username">Användarnamn</string>
+    <string name="preference_summary_username">Ange användarnamn (vid behov).</string>
+    <string name="preference_title_password">Lösenord</string>
+    <string name="preference_summary_password">Ange tjänstens lösenord (vid behov).</string>
+    <string name="preference_title_alarm">Larm</string>
+    <string name="preference_summary_alarm">Inställning för larmkod</string>
+    <string name="preference_title_pending_time">Utgångstid</string>
+    <string name="preference_summary_pending_time">Tid i sekunder att vänta innan larmet är tillkopplat i borta- eller hemmaläge. Nuvarande tid är %1$s sekunder.</string>
+    <string name="preference_title_trigger_time">Aktiveringstid</string>
+    <string name="preference_summary_trigger_time">Tid i sekunder innan larmet löser ut. Nuvarande tid är %1$s sekunder.</string>
+
+    <string name="preference_title_weather_settings">Väder</string>
+    <string name="preference_summary_weather_settings">Vid aktivering kommer en väderikon att visas på huvudskärmen.</string>
+    <string name="preference_title_darksky">DarkSky</string>
+    <string name="preference_summary_darksky">Använd DarkSky-tjänsten för att aktivera vädermodulen.</string>
+    <string name="preference_title_darksky_api">API Secret</string>
+    <string name="preference_summary_darksky_api">Ange din DarkSky API Secret.</string>
+    <string name="preference_title_latitude">Latitud</string>
+    <string name="preference_summary_latitude_summary">Ange din latitud.</string>
+    <string name="preference_title_longitude">Longitud</string>
+    <string name="preference_summary_longitude_summary">Ange din longitud.</string>
+    <string name="preference_title_units">Använd elsius (°C)</string>
+    <string name="preference_summary_units">Använd Celsius för temperaturvärden.</string>
+
+    <string name="preference_title_display">Skärm</string>
+    <string name="preference_title_screen_saver_settings">Skärmsläckare</string>
+    <string name="preference_summary_screen_saver_settings">Vid aktivering visas en inbyggd skärmsläckare med klocka.</string>
+    <string name="preference_title_screen_saver">Skärmsläckare med klocka</string>
+    <string name="pref_title_image_client_id">Imgur Klientid</string>
+    <string name="preference_summary_image_client_id">Ange ditt klientid till ditt Imgurkonto från https://api.imgur.com.</string>
+
+    <string name="preference_title_screen_saver_photo_settings">Inställningar för fotoskärmsläckare</string>
+    <string name="preference_summary_screen_saver_photo_settings">Vid aktivering visas foton från Imgur som skärmsläckare.</string>
+    <string name="preference_title_screen_saver_photo">Fotoskärmsläckare</string>
+
+    <string name="preference_summary_screen_saver">Använd foton från Instagram som skärmsläckare.</string>
+
+    <string name="preference_title_image_source">Imgur Tag</string>
+    <string name="preference_summary_image_source">Ange din Imgur tag för att använda med Imgur (t ex: rymd, arkitektur, blommor, eller landskap).</string>
+    <string name="preference_title_image_fit">Beskär bilder</string>
+    <string name="preference_summary_image_fit">Beskär bilderna för att passa skärmens storlek.</string>
+    <string name="preference_title_image_rotation">Bildintervall</string>
+    <string name="preference_summary_image_rotation">Tid i minuter för att visa en ny bild. Nuvarande tid är %1$s.</string>
+
+    <string name="preference_title_web_settings">Webbläsare</string>
+    <string name="preference_summary_web_settings">Tillåter dig att ange en extern anslagstavla.</string>
+    <string name="preference_title_web">Anslagstavla</string>
+    <string name="preference_summary_web">Visar din hemautomations anslagstavla genom att svepa på skärmen.</string>
+    <string name="preference_title_web_url">Adress till anslagstavla</string>
+    <string name="preference_summary_web_url">Ange IP-adressen till din anslagstavla med prefix och port om nödvändigt (t ex: http://ipadress:port).</string>
+    <string name="preference_web_description">Detta är en experimentell funktion. Webbsidan kommer att renderas med Androids version av Chrome och kan visas annorlunda beroende på Android SDK och WebView-version.</string>
+
+    <string name="preference_title_notification">Notifieringar</string>
+    <string name="preference_summary_notification">Visar en systemnotifiering om larmet löser ut eller om en inpassering detekteras.</string>
+
+    <string name="preference_title_inactivity">Starta skärmsläckare efter…</string>
+    <string name="preference_summary_inactivity_seconds">Skärmen dimmas efter %1$s sekunder av inaktivitet.</string>
+    <string name="preference_summary_inactivity_minutes">Skärmen dimmas efter %1$s minuter av inaktivitet.</string>
+
+    <string name="preference_title_notifications">Notifieringar</string>
+    <string name="preference_title_mqtt_notifications">MQTT-notifieringar</string>
+    <string name="preference_summary_mqtt_notifications">Visa eller tala notifieringar från MQTT-meddelanden.</string>
+
+    <string name="preference_title_alert">Larmnotifieringar</string>
+    <string name="preference_title_system_notifications">Systemnotifieringar</string>
+    <string name="preference_summary_alert">Exempel på format för meddelandets ämne och text för att visas i larmdialog: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"alert\":\"Hej!\"}\"}"</string>
+
+    <string name="preference_tts_voice">TTS-röst</string>
+    <string name="preference_tts">TTS-notifieringar</string>
+    <string name="preference_summary_tts">Använd Googles Text-Till-Tal för att säga texten i ett MQTT-meddelande. (OBS: Kräver Android Lollipop eller högre.)</string>
+
+    <string name="preference_tts_topic">TTS-ämne</string>
+    <string name="preference_topic_title">Ange ämne</string>
+
+    <string name="preference_tts_topic_summary">Exempel på ämne och text i ett talat meddelande: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hej!\"}\"}"</string>
+
+    <string name="preference_camera">Kamera</string>
+    <string name="preference_camera_title">Kamerabild</string>
+    <string name="preference_camera_summary">Använd kameran för att ta en bild och maila den när larmet frånkopplas.</string>
+
+    <string name="preference_camera_flip_title">Rotera kameran</string>
+    <string name="preference_camera_flip_summary">Beroende på den kamera så kan du behöva rotera eller vända bilden. Aktuell justering: %1$s.</string>
+
+    <string name="preference_mail_domain">Domän</string>
+    <string name="preference_mail_domain_summary">Ange ditt MailGun-domänvärde (t ex: sandboxd83b1e242f934c73a471c518392df0.mailgun.org).</string>
+    <string name="preference_mail_key">Api-nyckel</string>
+    <string name="preference_mail_key_summary">Ange din MailGun-apinyckel (example: key-5d021926d65dc12we8ec04d7f9d0fd2c).</string>
+
+    <string name="preference_mail_from">Från-adress</string>
+    <string name="preference_mail_from_summary">Ange en mailadress som mailet skall skickas från (t ex: mister@thankmister.com).</string>
+
+    <string name="preference_mail_to">Till-adress</string>
+    <string name="preference_mail_to_summary">Ange den mailadress som skall ta emot bilden. Du kan använda kommatecken om du vill skicka till flera.((t ex: "mister@thankmister.com" eller "mister@thankmister.com, me@thankmister.com")</string>
+
+    <string name="preference_mail_title">MailGun-inställningar</string>
+    <string name="preference_mail_description">För att maila tagna bilder så behöver du ett MailGun-konto (mailgun.com) och ange domän och apinyckel, ange dessutom mailadressen till mottagaren.</string>
+
+    <string name="text_title_system">SYSTEM</string>
+    <string name="text_titled_disarmed">FRÅNKOPPLAT</string>
+    <string name="text_titled_armed_away">LARMAT I BORTALÄGE</string>
+    <string name="toast_invalid_coordinates">Felaktig latitud och/eller longitud.</string>
+    <string name="toast_invalid_latitude">Värdet skall vara mellan -90 och 90.</string>
+    <string name="toast_invalid_longitude">Värdet skall vara mellan -180 och 180.</string>
+    <string name="toast_invalid_provider">Kan inte detektera plats, var god ange lat/long manuellt.</string>
+    <string name="activity_settings_title">Inställningar</string>
+    <string name="toast_alarm_deactivated">Larm frånkopplat!</string>
+    <string name="activity_logs_title">Datalogg</string>
+
+    <string name="text_arm_home">LARMA PÅ HEMMALÄGE</string>
+    <string name="text_arm_away">LARMA PÅ BORTALÄGE</string>
+    <string name="text_armed_home">LARM HEMMALÄGE</string>
+    <string name="text_armed_away">LARM BORTALÄGE</string>
+    <string name="text_system">SYSTEM</string>
+    <string name="text_disarmed">FRÅNKOPPLAT</string>
+    <string name="dialog_alarm_triggered">ANGE KOD FÖR FRÅNKOPPLING</string>
+    <string name="dialog_first_time">Efterson detta är första gången så var god att ange MQTT-server och larminformation (standardkod är 1234).</string>
+    <string name="text_alarm_pending">LARM AVVAKTAR</string>
+
+    <string name="text_temperature">%1$s %2$s</string>
+    <string name="text_temperature_range">H%1$s°  L%2$s°</string>
+    <string name="error_mqtt_connection">MQTT-klientanslutning kunde inte skapas eller blev oavsiktligt avbruten. Försöker att ansluta igen.</string>
+    <string name="error_mqtt_subscription">Kunde inte prenumerera på MQTT-ämnen, kontrollera MQTT-inställningarna.</string>
+    <string name="text_alarm">LARM</string>
+    <string name="string_device_location">Enhetens plats</string>
+    <string name="string_location_services_disabled">Din platsinformation är avstängd, vill du aktivera?</string>
+
+    <string name="mail_to_subject_text">MQTT-larm</string>
+    <string name="mail_subject_text">Skicka respons:</string>
+
+    <string name="thanks_mister_title">Tack, Mister!</string>
+    <string name="designer_developer_text">Design och utveckling</string>
+    <string name="company_url_text">thanksmister.com</string>
+    <string name="company_email">mister@thanksmister.com</string>
+    <string name="text_feedback">Respons</string>
+    <string name="text_rate_application">Betygsätt app</string>
+    <string name="text_reddit">Reddit-grupp</string>
+    <string name="text_license_information">Licensinformation</string>
+    <string name="text_github_code">GitHub Projektsida</string>
+    <string name="text_about">Om</string>
+    <string name="text_alarm_settings">Larminställningar</string>
+    <string name="text_mqtt_settings">MQTT-inställningar</string>
+    <string name="notification_channel_name">Inpassering detekterad / Larm aktiverat</string>
+    <string name="text_channel_description">Larmpanelsnotifiering</string>
+    <string name="text_notification_entry_title">Inpassering detekterad</string>
+    <string name="text_notification_entry_description">En inpassering har detekterats, var god ta nödvändiga åtgärder.</string>
+    <string name="text_notification_trigger_title">Larm utlöst</string>
+    <string name="text_notification_trigger_description">Larmet har löst ut, var god ta nödvändiga åtgärder.</string>
+    <string name="text_notification_network_title">Larm frånkopplat</string>
+    <string name="text_notification_network_description">Nätverksanlutningen är otillgänglig, en anslutning behövs för att larmet skall fungera.</string>
+    <string name="text_settings_code_title">Ange kod för att komma in här.</string>
+    <string name="text_error_no_alarm_setup">Du försöker koppla till larmet men du har inte gjort klart inställningarna för MQTT ännu.</string>
+    <string name="text_error_pending_time_low">Väntetiden är tiden före systemet är fullt tillkopplat. Se till att det finns tillräckligt med tid för att komma och gå när du till och frånkopplar larmet.</string>
+    <string name="text_error_trigger_time_low">Utlösartiden är tiden som larmet ligger i larmläge innan det återgår. En kort utlösartid kan få oväntat betende.</string>
+    <string name="text_error_mqtt_connection">Problem att ansluta med följande parametrar: %1$s</string>
+    <string name="progress_location">Hämtar platsinfo…</string>
+    <string name="text_error_only_numbers">Se till att värdet är enbart nummer och inga blanksteg.</string>
+    <string name="text_error_blank_entry">Värdet skall inte vara blankt, var god ange ett godkänt värde</string>
+    <string name="text_alarm_disabled_email">Larmet är frånkopplat, här är en bild.</string>
+    <string name="text_alarm_disabled_email_subject">Larm frånkopplat</string>
+    <string name="text_camera_failed_configuration">Det gick inte att konfigurera kameran, har du en kamera?</string>
+    <string name="text_camera_failed_session">Bildinfångst gick ej att utföra, har du en kamera?</string>
+    <string name="text_error_camera_device">Fel på kamera, kunde inte ansluta.</string>
+    <string name="text_camera_image_subject">\"Larmpanel\" %1$s</string>
+    <string name="pref_mqtt_settings_category">MQTT-notifieringar</string>
+    <string name="dialog_loading">Laddar…</string>
+    <string name="pref_time_update_title">Uppdatera tid</string>
+    <string name="pref_time_title">Tidsinställningar</string>
+    <string name="pref_automatic_time_zone_title">Automatisk tidszon</string>
+    <string name="pref_automatic_time_zone_summary">Använd nätverkets tidszon</string>
+    <string name="pref_time_summary">Ställ enhetens klocka.</string>
+    <string name="pref_time_format_title">Använd 24-timmarsformat</string>
+    <string name="text_dialog_select_time">Välj tid</string>
+    <string name="pref_density_summary">Ändra skärmdensitet. Nu är den: %1$s dpi.</string>
+    <string name="pref_device_brightness_summary">Ange skärmens ljusstyrka mellan 1 och 5. Nu är den: %1$s.</string>
+    <string name="pref_device_density_title">Skärmdensitet</string>
+    <string name="pref_device_brightness_title">Ljusstyrka</string>
+    <string name="pref_reset_category">Återställ</string>
+    <string name="pref_reset_title">Återställ inställningarna</string>
+    <string name="pref_reset_summary">Återställer inställningarna till ursprungsvärden.</string>
+
+    <string name="pref_device_timeout_minutes_summary">Efter %1$s minuter slås skärmen av.</string>
+    <string name="pref_device_timeout_seconds_summary">Efter %1$s sekunder slås skärmen av.</string>
+    <string name="pref_device_timeout_hours_summary">Efter %1$s timma slås skärmen av.</string>
+
+    <string name="pref_device_timeout_title">Skärmtimeout</string>
+    <string name="text_update_available">Det finns en ny uppdatering tillgänglig, vill du installera den nu?</string>
+    <string name="pref_home_pending_title">Tillkoppling i hemmaläge in/utpasseringstid</string>
+    <string name="pref_home_pending_summary">Tiden det tar innan larmet är tillkopplat vid manövrering till hemmaläge. Aktuellt värde: %1$s sekunder.</string>
+    <string name="pref_delay_title">Inpasseringstid</string>
+    <string name="pref_delay_summary">Tid i sekunder att visa vyn för frånkoppling innan larmet löser ut om det inte är förbisatt av hemmaläge eller bortaläge. Nu är den: %1$s sekunder.</string>
+    <string name="pref_away_pending_title">Larm i bortaläge utpasseringstid</string>
+    <string name="pref_away_pending_summary">Tiden det tar innan larmet är tillkopplat vid manövrering till bortaläge. Aktuellt värde: %1$s sekunder.</string>
+    <string name="pref_pending_times_description">Dessa tider bör matcha det som står i automations platformen. Om du inte vill använda dessa tider så sätt dem alla till samma som din utpasseringstid. För Home Assistant, se MQTT manual alarm control dokumenttion här: https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
+    <string name="pref_home_delay_summary">Tid i sekunder att visa vyn för frånkoppling innan larmet löser ut i hemmaläge. Aktuellt värde: %1$s sekunder.</string>
+    <string name="pref_home_delay_title">Inpasseringstid för Frånkoppling hemmaläge</string>
+    <string name="pref_away_delay_summary">Tid i sekunder att visa vyn för frånkoppling innan larmet löser ut i bortläge. Aktuellt värde: %1$s sekunder.</string>
+    <string name="pref_away_delay_title">Inpasseringstid för Frånkoppling bortaläge</string>
+    <string name="dialog_no_camera_permissions">Denna funktion kräver rättigheter till kameran. Gå till enhetsinställningar och aktivera rättigheterna för denna applikation.</string>
+    <string name="dialog_no_location_permissions">Denna funktion kräver lokala rättigheter till kameran. Gå till enhetsinställningar och aktivera råttigheterna för denna applikation.</string>
+    <string name="toast_screen_timeout">Skärmtimeout…</string>
+    <string name="button_hide_text">Göm</string>
+    <string name="pref_title_platform_bar">Visa nedre fältet</string>
+    <string name="pref_description_show_platform_bar">Om aktiverad, så visas det nedre fältet med knappar på skärmen.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Ange ditt Telegram bot chat id.</string>
+    <string name="pref_telegram_token_summary">Ange ditt Telegram bot API token.</string>
+    <string name="pref_telegram_chat_id_title">Telegram Chat Id</string>
+    <string name="pref_telegram_api_title">Telegram API Token</string>
+    <string name="pref_camera_send_image_notes">Du kan använda Telegram, Mailgun, eller båda för att skicka tagna bilder.</string>
+    <string name="menu_item_help">Hjälp</string>
+    <string name="error_mailgun_credentials">Det uppstod ett problem när bilden skickades, se över dina Mailgun-inställningar.</string>
+    <string name="pref_system_sounds_summary">Växla om du vill använda larmljud för att frånkoppla en larmhändelse</string>
+    <string name="pref_system_sounds_title">Systemljud</string>
+    <string name="pref_fingerprint_summary">Använd fingeravtryck för att låsa upp systemet. Larmkod kommer att användas som backup.</string>
+    <string name="pref_fingerprint_error">Du måste först ställa in ditt fingeravtryck för upplåsning.</string>
+    <string name="pref_fingerprint_title">Lås upp med fingeravtryck</string>
+    <string name="pref_hass_settings">Experimentella inställningar</string>
+    <string name="pref_hide_menu_title">Göm meny</string>
+    <string name="pref_hide_menu_summary">Göm adminlägets menyer.</string>
+    <string name="pref_back_behavior_title">Åsidosätt tillbakaknapp</string>
+    <string name="pref_back_behavior_summary">Androidknappen beter sig som en webbläsares tillbakaknapp.</string>
+    <string name="text_touch_sensor">Touchsensor</string>
+    <string name="dialog_clear_logs">Vill du tömma loggen?</string>
+    <string name="menu_item_clear_logs">Töm logg</string>
+    <string name="sensors_settings">Sensorer</string>
+    <string name="button_add_sensor">+ LÄGG TILL SENSOR</string>
+    <string name="pref_sensor_title">Lögg till sensor</string>
+    <string name="toast_changes_cancelled">Ändringar avbrutna…</string>
+    <string name="error_sensor_empty_data">Sensorer måste ha ämne och båda payloadsen sparade.</string>
+    <string name="add_sensor_description">Skapa en lista på sensorer som skall ta emot statusförändringar. T ex, skapa en ljud notifiering om en dörr är öppen eller förhindra att larmet tillkopplas om ett fönster är öppet.</string>
+    <string name="text_sensor">Sensorer</string>
+    <string name="sensor_topic_description">Sensorns MQTT ämne att prenumerera på för statusförändringar (%1$s/entredorr).</string>
+    <string name="pref_dark_mode_start_time">Starttid: %1$s</string>
+    <string name="pref_dark_mode_end_time">Sluttid: %1$s</string>
+    <string name="dialog_select_time">Välj tid</string>
+    <string name="pref_night_mode_description">Sänker ljusstyrkan och använder ett mörkt tema baserat på start och stopp tid.</string>
+    <string name="pref_night_mode_start_description">Starttid nattläge</string>
+    <string name="pref_night_mode_end_description">Sluttid nattläge</string>
+    <string name="pref_fullscreen_title">Fullskärmsläge</string>
+    <string name="pref_fullscreen_description">Visa applikationen i fullskärm.</string>
+    <string name="notification_title">Notifieringar</string>
+
+    <string name="summary_setting_sensors_default">Inte tillgänglig</string>
+    <string name="title_setting_sensors_temperature">Temperatur</string>
+    <string name="title_setting_sensors_light">Ljus</string>
+    <string name="title_setting_sensors_magneticField">Magnetfält</string>
+    <string name="title_setting_sensors_pressure">Tryck</string>
+    <string name="title_setting_sensors_humidity">Fuktighet</string>
+    <string name="summary_notification_topic">Exempelformat för meddelandets ämne och payload: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hej!\"}\"}"</string>
+    <string name="title_sensor_settings">Sensorinställningar</string>
+    <string name="title_enable_sensor_data">Aktivera sensorer</string>
+    <string name="summary_enable_sensor_data">Publicerar status på tillgängliga sensorer via MQTT</string>
+    <string name="pref_sensor_list_summary">Nedan är en lista på tillgängliga sensorer på denna nehet för publicering som MQTT data.</string>
+    <string name="pref_qr_code_summary">Scannar QR koder med enhetens kamera och publicerar dessa över MQTT.</string>
+    <string name="title_setting_mqtt_sensorfrequency">Publicerinsgfrekvens (i sekunder)</string>
+    <string name="summary_setting_mqtt_basetopic">Identifierare för att ta emot MQTT kommandon för denna panel. Varje panel behöver en unik identifierare.</string>
+    <string name="title_setting_mqtt_basetopic">Basämne</string>
+    <string name="service_notification_message">Larmpanel körs…</string>
+    <string name="toast_camera_source_error">Kunde inte starta kameran, vill du försöka igen?</string>
+    <string name="pref_user_agent_title">User Agent (Valfri)</string>
+    <string name="pref_user_agent_summary">Ange webbläsarens \'user agent stream\' vid behov för att ladda en anslagstavla (annars lämna tom).</string>
+    <string name="pref_camera_fps_title">Bildfrekvens</string>
+    <string name="pref_camera_fps_summary">Ange kamerans bildfrekvens. Använd lägre värde för äldre enheter, nu är det %1$s.</string>
+    <string name="pref_motion_reset_title">Rörelsedetektering, återställningstid</string>
+    <string name="pref_motion_reset_description">Tiden i sekunder före rörelsedetektorn återställs.</string>
+    <string name="text_front">Fram</string>
+    <string name="text_back">Bak</string>
+    <string name="text_camera_pattern">{0}: {1} Kamera {3}x{4} {2}º</string>
+    <string name="pref_camera_test_title">Testa kamera</string>
+    <string name="pref_camera_test_button_title">Testa kamera</string>
+    <string name="title_setting_http_port">HTTP-port</string>
+    <string name="title_setting_http_mjpegenabled">MJPEG-videoström</string>
+    <string name="title_setting_http_mjpegmaxstreams">MJPEG-kamera, max antal strömmar</string>
+    <string name="pref_face_detection_title">Ansiktsdetektering</string>
+    <string name="pref_motion_leniency_description">Maximal tolerans i skillnad på bilder. En lägre tolerans betyder känsligare rörelsedetektering (1 – 20).</string>
+    <string name="pref_motion_luma_description">Minsta ljusstyrka för att detektera rörelse. Ingen rörelse detekteras om värdet är lägre än detta värde (1 – 1000).</string>
+    <string name="pref_mjpeg_streaming_description">Använd kameran som live MJPEG-ström. Anslut till videoströmmen med enhetens IP, HTTP-port och slutpunkt: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_title">MJPEG-strömning</string>
+    <string name="pref_mjpeg_streaming_summary">Använd kameran som live MJPEG-ström.</string>
+    <string name="title_setting_camera_enabled">Kamera aktiverad</string>
+    <string name="title_setting_camera_cameraid">Välj kamera</string>
+    <string name="title_setting_camera_motionenabled">Rörelsedetektering aktiverad</string>
+    <string name="title_setting_camera_motionleniency">Max Leniency</string>
+    <string name="title_setting_camera_motionminluma">Min Luma</string>
+    <string name="title_setting_camera_motionwake">Väck skärm</string>
+    <string name="title_setting_camera_faceenabled">Ansiktsdetektering aktiverad</string>
+    <string name="title_setting_camera_facewake">Väck skärm</string>
+    <string name="title_setting_camera_qrcodeenabled">QR-kodläsare</string>
+    <string name="pref_motion_detection_summary">Detektera rörelse med enhetens kamera.</string>
+    <string name="pref_motion_wake_summary">Väck skärmen när rörelse detekteras.</string>
+    <string name="pref_motion_detection_title">Rörelsedetektering</string>
+    <string name="pref_motion_adjustments_title">Justering rörelsdetektering</string>
+    <string name="pref_face_detection_summary">Detekterar ansikten med enhetens kamera.</string>
+    <string name="pref_face_wake_summary">Väck skärmen när ansikte detekterats.</string>
+    <string name="pref_button_camera_test">Testa kamerans inställningar.</string>
+    <string name="toast_qr_code_read">Läsning av QR-kod...</string>
+    <string name="toast_too_dark_motion">För mörkt för rörelsedetektering</string>
+    <string name="toast_motion_detected">Rörelse detekterad!</string>
+    <string name="toast_face_detected">Ansikte detekterat!</string>
+    <string name="toast_qrcode_read">QR-kod %1$s</string>
+    <string name="title_setting_app_showactivity">Visa webbläsaraktivitet</string>
+    <string name="pref_show_browser_activity_summary">Visa webbläsarens laddningsstatus.</string>
+    <string name="pref_zoom_level_summary">Zooma webbläsaren till nivå (experimentell).</string>
+    <string name="title_setting_test_zoomlevel">Läsarens zoomnivå</string>
+    <string name="progress_loading">Laddar %1$s %%</string>
+    <string name="pref_title_prevent_sleep">Förhindra skärmavstängning</string>
+    <string name="pref_summary_prevent_sleep">När aktiv, håll skärmen på.</string>
+    <string name="dialog_title_ssl_error">SSL Certifikatfel</string>
+    <string name="dialog_message_ssl_continue">Vill du fortsätta ändå?</string>
+    <string name="dialog_message_ssl_not_yet_valid">Certifikatet är inte längre giltigt.</string>
+    <string name="dialog_message_ssl_mismatch">Certifikat och värdnamn skiljer.</string>
+    <string name="dialog_message_ssl_expired">Certifikatet är utgånget.</string>
+    <string name="dialog_message_ssl_untrusted">Certifikatets utfärdare är inte längre betrodd.</string>
+    <string name="dialog_message_ssl_generic">SSL certifikatfel.</string>
+    <string name="dialog_missing_webview_warning">Denna enhet har inte WebView-komponenten installerad, var god installera komponenten från Google Play.</string>
+    <string name="error_missing_vision_lib">Bibliotek för att kunna läsa ansikten och streckkoder saknas. Dessa funktioner är eventuellt inte tillgänliga på din enhet.</string>
+    <string name="pref_platform_title_refresh">Uppdatera läsaren</string>
+    <string name="pref_platform_refresh_summary">När denna är aktiverad så uppdateras webbläsaren om man drar nedåt från toppen på sidan.</string>
+    <string name="pref_title_sensor_list">Lista på sensorer</string>
+    <string name="pref_summary_battery">Batterinivå, USB ansluten, Nätadapter ansluten, Laddar</string>
+    <string name="pref_title_battery">Batteri</string>
+    <string name="error_mqtt_exception">Fel vid initiering av MQTT, var god kontrollera dina intällningar.</string>
+    <string name="pref_title_screen_brightness">Skärmens ljusstyrka</string>
+    <string name="pref_description_screen_brightness">Minska skärmens ljusstyrka när du är i nattläge. Var noga med att ställa in skärmens ljusstyrka till önskad nivå innan du aktiverar den här funktionen.</string>
+    <string name="summary_weather_topic">Se MQTT Weather-dokumentationen på projektsidan</string>
+    <string name="preference_title_weather">Väder MQTT</string>
+    <string name="summary_sun_topic">Se MQTT Sun-dokumentationen på projektsidan</string>
+    <string name="preference_title_sun">Sol MQTT</string>
+    <string name="pref_title_night_mode">Använd nattläge</string>
+    <string name="dialog_brightness_message">Vill du bevilja tillstånd att ändra systeminställningarna för skärmens ljusstyrka?</string>
+    <string name="toast_write_permissions_denied">Skriv inställningsbehörighet nekad…</string>
+    <string name="toast_write_permissions_granted">Skriv inställningar tillåtet…</string>
+    <string name="pref_web_screensaver_title">Webbskärmsläckare</string>
+    <string name="pref_web_screensaver_summary">Använd en webbsida som skärmsläckare. (begränsat stöd)</string>
+    <string name="pref_web_screensaver_url_title">Webbskärmsläsare Url</string>
+    <string name="pref_web_screensaver_url_summary">Ange webbadressen för att använda som en webbskärmsläckare.</string>
+    <string name="pref_weather_units_summary">Visar temperaturen i °F</string>
+    <string name="pref_weather_units_title">Temperaturenhet</string>
+    <string name="weather_beautiful">Skön</string>
+    <string name="weather_sunny">Solig</string>
+    <string name="weather_clear_night">Klar natt</string>
+    <string name="weather_stormy">åska</string>
+    <string name="weather_sleet">Snöblandat regn</string>
+    <string name="weather_partly_cloudy">Delvis molnigt</string>
+    <string name="weather_cloudy">Molnig</string>
+    <string name="weather_fog">Dimma</string>
+    <string name="weather_hail">Hagel</string>
+    <string name="weather_snow">Snö</string>
+    <string name="weather_windy">Blåsigt</string>
+    <string name="weather_rain">Regn</string>
+    <string name="weather_pouring_rain">Ösregn</string>
+    <string name="pref_retrain_title">Behåll MQTT-meddelande</string>
+    <string name="pref_retain_summary">När det är aktivt lagrar mäklare det sista meddelandet.</string>
+    <string name="toast_connect_retry">Reconnecting...</string>
+    <string name="pref_title_acceleration">Hårdvaruacceleration</string>
+    <string name="pref_summary_acceleration">På vissa enheter kommer detta att påskynda webb- eller kamerav rendering.</string>
+
+    <string-array name="inactivity_times">
+        <item>15 sekunder</item>
+        <item>30 sekunder</item>
+        <item>1 minuter</item>
+        <item>2 minuter</item>
+        <item>3 minuter</item>
+        <item>5 minuter</item>
+        <item>10 minuter</item>
+        <item>30 minuter</item>
+    </string-array>
+
+    <string-array name="timeout_times">
+        <item>15 sekunder</item>
+        <item>30 sekunder</item>
+        <item>1 minute</item>
+        <item>2 minuter</item>
+        <item>3 minuter</item>
+        <item>5 minuter</item>
+        <item>10 minuter</item>
+        <item>30 minuter</item>
+        <item>1 timma</item>
+        <item>2 timmar</item>
+        <item>3 timmar</item>
+        <item>6 timmar</item>
+        <item>12 timmar</item>
+        <item>24 timmar</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>Ingen</item>
+        <item>Rotera åt vänster</item>
+        <item>Rotera åt höger</item>
+        <item>Vänd vertikalt</item>
+    </string-array>
+
+    <string-array name="sensor_types">
+        <item>Generell</item>
+        <item>Dörr</item>
+        <item>Fönster</item>
+        <item>Ljud</item>
+        <item>Rörelse</item>
+        <item>Kamera</item>
+    </string-array>
+
+</resources>

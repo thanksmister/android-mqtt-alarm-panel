@@ -16,17 +16,17 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 /**
  * A SingleLiveEvent used for Snackbar messages. Like a {@link SingleLiveEvent} but also prevents
  * null messages and uses a custom observer.
  * <p>
  * Note that only one observer is going to be notified of changes.
- * https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SnackbarMessage.java
+ * https://github.com/googlesamples/androidxitecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/androidxitecture/blueprints/todoapp/SnackbarMessage.java
  */
 public class SnackbarMessage extends SingleLiveEvent<Integer> {
     public void observe(LifecycleOwner owner, final SnackbarObserver observer) {

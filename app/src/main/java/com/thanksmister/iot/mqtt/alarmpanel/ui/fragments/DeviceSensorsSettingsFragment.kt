@@ -21,11 +21,12 @@ import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v7.preference.*
+import androidx.preference.SwitchPreference
+import androidx.preference.*
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -45,6 +46,14 @@ class DeviceSensorsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
         super.onAttach(context)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if((activity as AppCompatActivity).supportActionBar != null) {
+            (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as AppCompatActivity).supportActionBar!!.title = (getString(R.string.sensors_settings))
+        }
+    }
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preference_device_sensors)
     }

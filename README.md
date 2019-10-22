@@ -4,26 +4,37 @@ This project is an MQTT Alarm Control Panel was originally created for use with 
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ)
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
-- [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel).   
+- [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
 
 The alarm panel acts as an interface for Home Assistant's manual alarm control panel component. You can set the alarm state to away or home, or disarm the alarm using a code. In addition it has some nice features such as weather forecast and screen saver mode.
 
 MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
-
-## Support
-
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Features
 - Stream video, detect motion, detect faces, and read QR Codes.
 - Capture and emailing images when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
-- Day/Night mode themes based on set start and end times.
+- Day/Night mode themes based on MQTT sun values.
 - Fingerprint unlock support to disable the alarm. (on supported devices).
-- Optional screensaver mode using a digital clock or Imgur images. 
-- Seven day Weather forecast (requires DarkSky api key).
+- Optional screensaver mode using a digital clock, Imgur images or webpage. 
+- Three day Weather forecast using MQTT.
 - Home Automation Platform webpage support for viewing home automation dashboards.
+- Support for Android 4.4 (API level 19) or later.
+
+## Hardware & Software 
+
+- Android Device running  Android 4.4 (API level 19) or later.  It'a also recommended that you use your own screensaver, like Daydream for Android so that your device does not go to sleep. You also want to disable your lock screen. The application will not work if your device sleeps (i.e. you need to unlock your device to open).  
+
+- There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream.  You will then need to use the built-in screensaver features or you need to install an alternative solution.   Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
+
+- The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.  
+
+***If you are looking for support for older devices, those running less than Android 4.4, then install one of the APK's from the release section prior to release v0.8.7-beta.0***
+
+## Support
+
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Screen Shots:
 
@@ -42,10 +53,6 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 You can also load your home automation platform website by entering the address with port into the settings.  It slides from the right on the main screen. 
 
 ![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
-
-## Hardware & Software 
-
-- Android Device running Android OS 4.1 or greater.
 
 ## Installation
 
@@ -96,29 +103,131 @@ alarm_control_panel:
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
 
-## Weather Updates (Darksky)
+## MQTT Communication
 
-If you would like to get weather updates, create and enter a [Dark Sky API](https://darksky.net/dev/) key and your current latitude and longitude into the weather setting screen. You can get your current location by using maps.google.com in a web browser and copying the lat/lon from the url (they look like -34.6156624,-58.5035102 in the url).
+The Alarm Panel application can display and control components using the MQTT protocal. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day/Night mode, and send various remote commands to the application.
 
-To use a photo screensaver rather than the digital clock, turn this feature on, using the screen saver settings screen. You can load other Instagram images by changing the Instagram profile name in the settings.
+You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices. 
 
-## Capture Images (Telegram/Mailgun)
+### MQTT Weather
 
-If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
+![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky: 
 
-The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
+```
 
-## Screensaver
+- id: '1538595661244'
+  alias: MQTT Weather
+  trigger:
+  - minutes: /30
+    platform: time_pattern
+  condition: []
+  action:
+  - data:
+      payload_template: {% raw %}"{'weather':{{states.weather.dark_sky.attributes}}}"{% endraw %}
+      retain: true
+      topic: alarmpanel/command
+    service: mqtt.publish
+```
 
-To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/)
+The resulting payload will look like this:
 
-## Platform Screen
+```
+{"topic": "alarmpanel/command","payload":"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
+```
 
-You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.86.240:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
 
-## MQTT Sensor and State Data
+```
+{
+  "payload_template": {% raw %}"{'weather':{{states.weather.dark_sky.attributes}}}"{% endraw %},
+  "retain": true,
+  "topic": "alarmpanel/command"
+}
+```
+
+### MQTT Day/Night Mode
+
+Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon).  To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish an MQTT message on an interval:
+
+```
+- alias: MQTT Sun
+  id: '1539017708085'
+  trigger:
+    platform: time_pattern
+    minutes: '/30'
+      #  condition: []
+  action:
+    service: mqtt.publish
+    data:
+      payload_template: {% raw %}"{'sun':'{{states('sun.sun')}}'}"{% endraw %}
+      retain: true
+      topic: alarmpanel/command
+```
+
+The resulting payload will look like this:
+
+```
+{
+  "payload": "{'sun':'below_horizon'}",
+  "topic": "alarmpanel/command"
+}
+```
+
+You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
+
+```
+{
+  "payload_template": {% raw %}"{'sun':'{{states('sun.sun')}}'}"{% endraw %},
+  "topic": "alarmpanel/command"
+}
+```
+
+If you wish, you can use an offset to change the day or night mode values or send a MQTT message at the desired time with "above_horizon" to show day mode or "below_horizon" to show night mode.  If you wish to always be night, you need only send one MQTT message with "below_horizon" and the app will not switch back to day mode.  Be sure to turn on the Day/Night mode under the Display settings in the application.
+
+### MQTT Alarm Commands with Mosquitto 
+
+Sending command to your MQTT Broker to arm or disarm the alarm, include your MQTT Broker IP address, port, and optionally the username and password if needed.  The "-d" is to get the debug information. 
+```
+mosquitto_pub -h 192.168.1.2  -t home/alarm/set -m "ARM_HOME" -d -p 1883 -u username -P password
+mosquitto_pub -h 192.168.1.2 -t home/alarm/set -m "DISARM" -d -p 1883 -u username -P password
+```
+Publish a message from your MQTT Broker to your MQTT client (the Android application).  You may need to add `-h localhost`, but you shouldn't since you are publishing directly from your MQTT broker. 
+```
+mosquitto_pub -t home/alarm -m "armed_home" 
+mosquitto_pub -t home/alarm -m "disarmed" 
+```
+
+Note that the application when sending a command expects an MQTT response. If you use the application to set the alarm to be armed home, the MQTT Broker should respond with the message that the alarm was set to armed home.  The application is just an interface for the MQTT service, its not the alarm system, the alarm system is your server, either Home Assistant or your MQTT Broker and server. 
+
+
+### MQTT Commands
+Key | Value | Example Payload | Description
+-|-|-|-
+audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
+wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
+speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
+alert | data | ```{"alert": "Hello!"}``` | Displays an alert dialog within the application
+notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the device
+sun | data | ```{"sun": "above_horizon"}``` | Changes the application day or night mode based on sun value (above_horizona, below_horizon)
+
+* The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
+* Commands are constructed via valid JSON. It is possible to string multiple commands together:
+  * eg, ```{"clearCache":true, "relaunch":true}```
+* MQTT
+  * WallPanel subscribes to topic ```[alarmpanel]/command```
+    * Default Topic: ```alarmpanel/command```
+  * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
+
+### Google Text-To-Speach Command
+You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
+
+Example format for the message topic and payload: 
+
+```{"topic":"alarmpanel/command", "payload":"{'speak':'Hello!'}"}```
+
+### MQTT Sensor and State Data
 If MQTT is enabled in the settings and properly configured, the application can publish data and states for various device sensors, camera detections, and application states. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
 
 ### Device Sensors
@@ -230,6 +339,22 @@ screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
   * WallPanel publishes state to topic ```[alarmpanel]/state```
     * Default Topic: ```alarmpanel/state```
 
+## Capture Images (Telegram/Mailgun)
+
+If you would like to capture and email images when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun accoint into the application setting screen along with other information. 
+
+You may also use Telegram to recieve a notification with the image when the alarm is deactivated.  To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram.  Enter the chat Id and token into the application settings screen.
+
+The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
+
+## Screensaver, Image, Clock, Webpage
+
+To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/).  You will need a valid web page URL to use the a webpage as screensaver.  Note that the application offers limited webpage support and some web animations may slow down your device.
+
+## Platform Screen or Webpage View
+
+You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address.  The address should be in the format http://192.168.1.1:8123 and include the port number.  You can use HADashboard or Home Assistant kiosk mode as well.  This feature uses an Android web view component and may not work on older SDK versions. 
+
 ## MJPEG Video Streaming
 
 Use the device camera as a live MJPEG stream. Just connect to the stream using the device IP address and end point. Be sure to turn on the camera streaming options in the settings and set the number of allowed streams and HTTP port number. Note that performance depends upon your device (older devices will be slow).
@@ -246,32 +371,6 @@ camera:
     mjpeg_url: http://192.168.1.1:2971/camera/stream
     name: Alarm Panel Camera
 ```
-## MQTT Commands
-Interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices.  
-
-### Commands
-Key | Value | Example Payload | Description
--|-|-|-
-audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
-wake | true | ```{"wake": true}``` | Wakes the screen if it is asleep
-speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
-alert | data | ```{"alert": "Hello!"}``` | Displays an alert dialog within the application
-notification | data | ```{"notification": "Hello!"}``` | Displays a system notification on the devie
-
-* The base topic value (default is "alarmpanel") should be unique to each device running the application unless you want all devices to receive the same command. The base topic and can be changed in the application settingssettings.
-* Commands are constructed via valid JSON. It is possible to string multiple commands together:
-  * eg, ```{"clearCache":true, "relaunch":true}```
-* MQTT
-  * WallPanel subscribes to topic ```[alarmpanel]/command```
-    * Default Topic: ```alarmpanel/command```
-  * Publish a JSON payload to this topic (be mindfula of quotes in JSON should be single quotes not double)
-
-### Google Text-To-Speach Command
-You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note that the device must be running Android Lollipop or above. 
-
-Example format for the message topic and payload: 
-
-```{"topic":"alarmpanel/command", "payload":"{'speak':'Hello!'}"}```
 
 ## Notes
 
@@ -279,7 +378,7 @@ Example format for the message topic and payload:
 
 ## Acknowledgements
 
-Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) helped make this project possible.  Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations and [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese. 
+Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) helped make this project possible.  Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations, [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese, [electricJP](https://github.com/electricJP) and [jncanches](https://github.com/jncanches) for French translations.
 
 ## Contributors
 [Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView) component.

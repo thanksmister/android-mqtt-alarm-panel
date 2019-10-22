@@ -75,7 +75,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getClientId(): String {
-        var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, null)
+        var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, "")
         if (TextUtils.isEmpty(clientId)) {
             clientId = DeviceUtils.uuIdHash
         }
@@ -159,6 +159,15 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         setOptionsUpdated(true)
     }
 
+    fun getRetain(): Boolean {
+        return sharedPreferences.getPrefBoolean(PREF_RETAIN, true)
+    }
+
+    fun setRetain(value: Boolean) {
+        this.sharedPreferences.setPrefBoolean(PREF_RETAIN, value)
+        setOptionsUpdated(true)
+    }
+
     @Deprecated ("We will move to commands")
     fun setNotificationTopic(value: String) {
         this.sharedPreferences.setPrefString(PREF_NOTIFICATION_TOPIC, value)
@@ -200,6 +209,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_PORT = "pref_port"
         const val PREF_CLIENT_ID = "pref_client_id"
         const val PREF_BROKER = "pref_broker"
+        const val PREF_RETAIN = "pref_retain"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
     }
 }

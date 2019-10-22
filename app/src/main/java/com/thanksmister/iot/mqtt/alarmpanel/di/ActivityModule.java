@@ -22,15 +22,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.LocationManager;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils;
 import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils;
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils;
 
 import javax.inject.Singleton;
 
@@ -88,12 +88,12 @@ class ActivityModule {
     }
 
     @Provides
-    static ImageOptions provideImageOptions(DPreference preference) {
-        return new ImageOptions(preference);
+    static ScreenUtils screenUtils(Application application, Configuration configuration) {
+        return new ScreenUtils(application, configuration);
     }
 
     @Provides
-    static DarkSkyOptions provideDarkSkyOptions(DPreference preference) {
-        return new DarkSkyOptions(preference);
+    static ImageOptions provideImageOptions(DPreference preference) {
+        return new ImageOptions(preference);
     }
 }

@@ -18,36 +18,42 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
+import android.content.DialogInterface
+import android.net.http.SslError
+import android.os.Build
 import android.os.Handler
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
 import android.text.TextUtils
+import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
+import android.webkit.*
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.squareup.picasso.Picasso
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.ImageFetcher
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.Item
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSky
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.tasks.ImageTask
-import com.thanksmister.iot.mqtt.alarmpanel.tasks.NetworkTask
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_screen_saver.view.*
-import retrofit2.Response
+import kotlinx.android.synthetic.main.fragment_information.*
 import timber.log.Timber
-import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ScreenSaverView : RelativeLayout {
 
@@ -61,9 +67,17 @@ class ScreenSaverView : RelativeLayout {
     private var rotationInterval: Long = 0
     private var options:ImageOptions? = null
     private var saverContext: Context? = null
-    private var dataSource: DarkSkyDao? = null
+    private var weatherSource: WeatherDao? = null
     private var useImageSaver: Boolean = false
+    private var useWebScreenSaver: Boolean = false
     private var hasWeather: Boolean = false
+    private var useImperial: Boolean = false
+    private var parentWidth: Int = 0
+    private var parentHeight: Int = 0
+    private val calendar: Calendar = Calendar.getInstance()
+    private var delayRotate = true
+    private var webUrl = Configuration.WEB_SCREEN_SAVER
+    private var certPermissionsShown = false
 
     private val delayRotationRunnable = object : Runnable {
         override fun run() {
@@ -74,12 +88,36 @@ class ScreenSaverView : RelativeLayout {
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentTimeString = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(Date())
-            screenSaverClockSmall.text = currentTimeString
+            val date = Date()
+            calendar.time = date
+            val currentTimeString = DateUtils.formatDateTime(context, date.time, DateUtils.FORMAT_SHOW_TIME)
             screenSaverClock.text = currentTimeString
-            if (timeHandler != null) {
-                timeHandler!!.postDelayed(this, 1000)
+
+            // use this only with the clock feature
+            if (!useImageSaver && !useWebScreenSaver && !delayRotate) {
+                val width = screenSaverClockLayout.width
+                val height = screenSaverClockLayout.height
+                parentWidth = screenSaverView.width
+                parentHeight = screenSaverView.height
+                try {
+                    if (width > 0 && height > 0 && parentWidth > 0 && parentHeight > 0) {
+                        if(parentHeight - width > 0) {
+                            val newX = Random().nextInt(parentWidth - width)
+                            screenSaverClockLayout.x = newX.toFloat()
+                        }
+                        if(parentHeight - height > 0) {
+                            val newY = Random().nextInt(parentHeight - height)
+                            screenSaverClockLayout.y = newY.toFloat()
+                        }
+                    }
+                } catch (e: IllegalArgumentException) {
+                    Timber.e(e.message)
+                }
             }
+
+            val offset = 60L - calendar.get(Calendar.SECOND)
+            timeHandler?.postDelayed(this, TimeUnit.SECONDS.toMillis(offset))
+            delayRotate = false
         }
     }
 
@@ -115,12 +153,7 @@ class ScreenSaverView : RelativeLayout {
         disposable.clear()
     }
 
-    fun setDataSource(dataSource: DarkSkyDao) {
-        this.dataSource = dataSource
-    }
-
-    // setup clock size based on screen and weather settings
-    private fun setWeatherClockViews() {
+    private fun setScreenSaverView() {
         val initialRegular = screenSaverClock.textSize
         val initialSmall = screenSaverClockSmall.textSize
         if (!hasWeather) {
@@ -132,26 +165,37 @@ class ScreenSaverView : RelativeLayout {
         if (useImageSaver && options!!.isValid) {
             screenSaverImageLayout.visibility = View.VISIBLE
             screenSaverClockLayout.visibility = View.GONE
-            if(!hasWeather) {
+            screenSaverWebViewLayout.visibility = View.GONE
+            if (!hasWeather) {
                 screenSaverWeatherSmallLayout.visibility = View.GONE
             } else {
                 screenSaverWeatherSmallLayout.visibility = View.VISIBLE
             }
             startImageScreenSavor()
+        } else if (useWebScreenSaver && webUrl.isNotEmpty()) {
+            screenSaverWebViewLayout.visibility = View.VISIBLE
+            screenSaverImageLayout.visibility = View.GONE
+            screenSaverClockLayout.visibility = View.GONE
+            startWebScreenSaver(webUrl)
         } else { // use clock
+            Timber.d("startClockScreenSavor")
+            screenSaverWebViewLayout.visibility = View.GONE
             screenSaverImageLayout.visibility = View.GONE
             screenSaverClockLayout.visibility = View.VISIBLE
             if(!hasWeather) {
                 screenSaverWeatherLayout.visibility = View.GONE
             } else {
+                setWeatherDataOnView()
                 screenSaverWeatherLayout.visibility = View.VISIBLE
             }
+            timeHandler = Handler()
+            timeHandler?.postDelayed(timeRunnable, 10)
         }
     }
 
     @SuppressLint("CheckResult")
     private fun setWeatherDataOnView() {
-        disposable.add(dataSource!!.getItems()
+        disposable.add(weatherSource!!.getItems()
                 .filter { items -> items.isNotEmpty() }
                 .map { items -> items[0] }
                 .subscribeOn(Schedulers.io())
@@ -161,50 +205,79 @@ class ScreenSaverView : RelativeLayout {
                 }, { error -> Timber.e("Error Notifications: ${error.message}")}))
     }
 
-    private fun setDisplayData(item: DarkSky) {
-        val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
+    private fun setDisplayData(item: Weather) {
+        val displayUnits =  if(useImperial) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
         if (useImageSaver) {
-            temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-            try {
-                if (item.umbrella) {
-                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                } else {
-                    conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+            item.takeIf{ saverContext != null }?.forecast?.let { it ->
+                temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
+                if(it.size > 0) {
+                    val forecast = it[0]
+                    try {
+                        val precipitation = forecast.precipitation
+                        if(StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+                        } else {
+                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
+                        }
+                    } catch (e : Exception) {
+                        Timber.e(e.message)
+                    }
                 }
-            } catch (e : Exception) {
-                Timber.e(e.message)
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
         } else {
-            temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-            try {
-                if (item.umbrella) {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, saverContext!!.applicationContext.theme))
-                } else {
-                    conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), saverContext!!.applicationContext.theme))
+            item.takeIf{ saverContext != null }?.forecast?.let { it ->
+                temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
+                if(it.size > 0) {
+                    val forecast = it[0]
+                    try {
+                        val precipitation = forecast.precipitation
+                        if(StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+                        } else {
+                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
+                        }
+                    } catch (e : Exception) {
+                        Timber.e(e.message)
+                    }
                 }
-            } catch (e : Exception) {
-                Timber.e(e.message)
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun init(useImageScreenSaver: Boolean, options:ImageOptions, dataSource: DarkSkyDao, hasWeather: Boolean) {
-        this.dataSource = dataSource
+    private fun shouldTakeUmbrellaToday(precipitation: Double?): Boolean {
+        precipitation?.let {
+            return precipitation > PRECIP_AMOUNT
+        }
+        return false
+    }
+
+    fun init(useImageScreenSaver: Boolean = false, options: ImageOptions, hasWeather: Boolean = false, useImperial: Boolean = false,
+             weatherDao: WeatherDao, hasWebScreenSaver: Boolean = false, webUrl: String = "") {
+        Timber.d("ScreenSaverView $hasWebScreenSaver")
+        this.weatherSource = weatherDao
         this.options = options
         this.rotationInterval = (options.imageRotation * 60 * 1000).toLong() // convert to milliseconds
         this.hasWeather = hasWeather
+        this.useImperial = useImperial
         this.useImageSaver = (useImageScreenSaver && options.isValid)
-        if(hasWeather) {
-            setWeatherDataOnView()
+        this.useWebScreenSaver = hasWebScreenSaver
+        if(!TextUtils.isEmpty(webUrl)) {
+            this.webUrl = webUrl
         }
-        setWeatherClockViews()
-        timeHandler = Handler()
-        timeHandler!!.postDelayed(timeRunnable, 10)
+        setScreenSaverView()
+    }
+
+    private fun closeView() {
+        this.callOnClick()
+    }
+
+    private fun startWebScreenSaver(url: String) {
+        Timber.d("startWebScreenSaver $url")
+        loadWebPage(url)
     }
 
     private fun startImageScreenSavor() {
+        Timber.d("startImageScreenSavor")
         if (itemList == null || itemList!!.isEmpty()) {
             fetchMediaData()
         } else {
@@ -227,31 +300,34 @@ class ScreenSaverView : RelativeLayout {
                 val randomImage = Random().nextInt(maxImage - minImage + 1) + minImage
                 val image = item.images[randomImage]
                 imageUrl = image.link
+                picasso?.let {
+                    if (options!!.imageFitScreen) {
+                        it.load(imageUrl)
+                                .placeholder(R.color.black)
+                                .resize(screenSaverImage.width, screenSaverImage.height)
+                                .centerCrop()
+                                .error(R.color.black)
+                                .into(screenSaverImage)
+                    } else {
+                        it.load(imageUrl)
+                                .placeholder(R.color.black)
+                                .resize(screenSaverImage.width, screenSaverImage.height)
+                                .centerInside()
+                                .error(R.color.black)
+                                .into(screenSaverImage)
+                    }
+                    if (rotationHandler == null) {
+                        rotationHandler = Handler()
+                    }
+                    rotationHandler?.postDelayed(delayRotationRunnable, rotationInterval)
+                }
 
-                if (options!!.imageFitScreen) {
-                    picasso!!.load(imageUrl)
-                            .placeholder(R.color.black)
-                            .resize(screenSaverImage.width, screenSaverImage.height)
-                            .centerCrop()
-                            .error(R.color.black)
-                            .into(screenSaverImage)
-                } else {
-                    picasso!!.load(imageUrl)
-                            .placeholder(R.color.black)
-                            .resize(screenSaverImage.width, screenSaverImage.height)
-                            .centerInside()
-                            .error(R.color.black)
-                            .into(screenSaverImage)
-                }
-                if (rotationHandler == null) {
-                    rotationHandler = Handler()
-                }
-                rotationHandler!!.postDelayed(delayRotationRunnable, rotationInterval)
             } else {
                 startImageRotation()
             }
         }
     }
+
     private fun fetchMediaData() {
         val clientId = options?.imageClientId
         val tag = options?.imageSource
@@ -267,5 +343,95 @@ class ScreenSaverView : RelativeLayout {
                         startImageRotation()
                     }
                 }, { error -> Timber.e("Error Images: ${error.message}")}))
+    }
+
+    private fun loadWebPage(url: String) {
+        Timber.d("loadWebPage url ${url}")
+        configureWebSettings("")
+        clearCache()
+        screenSaverWebView?.webChromeClient = object : WebChromeClient() {
+            override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
+                AlertDialog.Builder(view.context, R.style.CustomAlertDialog)
+                        .setTitle(context.getString(R.string.dialog_title_ssl_error))
+                        .setMessage(message)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                return true
+            }
+        }
+        screenSaverWebView?.setOnTouchListener(object: View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                v?.performClick()
+                closeView()
+                return false
+            }
+        })
+        screenSaverWebView?.webViewClient = object : WebViewClient() {
+            //If you will not use this method url links are open in new browser not in webview
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                view.loadUrl(url)
+                return true
+            }
+            override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
+                Toast.makeText(context, description, Toast.LENGTH_SHORT).show()
+            }
+            // TODO we need to load SSL certificates
+            override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
+                if(!certPermissionsShown) {
+                    var message = context.getString(R.string.dialog_message_ssl_generic)
+                    when (error?.primaryError) {
+                        SslError.SSL_UNTRUSTED -> message = context.getString(R.string.dialog_message_ssl_untrusted)
+                        SslError.SSL_EXPIRED -> message = context.getString(R.string.dialog_message_ssl_expired)
+                        SslError.SSL_IDMISMATCH -> message = context.getString(R.string.dialog_message_ssl_mismatch)
+                        SslError.SSL_NOTYETVALID -> message = context.getString(R.string.dialog_message_ssl_not_yet_valid)
+                    }
+                    message += context.getString(R.string.dialog_message_ssl_continue)
+                    AlertDialog.Builder(context, R.style.CustomAlertDialog)
+                            .setTitle(context.getString(R.string.dialog_title_ssl_error))
+                            .setMessage(message)
+                            .setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { _, _ ->
+                                certPermissionsShown = true
+                                handler?.proceed()
+                            })
+                            .setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { _, _ ->
+                                certPermissionsShown = false
+                                handler?.cancel()
+                            })
+                            .show()
+                } else {
+                    // we have already shown permissions, no need to show again on page refreshes or when page auto-refreshes itself
+                    handler?.proceed()
+                }
+            }
+        }
+        screenSaverWebView?.loadUrl(url)
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun configureWebSettings(userAgent: String) {
+        val webSettings = screenSaverWebView?.settings
+        webSettings?.javaScriptEnabled = true
+        webSettings?.domStorageEnabled = true
+        webSettings?.databaseEnabled = true
+        webSettings?.setAppCacheEnabled(true)
+        webSettings?.javaScriptCanOpenWindowsAutomatically = true
+        if (!TextUtils.isEmpty(userAgent)) {
+            webSettings?.userAgentString = userAgent
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings?.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        }
+        Timber.d(webSettings?.userAgentString)
+    }
+
+    private fun clearCache() {
+        screenSaverWebView?.clearCache(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().removeAllCookies(null)
+        }
+    }
+
+    companion object {
+        const val PRECIP_AMOUNT: Double = 0.3 // rain probability
     }
 }

@@ -16,13 +16,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper.getMainLooper
-import android.support.v4.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,22 +31,20 @@ import android.widget.Toast
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
+import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.stringToDouble
+import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.WeatherViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_information.*
+import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyRequest
-import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
-import timber.log.Timber
 
 class InformationFragment : BaseFragment() {
 
@@ -54,19 +53,22 @@ class InformationFragment : BaseFragment() {
 
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var darkSkyOptions: DarkSkyOptions
 
-    private var forecastList: List<Datum> = Collections.emptyList()
+    private var weather: Weather? = null
     private var timeHandler: Handler? = null
 
     private val timeRunnable = object : Runnable {
         override fun run() {
-            val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
-            val currentTimeString = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault()).format(Date())
-            dateText.text = currentDateString
-            timeText.text = currentTimeString
-            if (timeHandler != null) {
-                timeHandler!!.postDelayed(this, 1000)
+            try {
+                val currentDateString = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(Date())
+                val currentTimeString = DateUtils.formatDateTime(context, Date().time, DateUtils.FORMAT_SHOW_TIME)
+                dateText.text = currentDateString
+                timeText.text = currentTimeString
+                if (timeHandler != null) {
+                    timeHandler?.postDelayed(this, 1000)
+                }
+            } catch (e: IllegalArgumentException) {
+                Timber.e(e.message)
             }
         }
     }
@@ -83,8 +85,8 @@ class InformationFragment : BaseFragment() {
         timeHandler!!.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
         weatherLayout.setOnClickListener {
-            if (!forecastList.isEmpty()) {
-                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, forecastList)
+            if (weather != null) {
+                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, weather!!)
             }
         }
     }
@@ -95,8 +97,7 @@ class InformationFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (configuration.showWeatherModule() && darkSkyOptions.isValid) {
-            connectWeatherModule()
+        if (configuration.showWeatherModule()) {
             weatherLayout.visibility = View.VISIBLE
         } else {
             weatherViewModel.onCleared()
@@ -118,11 +119,9 @@ class InformationFragment : BaseFragment() {
 
     private fun observeViewModel(viewModel: WeatherViewModel) {
         viewModel.getAlertMessage().observe(this, Observer { message ->
-            Timber.d("getAlertMessage")
             dialogUtils.showAlertDialog(activity as BaseActivity, message!!)
         })
         viewModel.getToastMessage().observe(this, Observer { message ->
-            Timber.d("getToastMessage")
             Toast.makeText(activity as BaseActivity, message, Toast.LENGTH_LONG).show()
         })
         disposable.add(
@@ -131,20 +130,26 @@ class InformationFragment : BaseFragment() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { item ->
                             if(item != null) {
-                                (activity as BaseActivity).runOnUiThread {
-                                    weatherLayout.visibility = View.VISIBLE
-                                    outlookText.text = item.summary
-                                    val displayUnits = if (item.units == DarkSkyRequest.UNITS_US) getString(R.string.text_f) else getString(R.string.text_c)
-                                    temperatureText.text = getString(R.string.text_temperature, item.apparentTemperature, displayUnits)
-                                    forecastList = Gson().fromJson(item.data, object : TypeToken<List<Datum>>(){}.type)
-                                    try {
-                                        if (item.umbrella) {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
-                                        } else {
-                                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(item.icon), (activity as BaseActivity).theme))
+                                weather = item
+                                weatherLayout.visibility = View.VISIBLE
+                                val displayUnits =  if(configuration.weatherUnitsImperial) getString(R.string.text_f) else getString(R.string.text_c)
+                                temperatureText.text = getString(R.string.text_temperature, weather?.temperature.toString(), displayUnits)
+                                weather?.forecast?.let { it ->
+                                    if(it.size > 0) {
+                                        val forecast = it[0]
+                                        try {
+                                            val precipitation = forecast.precipitation
+                                            if(isDouble(precipitation) && viewModel.shouldTakeUmbrellaToday(stringToDouble(precipitation))) {
+                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                            } else {
+                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (activity as BaseActivity).theme))
+                                            }
+                                            context?.let { context ->
+                                                outlookText.text = WeatherUtils.getOutlookForWeatherCondition(forecast.condition, context)
+                                            }
+                                        } catch (e : Exception) {
+                                            Timber.e(e.message)
                                         }
-                                    } catch (e : Exception) {
-                                        Timber.e(e.message)
                                     }
                                 }
                             }
@@ -152,22 +157,9 @@ class InformationFragment : BaseFragment() {
         )
     }
 
-    private fun connectWeatherModule() {
-        val apiKey = darkSkyOptions.darkSkyKey
-        val units = darkSkyOptions.weatherUnits
-        val lat = darkSkyOptions.latitude
-        val lon = darkSkyOptions.longitude
-        weatherViewModel.getDarkSkyHourlyForecast(apiKey!!, units, lat!!, lon!!)
-    }
-
     companion object {
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         */
         fun newInstance(): InformationFragment {
             return InformationFragment()
         }
     }
-}// Required empty public constructor
+}

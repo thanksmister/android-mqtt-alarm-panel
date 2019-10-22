@@ -16,18 +16,22 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import android.content.Context
 
 /**
  * The Room database that contains the Sensors table
  */
-@Database(entities = arrayOf(Sensor::class), version = 2, exportSchema = false)
+@Database(entities = arrayOf(Sensor::class, Weather::class, Sun::class), version = 8, exportSchema = false)
+@TypeConverters(ForecastConverter::class)
 abstract class SensorDatabase : RoomDatabase() {
 
     abstract fun sensorDao(): SensorDao
+    abstract fun weatherDao(): WeatherDao
+    abstract fun sunDao(): SunDao
 
     companion object {
 

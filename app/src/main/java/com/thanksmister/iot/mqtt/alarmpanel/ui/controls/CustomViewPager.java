@@ -17,9 +17,10 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.controls;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * https://stackoverflow.com/questions/31000076/how-to-make-swipe-disable-in-a-view-pager-in-android

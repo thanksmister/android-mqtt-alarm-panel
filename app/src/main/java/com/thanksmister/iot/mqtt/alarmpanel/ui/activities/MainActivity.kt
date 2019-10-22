@@ -16,28 +16,25 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.content.*
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AlertDialog
+import android.os.Handler
+
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
-import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
-import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
-import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.managers.DayNightAlarmLiveData
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.*
+import com.thanksmister.iot.mqtt.alarmpanel.*
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
@@ -58,10 +55,21 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     lateinit var viewModel: MainViewModel
     private lateinit var pagerAdapter: PagerAdapter
     private var alertDialog: AlertDialog? = null
-    private var alarmLiveData: DayNightAlarmLiveData? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var decorView: View? = null
-    private var alarmPanelService: Intent? = null
+
+    private val inactivityHandler: Handler = Handler()
+
+    val inactivityCallback = Runnable {
+        Timber.d("inactivityCallback")
+        dialogUtils.clearDialogs()
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+        clearInactivityTimer()
+        showScreenSaver()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +80,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
 
+        if(configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
         decorView = window.decorView
 
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)
@@ -81,9 +93,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
        if(BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
-            darkSkyOptions.darkSkyKey = BuildConfig.DARK_SKY_KEY
-            darkSkyOptions.latitude = BuildConfig.LATITUDE
-            darkSkyOptions.longitude = BuildConfig.LONGITUDE
             mqttOptions.setBroker(BuildConfig.BROKER)
             configuration.webUrl = BuildConfig.HASS_URL
             configuration.setMailFrom(BuildConfig.MAIL_FROM)
@@ -94,10 +103,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
             imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
             imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
-            darkSkyOptions.setIsCelsius(true)
             configuration.isFirstTime = false
-
-            configuration.setClockScreenSaverModule(true)
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)
             configuration.setWebModule(true)
@@ -117,30 +123,41 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         // We must be sure we have the instantiated the view model before we observe.
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-        lifecycle.addObserver(dialogUtils)
+
         observeViewModel()
 
         if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
-
         Timber.d("Prevent Sleep ${configuration.appPreventSleep}")
         if (configuration.appPreventSleep) {
-            window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            decorView?.keepScreenOn = true
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            decorView?.keepScreenOn = false
         }
+
     }
 
     override fun onStart() {
         super.onStart()
         Timber.d("onStart")
-        alarmPanelService = Intent(this, AlarmPanelService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(alarmPanelService)
         } else {
             startService(alarmPanelService)
         }
+    }
+
+    override fun onUserInteraction() {
+        Timber.d("onUserInteraction")
+        resetInactivityTimer()
+        onWindowFocusChanged(true)
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     private fun observeViewModel() {
@@ -163,6 +180,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                             AlarmUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction() // 3 hours
                                 stopDisconnectTimer() // stop screen saver mode
+                                clearInactivityTimer() // Remove inactivity timer
                             }
                             AlarmUtils.STATE_PENDING -> {
                                 awakenDeviceForAction()
@@ -172,6 +190,21 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     }
                 }, { error -> Timber.e("Unable to get message: " + error)}))
 
+        disposable.add(viewModel.getSun()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({sun ->
+                    this@MainActivity.runOnUiThread {
+                        if (configuration.useNightDayMode) {
+                            dayNightModeCheck(sun.sun)
+                        }
+                        sun.sun?.let {
+                            configuration.dayNightMode = it
+                        }
+                    }
+                }, { error -> Timber.e("Sun Data error: " + error)}))
+
+
         viewModel.getAlertMessage().observe(this, Observer { message ->
             Timber.d("getAlertMessage")
             dialogUtils.showAlertDialog(this@MainActivity, message!!)
@@ -180,11 +213,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         viewModel.getToastMessage().observe(this, Observer { message ->
             Timber.d("getToastMessage")
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
-        })
-
-        alarmLiveData = DayNightAlarmLiveData(this@MainActivity, configuration)
-        alarmLiveData?.observe(this, Observer { dayNightMode ->
-            dayNightModeCheck(dayNightMode)
         })
     }
 
@@ -196,28 +224,32 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         // Filter messages from service
         val filter = IntentFilter()
         filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
+        filter.addAction(AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
+        filter.addAction(AlarmPanelService.BROADCAST_SERVICE_STARTED)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
         localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
     }
 
     override fun onPause() {
         super.onPause()
+        clearInactivityTimer()
         if(localBroadCastManager != null) {
             localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
         }
     }
 
     override fun onDestroy() {
-        Timber.d("onDestroy")
         super.onDestroy()
-        if(alertDialog != null) {
-            alertDialog?.dismiss()
+        Timber.d("onDestroy")
+        window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        hideScreenSaver()
+        clearInactivityTimer()
+        alertDialog?.let {
+            it.dismiss()
             alertDialog = null
         }
-
-        window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
     }
 
     override fun onBackPressed() {
@@ -316,7 +348,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
      */
     private fun awakenDeviceForAction() {
         Timber.d("awakenDeviceForAction")
-        bringApplicationToForegroundIfNeeded()
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
@@ -332,6 +363,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun manuallyLaunchScreenSaver() {
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+        clearInactivityTimer()
         showScreenSaver()
     }
 
@@ -357,26 +393,65 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         fun getCurrentFragment() = currentFragment
     }
 
+    private fun resetInactivityTimer() {
+        Timber.d("resetInactivityTimer")
+        hideScreenSaver()
+        inactivityHandler.removeCallbacks(inactivityCallback)
+        inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
+    }
+
+    /**
+     * We only remove the inactivity handler if the activity is destroyed, the alarm is triggered
+     * or we have a screen saver.   This should only be called during one of those three scenarios.
+     */
+    private fun clearInactivityTimer() {
+        Timber.d("clearInactivityTimer")
+        inactivityHandler.removeCallbacks(inactivityCallback)
+    }
+
+    private fun stopDisconnectTimer() {
+        hideScreenSaver()
+        clearInactivityTimer()
+    }
+
     // handler for received data from service
     private val mBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action) {
+            Timber.d("intent.action ${intent.action}")
+            if (AlarmPanelService.BROADCAST_ALERT_MESSAGE == intent.action && !isFinishing) {
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 try {
-                    AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
-                            .setMessage(message)
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                            }
-                            .show()
+                    resetInactivityTimer()
+                    dialogUtils.showAlertDialog(this@MainActivity, message)
                 } catch (e: Exception) {
-
+                    Timber.e(e.message) // getting crashes on some devices
                 }
-            } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action) {
+            } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action && !isFinishing) {
+                resetInactivityTimer()
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-            } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action) {
+            } else if (AlarmPanelService.BROADCAST_SCREEN_WAKE == intent.action && !isFinishing) {
                 resetInactivityTimer()
+            } else if (AlarmPanelService.BROADCAST_CLEAR_ALERT_MESSAGE == intent.action && !isFinishing) {
+                resetInactivityTimer()
+                dialogUtils.clearDialogs()
+            } else if (AlarmPanelService.BROADCAST_SERVICE_STARTED == intent.action && !isFinishing) {
+                serviceStarted = true
             }
+        }
+    }
+
+    /**
+     * Attempts to bring the application to the foreground if needed.
+     */
+    // TODO let's make this a setting we can turn on and off
+    private fun bringApplicationToForegroundIfNeeded() {
+        if (!LifecycleHandler.isApplicationInForeground()) {
+            Timber.d("bringApplicationToForegroundIfNeeded")
+            val intent = Intent("intent.alarm.action")
+            intent.component = ComponentName(this@MainActivity.packageName, MainActivity::class.java.name)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
         }
     }
 }

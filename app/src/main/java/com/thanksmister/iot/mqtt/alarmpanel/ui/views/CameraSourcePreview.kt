@@ -19,24 +19,15 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.hardware.Camera
 import android.util.AttributeSet
-import android.util.Log
-import android.view.Display
 import android.view.Gravity
-import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.LinearLayout
-
-import com.google.android.gms.common.images.Size
 import com.google.android.gms.vision.CameraSource
-
-import java.io.IOException
-
 import timber.log.Timber
+import java.io.IOException
 
 class CameraSourcePreview(private val mContext: Context, attrs: AttributeSet) : ViewGroup(mContext, attrs) {
 

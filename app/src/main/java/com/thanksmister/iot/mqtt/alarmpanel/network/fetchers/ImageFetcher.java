@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.network.fetchers;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageApi;
 import com.thanksmister.iot.mqtt.alarmpanel.network.model.ImageResponse;

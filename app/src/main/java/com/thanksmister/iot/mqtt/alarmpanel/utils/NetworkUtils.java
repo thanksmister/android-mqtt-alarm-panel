@@ -28,7 +28,7 @@ public final class NetworkUtils {
     private NetworkUtils() {
     }
     
-    public static boolean hasInternetAccess(Context context) {
+    private static boolean hasInternetAccess(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return (ni != null);

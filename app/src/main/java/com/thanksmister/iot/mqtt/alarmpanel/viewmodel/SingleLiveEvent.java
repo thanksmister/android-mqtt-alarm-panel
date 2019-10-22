@@ -16,12 +16,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,15 +31,16 @@ import timber.log.Timber;
 
 /**
  * Created by michaelritchie on 1/23/18.
- * From https://github.com/googlesamples/android-architecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java
+ * From https://github.com/googlesamples/androidxitecture/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/androidxitecture/blueprints/todoapp/SingleLiveEvent.java
  */
 
 public class SingleLiveEvent<T> extends MutableLiveData<T> {
 
     private final AtomicBoolean mPending = new AtomicBoolean(false);
 
+
     @MainThread
-    public void observe(@NonNull LifecycleOwner owner, @NonNull final Observer<T> observer) {
+    public void observe(@NonNull LifecycleOwner owner, @NonNull final Observer<? super T> observer) {
 
         if (hasActiveObservers()) {
             Timber.w("Multiple observers registered but only one will be notified of changes.");

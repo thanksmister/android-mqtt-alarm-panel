@@ -28,22 +28,26 @@
         android:orientation="horizontal">
 
     <include layout="@layout/view_keypad"
-             android:layout_width="310dp"
-             android:layout_height="400dp" />
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
-    <android.support.v4.widget.Space
+    <Space
             android:layout_width="16dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+        android:layout_weight="0"/>
 
     <RelativeLayout
-            android:layout_width="310dp"
+            android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
             android:paddingTop="16dp"
-            android:layout_height="400dp">
+           >
 
         <TextView
                 android:id="@+id/settings_code_title"
                 style="@style/WizardPageTitle"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textAllCaps="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

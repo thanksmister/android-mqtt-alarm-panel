@@ -111,18 +111,15 @@ abstract class BaseAlarmView : LinearLayout {
     }
 
     @SuppressLint("InlinedApi")
-    override fun onVisibilityChanged(changedView: View?, visibility: Int) {
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if(useFingerprint) {
             // TODO looks like this throws an error internally
             try {
-                fingerPrintIdentity = FingerprintIdentify(context, BaseFingerprint.FingerprintIdentifyExceptionListener {
-                    Timber.w("Fingerprint Error: " + it.message)
-                })
+                fingerPrintIdentity = FingerprintIdentify(context)
             } catch (e: ClassNotFoundException) {
                 Timber.w("Fingerprint: " + e.message)
             }
-
             if (fingerPrintIdentity != null) {
                 if (fingerPrintIdentity!!.isFingerprintEnable && fingerPrintIdentity!!.isHardwareEnable) {
                     if (!this.isShown) {
@@ -144,7 +141,8 @@ abstract class BaseAlarmView : LinearLayout {
 
     private fun startFingerprintIdentity(){
         Timber.d("Fingerprint identity start");
-        fingerPrintIdentity?.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.FingerprintIdentifyListener{
+        fingerPrintIdentity?.startIdentify(MAX_FINGERPRINT_RETRIES, object : BaseFingerprint.IdentifyListener{
+
             override fun onSucceed(){
                 Timber.d("Fingerprint identity success");
                 codeComplete = false;

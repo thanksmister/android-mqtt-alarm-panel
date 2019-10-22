@@ -19,18 +19,19 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v7.preference.CheckBoxPreference
-import android.support.v7.preference.EditTextPreference
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
+import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_MODULE_WEB
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_BAR
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_REFRESH
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEB_URL
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -48,6 +49,15 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_web_settings))
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

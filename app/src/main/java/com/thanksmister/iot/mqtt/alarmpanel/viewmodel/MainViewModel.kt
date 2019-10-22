@@ -17,7 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import androidx.lifecycle.AndroidViewModel
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
@@ -41,7 +41,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewModel @Inject
-constructor(application: Application, private val messageDataSource: MessageDao, private val configuration: Configuration,
+constructor(application: Application, private val messageDataSource: MessageDao, private val sunSource: SunDao, private val configuration: Configuration,
             private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
@@ -144,8 +144,10 @@ constructor(application: Application, private val messageDataSource: MessageDao,
                 }
     }
 
-    init {
-
+    fun getSun(): Flowable<Sun> {
+        return sunSource.getItems()
+                .filter {items -> items.isNotEmpty()}
+                .map { items -> items[items.size - 1] }
     }
 
     /**

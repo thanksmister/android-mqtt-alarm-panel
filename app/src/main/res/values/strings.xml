@@ -84,11 +84,11 @@
     <string name="pref_title_image_client_id">Imgur Client Id</string>
     <string name="preference_summary_image_client_id">Enter the client id of the Imgur account from https://api.imgur.com.</string>
 
-    <string name="preference_title_screen_saver_photo_settings">Photo Screen Saver Settings</string>
-    <string name="preference_summary_screen_saver_photo_settings">When active, uses rotating Imgur images for the screen saver.</string>
-    <string name="preference_title_screen_saver_photo">Image Screen Saver</string>
+    <string name="preference_title_screen_saver_photo_settings">Photo Screensaver Settings</string>
+    <string name="preference_summary_screen_saver_photo_settings">When active, uses rotating Imgur images for the screensaver.</string>
+    <string name="preference_title_screen_saver_photo">Image Screensaver</string>
 
-    <string name="preference_summary_screen_saver">Use rotating images from Instagram as screen saver.</string>
+    <string name="preference_summary_screen_saver">Use rotating images from Instagram as screensaver.</string>
 
     <string name="preference_title_image_source">Imgur Tag</string>
     <string name="preference_summary_image_source">Enter an Imgur tag to use for images (example: space, architecture, flowers, or landscape).</string>
@@ -192,7 +192,7 @@
     <string name="text_rate_application">Rate application</string>
     <string name="text_reddit">Reddit group</string>
     <string name="text_license_information">License information</string>
-    <string name="text_github_code">GitHub code</string>
+    <string name="text_github_code">GitHub Project Page</string>
     <string name="text_about">About</string>
     <string name="text_alarm_settings">Alarm Settings</string>
     <string name="text_mqtt_settings">MQTT Settings</string>
@@ -292,7 +292,7 @@
     <string name="pref_dark_mode_start_time">Start Time: %1$s</string>
     <string name="pref_dark_mode_end_time">End Time: %1$s</string>
     <string name="dialog_select_time">Select Time</string>
-    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the start and end time.</string>
+    <string name="pref_night_mode_description">Dims the display and uses a dark theme based on the sun below or above the horizon.</string>
     <string name="pref_night_mode_start_description">Night Mode Start Time</string>
     <string name="pref_night_mode_end_description">Night Mode End Time</string>
     <string name="pref_fullscreen_title">Fullscreen Mode</string>
@@ -375,9 +375,44 @@
     <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
     <string name="pref_platform_title_refresh">Browser Refresh</string>
     <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
+    <string name="pref_title_sensor_list">Sensor List</string>
     <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
     <string name="pref_title_battery">Battery</string>
-    <string name="pref_title_sensor_list">Sensor List</string>
+    <string name="error_mqtt_exception">There was an error initializing the MQTT client, please check your settings.</string>
+    <string name="pref_title_screen_brightness">Screen Brightness</string>
+    <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
+    <string name="summary_weather_topic">Please see the MQTT Weather documentation on the Project Page</string>
+    <string name="preference_title_weather">Weather MQTT</string>
+    <string name="summary_sun_topic">Please see the MQTT Sun documentation on the Project Page</string>
+    <string name="preference_title_sun">Sun MQTT</string>
+    <string name="pref_title_night_mode">Use Night Mode</string>
+    <string name="dialog_brightness_message">Do you want to grant permission to modify the system settings for screen brightness?</string>
+    <string name="toast_write_permissions_denied">Write settings permission denied…</string>
+    <string name="toast_write_permissions_granted">Write settings permission granted…</string>
+    <string name="pref_web_screensaver_title">Web Screensaver</string>
+    <string name="pref_web_screensaver_summary">Use a web page as a screensaver. (limited support)</string>
+    <string name="pref_web_screensaver_url_title">Web Screensaver Url</string>
+    <string name="pref_web_screensaver_url_summary">Enter the url to use as a web screensaver.</string>
+    <string name="pref_weather_units_summary">Displays temperature in °F</string>
+    <string name="pref_weather_units_title">Temperature Unit</string>
+    <string name="weather_beautiful">Beautiful</string>
+    <string name="weather_sunny">Sunny</string>
+    <string name="weather_clear_night">Clear Night</string>
+    <string name="weather_stormy">Thunderstorms</string>
+    <string name="weather_sleet">Sleet</string>
+    <string name="weather_partly_cloudy">Partly Cloudy</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_fog">Fog</string>
+    <string name="weather_hail">Hail</string>
+    <string name="weather_snow">Snow</string>
+    <string name="weather_windy">Windy</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_pouring_rain">Pouring Rain</string>
+    <string name="pref_retrain_title">Retain MQTT Message</string>
+    <string name="pref_retain_summary">When active, the broker stores the last message.</string>
+    <string name="toast_connect_retry">Reconnecting...</string>
+    <string name="pref_title_acceleration">Hardware Acceleration</string>
+    <string name="pref_summary_acceleration">On some devices this will speed up web or camera rendering.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

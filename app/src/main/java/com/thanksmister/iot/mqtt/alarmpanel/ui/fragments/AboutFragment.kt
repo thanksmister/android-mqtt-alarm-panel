@@ -16,6 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -23,11 +24,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_about.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,8 +39,14 @@ class AboutFragment : BaseFragment() {
     @Inject lateinit var dialogUtils: DialogUtils
     private var versionNumber: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.text_about))
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

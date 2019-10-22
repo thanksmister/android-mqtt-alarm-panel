@@ -17,33 +17,32 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
-import android.app.Dialog
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.annotation.NonNull
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatDelegate
+import android.os.PersistableBundle
+import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -55,48 +54,33 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var mqttOptions: MQTTOptions
     @Inject lateinit var imageOptions: ImageOptions
-    @Inject lateinit var darkSkyOptions: DarkSkyOptions
     @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var darkSkyDataSource: DarkSkyDao
+    @Inject lateinit var weatherDao: WeatherDao
+    @Inject lateinit var screenUtils: ScreenUtils
 
-    private val inactivityHandler: Handler = Handler()
+    var serviceStarted: Boolean = false
+    val disposable = CompositeDisposable()
+    val alarmPanelService: Intent by lazy {
+        Intent(this, AlarmPanelService::class.java)
+    }
+
     private var hasNetwork = AtomicBoolean(true)
-    private var userPresent: Boolean = false
     private var connectionLiveData: ConnectionLiveData? = null
 
-    val disposable = CompositeDisposable()
-    private var screenSaverDialog : Dialog? = null
-
-    private val inactivityCallback = Runnable {
-        Timber.d("inactivityCallback")
-        dialogUtils.clearDialogs()
-        userPresent = false
-        showScreenSaver()
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
     }
 
     override fun onStart(){
         super.onStart()
-        connectionLiveData = ConnectionLiveData(this)
+        /*connectionLiveData = ConnectionLiveData(this)
         connectionLiveData?.observe(this, Observer { connected ->
             if(connected!!) {
                 handleNetworkConnect()
             } else {
                 handleNetworkDisconnect()
             }
-        })
-    }
-
-    private fun checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
-                return
-            }
-        }
+        })*/
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
@@ -117,31 +101,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        inactivityHandler.removeCallbacks(inactivityCallback)
+        Timber.d("onDestroy")
         disposable.dispose()
-    }
-
-    fun resetInactivityTimer() {
-        Timber.d("resetInactivityTimer")
-        hideScreenSaver()
-        inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, configuration.inactivityTime)
-    }
-
-    fun stopDisconnectTimer() {
-        hideScreenSaver()
-        inactivityHandler.removeCallbacks(inactivityCallback)
-    }
-
-    override fun onUserInteraction() {
-        Timber.d("onUserInteraction")
-        onWindowFocusChanged(true)
-        userPresent = true
-        resetInactivityTimer()
-        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
-        val bm = LocalBroadcastManager.getInstance(applicationContext)
-        bm.sendBroadcast(intent)
     }
 
     public override fun onResume() {
@@ -150,6 +111,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false // reset
             dayNightModeChanged() // reset screen brightness if day/night mode inactive
+        } else {
+            screenUtils.resetScreenBrightness(configuration.dayNightMode == Configuration.SUN_ABOVE_HORIZON)
         }
     }
 
@@ -161,25 +124,20 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    open fun dayNightModeCheck(dayNightMode:String?) {
-        Timber.d("dayNightModeCheck")
-        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        if(dayNightMode == Configuration.DISPLAY_MODE_NIGHT && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_NO) {
-            Timber.d("Tis the night!")
+    fun dayNightModeCheck(sunValue:String?) {
+        Timber.d("dayNightModeCheck $sunValue")
+        if(sunValue == Configuration.SUN_BELOW_HORIZON && screenUtils.tisTheDay() && serviceStarted) {
+            stopService(alarmPanelService)
+            serviceStarted = false
+            hideScreenSaver()
+            screenUtils.resetScreenBrightness(false)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            Timber.d("Tis the day!")
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            recreate()
-        }
-    }
-
-    private fun dayNightModeChanged() {
-        Timber.d("dayNightModeChanged")
-        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        if (!configuration.useNightDayMode && uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            Timber.d("Tis the day!")
+        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !screenUtils.tisTheDay() && serviceStarted) {
+            stopService(alarmPanelService)
+            serviceStarted = false
+            hideScreenSaver()
+            screenUtils.resetScreenBrightness(true)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }
@@ -189,23 +147,28 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue
      * with the alarm disabled because the disable time will be longer than this.
      */
-    open fun showScreenSaver() {
+    fun showScreenSaver() {
+        Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
         if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
-            inactivityHandler.removeCallbacks(inactivityCallback)
-            val hasWeather = (configuration.showWeatherModule() && darkSkyOptions.isValid)
-            dialogUtils.showScreenSaver(this@BaseActivity,
-                    configuration.showPhotoScreenSaver(),
-                    imageOptions,
-                    View.OnClickListener {
-                        dialogUtils.hideScreenSaverDialog()
-                        resetInactivityTimer()
-                    }, darkSkyDataSource, hasWeather)
+            val hasWeather = configuration.showWeatherModule()
+            val isImperial = configuration.weatherUnitsImperial
+            try {
+                dialogUtils.showScreenSaver(this@BaseActivity,
+                        configuration.showPhotoScreenSaver(),
+                        imageOptions,
+                        View.OnClickListener {
+                            dialogUtils.hideScreenSaverDialog()
+                            onUserInteraction()
+                        },  hasWeather, isImperial, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
+            } catch (e: Throwable) {
+                Timber.e(e.message)
+            }
         }
     }
 
-    open fun hideScreenSaver() {
-        dialogUtils.hideScreenSaverDialog()
-        screenSaverDialog = null
+    fun hideScreenSaver() {
+        Timber.d("hideScreenSaver")
+        val hasScreenSaver = dialogUtils.hideScreenSaverDialog()
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
@@ -217,7 +180,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      */
     open fun handleNetworkDisconnect() {
         hideScreenSaver()
-        bringApplicationToForegroundIfNeeded()
         dialogUtils.showAlertDialogToDismiss(this@BaseActivity, getString(R.string.text_notification_network_title),
                 getString(R.string.text_notification_network_description))
         hasNetwork.set(false)
@@ -227,7 +189,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * On network connect hide any alert dialogs generated by
      * the network disconnect and clear any notifications.
      */
-    open fun handleNetworkConnect() {
+    private fun handleNetworkConnect() {
         dialogUtils.hideAlertDialog()
         hasNetwork.set(true)
     }
@@ -236,7 +198,39 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return hasNetwork.get()
     }
 
-    fun bringApplicationToForegroundIfNeeded() {
+    private fun dayNightModeChanged() {
+        Timber.d("dayNightModeChanged")
+        if (!configuration.useNightDayMode && !screenUtils.tisTheDay() && serviceStarted) {
+            stopService(alarmPanelService)
+            hideScreenSaver()
+            screenUtils.resetScreenBrightness(true)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            recreate()
+        }
+    }
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                 try {
+                     ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                             Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+
+                 } catch (e: RuntimeException) {
+                     Timber.e("Permissions error: ${e.message}")
+                 }
+                 return
+            }
+        }
+    }
+
+    /**
+     * Attempts to bring the application to the foreground if needed.
+     */
+    private fun bringApplicationToForegroundIfNeeded() {
         if (!LifecycleHandler.isApplicationInForeground()) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")

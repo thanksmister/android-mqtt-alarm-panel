@@ -20,84 +20,100 @@
 
     <PreferenceCategory android:title="@string/preference_title_display">
 
-        <CheckBoxPreference
-            android:key="pref_day_night_mode"
-            android:summary="@string/pref_night_mode_description"
-            android:title="Use Night Mode"/>
+        <SwitchPreference
+            android:title="@string/pref_title_acceleration"
+            android:summary="@string/pref_summary_acceleration"
+            android:key="pref_hardware_acceleration"/>
 
-        <Preference
-            android:key="mode_day_night_start"
-            android:title="@string/pref_night_mode_start_description"
-            android:summary="19:00"/>
-
-        <Preference
-            android:key="mode_day_night_end"
-            android:title="@string/pref_night_mode_end_description"
-            android:summary="6:00"/>
-
-        <CheckBoxPreference
+        <SwitchPreference
             android:title="@string/pref_fullscreen_title"
             android:summary="@string/pref_fullscreen_description"
             android:key="pref_full_screen"/>
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@string/default_setting_app_preventsleep"
             android:key="@string/key_setting_app_preventsleep"
             android:title="@string/pref_title_prevent_sleep"
             android:summary="@string/pref_summary_prevent_sleep"/>
 
+        <SwitchPreference
+            android:key="pref_day_night_mode"
+            android:summary="@string/pref_night_mode_description"
+            android:title="@string/pref_title_night_mode"/>
+
+        <EditTextPreference
+            android:selectable="false"
+            android:summary="@string/summary_sun_topic"
+            android:title="@string/preference_title_sun"
+            android:textSize="12sp"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preference_title_screen_saver_settings">
 
-        <CheckBoxPreference
-            android:title="@string/preference_title_screen_saver"
-            android:summary="@string/preference_summary_screen_saver_settings"
-            android:key="pref_module_saver_clock"/>
-
-        <CheckBoxPreference
-            android:title="@string/preference_title_screen_saver_photo"
-            android:summary="@string/preference_summary_screen_saver_photo_settings"
-            android:key="pref_module_saver_photo"/>
-
         <ListPreference
             android:key="pref_inactivity_time"
-            android:enabled="false"
             android:title="@string/preference_title_inactivity"
             android:entries="@array/inactivity_times"
             android:entryValues="@array/inactivity_values"/>
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_use_screen_brightness"
+            android:title="@string/pref_title_screen_brightness"
+            android:summary="@string/pref_description_screen_brightness"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/preference_title_screen_saver"
+            android:summary="@string/preference_summary_screen_saver_settings"
+            android:key="pref_module_saver_clock"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/pref_web_screensaver_title"
+            android:summary="@string/pref_web_screensaver_summary"
+            android:key="@string/key_setting_web_screensaver"/>
+
+        <EditTextPreference
+            android:key="@string/key_setting_web_url"
+            android:dependency="@string/key_setting_web_screensaver"
+            android:title="@string/pref_web_screensaver_url_title"
+            android:summary="@string/pref_web_screensaver_url_summary"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="@string/preference_title_screen_saver_photo"
+            android:summary="@string/preference_summary_screen_saver_photo_settings"
+            android:key="@string/key_saver_photo"/>
+
         <EditTextPreference
             android:key="pref_image_source"
-            android:enabled="false"
+            android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_source"
-            android:autoLink="web"
-            android:linksClickable="true"
-            android:textColorLink="@color/blue"
             android:summary="@string/preference_summary_image_source"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"/>
 
         <EditTextPreference
             android:key="pref_image_client_id"
-            android:enabled="false"
+            android:dependency="@string/key_saver_photo"
             android:title="@string/pref_title_image_client_id"
-            android:autoLink="web"
-            android:linksClickable="true"
-            android:textColorLink="@color/blue"
             android:summary="@string/preference_summary_image_client_id"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"/>
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="pref_image_fit"
-            android:enabled="false"
+            android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_fit"
             android:summary="@string/preference_summary_image_fit"/>
 
         <EditTextPreference
             android:key="pref_image_rotation"
-            android:enabled="false"
+            android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_rotation"
             android:summary="@string/preference_summary_image_rotation"
             android:digits="0123456789"

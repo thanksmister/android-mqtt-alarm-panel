@@ -191,7 +191,7 @@
     <string name="text_rate_application">Avaliar a aplicação</string>
     <string name="text_reddit">Grupo do Reddit</string>
     <string name="text_license_information">Informação da Licença</string>
-    <string name="text_github_code">Código no GitHub</string>
+    <string name="text_github_code">Página do projeto do Github</string>
     <string name="text_about">Acerca</string>
     <string name="text_alarm_settings">Configurações do Alarme</string>
     <string name="text_mqtt_settings">Configurações MQTT</string>
@@ -368,8 +368,48 @@
     <string name="dialog_message_ssl_untrusted">A autoridade de certificação não é confiável.</string>
     <string name="dialog_message_ssl_generic">Erro de certificado SSL.</string>
     <string name="dialog_missing_webview_warning">Este dispositivo não possui o componente WebView instalado. Instale o componente na loja do Google Play.</string>
-    <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
-    <string name="pref_title_battery">Battery</string>
+    <string name="pref_summary_battery">Nível da bateria, USB conectado, AC plugado, carregamento</string>
+    <string name="pref_title_battery">Bateria</string>
+    <string name="text_front">Frente</string>
+    <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
+    <string name="pref_platform_title_refresh">Atualização do Navegador</string>
+    <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
+    <string name="pref_title_sensor_list">Sensor List</string>
+    <string name="error_mqtt_exception">Houve um erro ao inicializar o cliente MQTT, verifique suas configurações.</string>
+    <string name="pref_title_screen_brightness">Brilho do ecrã</string>
+    <string name="pref_description_screen_brightness">Diminua o brilho da tela quando estiver no modo noturno. Certifique-se de ajustar o brilho da tela para o nível desejado antes de ativar esse recurso.</string>
+    <string name="summary_weather_topic">Por favor, veja a documentação do MQTT Weather na página do projeto</string>
+    <string name="preference_title_weather">Tempo MQTT</string>
+    <string name="summary_sun_topic">Por favor, veja a documentação do MQTT Sun na página do projeto</string>
+    <string name="preference_title_sun">Sol MQTT</string>
+    <string name="pref_title_night_mode">Use o modo noturno</string>
+    <string name="dialog_brightness_message">Você deseja conceder permissão para modificar as configurações do sistema para o brilho da tela?</string>
+    <string name="toast_write_permissions_denied">Permissão de gravação de configurações negada…</string>
+    <string name="toast_write_permissions_granted">Escrever permissão de configurações concedida…</string>
+    <string name="pref_web_screensaver_title">Screensaver da correia fotorreceptora</string>
+    <string name="pref_web_screensaver_summary">Use uma página da web como protetor de tela. (suporte limitado)</string>
+    <string name="pref_web_screensaver_url_title">URL do protetor de tela da Web</string>
+    <string name="pref_web_screensaver_url_summary">Digite a URL para usar como protetor de tela da web.</string>
+    <string name="pref_weather_units_summary">Exibe a temperatura em °F</string>
+    <string name="pref_weather_units_title">Unidade de temperatura</string>
+    <string name="weather_beautiful">Lindo</string>
+    <string name="weather_sunny">Ensolarado</string>
+    <string name="weather_clear_night">Noite clara</string>
+    <string name="weather_stormy">Tempestades</string>
+    <string name="weather_sleet">Sleet</string>
+    <string name="weather_partly_cloudy">Parcialmente nublado</string>
+    <string name="weather_cloudy">Nublado</string>
+    <string name="weather_fog">Névoa</string>
+    <string name="weather_hail">Saudar</string>
+    <string name="weather_snow">Neve</string>
+    <string name="weather_windy">Ventoso</string>
+    <string name="weather_rain">Chuva</string>
+    <string name="weather_pouring_rain">Chuva torrencial</string>
+    <string name="pref_retrain_title">Retenha a mensagem MQTT</string>
+    <string name="pref_retain_summary">Quando ativo, o corretor armazena a última mensagem.</string>
+    <string name="toast_connect_retry">Reconectando...</string>
+    <string name="pref_title_acceleration">Aceleraçao do hardware</string>
+    <string name="pref_summary_acceleration">Em alguns dispositivos, isso acelera a renderização na web ou na câmera.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>
@@ -414,10 +454,5 @@
         <item>Motion</item>
         <item>Camera</item>
     </string-array>
-    <string name="text_front">Frente</string>
-    <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
-    <string name="pref_platform_title_refresh">Browser Refresh</string>
-    <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
-    <string name="pref_title_sensor_list">Sensor List</string>
 
 </resources>

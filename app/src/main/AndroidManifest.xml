@@ -30,8 +30,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="com.fingerprints.service.ACCESS_FINGERPRINT_MANAGER"/>
     <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
@@ -43,9 +45,11 @@
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true"
             android:allowBackup="true"
             android:fullBackupContent="true"
-            tools:ignore="GoogleAppIndexingWarning">
+            tools:ignore="GoogleAppIndexingWarning"
+            tools:targetApi="m">
         
         <activity
             android:name=".ui.activities.MainActivity"
@@ -79,11 +83,6 @@
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="true"/>
-
-        <!-- Your Crashlytics key here, you also need the secret in a fabric.properties -->
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="6aa105ab19b074264f7333064640f494720b90f1"/>
 
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="face,barcode"/>
 

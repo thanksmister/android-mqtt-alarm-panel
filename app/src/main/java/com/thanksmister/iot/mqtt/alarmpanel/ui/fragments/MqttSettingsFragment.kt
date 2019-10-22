@@ -19,12 +19,12 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v7.preference.CheckBoxPreference
-import android.support.v7.preference.EditTextPreference
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceFragmentCompat
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BASE_TOPIC
@@ -34,9 +34,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_C
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PASSWORD
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PORT
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_RETAIN
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -52,6 +54,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var stateTopicPreference: EditTextPreference? = null
     private var userNamePreference: EditTextPreference? = null
     private var sslPreference: CheckBoxPreference? = null
+    private var retainPreference: CheckBoxPreference? = null
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
@@ -59,6 +62,16 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_mqtt_server))
+        }
+    }
+
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey : String?) {
         addPreferencesFromResource(R.xml.mqtt_preferences)
@@ -74,14 +87,6 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
@@ -94,6 +99,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
+        retainPreference = findPreference(PREF_RETAIN) as CheckBoxPreference
         baseTopicPreference = findPreference(PREF_BASE_TOPIC) as EditTextPreference
 
         baseTopicPreference!!.text = mqttOptions.getBaseTopic()
@@ -105,6 +111,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         userNamePreference!!.text = mqttOptions.getUsername()
         passwordPreference!!.text = mqttOptions.getPassword()
         sslPreference!!.isChecked = mqttOptions.getTlsConnection()
+        retainPreference!!.isChecked = mqttOptions.getRetain()
 
         if (!TextUtils.isEmpty(mqttOptions.getBroker())) {
             brokerPreference!!.summary = mqttOptions.getBroker()
@@ -159,7 +166,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 value = portPreference!!.text
                 if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
                     mqttOptions.setPort(Integer.valueOf(value)!!)
-                    portPreference!!.summary = value.toString()
+                    portPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
                     portPreference!!.text = mqttOptions.getPort().toString()
@@ -209,6 +216,10 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             PREF_TLS_CONNECTION -> {
                 val checked = sslPreference!!.isChecked
                 mqttOptions.setTlsConnection(checked)
+            }
+            PREF_RETAIN -> {
+                val checked = sslPreference!!.isChecked
+                mqttOptions.setRetain(checked)
             }
         }
     }

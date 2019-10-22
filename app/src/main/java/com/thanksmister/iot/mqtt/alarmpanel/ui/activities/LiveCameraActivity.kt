@@ -17,16 +17,18 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.Manifest
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraCallback
@@ -80,7 +82,10 @@ class LiveCameraActivity : BaseActivity() {
             supportActionBar!!.title = getString(R.string.pref_camera_test_title)
         }
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        if(configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
         preview = findViewById<CameraSourcePreview>(R.id.imageView_preview)
         detectionViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetectionViewModel::class.java)
 
@@ -124,12 +129,13 @@ class LiveCameraActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.removeCallbacks(inactivityCallback)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     override fun onUserInteraction() {
         inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, 300000)
+        inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
 
     public override fun onDestroy() {

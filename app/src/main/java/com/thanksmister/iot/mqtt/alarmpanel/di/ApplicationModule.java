@@ -20,12 +20,12 @@ import android.app.Application;
 import android.content.Context;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseApplication;
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao;
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDatabase;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.SunDao;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao;
 
 import javax.inject.Singleton;
 
@@ -71,13 +71,13 @@ abstract class ApplicationModule {
 
     @Singleton
     @Provides
-    static DarkSkyDatabase provideDarkSkyDatabase(Application app) {
-        return DarkSkyDatabase.getInstance(app);
+    static WeatherDao provideWeatherDao(SensorDatabase database) {
+        return database.weatherDao();
     }
 
     @Singleton
     @Provides
-    static DarkSkyDao provideDarkSkyDao(DarkSkyDatabase database) {
-        return database.darkSkyDao();
+    static SunDao provideSunDao(SensorDatabase database) {
+        return database.sunDao();
     }
 }

@@ -23,10 +23,10 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.preference.*
+import androidx.preference.SwitchPreference
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.preference.*
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
@@ -53,9 +53,20 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var fpsPreference: EditTextPreference? = null
     private var rotatePreference: ListPreference? = null
 
+    var cameraList = ArrayList<CameraUtils.Companion.CameraList>()
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_camera))
+        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -88,11 +99,11 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         rotatePreference!!.value = configuration.cameraRotate.toString()
         if(configuration.cameraRotate == 0f) {
             rotatePreference!!.setValueIndex(0)
-        } else if (configuration.cameraRotate == -360f) {
+        } else if (configuration.cameraRotate == -90f) {
             rotatePreference!!.setValueIndex(1)
-        } else if (configuration.cameraRotate == 180f) {
+        } else if (configuration.cameraRotate == 90f) {
             rotatePreference!!.setValueIndex(2)
-        } else if (configuration.cameraRotate == -270f) {
+        } else if (configuration.cameraRotate == -180f) {
             rotatePreference!!.setValueIndex(3)
         }
         cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference
@@ -107,8 +118,11 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
                 if(index >= 0) {
                     //configuration.cameraId = index
-                    Timber.d("Camera Id: " + configuration.cameraId)
-                    configuration.cameraId = index
+                    val cameraListItem = cameraList[index]
+                    configuration.cameraId = cameraListItem.cameraId
+                    configuration.cameraOrientation = cameraListItem.orientation
+                    configuration.cameraWidth = cameraListItem.width
+                    configuration.cameraHeight = cameraListItem.height
                 }
             }
             true;
@@ -232,13 +246,15 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private fun createCameraList() {
         Timber.d("createCameraList")
         try {
-            val cameraList = CameraUtils.getCameraList(activity!!)
-            cameraListPreference!!.entries = cameraList.toTypedArray<CharSequence>()
-            val vals = arrayOfNulls<CharSequence>(cameraList.size)
-            for (i in cameraList.indices) {
-                vals[i] = Integer.toString(i)
+            cameraList = CameraUtils.getCameraList(activity!!)
+            val cameraListEntries:ArrayList<CharSequence> = ArrayList()
+            val cameraListValues:ArrayList<CharSequence> = ArrayList()
+            for (item in cameraList) {
+                cameraListEntries.add(item.description)
+                cameraListValues.add(Integer.toString(item.cameraId))
             }
-            cameraListPreference?.entryValues = vals
+            cameraListPreference!!.entries = cameraListEntries.toTypedArray<CharSequence>()
+            cameraListPreference!!.entryValues = cameraListValues.toTypedArray<CharSequence>()
             val index = cameraListPreference!!.findIndexOfValue(configuration.cameraId.toString())
             cameraListPreference!!.summary = if (index >= 0)
                 cameraListPreference!!.entries[index]

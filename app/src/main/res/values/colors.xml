@@ -43,6 +43,7 @@
     <color name="screen_saver_black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white_alpha">#beffffff</color>
+    <color name="blue_alpha">#BEC4DAFA</color>
     <color name="light_gray">#efefef</color>
     <color name="red">#c8d7523e</color>
     <color name="red_light_up">#fff4492c</color>

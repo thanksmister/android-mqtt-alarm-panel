@@ -29,18 +29,20 @@
     <include layout="@layout/view_keypad"
              android:layout_width="match_parent"
              android:layout_height="320dp"
-             android:layout_weight="1"/>
+             android:layout_weight="3"/>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        android:layout_height="16dp"
+        android:layout_weight="0"/>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-        >
+           android:padding="16dp"
+            android:layout_weight="0">
 
         <com.todddavies.components.progressbar.ProgressWheel
             android:id="@+id/countDownProgressWheel"
@@ -55,10 +57,13 @@
             tools:text="60"
             ProgressWheel:textSize="18sp" />
 
+        <Space
+            android:layout_width="24dp"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
             android:orientation="vertical">
 
             <TextView

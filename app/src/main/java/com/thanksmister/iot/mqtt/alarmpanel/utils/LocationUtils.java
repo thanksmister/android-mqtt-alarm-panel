@@ -16,8 +16,9 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.utils;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 /**
  * Validate longitude and latitude coordinates

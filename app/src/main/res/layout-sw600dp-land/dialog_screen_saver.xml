@@ -44,8 +44,8 @@
                 style="@style/TextAppearance.Clock.Temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white_alpha"
-                android:textSize="64sp"
+                android:textColor="@color/blue_alpha"
+                android:textSize="92sp"
                 tools:text="18°C" />
 
             <Space
@@ -57,7 +57,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_width="84dp"
                 android:layout_height="84dp"
-                android:tint="@color/white_alpha"
+                android:tint="@color/blue_alpha"
                 tools:src="@drawable/ic_thunderstorm" />
 
         </LinearLayout>
@@ -69,8 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="48sp"
-            android:textColor="@color/white_alpha"
+            android:textSize="72sp"
+            android:textColor="@color/blue_alpha"
             tools:text="12:00 PM"/>
 
     </LinearLayout>
@@ -111,7 +111,7 @@
                     style="@style/TextAppearance.Clock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white_alpha"
+                    android:textColor="@color/blue_alpha"
                     android:textSize="42sp"
                     tools:text="18°C"/>
 
@@ -124,7 +124,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:tint="@color/white_alpha"
+                    android:tint="@color/blue_alpha"
                     tools:src="@drawable/ic_thunderstorm" />
 
             </LinearLayout>
@@ -137,10 +137,24 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="28sp"
-                android:textColor="@color/white_alpha"
+                android:textColor="@color/blue_alpha"
                 tools:text="12:00 PM"/>
 
         </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/screenSaverWebViewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <WebView
+            android:id="@+id/screenSaverWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 

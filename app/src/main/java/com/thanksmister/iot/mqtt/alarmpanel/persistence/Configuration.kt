@@ -32,8 +32,8 @@ class Configuration @Inject
 constructor(private val context: Context, private val sharedPreferences: DPreference) {
 
     var webUrl: String?
-        get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, null)
-        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value)
+        get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, "")
 
     var appPreventSleep: Boolean
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
@@ -60,16 +60,24 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_END, value)
 
     var screenBrightness: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 5)
+        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 255)
         set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value)
+
+    var screenNightBrightness: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, 155)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, value)
+
+    var useScreenBrightness: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_SCREEN_BRIGHTNESS, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SCREEN_BRIGHTNESS, value)
 
     var alarmMode: String
         get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
     var fullScreen: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCXREEN, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCXREEN, value)
+        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCREEN, true)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCREEN, value)
 
     var systemAlerts: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
@@ -82,6 +90,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     var isFirstTime: Boolean
         get() = sharedPreferences.getPrefBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.setPrefBoolean(PREF_FIRST_TIME, value)
+
+    var userHardwareAcceleration: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_HARDWARE_ACCELERATION, false)
+        set(value) = sharedPreferences.setPrefBoolean(PREF_HARDWARE_ACCELERATION, value)
 
     var fingerPrint: Boolean
         get() = sharedPreferences.getPrefBoolean(PREF_FINGERPRINT, false)
@@ -155,6 +167,18 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_cameraid), 0)
         set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_cameraid), value)
 
+    var cameraOrientation: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ORIENTATION, 0)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ORIENTATION, value)
+
+    var cameraWidth: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_WIDTH, 640)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_WIDTH, value)
+
+    var cameraHeight: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_HEIGHT, 480)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_HEIGHT, value)
+
     var cameraMotionMinLuma: Int
         get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionminluma),
                 context.getString(R.string.default_setting_camera_motionminluma).toInt())
@@ -201,9 +225,9 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
         set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
 
-    var sensorsEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_SENSOR_ENABLED, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SENSOR_ENABLED, value)
+    var weatherUnitsImperial: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(PREF_WEATHER_UNITS, false)
+        set(value) = this.sharedPreferences.setPrefBoolean(PREF_WEATHER_UNITS, value)
 
     var cameraFaceEnabled: Boolean
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), false)
@@ -240,6 +264,21 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
                 context.getString(R.string.default_browser_user_agent))
         set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_browser_user_agent), value)
 
+    var writeScreenPermissionsShown: Boolean
+        get() = sharedPreferences.getPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, false)
+        set(value) {
+            sharedPreferences.setPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, value)
+        }
+
+    var webScreenSaver: Boolean
+        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_web_screensaver), false)
+        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_web_screensaver), value)
+
+    var webScreenSaverUrl: String
+        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_web_url), WEB_SCREEN_SAVER)
+        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_web_url), value)
+
+
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
     }
@@ -273,11 +312,11 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun showPhotoScreenSaver(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_PHOTO_SAVER, false)
+        return sharedPreferences.getPrefBoolean(context.getString(R.string.key_saver_photo), false)
     }
 
     fun setPhotoScreenSaver(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_PHOTO_SAVER, value)
+        this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_saver_photo), value)
     }
 
     fun setShowWeatherModule(show: Boolean) {
@@ -289,7 +328,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailTo(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_TO, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_TO, "")
     }
 
     fun setMailTo(value: String) {
@@ -297,7 +336,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailFrom(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_FROM, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_FROM, "")
     }
 
     fun setMailFrom(value: String) {
@@ -305,7 +344,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailGunApiKey(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_API_KEY, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_API_KEY, "")
     }
 
     fun setMailGunApiKey(value: String) {
@@ -313,7 +352,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun getMailGunUrl(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_URL, null)
+        return sharedPreferences.getPrefString(PREF_MAIL_URL, "")
     }
 
     fun setMailGunUrl(value: String) {
@@ -346,7 +385,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun hasScreenSaver() : Boolean {
-        return (showPhotoScreenSaver() || showClockScreenSaverModule())
+        return (showPhotoScreenSaver() || showClockScreenSaverModule() || webScreenSaver)
     }
 
     fun isAlarmTriggeredMode(): Boolean {
@@ -377,7 +416,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     fun reset() {
         sharedPreferences.removePreference(PREF_PENDING_TIME)
         sharedPreferences.removePreference(PREF_MODULE_CLOCK_SAVER)
-        sharedPreferences.removePreference(PREF_MODULE_PHOTO_SAVER)
+        sharedPreferences.removePreference(context.getString(R.string.key_saver_photo))
         sharedPreferences.removePreference(PREF_INACTIVITY_TIME)
         sharedPreferences.removePreference(PREF_MODULE_WEATHER)
         sharedPreferences.removePreference(PREF_MODULE_WEB)
@@ -412,7 +451,14 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(PREF_FINGERPRINT)
         sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
         sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
-        sharedPreferences.removePreference(PREF_FULL_SCXREEN)
+        sharedPreferences.removePreference(PREF_FULL_SCREEN)
+        sharedPreferences.removePreference(PREF_SCREEN_BRIGHTNESS)
+        sharedPreferences.removePreference(PREF_WRITE_SCREEN_PERMISSIONS)
+        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS)
+        sharedPreferences.removePreference(SUN_ABOVE_HORIZON)
+        sharedPreferences.removePreference(SUN_BELOW_HORIZON)
+        sharedPreferences.removePreference(context.getString(R.string.key_setting_web_url))
+        sharedPreferences.removePreference(PREF_WEATHER_UNITS)
     }
 
     companion object {
@@ -428,13 +474,12 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_ALARM_MODE = "pref_alarm_mode"
         const val PREF_ALARM_CODE = "pref_alarm_code"
         const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        const val PREF_MODULE_PHOTO_SAVER = "pref_module_saver_photo"
         const val PREF_IMAGE_SOURCE = "pref_image_source"
         const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
         const val PREF_IMAGE_ROTATION = "pref_image_rotation"
         const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
-        const val PREF_FULL_SCXREEN = "pref_full_screen"
+        const val PREF_FULL_SCREEN = "pref_full_screen"
         const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
         const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         const val PREF_MODULE_TSS = "pref_module_tss"
@@ -447,7 +492,11 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
         const val PREF_CAMERA_CAPTURE = "pref_module_camera"
         const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
+        const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
+        const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
+        const val PREF_CAMERA_HEIGHT = "pref_camera_height"
         const val PREF_MODULE_WEATHER = "pref_module_weather"
+
         const val PREF_MODULE_WEB = "pref_module_web"
         const val PREF_WEB_URL = "pref_web_url"
         const val PREF_FIRST_TIME = "pref_first_time"
@@ -457,12 +506,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
         const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
         const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
+        const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
-        const val PREF_WEATHER_WEATHER = "pref_weather_module"
-        const val PREF_WEATHER_UNITS = "pref_weather_units"
-        const val PREF_WEATHER_API_KEY = "pref_weather_api_key"
-        const val PREF_WEATHER_LATITUDE = "pref_weather_latitude"
-        const val PREF_WEATHER_LONGITUDE = "pref_weather_longitude"
+
+        const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
         const val PREF_PLATFORM_BAR = "pref_platform_bar"
         const val PREF_TELEGRAM_MODULE = "pref_telegram_module"
         const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
@@ -479,5 +526,13 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_SENSOR_ENABLED = "pref_device_sensors_enabled"
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
         const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
+        const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
+        const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
+        const val SUN_ABOVE_HORIZON = "above_horizon"
+        const val SUN_BELOW_HORIZON = "below_horizon"
+        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
+        const val PREF_BRIGHTNESS_FACTOR = .10
+
+        const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
     }
 }

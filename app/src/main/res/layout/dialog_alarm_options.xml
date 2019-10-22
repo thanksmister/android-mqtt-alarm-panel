@@ -22,8 +22,8 @@
         android:id="@+id/armOptionsView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:padding="16dp"
         android:orientation="vertical">
 
@@ -102,7 +102,7 @@
 
             </FrameLayout>
 
-            <android.support.v4.widget.Space
+            <Space
                     android:layout_width="match_parent"
                     android:layout_height="4dp"/>
 
@@ -120,7 +120,7 @@
 
         </LinearLayout>
 
-        <android.support.v4.widget.Space
+        <Space
                 android:layout_width="8dp"
                 android:layout_weight="0"
                 android:layout_height="match_parent"/>
@@ -148,7 +148,7 @@
 
             </FrameLayout>
 
-            <android.support.v4.widget.Space
+            <Space
                     android:layout_width="match_parent"
                     android:layout_height="4dp"/>
 

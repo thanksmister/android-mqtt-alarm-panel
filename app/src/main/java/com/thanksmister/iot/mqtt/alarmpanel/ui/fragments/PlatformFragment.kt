@@ -23,18 +23,17 @@ import android.content.Intent
 import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.webkit.*
-import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
@@ -54,9 +53,10 @@ class PlatformFragment : BaseFragment() {
     private var currentUrl:String? = null
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
-    private var zoomLevel = 1.0f
-    private var hasWebView:Boolean = true;
+    private var zoomLevel = 0.0f
+    private var hasWebView:Boolean = true
     private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
+    private var certPermissionsShown = false
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -157,7 +157,6 @@ class PlatformFragment : BaseFragment() {
     }
 
     private fun loadWebPage() {
-        Timber.d("loadWebPage url ${configuration.webUrl}")
         if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl)
                 && webView != null && hasWebView) {
             configureWebSettings(configuration.browserUserAgent)
@@ -167,14 +166,16 @@ class PlatformFragment : BaseFragment() {
                         if(progressDialog != null) {
                             progressDialog.visibility = View.GONE
                         }
-                        pageLoadComplete(view.url)
+                        if(view.url != null) {
+                            pageLoadComplete(view.url)
+                        }
                         return
                     }
                     if(displayProgress) {
-                        if(progressDialog != null) {
+                        if(progressDialog != null && progressDialogMessage != null) {
                             progressDialog.visibility = View.VISIBLE
+                            progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                         }
-                        progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                     } else {
                         if(progressDialog != null) {
                             progressDialog.visibility = View.GONE
@@ -199,28 +200,42 @@ class PlatformFragment : BaseFragment() {
                         Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
                     }
                 }
+                // TODO we need to load SSL certificates
                 override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
-                    super.onReceivedSslError(view, handler, error)
-                    var message = getString(R.string.dialog_message_ssl_generic)
-                    when (error?.primaryError) {
-                        SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
-                        SslError.SSL_EXPIRED -> message = getString(R.string.dialog_message_ssl_expired)
-                        SslError.SSL_IDMISMATCH -> message = getString(R.string.dialog_message_ssl_mismatch)
-                        SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
-                    }
-                    message += getString(R.string.dialog_message_ssl_continue)
-                    if(isAdded && activity != null) {
-                        dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
-                                DialogInterface.OnClickListener { _, _ ->
-                                    handler?.proceed()
-                                },
-                                DialogInterface.OnClickListener { _, _ ->
-                                    handler?.cancel()
-                                })
+                    if(!certPermissionsShown) {
+                        var message = getString(R.string.dialog_message_ssl_generic)
+                        when (error?.primaryError) {
+                            SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
+                            SslError.SSL_EXPIRED -> message = getString(R.string.dialog_message_ssl_expired)
+                            SslError.SSL_IDMISMATCH -> message = getString(R.string.dialog_message_ssl_mismatch)
+                            SslError.SSL_NOTYETVALID -> message = getString(R.string.dialog_message_ssl_not_yet_valid)
+                        }
+                        message += getString(R.string.dialog_message_ssl_continue)
+                        if (isAdded && activity != null) {
+                            dialogUtils.showAlertDialog(activity!!, getString(R.string.dialog_title_ssl_error), message,
+                                    DialogInterface.OnClickListener { _, _ ->
+                                        certPermissionsShown = true
+                                        handler?.proceed()
+                                    },
+                                    DialogInterface.OnClickListener { _, _ ->
+                                        certPermissionsShown = false
+                                        handler?.cancel()
+                                    })
+                        }
+                    } else {
+                        // we have already shown permissions, no need to show again on page refreshes or when page auto-refreshes itself
+                        handler?.proceed()
                     }
                 }
             }
-            if (zoomLevel.toDouble() != 1.0) {
+            if (configuration.userHardwareAcceleration && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // chromium, enable hardware acceleration
+                webView?.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            } else  {
+                // older android version, disable hardware acceleration
+                webView?.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+            if (zoomLevel != 0.0f) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
             webView.loadUrl(configuration.webUrl)
@@ -234,7 +249,7 @@ class PlatformFragment : BaseFragment() {
         }
     }
 
-    private fun pageLoadComplete(url: String) {
+    private fun pageLoadComplete(url: String?) {
         Timber.d("pageLoadComplete currentUrl $url")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE, url)

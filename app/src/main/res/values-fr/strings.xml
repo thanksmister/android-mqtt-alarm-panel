@@ -1,0 +1,459 @@
+<!--
+  ~ Copyright (c) 2018 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Alarm Panel</string>
+
+
+    <!-- Menus -->
+    <string name="action_settings">Paramètres</string>
+    <string name="action_publish">Publier</string>
+
+    <!-- Buttons -->
+
+    <!-- Toasts, Alerts, Errors -->
+    <string name="toast_code_match">Le code saisi est identique au code actuel. Veuillez saisir un code différent.</string>
+    <string name="toast_code_alarm_set">Alarme modifiée!</string>
+    <string name="toast_code_unchanged">Code d\'alarme inchangé!</string>
+    <string name="toast_code_changed">Code de l\'alarme modifiée avec succès!</string>
+    <string name="toast_code_not_match">Le code ne correspond pas, essayez à nouveau.</string>
+    <string name="toast_code_invalid">Le code est invalide, essayez à nouveau.</string>
+
+    <!-- Text Content -->
+    <string name="text_enter_alarm_code_title">Veuillez saisir un nouveau code</string>
+    <string name="text_renter_alarm_code_title">Veuillez saisir le code à nouveau</string>
+
+    <!-- Preferences -->
+    <string name="preference_summary_security_code">Renseigner le code de l\'alarme (défaut 1234).</string>
+    <string name="preference_title_security_code">Code de sécurité</string>
+    <string name="preference_title_mqtt_server">MQTT</string>
+    <string name="preference_summary_mqtt_server">Renseigner les valeurs concernant le serveur MQTT</string>
+    <string name="preference_title_broker">Serveur MQTT</string>
+    <string name="preference_summary_broker">Renseigner l\'adresse du serveur MQTT. Pour TCP/SSL, exclure le préfixe (192.168.1.1). Pour les autres, inclure le préfixe (http://192.168.1.1).</string>
+    <string name="preference_client_id">Identifiant du client</string>
+    <string name="preference_summary_client_id">Renseigner l\'identifiant du client si nécessaire.</string>
+    <string name="preference_tls_connection">Connexion SSL/TLS</string>
+    <string name="preference_summary_tls_connection">En SSL/TLS, écouter le serveur MQTT sur le port 8883.</string>
+    <string name="preference_title_port">Port</string>
+    <string name="preference_summary_port">Renseigner le port, généralement 8123 si non sécurisé.</string>
+    <string name="preference_title_command_topic">Commandes de l\'alarme</string>
+    <string name="preference_title_state_topic">Topic des commandes</string>
+    <string name="preference_summary_command_topic">Renseigner le topic pour l\'envoi de commandes au serveur MQTT.</string>
+    <string name="preference_summary_state_topic">Renseigner le topic d\'état de l\'alarme publié par le serveur MQTT.</string>
+    <string name="preference_title_username">Utilisateur</string>
+    <string name="preference_summary_username">Nom d\'utilisateur pour le serveur MQTT (si nécessaire).</string>
+    <string name="preference_title_password">Mot de passe</string>
+    <string name="preference_summary_password">Mot de passe de l\'utilisateur MQTT (si nécessaire).</string>
+    <string name="preference_title_alarm">Alarme</string>
+    <string name="preference_summary_alarm">Paramétrage du code de l\'alarme</string>
+    <string name="preference_title_pending_time">Délai avant armement (Pending Time)</string>
+    <string name="preference_summary_pending_time">Délai, en secondes, avant que l\'alarme ne passe en mode absent (away) ou présent (home). Actuellement %1$s secondes.</string>
+    <string name="preference_title_trigger_time">Délai avant déclenchement (Trigger Time)</string>
+    <string name="preference_summary_trigger_time">Délai, en secondes, avant que l\'alarme ne se déclenche. Actuellement %1$s secondes.</string>
+
+    <string name="preference_title_weather_settings">Météo</string>
+    <string name="preference_summary_weather_settings">Une fois activée, la météo apparaîtra sur l\'écran principal.</string>
+    <string name="preference_title_darksky">DarkSky</string>
+    <string name="preference_summary_darksky">Activer la météo fournie par DarkSky.</string>
+    <string name="preference_title_darksky_api">Clé d\'API</string>
+    <string name="preference_summary_darksky_api">Renseigner la clé d\'API DarkSky.</string>
+    <string name="preference_title_latitude">Latitude</string>
+    <string name="preference_summary_latitude_summary">Renseigner la latitude.</string>
+    <string name="preference_title_longitude">Longitude</string>
+    <string name="preference_summary_longitude_summary">Renseigner la longitude.</string>
+    <string name="preference_title_units">Unité de température</string>
+    <string name="preference_summary_units">Utiliser les Celsius (°C) comme unité de température.</string>
+
+    <string name="preference_title_display">Affichage</string>
+    <string name="preference_title_screen_saver_settings">Economiseur d\'écran</string>
+    <string name="preference_summary_screen_saver_settings">Si activé, affiche une horloge comme économiseur d\'écran.</string>
+    <string name="preference_title_screen_saver">Horloge comme économiseur d\'écran</string>
+    <string name="pref_title_image_client_id">Identifiant Imgur</string>
+    <string name="preference_summary_image_client_id">Renseigner l\'identifiant Imgur disponible ici https://api.imgur.com.</string>
+
+    <string name="preference_title_screen_saver_photo_settings">Images comme économiseur d\'écran</string>
+    <string name="preference_summary_screen_saver_photo_settings">Si activé, utilise un défilement d\'images d\'Imgur comme économiseur d\'écran.</string>
+    <string name="preference_title_screen_saver_photo">Images comme économiseur d\'écran</string>
+
+    <string name="preference_summary_screen_saver">Utiliser un défilement d\'images d\'Instagram comme économisuer d\'écran.</string>
+
+    <string name="preference_title_image_source">Tag Imgur</string>
+    <string name="preference_summary_image_source">Renseigner un tag Imgur à utiliser pour sélectionner les images (exemple: space, architecture, flowers, or landscape).</string>
+    <string name="preference_title_image_fit">Rogner les images</string>
+    <string name="preference_summary_image_fit">Rogner les images à la taille de l\'écran.</string>
+    <string name="preference_title_image_rotation">Intervalle de défilement</string>
+    <string name="preference_summary_image_rotation">Intervalle de défilement des images (en minutes). Actuellement %1$s minute(s).</string>
+
+    <string name="preference_title_web_settings">Navigateur</string>
+    <string name="preference_summary_web_settings">Autoriser le chargement d\'interfaces externes, comme Home Assistant.</string>
+    <string name="preference_title_web">Interface externe</string>
+    <string name="preference_summary_web">Affiche votre interface par glissement sur l\'écran principal.</string>
+    <string name="preference_title_web_url">Adresse de l\'interface</string>
+    <string name="preference_summary_web_url">Renseigner l\'adresse IP de votre interface avec le préfixe et le port si nécessaire (exemple: http://ipaddress:port).</string>
+    <string name="preference_web_description">Cette fonctionnalité est expérimentale. La page web est rendue avec la version Android du navigateur Chrome et peut être différente en fonction de vos version de SDK Android et de WebView.</string>
+
+    <string name="preference_title_notification">Notifications</string>
+    <string name="preference_summary_notification">Affiche une notification si l\'alarme est déclenchée.</string>
+
+    <string name="preference_title_inactivity">Déclencher l\'économiseur d\'écran…</string>
+    <string name="preference_summary_inactivity_seconds">Aprés %1$s secondes d\'inactivité, la luminosité de l\'écran diminue.</string>
+    <string name="preference_summary_inactivity_minutes">Aprés %1$s minute(s) d\'inactivité, la luminosité de l\'écran diminue.</string>
+
+
+    <string name="preference_title_notifications">Notifications</string>
+    <string name="preference_title_mqtt_notifications">Notifications MQTT</string>
+    <string name="preference_summary_mqtt_notifications">Affiche et énonce les notifications en provenance du serveur MQTT.</string>
+
+    <string name="preference_title_alert">Notifications d\'alerte</string>
+    <string name="preference_title_system_notifications">Notifications système</string>
+    <string name="preference_summary_alert">Exemple de format de message pour afficher une alerte: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"alert\":\"Hello!\"}\"}"</string>
+
+    <string name="preference_tts_voice">TTS</string>
+    <string name="preference_tts">Notifications TTS</string>
+    <string name="preference_summary_tts">Utiliser Google Text-To-Speech pour énoncer les messages en provenance du serveur MQTT. (Note: Android Lollipop ou supérieur requis.)</string>
+
+    <string name="preference_tts_topic">TTS Topic</string>
+    <string name="preference_topic_title">Renseigner le Topic TTS</string>
+
+
+    <string name="preference_tts_topic_summary">Exemple de format de message pour énoncer un message: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hello!\"}\"}"</string>
+
+    <string name="preference_camera">Caméra</string>
+    <string name="preference_camera_title">Capture d\'image de la caméra</string>
+    <string name="preference_camera_summary">utiliser la caméra de votre appareil pour faire une capture et l\'envoyer par email lors de la désactivation de l\'alarme.</string>
+
+    <string name="preference_camera_flip_title">Rotation de la caméra</string>
+    <string name="preference_camera_flip_summary">En fonction de votre caméra, vous pouvez faire pivoter ou retourner l\'image. Currently %1$s.</string>
+
+    <string name="preference_mail_domain">Domaine</string>
+    <string name="preference_mail_domain_summary">Renseigner votre domaine MailGun (exemple: sandboxd83b1e242f934c73a471c518392df0.mailgun.org).</string>
+    <string name="preference_mail_key">Clé d\'API MailGun</string>
+    <string name="preference_mail_key_summary">Renseigner votre clé d\'API MailGun (example: key-5d021926d65dc12we8ec04d7f9d0fd2c).</string>
+
+    <string name="preference_mail_from">Expéditeur du mail</string>
+    <string name="preference_mail_from_summary">Renseigner l\'adresse e-mail à utiliser en tant qu\'expéditeur du mail (example: mister@thankmister.com).</string>
+
+    <string name="preference_mail_to">Destinataire</string>
+    <string name="preference_mail_to_summary">renseigner l\'adresse e-mail qui recevra la capture. Vous pouvez renseigner plusieurs adresses en les séparant par une virgule.((example: "mister@thankmister.com" or "mister@thankmister.com, me@thankmister.com")</string>
+
+    <string name="preference_mail_title">Paramétres MailGun</string>
+    <string name="preference_mail_description">Pour envoyer les captures par email, vous devez configurer un compte MailGun (mailgun.com) et renseigner les nom de domaine, clé d\'API, ainsi que les adresses de destinataires.</string>
+
+    <string name="text_title_system">SYSTÈME</string>
+    <string name="text_titled_disarmed">DÉSACTIVÉ</string>
+    <string name="text_titled_armed_away">MODE ABSENT</string>
+    <string name="toast_invalid_coordinates">Latitude et longitude invalides.</string>
+    <string name="toast_invalid_latitude">La valeur doit être comprise entre -90 et 90.</string>
+    <string name="toast_invalid_longitude">La valeur doit être comprise entre -180 et 180.</string>
+    <string name="toast_invalid_provider">Impossible de détecter la position, veuillez renseigner la latitude et la longitude manuellement.</string>
+    <string name="activity_settings_title">Paramètres</string>
+    <string name="toast_alarm_deactivated">Alarme désactivée!</string>
+    <string name="activity_logs_title">Journal d\'évènements</string>
+
+    <string name="text_arm_home">ACTIVER MODE PRESENT</string>
+    <string name="text_arm_away">ACTIVER MODE ABSENT</string>
+    <string name="text_armed_home">MODE PRÉSENT</string>
+    <string name="text_armed_away">MODE ABSENT</string>
+    <string name="text_system">SYSTEME</string>
+    <string name="text_disarmed">DESACTIVEE</string>
+    <string name="dialog_alarm_triggered">SAISIR CODE POUR DESACTIVER</string>
+    <string name="dialog_first_time">Comme il s\'agit de votre première utilisation, veuillez configurer votre appareil, votre serveur MQTT ainsi que les informations relatives à l\'alarme (le code par défaut est 1234).</string>
+    <string name="text_alarm_pending">EN COURS D\'ACTIVATION</string>
+
+    <string name="text_temperature">%1$s %2$s</string>
+    <string name="text_temperature_range">H%1$s°  L%2$s°</string>
+    <string name="error_mqtt_connection">La connexion au serveur MQTT n\'a pas pu être établie ou a été perdue. Une nouvelle tentative va être faite.</string>
+    <string name="error_mqtt_subscription">Impossible de souscrire au Topic MQTT, veuillez vérifier le paramètrage du serveur MQTT ou votre connexion.</string>
+    <string name="text_alarm">ALARME</string>
+    <string name="string_device_location">Localisation de votre appareil</string>
+    <string name="string_location_services_disabled">La localisation est désactivée. Voulez-vous l\'activer ?</string>
+
+    <string name="mail_to_subject_text">Retours MQTT Alarm Panel</string>
+    <string name="mail_subject_text">Envoyer les retours:</string>
+
+    <string name="thanks_mister_title">Thanks, Mister!</string>
+    <string name="designer_developer_text">Design et développement</string>
+    <string name="company_url_text">thanksmister.com</string>
+    <string name="company_email">mister@thanksmister.com</string>
+    <string name="text_feedback">Retours</string>
+    <string name="text_rate_application">Notez l\'application</string>
+    <string name="text_reddit">Groupe Reddit</string>
+    <string name="text_license_information">Information de licence</string>
+    <string name="text_github_code">Page du projet Github</string>
+    <string name="text_about">A propos</string>
+    <string name="text_alarm_settings">Paramètres de l\'alarme</string>
+    <string name="text_mqtt_settings">Paramètres MQTT</string>
+    <string name="notification_channel_name">Déclenchement de l\'alarme</string>
+    <string name="text_channel_description">Notifications de l\'alarme</string>
+    <string name="text_notification_entry_title">Intrusion détectée</string>
+    <string name="text_notification_entry_description">Une intrusion a été détectée, veuillez prendre les mesures nécessaires.</string>
+    <string name="text_notification_trigger_title">Alarme déclenchée</string>
+    <string name="text_notification_trigger_description">L\'alarme s\'est déclenchée, veuillez prendre les mesures nécessaires.</string>
+    <string name="text_notification_network_title">Alarme déconnectée</string>
+    <string name="text_notification_network_description">La connexion réseau est indisponible. Une connexion est obligatoire pour assurer un fonctionnement correct.</string>
+    <string name="text_settings_code_title">Pour continuer, saisissez le code.</string>
+    <string name="text_error_no_alarm_setup">Vous n\'avez pas fini de paramétrer les informations du serveur MQTT.</string>
+    <string name="text_error_pending_time_low">Le délai avant armement est le temps avant que l\'alarme ne s\'active ou ne se déclenche. Veillez à laisser assez de temps pour quitter les lieux à votre départ ou désactiver l\'alarme lors de votre arrivée.</string>
+    <string name="text_error_trigger_time_low">La durée de déclenchement est la durée pendant laquelle l\'alarme sonne avant d\'être désactivée. Une durée trop courte peut entrainer des comportements inattendus.</string>
+    <string name="text_error_mqtt_connection">Impossible de se connecter au serveur MQTT sur le port: %1$s</string>
+    <string name="progress_location">Localisation en cours…</string>
+    <string name="text_error_only_numbers">Veuillez saisir uniquement des chiffres sans espace.</string>
+    <string name="text_error_blank_entry">La valeur ne doit pas être vide. Veuillez saisir une valeur valide.</string>
+    <string name="text_alarm_disabled_email">L\'alarme a été désactivée, voici une image.</string>
+    <string name="text_alarm_disabled_email_subject">Alarme désactivée</string>
+    <string name="text_camera_failed_configuration">Impossible de configurer la caméra. Votre appareil en est-il équipé ?</string>
+    <string name="text_camera_failed_session">Impossible de faire une capture à partir de la caméra. Votre appareil en est-il équipé ?</string>
+    <string name="text_error_camera_device">Erreur de caméra. Impossible d\'y accéder.</string>
+    <string name="text_camera_image_subject">\"Alarm Panel\" %1$s</string>
+    <string name="pref_mqtt_settings_category">Notifications MQTT</string>
+    <string name="dialog_loading">Chargement…</string>
+    <string name="pref_time_update_title">Mise à jour de l\'heure</string>
+    <string name="pref_time_title">Paramétrage de l\'heure</string>
+    <string name="pref_automatic_time_zone_title">Fuseau horaire automatique</string>
+    <string name="pref_automatic_time_zone_summary">Utiliser le fuseau horaire fourni par le réseau</string>
+    <string name="pref_time_summary">Mettre à jour l\'heure de l\'appareil.</string>
+    <string name="pref_time_format_title">Utiliser le format sur 24 heures</string>
+    <string name="text_dialog_select_time">Heure</string>
+    <string name="pref_density_summary">Modifier la densité d\'affichage. Actuellement %1$s dpi.</string>
+    <string name="pref_device_brightness_summary">Modifier la luminosité entre 1 et 5. Actuellement %1$s.</string>
+    <string name="pref_device_density_title">Densité d\'affichage</string>
+    <string name="pref_device_brightness_title">Luminosité</string>
+    <string name="pref_reset_category">Réinitialiser</string>
+    <string name="pref_reset_title">Paramètres par défaut</string>
+    <string name="pref_reset_summary">Effacer tous les paramètres et les réinitialiser à leur valeur par défaut.</string>
+
+    <string name="pref_device_timeout_minutes_summary">Après %1$s minute(s) l\'affichage se met en veille.</string>
+    <string name="pref_device_timeout_seconds_summary">Après %1$s seconde(s) l\'affichage se met en veille.</string>
+    <string name="pref_device_timeout_hours_summary">Après %1$s heure(s) l\'affichage se met en veille.</string>
+
+    <string name="pref_device_timeout_title">Délai de mise en veille de l\'écran</string>
+    <string name="text_update_available">Une mise à jour est disponible, voulez-vous l\'installer maintenant ?</string>
+    <string name="pref_home_pending_title">Délai avant armement mode présent</string>
+    <string name="pref_home_pending_summary">Le délai en seconde avant que l\'alarme ne passe en mode présent. Actuellement %1$s secondes.</string>
+    <string name="pref_delay_title">Durée de la fenêtre de désactivation</string>
+    <string name="pref_delay_summary">La durée en secondes pendant laquelle la fenêtre de désactivation s\'affiche, avant que l\'alarme ne se déclenche (sauf si défini par délai de déclenchement des modes présent ou absent). Actuellement %1$s secondes.</string>
+    <string name="pref_away_pending_title">Délai avant armement mode absent</string>
+    <string name="pref_away_pending_summary">Le délai en secondes avant que l\'alarme ne passe en mode absent. Actuellement %1$s secondes.</string>
+    <string name="pref_pending_times_description">Ces délais doivent correspondre à ceux définis dans le paramétrage de votre centrale domotique. Si vous vous ne souhaitez pas utiliser les délais du mode présent et du mode absent, positionnez les aux mêmes valeurs que le délai d\'armement global. Pour Home Assistant, consultez la documentation de MQTT manual alarm control panel ici https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
+    <string name="pref_home_delay_summary">La durée en secondes pendant laquelle la fenêtre de désactivation s\'affiche en mode présent. Actuellement %1$s secondes.</string>
+    <string name="pref_home_delay_title">Durée de la fenêtre de désactivation en mode présent</string>
+    <string name="pref_away_delay_summary">La durée en secondes pendant laquelle la fenêtre de désactivation s\'affiche en mode absent. Actuellement %1$s secondes.</string>
+    <string name="pref_away_delay_title">Durée de la fenêtre de désactivation en mode absent</string>
+    <string name="dialog_no_camera_permissions">Cette fonctionnalité nécessite des permissions relatives à la caméra. Dans les paramètres de votre appareil, donnez les permissions à cette application.</string>
+    <string name="dialog_no_location_permissions">Cette fonctionnalité nécessite des permissions relatives à la localisation. Dans les paramètres de votre appareil, donnez les permissions à cette application.</string>
+    <string name="toast_screen_timeout">Délai de mise en veille de l\'écran écoulé…</string>
+    <string name="button_hide_text">Masquer</string>
+    <string name="pref_title_platform_bar">Montrer la barre de navigation</string>
+    <string name="pref_description_show_platform_bar">Si activé, affiche une barre de navigation à l\'écran.</string>
+    <string name="pref_telegram_title">Telegram</string>
+    <string name="pref_telegram_chat_id_summary">Renseigner votre identifiant Telegram bot chat.</string>
+    <string name="pref_telegram_token_summary">Renseigner le jeton (token) d\'API Telegram bot.</string>
+    <string name="pref_telegram_chat_id_title">dentifiant Telegram Chat</string>
+    <string name="pref_telegram_api_title">Jeton d\'API Telegram</string>
+    <string name="pref_camera_send_image_notes">Vous pouvez utiliser Telegram, Mailgun ou les deux pour envoyer des captures de caméra par email.</string>
+    <string name="menu_item_help">Aide</string>
+    <string name="error_mailgun_credentials">Il y a eu un problème lors de l\'envoi par email de l\'image. Veuillez vérifier vos identifiants MailGun.</string>
+    <string name="pref_system_sounds_summary">Activer/désactiver le son utilisé lorsque l\'alarme est déclenchée.</string>
+    <string name="pref_system_sounds_title">Sons système</string>
+    <string name="pref_fingerprint_summary">Empreinte digitale pour déverrouiller le système d\'alarme. Le code pourra être utilisé en secours.</string>
+    <string name="pref_fingerprint_error">Configurez d\'abord vos empreintes digitales sur votre appareil.</string>
+    <string name="pref_fingerprint_title">Déverrouillage par empreinte digitale</string>
+    <string name="pref_hass_settings">Paramètres expérimentaux</string>
+    <string name="pref_hide_menu_title">Masquer le menu</string>
+    <string name="pref_hide_menu_summary">Masquer les éléments de menu destinés aux administrateurs.</string>
+    <string name="pref_back_behavior_title">Surchargez le comportement du bouton précédent</string>
+    <string name="pref_back_behavior_summary">Le bouton précédent Android se comporte comme le précédent du navigateur.</string>
+    <string name="text_touch_sensor">Capteur tactile</string>
+    <string name="dialog_clear_logs">Voulez-vous effacer les journaux d\'évènements ?</string>
+    <string name="menu_item_clear_logs">Effacer les journaux</string>
+    <string name="sensors_settings">Capteurs</string>
+    <string name="button_add_sensor">+ AJOUTER CAPTEUR</string>
+    <string name="pref_sensor_title">Ajouter capteur</string>
+    <string name="toast_changes_cancelled">Modifications annulées…</string>
+    <string name="error_sensor_empty_data">Pour enregistrer un capteur, vous devez saisir le topic ET le payload.</string>
+    <string name="add_sensor_description">Créer une liste de capteurs qui recevront les changements d\'état. Par exemple, créer une notification sonore si une porte est ouverte ou empêcher l\'activation de l\'alarme tant qu\'une fenêtre est ouverte.</string>
+    <string name="text_sensor">Capteurs</string>
+    <string name="sensor_topic_description">Topic MQTT du capteur pour les chagements d\'état (%1$s/Porte d\'entrée).</string>
+    <string name="pref_dark_mode_start_time">Heure de début: %1$s</string>
+    <string name="pref_dark_mode_end_time">Heure de fin: %1$s</string>
+    <string name="dialog_select_time">Sélection de l\'heure</string>
+    <string name="pref_night_mode_description">Atténuer l\'affichage et utiliser un thème sombre entre deux horaires.</string>
+    <string name="pref_night_mode_start_description">Heure de début du thème sombre</string>
+    <string name="pref_night_mode_end_description">Heure de fin du thème sombre</string>
+    <string name="pref_fullscreen_title">Mode plein écran</string>
+    <string name="pref_fullscreen_description">Afficher l\'application en plein écran.</string>
+    <string name="notification_title">Notification</string>
+
+    <string name="summary_setting_sensors_default">Non disponible</string>
+    <string name="title_setting_sensors_temperature">Température</string>
+    <string name="title_setting_sensors_light">Luminosité</string>
+    <string name="title_setting_sensors_magneticField">Champ magnétique</string>
+    <string name="title_setting_sensors_pressure">Pression</string>
+    <string name="title_setting_sensors_humidity">Humidité</string>
+    <string name="summary_notification_topic">Exemple de format pour le message: \n\n"{\"topic\":\"alarmpanel/command\", \"payload\":\"{\"speak\":\"Hello!\"}\"}"</string>
+    <string name="title_sensor_settings">Paramètres des capteurs</string>
+    <string name="title_enable_sensor_data">Autoriser la publication des capteurs</string>
+    <string name="summary_enable_sensor_data">Publier les états des capteurs disponibles sur l\'appareil sur le serveur MQTT</string>
+    <string name="pref_sensor_list_summary">Ci-dessous une liste des capteurs disponibles sur cet appareil dont les états seront publiés sur le serveur MQTT.</string>
+    <string name="pref_qr_code_summary">Autoriser le scan des QR code avec la camera de l\'appareil et le publier sur le serveur MQTT.</string>
+    <string name="title_setting_mqtt_sensorfrequency">Fréquence de publication (en secondes)</string>
+    <string name="summary_setting_mqtt_basetopic">Identifiant pour la réception de commande MQTT pour cet appareil. Chaque appareil doit avoir un identifiant unique.</string>
+    <string name="title_setting_mqtt_basetopic">Racine du Topic</string>
+    <string name="service_notification_message">Alarm Panel en cours…</string>
+    <string name="toast_camera_source_error">Impossible de démarrer la caméra, réessayer plus tard.</string>
+    <string name="pref_user_agent_title">User Agent (Optionel)</string>
+    <string name="pref_user_agent_summary">Forcer l\'utilisation d\'un user agent pour le chargement de l\'interface externe si nécessaire (laissez vide dans le cas contraire)</string>
+    <string name="pref_camera_fps_title">FPS de la caméra</string>
+    <string name="pref_camera_fps_summary">Régler la vitesse de rafraîchissement de la caméra. Utilisez des valeurs faibles sur les appareils anciens. Actuellement %1$s.</string>
+    <string name="pref_motion_reset_title">Réinitialisation Capteur de mouvement</string>
+    <string name="pref_motion_reset_description">Délai en secondes avant la remise à zéro du capteur de mouvement.</string>
+    <string name="text_front">Frontal</string>
+    <string name="text_back">Arrière</string>
+    <string name="text_camera_pattern">{0}: {1} Caméra {3}x{4} {2}º</string>
+    <string name="pref_camera_test_title">Test de la caméra</string>
+    <string name="pref_camera_test_button_title">Test de la caméra</string>
+    <string name="title_setting_http_port">Port d\'écoute HTTP</string>
+    <string name="title_setting_http_mjpegenabled">Flux MJPEG de la caméra</string>
+    <string name="title_setting_http_mjpegmaxstreams">Nombre maximal de flux MJPEG de la caméra</string>
+    <string name="pref_face_detection_title">Détection de visage</string>
+    <string name="pref_motion_leniency_description">Tolérance maximale de différence entre les images. Une tolérance plus faible signifie un capteur plus sensible (1 – 20).</string>
+    <string name="pref_motion_luma_description">Luminosité minimale pour la détection de mouvement. Aucune détection ne sera effectuée sous ce seuil de luminosité (1 – 1000).</string>
+    <string name="pref_mjpeg_streaming_description">Utiliser la caméra pour diffuser un flux MJPG en direct. Connectez-vous à ce flux en utilisant l\'adresse IP de l\'appreil, le port HTTP, et l\'accès: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_title">Flux MJPEG</string>
+    <string name="pref_mjpeg_streaming_summary">Utiliser la caméra pour diffuser un flux MJPG.</string>
+    <string name="title_setting_camera_enabled">Utiliser la caméra</string>
+    <string name="title_setting_camera_cameraid">Caméra sélectionnée</string>
+    <string name="title_setting_camera_motionenabled">Activer la détection de mouvement</string>
+    <string name="title_setting_camera_motionleniency">Tolérance maximale</string>
+    <string name="title_setting_camera_motionminluma">Luminosité minimale</string>
+    <string name="title_setting_camera_motionwake">Réveiller l\'écran</string>
+    <string name="title_setting_camera_faceenabled">Activer la détection de visage</string>
+    <string name="title_setting_camera_facewake">Réveiller l\'écran</string>
+    <string name="title_setting_camera_qrcodeenabled">Lecteur de QR Code</string>
+    <string name="pref_motion_detection_summary">Détecter les mouvements en utilisant la caméra de l\'appareil.</string>
+    <string name="pref_motion_wake_summary">Réveiller l\'écran lorsqu\'un mouvement est détecté.</string>
+    <string name="pref_motion_detection_title">Détection de mouvement</string>
+    <string name="pref_motion_adjustments_title">Ajustement de la détection de mouvement</string>
+    <string name="pref_face_detection_summary">Détecter les visage en utlisant la caméra de l\'appareil.</string>
+    <string name="pref_face_wake_summary">Réveiller l\'écran lorsqu\'un visage est détecté.</string>
+    <string name="pref_button_camera_test">Tester les paramètres de la caméra.</string>
+    <string name="toast_qr_code_read">Lecture du QR Code...</string>
+    <string name="toast_too_dark_motion">Trop sombre pour la détcetion de mouvement</string>
+    <string name="toast_motion_detected">Mouvement détecté!</string>
+    <string name="toast_face_detected">Visage détecté!</string>
+    <string name="toast_qrcode_read">QR Code %1$s</string>
+    <string name="title_setting_app_showactivity">Voir l\'activité du navigateur</string>
+    <string name="pref_show_browser_activity_summary">Afficher la barre de chargement du navigateur.</string>
+    <string name="pref_zoom_level_summary">Zoom du navigateur (expérimental).</string>
+    <string name="title_setting_test_zoomlevel">Niveau de zoom du navigateur</string>
+    <string name="progress_loading">Chargement %1$s %%</string>
+    <string name="pref_title_prevent_sleep">Empêcher la mise en veille de l\'écran</string>
+    <string name="pref_summary_prevent_sleep">Si activé, maintient l\'écran allumé.</string>
+    <string name="dialog_title_ssl_error">Erreur de certificat SSL</string>
+    <string name="dialog_message_ssl_continue">Voulez-vous quand même continuer ?</string>
+    <string name="dialog_message_ssl_not_yet_valid">Le certificat n\'est pas encore valide.</string>
+    <string name="dialog_message_ssl_mismatch">L\'Hostname du certificat ne correspond pas.</string>
+    <string name="dialog_message_ssl_expired">Le certificat est expiré.</string>
+    <string name="dialog_message_ssl_untrusted">L\'autorité du certificat n\'est pas de confiance.</string>
+    <string name="dialog_message_ssl_generic">Erreur du certificat SSL.</string>
+    <string name="dialog_missing_webview_warning">Le composant WebView n\'est pas installé sur cet appareil. Installez-le à partir du Google Play store.</string>
+    <string name="error_missing_vision_lib">Il manque des librairies pour utiliser la détection de visage et la lecture de QR code. Ces fonctionnalités ne fonctionneront pas sur cet appareil.</string>
+    <string name="pref_platform_title_refresh">Rafraîchissement du navigateur</string>
+    <string name="pref_platform_refresh_summary">Si activé, autorise le rafraîchissement du navigateur par un glissement vers le bas.</string>
+    <string name="pref_title_sensor_list">Liste des capteurs</string>
+    <string name="pref_summary_battery">Niveau de batterie, branchement USB, branchement électrique, chargement</string>
+    <string name="pref_title_battery">Batterie</string>
+    <string name="error_mqtt_exception">Une erreur s\'est produite lors de l\'initilisation du client MQTT. Veuillez vérifier vos paramètres.</string>
+    <string name="pref_title_screen_brightness">Luminosité de l\'écran</string>
+    <string name="pref_description_screen_brightness">Diminuez la luminosité de l\'écran en mode nuit. Assurez-vous de régler la luminosité de votre écran au niveau souhaité avant d\'activer cette fonction.</string>
+    <string name="summary_weather_topic">Exemple de format de sujet de commande et de données utiles pour les données météorologiques: </string>
+    <string name="preference_title_weather">Météo MQTT</string>
+    <string name="summary_sun_topic">Exemple de format pour le sujet de commande et la charge utile pour les données sun: </string>
+    <string name="preference_title_sun">Soleil MQTT</string>
+    <string name="pref_title_night_mode">Utiliser le mode nuit</string>
+    <string name="dialog_brightness_message">Voulez-vous accorder l\'autorisation de modifier les paramètres système pour la luminosité de l\'écran?</string>
+    <string name="toast_write_permissions_denied">Autorisation d\'écriture des paramètres refusée…</string>
+    <string name="toast_write_permissions_granted">Écriture des paramètres autorisation accordée…</string>
+    <string name="pref_web_screensaver_title">Économiseur d\'écran Web</string>
+    <string name="pref_web_screensaver_summary">Utilisez une page Web comme économiseur d\'écran. (support limité)</string>
+    <string name="pref_web_screensaver_url_title">URL de l\'écran de veille Web</string>
+    <string name="pref_web_screensaver_url_summary">Entrez l\'URL à utiliser comme économiseur d\'écran Web.</string>
+    <string name="pref_weather_units_summary">Affiche la température en °F</string>
+    <string name="pref_weather_units_title">Unité de température</string>
+    <string name="weather_beautiful">Belle</string>
+    <string name="weather_sunny">Ensoleillé</string>
+    <string name="weather_clear_night">Nuit claire</string>
+    <string name="weather_stormy">Des orages</string>
+    <string name="weather_sleet">Neige fondue</string>
+    <string name="weather_partly_cloudy">Partiellement nuageux</string>
+    <string name="weather_cloudy">Nuageux</string>
+    <string name="weather_fog">Brouillard</string>
+    <string name="weather_hail">Saluer</string>
+    <string name="weather_snow">Neige</string>
+    <string name="weather_windy">Venteux</string>
+    <string name="weather_rain">Pluie</string>
+    <string name="weather_pouring_rain">Pluie battante</string>
+    <string name="pref_retrain_title">Conserver le message MQTT</string>
+    <string name="pref_retain_summary">Lorsqu\'il est actif, le courtier stocke le dernier message.</string>
+    <string name="toast_connect_retry">Reconnexion...</string>
+    <string name="pref_title_acceleration">Accélération matérielle</string>
+    <string name="pref_summary_acceleration">Sur certains appareils, cela accélérera le rendu Web ou par caméra.</string>
+
+    <string-array name="inactivity_times">
+        <item>15 secondes</item>
+        <item>30 secondes</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+    </string-array>
+
+    <string-array name="timeout_times">
+        <item>15 secondes</item>
+        <item>30 secondes</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 heure</item>
+        <item>2 heures</item>
+        <item>3 heures</item>
+        <item>6 heures</item>
+        <item>12 heures</item>
+        <item>24 heures</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>Aucune</item>
+        <item>Rotation sur la gauche</item>
+        <item>Rotate sur la droite</item>
+        <item>Symétrie verticale</item>
+    </string-array>
+
+    <string-array name="sensor_types">
+        <item>Générique</item>
+        <item>Porte</item>
+        <item>Fenêtre</item>
+        <item>Son</item>
+        <item>Mouvement</item>
+        <item>Caméra</item>
+    </string-array>
+
+</resources>

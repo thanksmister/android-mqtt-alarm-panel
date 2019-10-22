@@ -17,8 +17,8 @@
 package com.thanksmister.iot.mqtt.alarmpanel.modules
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.Context
 import android.graphics.*
 import android.hardware.Camera
@@ -31,13 +31,13 @@ import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.android.gms.vision.face.Face
 import com.google.android.gms.vision.face.FaceDetector
 import com.google.android.gms.vision.face.LargestFaceFocusingProcessor
-import io.github.silvaren.easyrs.tools.Nv21Image
+
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import android.graphics.Bitmap
-import android.support.v8.renderscript.RenderScript
+import android.renderscript.*
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_BACK
 import com.google.android.gms.vision.CameraSource.CAMERA_FACING_FRONT
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -48,7 +48,6 @@ import java.io.IOException
 class CameraReader @Inject
 constructor(private val context: Context) {
 
-    private val renderScript: RenderScript = RenderScript.create(context)
     private var cameraCallback: CameraCallback? = null
     private var faceDetector: FaceDetector? = null
     private var barcodeDetector: BarcodeDetector? = null
@@ -141,16 +140,16 @@ constructor(private val context: Context) {
             buildDetectors(configuration)
             if(multiDetector != null) {
                 try {
-                    cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
+                    cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                     cameraSource!!.start()
                 } catch (e : Exception) {
                     Timber.e(e.message)
                     try {
                         if(configuration.cameraId == CAMERA_FACING_FRONT) {
-                            cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
+                            cameraSource = initCamera(CAMERA_FACING_BACK, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                             cameraSource!!.start()
                         } else {
-                            cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS)
+                            cameraSource = initCamera(CAMERA_FACING_FRONT, configuration.cameraFPS, configuration.cameraWidth, configuration.cameraHeight)
                             cameraSource!!.start()
                         }
                     } catch (e : Exception) {
@@ -286,13 +285,11 @@ constructor(private val context: Context) {
             return
         }
         cameraOrientation = info.orientation
-        if(configuration.cameraRotate != 0f) {
-            cameraOrientation = configuration.cameraRotate.toInt()
-        }
         val multiDetectorBuilder = MultiDetector.Builder()
         var detectorAdded = false
 
         if(configuration.cameraEnabled && (configuration.httpMJPEGEnabled || configuration.captureCameraImage())) {
+            val renderScript = RenderScript.create(context)
             streamDetector = StreamingDetector.Builder().build()
             streamDetectorProcessor = MultiProcessor.Builder<Stream>(MultiProcessor.Factory<Stream> {
                 object : Tracker<Stream>() {
@@ -306,7 +303,7 @@ constructor(private val context: Context) {
                                 }
                             })
                             bitmapComplete = false
-                            byteArrayCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation)
+                            byteArrayCreateTask!!.execute(stream.byteArray, stream.width, stream.height, cameraOrientation, configuration.cameraRotate)
                         }
                     }
                 }
@@ -375,8 +372,10 @@ constructor(private val context: Context) {
                     override fun onUpdate(p0: Detector.Detections<Barcode>?, p1: Barcode?) {
                         super.onUpdate(p0, p1)
                         if (cameraCallback != null && configuration.cameraQRCodeEnabled) {
-                            Timber.d("Barcode: " + p1?.displayValue)
-                            cameraCallback!!.onQRCode(p1?.displayValue)
+                            p1?.let {
+                                Timber.d("Barcode: " + p1.displayValue)
+                                cameraCallback?.onQRCode(p1.displayValue)
+                            }
                         }
                     }
                 }
@@ -398,12 +397,14 @@ constructor(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     @Throws(Exception::class)
-    private fun initCamera(camerId: Int, fsp: Float): CameraSource {
-        Timber.d("initCamera camerId $camerId")
+    private fun initCamera(cameraId: Int, fsp: Float, widthPixels: Int = 640, heightPixels: Int = 480): CameraSource {
+        Timber.d("initCamera cameraId $cameraId")
+        Timber.d("initCamera widthPixels $widthPixels")
+        Timber.d("initCamera heightPixels $heightPixels")
         return CameraSource.Builder(context, multiDetector)
                 .setRequestedFps(fsp)
-                .setRequestedPreviewSize(640, 480)
-                .setFacing(camerId)
+                .setRequestedPreviewSize(widthPixels, heightPixels)
+                .setFacing(cameraId)
                 .build()
     }
 
@@ -411,7 +412,7 @@ constructor(private val context: Context) {
         fun onComplete(byteArray: ByteArray?)
     }
 
-    class ByteArrayTask(context: Context, private val renderScript: RenderScript, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
+    class ByteArrayTask(context: Context, private val renderScript: RenderScript?, private val onCompleteListener: OnCompleteListener) : AsyncTask<Any, Void, ByteArray>() {
 
         private val contextRef: WeakReference<Context> = WeakReference(context)
 
@@ -423,34 +424,41 @@ constructor(private val context: Context) {
             val width = params[1] as Int
             val height = params[2] as Int
             val orientation = params[3] as Int
+            val rotation = params[4] as Float
 
             val windowService = contextRef.get()!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val currentRotation = windowService.defaultDisplay.rotation
-            val nv21Bitmap = Nv21Image.nv21ToBitmap(renderScript, byteArray, width, height)
-
+            val nv21Bitmap = nv21ToBitmap(renderScript, byteArray, width, height)
             var rotate = orientation
+
             when (currentRotation) {
                 Surface.ROTATION_90 -> {
-                    rotate += 90
+                    rotate -= 90
                 }
                 Surface.ROTATION_180 -> {
-                    rotate += 180
+                    rotate -= 180
                 }
                 Surface.ROTATION_270 -> {
-                    rotate += 270
+                    rotate -= 270
                 }
             }
+
             rotate %= 360
+            rotate += rotation.toInt()
 
             val matrix = Matrix()
             matrix.postRotate(rotate.toFloat())
-            val bitmap =  Bitmap.createBitmap(nv21Bitmap, 0, 0, width, height, matrix, true)
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-            val byteArrayOut = stream.toByteArray()
-            bitmap.recycle()
-
-            return byteArrayOut
+            return try {
+                val bitmap = Bitmap.createBitmap(nv21Bitmap, 0, 0, width, height, matrix, true)
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+                val byteArrayOut = stream.toByteArray()
+                bitmap.recycle()
+                byteArrayOut
+            } catch (e: OutOfMemoryError) {
+                Timber.e(e.message)
+                null
+            }
         }
 
         override fun onPostExecute(result: ByteArray?) {
@@ -459,6 +467,28 @@ constructor(private val context: Context) {
                 return
             }
             onCompleteListener.onComplete(result)
+        }
+
+
+        private fun nv21ToBitmap(rs: RenderScript?, yuvByteArray: ByteArray, width: Int, height: Int): Bitmap {
+
+            val yuvToRgbIntrinsic = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs))
+
+            val yuvType = Type.Builder(rs, Element.U8(rs)).setX(yuvByteArray.size)
+            val allocationIn = Allocation.createTyped(rs, yuvType.create(), Allocation.USAGE_SCRIPT)
+
+            val rgbaType = Type.Builder(rs, Element.RGBA_8888(rs)).setX(width).setY(height)
+            val allocationOut = Allocation.createTyped(rs, rgbaType.create(), Allocation.USAGE_SCRIPT)
+
+            allocationIn.copyFrom(yuvByteArray)
+
+            yuvToRgbIntrinsic.setInput(allocationIn)
+            yuvToRgbIntrinsic.forEach(allocationOut)
+
+            val bmpout = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            allocationOut.copyTo(bmpout)
+
+            return bmpout
         }
     }
 

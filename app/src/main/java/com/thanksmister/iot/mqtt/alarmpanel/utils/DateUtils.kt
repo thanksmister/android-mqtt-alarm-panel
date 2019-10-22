@@ -18,13 +18,20 @@ package com.thanksmister.iot.mqtt.alarmpanel.utils
 
 import android.text.TextUtils
 import org.joda.time.DateTime
+import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormat
+import timber.log.Timber
+import java.lang.Exception
 
 import java.text.DateFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import org.joda.time.DateTimeZone
+import java.time.DayOfWeek
+import java.time.format.TextStyle
 
 
 /**
@@ -91,6 +98,41 @@ object DateUtils {
         }
         val sdf = SimpleDateFormat("EEEE", Locale.getDefault())
         return sdf.format(Date(time))
+    }
+
+    fun dayOfWeek(dateTime: String?): String {
+        try {
+            val parsed = Instant.parse(dateTime)
+            val formatter = DateTimeFormat.forPattern("EEEE").withLocale(Locale.getDefault())
+            return formatter.print(parsed)
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+        return ""
+    }
+
+    fun hourOfDay(dateTime: String?): Int {
+        try {
+            val parsed = Instant.parse(dateTime)
+            val formatter = DateTimeFormat.forPattern("H")
+            val hour = formatter.print(parsed)
+            return hour.toInt()
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+        return 12
+    }
+
+    fun minuteOfDay(dateTime: String?): Int {
+        try {
+            val parsed = Instant.parse(dateTime)
+            val formatter = DateTimeFormat.forPattern("m")
+            val hour = formatter.print(parsed)
+            return hour.toInt()
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+        return 0
     }
 
     fun convertInactivityTime(inactivityValue: Long): String {

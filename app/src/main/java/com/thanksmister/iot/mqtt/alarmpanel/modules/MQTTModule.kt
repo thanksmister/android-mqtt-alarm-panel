@@ -16,9 +16,9 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.modules
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.content.ContextWrapper
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
@@ -126,7 +126,12 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
         listener.onMQTTDisconnect()
     }
 
+    override fun handleMqttConnected() {
+        listener.onMQTTConnect()
+    }
+
     interface MQTTListener {
+        fun onMQTTConnect()
         fun onMQTTDisconnect()
         fun onMQTTException(message : String)
         fun onMQTTMessage(id: String, topic: String, payload: String)

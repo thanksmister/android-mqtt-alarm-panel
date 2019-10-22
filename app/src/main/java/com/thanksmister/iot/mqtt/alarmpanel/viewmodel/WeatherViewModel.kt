@@ -17,38 +17,20 @@
 package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.text.TextUtils
-import com.google.gson.Gson
-import com.thanksmister.iot.mqtt.alarmpanel.network.DarkSkyApi
-import com.thanksmister.iot.mqtt.alarmpanel.network.fetchers.DarkSkyFetcher
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSky
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
-import io.reactivex.Completable
+import androidx.lifecycle.AndroidViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.exceptions.UndeliverableException
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.lang.Math.round
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
 class WeatherViewModel @Inject
-constructor(application: Application, private val dataSource: DarkSkyDao, private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application, private val dataSource: WeatherDao) : AndroidViewModel(application) {
 
     private val toastText = ToastMessage()
     private val alertText = AlertMessage()
     private val disposable = CompositeDisposable()
-
-    fun hasWeatherModule() : Boolean {
-        return (configuration.showWeatherModule())
-    }
 
     fun getToastMessage(): ToastMessage {
         return toastText
@@ -58,59 +40,10 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
         return alertText
     }
 
-    init {
-    }
-
-    private fun showAlertMessage(message: String?) {
-        Timber.d("showAlertMessage")
-        alertText.value = message
-    }
-
-    private fun showToastMessage(message: String?) {
-        Timber.d("showToastMessage")
-        toastText.value = message
-    }
-
-    /**
-     * Get the items.
-     * @return a [Flowable] that will emit every time the messages have been updated.
-     */
-    fun getItems():Flowable<List<DarkSky>> {
-        return dataSource.getItems()
-                .filter {items -> items.isNotEmpty()}
-    }
-
-    /**
-     * Get the last item.
-     * @return a [Flowable] that will emit every time the messages have been updated.
-     */
-    fun getLatestItem():Flowable<DarkSky> {
+    fun getLatestItem():Flowable<Weather> {
         return dataSource.getItems()
                 .filter {items -> items.isNotEmpty() }
-                .map { items -> items[items.size - 1] }
-    }
-
-    /**
-     * Insert new items into the database.
-     */
-    private fun insertNetworkResponse(icon: String, temp: String, precip: String, units: String, summary: String, data: String, umbrella: Boolean) {
-        Timber.d("insertNetworkResponse")
-        disposable.add(Completable.fromAction {
-            val createdAt = DateUtils.generateCreatedAtDate()
-            val item = DarkSky()
-            item.icon = icon
-            item.summary = summary
-            item.apparentTemperature = temp
-            item.precipProbability = precip
-            item.data = data
-            item.units = units
-            item.umbrella = umbrella
-            item.createdAt = createdAt
-            dataSource.updateItem(item) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                }, { error -> Timber.e("Database error" + error.message)}))
+                .map { items -> items[0] }
     }
 
     public override fun onCleared() {
@@ -119,7 +52,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
         if (!disposable.isDisposed) {
             try {
                 disposable.clear()
-            } catch (e: UndeliverableException) {
+            } catch (e: Exception) {
                 Timber.e(e.message)
             }
         }
@@ -131,7 +64,7 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
      * @param lat Location latitude
      * @param lon Location longitude
      */
-    fun getDarkSkyHourlyForecast(key: String, units: String, lat: String, lon: String) {
+    /*fun getDarkSkyHourlyForecast(key: String, units: String, lat: String, lon: String) {
         if(disposable.size() > 0) {
             return
         }
@@ -186,25 +119,21 @@ constructor(application: Application, private val dataSource: DarkSkyDao, privat
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                 }, { error -> Timber.e("Dark Sky error" + error.message) }))
-    }
+    }*/
 
     /**
      * Determines if today is a good day to take your umbrella
      * Adapted from https://github.com/HannahMitt/HomeMirror/.
      * @return
      */
-    private fun shouldTakeUmbrellaToday(precipProbability: Double): Boolean {
-        return precipProbability > PRECIP_AMOUNT
+    fun shouldTakeUmbrellaToday(precipitation: Double?): Boolean {
+        precipitation?.let {
+            return precipitation > PRECIP_AMOUNT
+        }
+        return false
     }
 
-    /**
-     * Network connectivity receiver to notify client of the network disconnect issues and
-     * to clear any network notifications when reconnected. It is easy for network connectivity
-     * to run amok that is why we only notify the user once for network disconnect with
-     * a boolean flag.
-     */
     companion object {
-        const val LOAD_INTERVAL: Long = 30 // in minutes
         const val PRECIP_AMOUNT: Double = 0.3 // rain probability
     }
 }

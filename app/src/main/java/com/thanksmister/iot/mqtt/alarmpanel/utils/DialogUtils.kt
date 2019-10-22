@@ -17,34 +17,36 @@
 package com.thanksmister.iot.mqtt.alarmpanel.utils
 
 import android.app.Dialog
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.model.Datum
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.DarkSkyDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.*
 import timber.log.Timber
 
 /**
  * Dialog utils
  */
-class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
+class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
 
     private var alertDialog: AlertDialog? = null
     private var dialog: Dialog? = null
@@ -52,43 +54,48 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun clearDialogs() {
-        if (dialog != null && dialog!!.isShowing) {
-            dialog!!.dismiss()
-            dialog = null
+        try {
+            dialog?.let {
+                if (it.isShowing) {
+                    it.dismiss()
+                    dialog = null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
         }
-
-        if (alertDialog != null && alertDialog!!.isShowing) {
-            alertDialog!!.dismiss()
-            alertDialog = null
-        }
-        if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
-            screenSaverDialog!!.dismiss()
-            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
-            screenSaverDialog = null
-        }
+        hideAlertDialog()
+        hideScreenSaverDialog()
     }
 
-    fun hideScreenSaverDialog() {
-        if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
-            screenSaverDialog!!.dismiss()
-            screenSaverDialog!!.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
-            screenSaverDialog = null
+    fun hideScreenSaverDialog(): Boolean{
+        try {
+            screenSaverDialog?.let {
+                if (it.isShowing) {
+                    it.dismiss()
+                    it.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    screenSaverDialog = null
+                    return true
+                }
+            }
+            return false
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
+            return false
         }
     }
 
     fun hideAlertDialog() {
-        if (alertDialog != null && alertDialog!!.isShowing) {
-            alertDialog!!.dismiss()
-            alertDialog = null
+        try {
+            alertDialog?.let {
+                if(it.isShowing) {
+                    it.dismiss()
+                    alertDialog = null
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e.message)
         }
-    }
-
-    fun showAlertDialog(activity: AppCompatActivity, message: String) {
-        hideAlertDialog()
-        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
     }
 
     fun showAlertDialog(context: Context, message: String) {
@@ -99,7 +106,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showAlertDialogToDismiss(activity: AppCompatActivity, title: String, message: String) {
+    fun showAlertDialogToDismiss(activity: Context, title: String, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
                 .setTitle(title)
@@ -108,7 +115,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showAlertDialog(activity: AppCompatActivity, title: String, message: String) {
+    fun showAlertDialog(activity: Context, title: String, message: String) {
         hideAlertDialog()
         alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
                 .setTitle(title)
@@ -197,7 +204,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setUseFingerPrint(useFingerprint)
         alarmCodeView.startCountDown(timeRemaining)
         alarmCodeView.playContinuousAlarm()
-        dialog = buildImmersiveDialog(activity, true, view, false)
+        dialog = buildFullscreenDialog(activity, true, view, true)
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
     }
 
@@ -217,7 +224,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         alarmCodeView.setUseSound(false)
         alarmCodeView.setUseFingerPrint(useFingerprint)
         alarmCodeView.startCountDown(timeRemaining)
-        dialog = buildImmersiveDialog(activity, true, view, false)
+        dialog = buildFullscreenDialog(activity, true, view, true)
         dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
     }
 
@@ -230,7 +237,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         settingsCodeView.setListener(listener)
         settingsCodeView.setUseSound(systemSounds)
         settingsCodeView.setUseFingerPrint(useFingerprint)
-        dialog = buildImmersiveDialog(activity, true, view, false)
+        dialog = buildFullscreenDialog(activity, true, view, true)
     }
 
     fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener,
@@ -245,7 +252,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         }
         alarmCodeView.setListener(listener)
         alarmCodeView.setUseSound(systemSounds)
-        dialog = buildImmersiveDialog(activity, true, view, false)
+        dialog = buildFullscreenDialog(activity, true, view, true)
         dialog!!.setOnCancelListener(onCancelListener)
     }
 
@@ -263,7 +270,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showExtendedForecastDialog(activity: AppCompatActivity, data: List<Datum>) {
+    fun showExtendedForecastDialog(activity: AppCompatActivity, weather: Weather) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_extended_forecast, null, false)
@@ -282,7 +289,7 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
             view.minimumHeight = (displayRectangle.height() * 0.45f).toInt()
         }
         val extendedForecastView = view.findViewById<ExtendedForecastView>(R.id.extendedForecastView)
-        extendedForecastView.setExtendedForecast(data)
+        extendedForecastView.setExtendedForecast(weather)
         dialog = buildImmersiveDialog(activity, true, view, false)
     }
 
@@ -291,21 +298,38 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue
      * with the alarm disabled because the disable time will be longer than this.
      */
-    fun showScreenSaver(activity: AppCompatActivity, showPhotoScreenSaver: Boolean, options:ImageOptions,
-                        onClickListener: View.OnClickListener, dataSource: DarkSkyDao, hasWeather: Boolean) {
-        if (screenSaverDialog != null && screenSaverDialog!!.isShowing) {
-            return
+    fun showScreenSaver(activity: AppCompatActivity, showPhotoScreenSaver: Boolean = false, options:ImageOptions,
+                        onClickListener: View.OnClickListener, hasWeather: Boolean = false, isImperial: Boolean = false,
+                        dataSource: WeatherDao, hasWebScreensaver: Boolean = false, webUrl: String = "") {
+        if (screenSaverDialog == null) {
+            clearDialogs() // clear any alert dialogs
+            val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
+            val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
+            screenSaverView.init(showPhotoScreenSaver, options, hasWeather, isImperial, dataSource, hasWebScreensaver, webUrl)
+            screenSaverView.setOnClickListener(onClickListener)
+            screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
+            screenSaverDialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-        clearDialogs() // clear any alert dialogs
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_screen_saver, null, false)
-        val screenSaverView = view.findViewById<ScreenSaverView>(R.id.screenSaverView)
-        screenSaverView.init(showPhotoScreenSaver, options, dataSource, hasWeather)
-        screenSaverView.setOnClickListener(onClickListener)
-        screenSaverDialog = buildImmersiveDialog(activity, true, screenSaverView, true)
-        if (screenSaverDialog != null){
-            screenSaverDialog!!.window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON )
+    }
+
+    private fun buildFullscreenDialog(context: AppCompatActivity, cancelable: Boolean, view: View, fullscreen: Boolean): Dialog {
+        val dialog: Dialog
+        dialog = Dialog(context, R.style.CustomAlertDialogFullscreen)
+        dialog.setCancelable(cancelable)
+        dialog.setContentView(view)
+        //Set the dialog to not focusable (makes navigation ignore us adding the window)
+        dialog.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        dialog.window?.decorView?.systemUiVisibility = context.window.decorView.systemUiVisibility
+        dialog.show()
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        try {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.updateViewLayout(context.window.decorView, context.window.attributes)
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Problem starting window decor for screen saver.")
         }
+        return dialog
     }
 
     // immersive dialogs without navigation
@@ -320,12 +344,16 @@ class DialogUtils(base: Context?) : ContextWrapper(base), LifecycleObserver {
         dialog.setCancelable(cancelable)
         dialog.setContentView(view)
         //Set the dialog to not focusable (makes navigation ignore us adding the window)
-        dialog.window!!.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-        dialog.window!!.decorView.systemUiVisibility = context.window.decorView.systemUiVisibility
+        dialog.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        dialog.window?.decorView?.systemUiVisibility = context.window.decorView.systemUiVisibility
         dialog.show()
-        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        wm.updateViewLayout(context.window.decorView, context.window.attributes)
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+        try {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.updateViewLayout(context.window.decorView, context.window.attributes)
+        } catch (e: IllegalArgumentException) {
+            Timber.e("Problem starting window decor for screen saver.")
+        }
         return dialog
     }
 }

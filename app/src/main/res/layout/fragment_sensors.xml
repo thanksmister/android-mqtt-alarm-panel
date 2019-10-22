@@ -105,7 +105,7 @@
         android:layout_height="1dp"
         android:layout_above="@+id/sensorList" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

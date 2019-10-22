@@ -16,7 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,6 +24,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 
 import timber.log.Timber
+import java.lang.Exception
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean>() {
@@ -76,3 +77,4 @@ class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean
         var hasNetwork = AtomicBoolean(true)
     }
 }
+

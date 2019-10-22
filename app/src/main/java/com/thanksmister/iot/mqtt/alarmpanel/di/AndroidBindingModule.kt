@@ -17,7 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.di
 
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
@@ -49,11 +49,6 @@ internal abstract class AndroidBindingModule {
     @IntoMap
     @ViewModelKey(SensorViewModel::class)
     abstract fun bindsSensorViewModel(mainViewModel: SensorViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ScreenSaverViewModel::class)
-    abstract fun bindsScreenSaverViewModel(mainViewModel: ScreenSaverViewModel): ViewModel
 
     @Binds
     @IntoMap
