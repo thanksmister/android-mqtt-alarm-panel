@@ -48,10 +48,6 @@ class LogFragment : BaseFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true);

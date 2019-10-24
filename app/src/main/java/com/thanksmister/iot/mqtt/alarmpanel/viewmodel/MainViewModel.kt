@@ -92,6 +92,8 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     fun hasPlatform() : Boolean {
+        Timber.d("Has Plaform Module: " + configuration.hasPlatformModule())
+        Timber.d("Has Plaform Url: " + configuration.webUrl)
         return (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl))
     }
 

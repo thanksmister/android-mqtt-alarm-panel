@@ -90,8 +90,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
         webUrlPreference = findPreference(PREF_WEB_URL) as EditTextPreference
 
         if (!TextUtils.isEmpty(configuration.webUrl)) {
-            webUrlPreference!!.text = configuration.webUrl
-            webUrlPreference!!.summary = configuration.webUrl
+            webUrlPreference?.text = configuration.webUrl
+            webUrlPreference?.summary = configuration.webUrl
         }
 
         webModulePreference!!.isChecked = configuration.hasPlatformModule()
@@ -129,8 +129,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
             PREF_WEB_URL -> {
                 val value = webUrlPreference!!.text
                 configuration.webUrl = value
-                webUrlPreference!!.text = value
-                webUrlPreference!!.summary = value
+                webUrlPreference?.text = value
+                webUrlPreference?.summary = value
                 configuration.setHasPlatformChange(true)
             }
         }

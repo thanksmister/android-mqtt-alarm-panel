@@ -57,13 +57,13 @@ class MainFragment : BaseFragment() {
         fun navigatePlatformPanel()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         Timber.d("onAttach")
         if (context is OnMainFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnMainFragmentListener")
+            throw RuntimeException(context.toString() + " must implement OnMainFragmentListener")
         }
     }
 

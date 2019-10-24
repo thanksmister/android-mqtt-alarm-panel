@@ -98,12 +98,12 @@ class ControlsFragment : BaseFragment() {
         observeViewModel(viewModel)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnControlsFragmentListener) {
             mListener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnControlsFragmentListener")
+            throw RuntimeException(context.toString() + " must implement OnControlsFragmentListener")
         }
     }
 

@@ -1019,7 +1019,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground()) {
+        if (!LifecycleHandler.isApplicationInForeground) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@AlarmPanelService.packageName, MainActivity::class.java.name)

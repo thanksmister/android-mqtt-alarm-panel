@@ -16,10 +16,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel
 
-import android.content.Context
-import android.os.Bundle
-import android.view.View
-
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 

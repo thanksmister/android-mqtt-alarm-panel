@@ -205,12 +205,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 }, { error -> Timber.e("Sun Data error: " + error)}))
 
 
-        viewModel.getAlertMessage().observe(this, Observer { message ->
+        viewModel.getAlertMessage().observe(this, Observer<String> { message ->
             Timber.d("getAlertMessage")
-            dialogUtils.showAlertDialog(this@MainActivity, message!!)
+            dialogUtils.showAlertDialog(this@MainActivity, message)
 
         })
-        viewModel.getToastMessage().observe(this, Observer { message ->
+
+        viewModel.getToastMessage().observe(this, Observer<String> { message ->
             Timber.d("getToastMessage")
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
         })
@@ -444,9 +445,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     /**
      * Attempts to bring the application to the foreground if needed.
      */
-    // TODO let's make this a setting we can turn on and off
     private fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground()) {
+        if (!LifecycleHandler.isApplicationInForeground) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
             intent.component = ComponentName(this@MainActivity.packageName, MainActivity::class.java.name)

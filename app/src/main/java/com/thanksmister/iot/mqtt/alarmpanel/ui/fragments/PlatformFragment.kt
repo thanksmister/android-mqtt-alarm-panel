@@ -73,12 +73,12 @@ class PlatformFragment : BaseFragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnPlatformFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnPlatformFragmentListener")
+            throw RuntimeException("$context must implement OnPlatformFragmentListener")
         }
     }
 

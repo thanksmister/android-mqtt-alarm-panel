@@ -17,7 +17,6 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
-import androidx.lifecycle.Observer
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -40,7 +39,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import dagger.android.support.DaggerAppCompatActivity
@@ -230,7 +228,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     /**
      * Attempts to bring the application to the foreground if needed.
      */
-    private fun bringApplicationToForegroundIfNeeded() {
+   /* private fun bringApplicationToForegroundIfNeeded() {
         if (!LifecycleHandler.isApplicationInForeground()) {
             Timber.d("bringApplicationToForegroundIfNeeded")
             val intent = Intent("intent.alarm.action")
@@ -238,7 +236,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
-    }
+    }*/
 
     companion object {
         const val REQUEST_PERMISSIONS = 88

@@ -48,12 +48,12 @@ class SettingsFragment : BaseFragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is SettingsFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement SettingsFragmentListener")
+            throw RuntimeException(context.toString() + " must implement SettingsFragmentListener")
         }
     }
 

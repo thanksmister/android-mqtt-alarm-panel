@@ -33,7 +33,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
 
     var webUrl: String?
         get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, "")
-        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, "")
+        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value.orEmpty())
 
     var appPreventSleep: Boolean
         get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
