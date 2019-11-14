@@ -26,6 +26,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
+import com.crashlytics.android.answers.Answers
 
 class BaseApplication : DaggerApplication() {
 
@@ -42,6 +43,7 @@ class BaseApplication : DaggerApplication() {
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
         } else {
+            Fabric.with(this, Answers())
             Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())
         }

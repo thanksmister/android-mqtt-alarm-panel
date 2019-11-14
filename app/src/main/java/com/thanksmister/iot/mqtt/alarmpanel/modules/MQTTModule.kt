@@ -33,9 +33,6 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
 
     private var mqttService: MQTTService? = null
 
-    init {
-    }
-
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun start() {
         Timber.d("start")
@@ -49,7 +46,7 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
         } else if (mqttOptions.hasUpdates()) {
             Timber.d("readMqttOptions().hasUpdates(): " + mqttOptions.hasUpdates())
             try {
-                mqttService!!.reconfigure(applicationContext, mqttOptions, this)
+                mqttService?.reconfigure(applicationContext, mqttOptions, this)
                 mqttOptions.setOptionsUpdated(false)
             } catch (t: Throwable) {
                 // TODO should we loop back and try again?
@@ -61,9 +58,9 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun stop() {
         Timber.d("stop")
-        if (mqttService != null) {
+        mqttService?.let {
             try {
-                mqttService!!.close()
+                it.close()
             } catch (e: MqttException) {
                 e.printStackTrace()
             }
@@ -83,33 +80,14 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     }
 
     fun publishAlarm(command : String) {
-        if(mqttService != null) {
-            Timber.d("command: $command")
-            mqttService!!.publishAlarm(command)
-        }
+        Timber.d("command: $command")
+        mqttService?.publishAlarm(command)
     }
 
     // TODO update service to have two different publishAlarm
     fun publishState(command : String, message: String) {
-        if(mqttService != null) {
-            Timber.d("state command: $command")
-            mqttService!!.publishState(command, message)
-        }
-    }
-
-    @Deprecated("we don't need this any longer.")
-    fun resetMQttOptions(mqttOptions: MQTTOptions) {
-        this.mqttOptions = mqttOptions
-        if (mqttService != null && mqttOptions.hasUpdates()) {
-            Timber.d("readMqttOptions().hasUpdates(): " + mqttOptions.hasUpdates())
-            try {
-                mqttService!!.reconfigure(applicationContext, mqttOptions, this)
-                mqttOptions.setOptionsUpdated(false)
-            } catch (t: Throwable) {
-                // TODO should we loop back and try again?
-                Timber.e("Could not create MQTTPublisher: " + t.message)
-            }
-        }
+        Timber.d("state command: $command")
+        mqttService?.publishState(command, message)
     }
 
     override fun subscriptionMessage(id: String, topic: String, payload: String) {

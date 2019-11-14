@@ -122,6 +122,16 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var mqttAlertMessageShown = false
     private var mqttConnected = false
+    private var mqttConnecting = false
+    private var mqttInitConnection = AtomicBoolean(true)
+
+    private val restartMQTTRunnable = Runnable {
+        clearAlertMessage() // clear any dialogs
+        mqttAlertMessageShown = false
+        mqttConnecting = false
+        sendToastMessage(getString(R.string.toast_connect_retry))
+        mqttModule?.restart()
+    }
 
     inner class AlarmPanelServiceBinder : Binder() {
         val service: AlarmPanelService
@@ -197,7 +207,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         sensorReader.stopReadings()
         stopHttp()
         stopPowerOptions()
-        reconnectHandler.removeCallbacks(restartMqttRunnable)
+        reconnectHandler.removeCallbacks(restartMQTTRunnable)
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -239,8 +249,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startForegroundService() {
         Timber.d("startForegroundService")
-
-        // listen for network connectivity changes
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData?.observe(this, Observer { connected ->
             if (connected!!) {
@@ -249,13 +257,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 handleNetworkDisconnect()
             }
         })
-
         sendServiceStarted()
     }
 
     private fun handleNetworkConnect() {
         Timber.d("handleNetworkConnect")
-        notifications.clearNotification()
         mqttModule?.let {
             if (!hasNetwork.get()) {
                 it.restart()
@@ -268,6 +274,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.d("handleNetworkDisconnect")
         mqttModule?.let {
             if (hasNetwork.get()) {
+                mqttConnected = false
                 it.pause()
             }
         }
@@ -337,46 +344,39 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     override fun onMQTTConnect() {
         Timber.w("onMQTTConnect")
-        if (!mqttConnected) {
-            if (mqttAlertMessageShown) {
-                clearAlertMessage() // clear any dialogs
-                mqttAlertMessageShown = false
-            }
-            clearFaceDetected()
-            clearMotionDetected()
-            mqttConnected = true
+        if (mqttAlertMessageShown) {
+            clearAlertMessage() // clear any dialogs
+            mqttAlertMessageShown = false
         }
+        clearFaceDetected()
+        clearMotionDetected()
+        mqttConnected = true
+        mqttInitConnection.set(false)
     }
 
     override fun onMQTTDisconnect() {
         Timber.w("onMQTTDisconnect")
-        if (hasNetwork()) {
-            if (!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                mqttAlertMessageShown = true
-                sendAlertMessage(getString(R.string.error_mqtt_connection))
-                reconnectHandler.postDelayed(restartMqttRunnable, 180000)
-            }
-        }
-        mqttConnected = false
+        handleMQTDisconnectError()
     }
 
     override fun onMQTTException(message: String) {
         Timber.w("onMQTTException: $message")
-        if (hasNetwork()) {
-            if (!mqttAlertMessageShown && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                mqttAlertMessageShown = true
-                sendAlertMessage(getString(R.string.error_mqtt_exception))
-                reconnectHandler.postDelayed(restartMqttRunnable, 180000)
-            }
-        }
-        mqttConnected = true
+        handleMQTDisconnectError()
     }
 
-    private val restartMqttRunnable = Runnable {
-        sendToastMessage(getString(R.string.toast_connect_retry))
-        mqttAlertMessageShown = false
-        clearAlertMessage()
-        //mqttModule?.restart()
+    private fun handleMQTDisconnectError() {
+        if(hasNetwork()) {
+            mqttConnected = false
+            if (mqttInitConnection.get()) {
+                mqttInitConnection.set(false)
+                sendAlertMessage(getString(R.string.error_mqtt_exception))
+                mqttAlertMessageShown = true
+            }
+            if(!mqttConnecting) {
+                reconnectHandler.postDelayed(restartMQTTRunnable, 30000)
+                mqttConnecting = true
+            }
+        }
     }
 
     override fun onMQTTMessage(id: String, topic: String, payload: String) {
