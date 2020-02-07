@@ -386,7 +386,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         if (mqttOptions.getNotificationTopic() == topic) {
             speakMessage(payload)
             insertMessage(id, topic, payload)
-        } else if (AlarmUtils.ALARM_STATE_TOPIC == topic && AlarmUtils.hasSupportedStates(payload)) {
+        } else if (mqttOptions.getAlarmStateTopic() == topic && AlarmUtils.hasSupportedStates(payload)) {
             when (payload) {
                 AlarmUtils.STATE_DISARM -> {
                     switchScreenOn(AWAKE_TIME)
@@ -616,6 +616,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    // TODO this assumes that the command can be converted to json
     private fun processCommand(id: String, topic: String, command: String) {
         Timber.d("processCommand")
         return try {
