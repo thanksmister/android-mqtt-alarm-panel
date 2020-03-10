@@ -33,7 +33,6 @@ import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_BRIGHTNESS_FACTOR
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.WEB_SCREEN_SAVER
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
@@ -63,6 +62,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var dayNightPreference: SwitchPreference? = null
     private var preventSleepPreference: SwitchPreference? = null
     private var screenBrightness: SwitchPreference? = null
+    private var dimPreference: ListPreference? = null
+    private var brightnessPreference: Preference? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -110,6 +111,8 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as SwitchPreference
         screenBrightness = findPreference(Configuration.PREF_SCREEN_BRIGHTNESS) as SwitchPreference
         dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as SwitchPreference
+        dimPreference = findPreference(Configuration.PREF_SCREENSAVER_DIM_VALUE) as ListPreference
+        brightnessPreference = findPreference(Configuration.PREF_BUTTON_BRIGHTNESS) as Preference
 
         webUrlPreference?.text = configuration.webScreenSaverUrl
         dayNightPreference?.isChecked = configuration.useNightDayMode
@@ -136,6 +139,16 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     DateUtils.convertInactivityTime(configuration.inactivityTime))
         }
 
+        dimPreference?.setDefaultValue(configuration.nightModeDimValue)
+        dimPreference?.value = configuration.nightModeDimValue.toString()
+        dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, configuration.nightModeDimValue.toString())
+
+        brightnessPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+            screenUtils.setScreenBrightnessLevels()
+            Toast.makeText(requireContext(), getString(R.string.toast_screen_brightness_captured), Toast.LENGTH_SHORT).show()
+            false
+        }
+
         imageFitPreference?.isChecked = imageOptions.imageFitScreen
         fullScreenPreference?.isChecked = configuration.fullScreen
 
@@ -152,9 +165,12 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     Toast.makeText(requireActivity(), getString(R.string.toast_write_permissions_granted), Toast.LENGTH_LONG).show()
                     screenBrightness?.isChecked = true
                     configuration.useScreenBrightness = true
+                    Toast.makeText(requireContext(), getString(R.string.toast_screen_brightness_captured), Toast.LENGTH_SHORT).show()
+                    screenUtils.setScreenBrightnessLevels()
                 } else {
                     Toast.makeText(requireActivity(), getString(R.string.toast_write_permissions_denied), Toast.LENGTH_LONG).show()
                     configuration.useScreenBrightness = false
+                    screenBrightness?.isChecked = false
                 }
             }
             screenUtils.setScreenBrightnessLevels()
@@ -310,6 +326,12 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             getString(R.string.key_setting_web_screensaver) -> {
                 val checked = webSaverPreference!!.isChecked
                 setWebScreenSaver(checked)
+            }
+            Configuration.PREF_SCREENSAVER_DIM_VALUE -> {
+                val dim = dimPreference?.value!!.toInt()
+                configuration.nightModeDimValue = dim
+                screenUtils.setScreenBrightnessLevels()
+                dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, dim.toString())
             }
         }
     }

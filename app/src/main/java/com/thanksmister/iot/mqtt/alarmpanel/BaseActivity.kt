@@ -17,23 +17,18 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Bundle
-import android.os.PersistableBundle
-import androidx.annotation.NonNull
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatDelegate
-import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
@@ -63,22 +58,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     private var hasNetwork = AtomicBoolean(true)
-    private var connectionLiveData: ConnectionLiveData? = null
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-    }
 
     override fun onStart(){
         super.onStart()
-        /*connectionLiveData = ConnectionLiveData(this)
-        connectionLiveData?.observe(this, Observer { connected ->
-            if(connected!!) {
-                handleNetworkConnect()
-            } else {
-                handleNetworkDisconnect()
-            }
-        })*/
+        screenUtils.setScreenBrightness()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
@@ -108,9 +91,16 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         checkPermissions()
         if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false // reset
-            dayNightModeChanged() // reset screen brightness if day/night mode inactive
+            Timber.d("dayNightModeChanged")
+            if (!configuration.useNightDayMode && !screenUtils.tisTheDay() && serviceStarted) {
+                stopService(alarmPanelService)
+                hideScreenSaver()
+                screenUtils.setScreenBrightness()
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                recreate()
+            }
         } else {
-            screenUtils.resetScreenBrightness(configuration.dayNightMode == Configuration.SUN_ABOVE_HORIZON)
+            screenUtils.setScreenBrightness()
         }
     }
 
@@ -122,20 +112,22 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    fun dayNightModeCheck(sunValue:String?) {
+    fun dayNightModeCheck(sunValue:String?, force: Boolean = false) {
         Timber.d("dayNightModeCheck $sunValue")
-        if(sunValue == Configuration.SUN_BELOW_HORIZON && screenUtils.tisTheDay() && serviceStarted) {
+        Timber.d("configuration.dayNightMode ${configuration.dayNightMode}")
+        val nightMode = AppCompatDelegate.getDefaultNightMode()
+        if(sunValue == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) ) {
+            configuration.dayNightMode = sunValue
             stopService(alarmPanelService)
             serviceStarted = false
-            hideScreenSaver()
-            screenUtils.resetScreenBrightness(false)
+            screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             recreate()
-        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && !screenUtils.tisTheDay() && serviceStarted) {
+        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && serviceStarted  && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+            configuration.dayNightMode = sunValue
             stopService(alarmPanelService)
             serviceStarted = false
-            hideScreenSaver()
-            screenUtils.resetScreenBrightness(true)
+            screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             recreate()
         }
@@ -158,6 +150,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                             dialogUtils.hideScreenSaverDialog()
                             onUserInteraction()
                         },  hasWeather, isImperial, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
+                screenUtils.setScreenSaverBrightness(true)
             } catch (e: Throwable) {
                 Timber.e(e.message)
             }
@@ -166,7 +159,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     fun hideScreenSaver() {
         Timber.d("hideScreenSaver")
-        val hasScreenSaver = dialogUtils.hideScreenSaverDialog()
+        dialogUtils.hideScreenSaverDialog()
+        //screenUtils.setScreenSaverBrightness(false)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
@@ -193,18 +187,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun hasNetworkConnectivity(): Boolean {
-        return hasNetwork.get()
-    }
-
-    private fun dayNightModeChanged() {
-        Timber.d("dayNightModeChanged")
-        if (!configuration.useNightDayMode && !screenUtils.tisTheDay() && serviceStarted) {
-            stopService(alarmPanelService)
-            hideScreenSaver()
-            screenUtils.resetScreenBrightness(true)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            recreate()
+        if(hasNetwork.get()) {
+            handleNetworkConnect()
         }
+        return hasNetwork.get()
     }
 
     private fun checkPermissions() {

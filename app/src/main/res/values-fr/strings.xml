@@ -411,6 +411,11 @@
     <string name="toast_connect_retry">Reconnexion...</string>
     <string name="pref_title_acceleration">Accélération matérielle</string>
     <string name="pref_summary_acceleration">Sur certains appareils, cela accélérera le rendu Web ou par caméra.</string>
+    <string name="toast_screen_brightness_captured">Your screen brightness level has been saved!</string>
+    <string name="pref_brightness_button">Capture Brightness</string>
+    <string name="pref_button_brightness_summary">Click to update and save the current device brightness.</string>
+    <string name="preference_title_screensaver_dim">Dim screen…</string>
+    <string name="preference_summary_dim_screensaver" formatted="false">By %1$s percent when screensaver is active (requires screen brightness permission).</string>
 
     <string-array name="inactivity_times">
         <item>15 secondes</item>

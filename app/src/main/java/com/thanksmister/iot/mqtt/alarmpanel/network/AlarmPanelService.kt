@@ -42,8 +42,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.modules.*
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.*
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_ALERT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_AUDIO
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_CAPTURE
@@ -61,8 +60,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE_CURRENT_URL
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.STATE_SCREEN_ON
 import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.VALUE
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
 import dagger.android.AndroidInjection
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -96,6 +93,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     lateinit var weatherDao: WeatherDao
     @Inject
     lateinit var sunDao: SunDao
+    @Inject
+    lateinit var screenUtils: ScreenUtils
 
     private var cameraReader: CameraReader? = null
     private val disposable = CompositeDisposable()
@@ -240,7 +239,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             try {
                 state.put(STATE_CURRENT_URL, currentUrl)
                 state.put(STATE_SCREEN_ON, isScreenOn)
-                state.put(STATE_BRIGHTNESS, screenBrightness)
+                state.put(STATE_BRIGHTNESS, screenUtils.getCurrentScreenBrightness())
             } catch (e: JSONException) {
                 e.printStackTrace()
             }

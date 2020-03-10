@@ -57,12 +57,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     private var alertDialog: AlertDialog? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var decorView: View? = null
-
+    private var userPresent: Boolean = false
     private val inactivityHandler: Handler = Handler()
 
     val inactivityCallback = Runnable {
         Timber.d("inactivityCallback")
         dialogUtils.clearDialogs()
+        userPresent = false
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
@@ -151,13 +152,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     override fun onUserInteraction() {
-        Timber.d("onUserInteraction")
-        resetInactivityTimer()
         onWindowFocusChanged(true)
-        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
-        val bm = LocalBroadcastManager.getInstance(applicationContext)
-        bm.sendBroadcast(intent)
+        Timber.d("onUserInteraction")
+        if(!userPresent) {
+            userPresent = true
+            val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
+            intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
+            val bm = LocalBroadcastManager.getInstance(applicationContext)
+            bm.sendBroadcast(intent)
+        }
+        resetInactivityTimer()
     }
 
     private fun observeViewModel() {
@@ -193,17 +197,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         disposable.add(viewModel.getSun()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({sun ->
+                /*.takeWhile { sunValue ->
+                    configuration.dayNightMode != sunValue.sun.orEmpty()
+                }*/
+                .subscribe({sunValue ->
                     this@MainActivity.runOnUiThread {
                         if (configuration.useNightDayMode) {
-                            dayNightModeCheck(sun.sun)
-                        }
-                        sun.sun?.let {
-                            configuration.dayNightMode = it
+                            dayNightModeCheck(sunValue.sun)
                         }
                     }
                 }, { error -> Timber.e("Sun Data error: " + error)}))
-
 
         viewModel.getAlertMessage().observe(this, Observer<String> { message ->
             Timber.d("getAlertMessage")
@@ -411,6 +414,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private fun stopDisconnectTimer() {
+        if(!userPresent) {
+            userPresent = true
+        }
         hideScreenSaver()
         clearInactivityTimer()
     }

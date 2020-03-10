@@ -164,4 +164,28 @@
         <item>2.0</item>
     </string-array>
 
+    <string-array name="dim_title">
+        <item>0%</item>
+        <item>10%</item>
+        <item>15%</item>
+        <item>25%</item>
+        <item>30%</item>
+        <item>40%</item>
+        <item>50%</item>
+        <item>75%</item>
+        <item>90%</item>
+    </string-array>
+
+    <string-array name="dim_values">
+        <item>0</item>
+        <item>10</item>
+        <item>15</item>
+        <item>25</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>75</item>
+        <item>90</item>
+    </string-array>
+
 </resources>

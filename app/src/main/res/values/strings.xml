@@ -380,7 +380,7 @@
     <string name="pref_title_battery">Battery</string>
     <string name="error_mqtt_exception">There was an error initializing the MQTT client, please check your settings.</string>
     <string name="pref_title_screen_brightness">Screen Brightness</string>
-    <string name="pref_description_screen_brightness">Decrease the screen brightness when in night mode. Be sure to set your screen brightness to the desired level before activating this feature.</string>
+    <string name="pref_description_screen_brightness">Give permission to the application to control the device\'s screen brightness for night mode and screensaver.</string>
     <string name="summary_weather_topic">Please see the MQTT Weather documentation on the Project Page</string>
     <string name="preference_title_weather">Weather MQTT</string>
     <string name="summary_sun_topic">Please see the MQTT Sun documentation on the Project Page</string>
@@ -410,9 +410,14 @@
     <string name="weather_pouring_rain">Pouring Rain</string>
     <string name="pref_retrain_title">Retain MQTT Message</string>
     <string name="pref_retain_summary">When active, the broker stores the last message.</string>
-    <string name="toast_connect_retry">Reconnecting...</string>
+    <string name="toast_connect_retry">Reconnecting…</string>
     <string name="pref_title_acceleration">Hardware Acceleration</string>
     <string name="pref_summary_acceleration">On some devices this will speed up web or camera rendering.</string>
+    <string name="toast_screen_brightness_captured">Your screen brightness level has been saved!</string>
+    <string name="pref_brightness_button">Capture Brightness</string>
+    <string name="pref_button_brightness_summary">Click to update and save the current device screen brightness.</string>
+    <string name="preference_title_screensaver_dim">Dim screen…</string>
+    <string name="preference_summary_dim_screensaver" formatted="false">By a maximum of %1$s percent when screen brightness active.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

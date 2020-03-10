@@ -40,16 +40,16 @@ constructor(context: Context, private val configuration: Configuration): Context
         return true
     }
 
-   fun resetScreenBrightness(isTheDay: Boolean = true) {
+    fun setScreenBrightness() {
         Timber.d("resetScreenBrightness useScreenBrightness ${configuration.useScreenBrightness}")
         if(configuration.useScreenBrightness) {
             Timber.d("resetScreenBrightness")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
-                setDeviceBrightnessControl(isTheDay)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(applicationContext)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && canWriteScreenSetting()) {
+                setDeviceBrightnessControl()
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !canWriteScreenSetting()) {
                 restoreDeviceBrightnessControl()
             } else {
-                setDeviceBrightnessControl(isTheDay)
+                setDeviceBrightnessControl()
             }
         } else {
             Timber.d("resetScreenBrightness ignored")
@@ -57,17 +57,40 @@ constructor(context: Context, private val configuration: Configuration): Context
         }
     }
 
-    private fun setDeviceBrightnessControl(isTheDay: Boolean = true) {
-        setDeviceBrightnessMode(false)
+    fun getCurrentScreenBrightness(): Int {
+        return try {
+            Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+        } catch (e: Exception) {
+            Timber.d("get current brightness error ${e.message}")
+            0
+        }
+    }
+
+    fun hasScreenBrightnessMode():Boolean {
+       return configuration.hasScreenSaver() || configuration.useNightDayMode
+    }
+
+    /**
+     *  We do not use this if we already have night mode on, it will handle dimming and no additional dimming occurs
+     *  when screensaver is active.  But if night mode is not active and user has given brightness permission,
+     *  we do some auto dimming for better experience.
+     */
+   fun setScreenSaverBrightness(screenSaver: Boolean) {
+        if(hasNightMode() && !tisTheDay()) {
+            return
+        }
+        //setDeviceBrightnessMode(false)
         try {
-            Timber.d("resetScreenBrightness setting brightness without permission")
-            Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
-            if (isTheDay && configuration.screenBrightness in 1..255) {
-                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-                Timber.d("calculated brightness ${configuration.screenBrightness}")
-            } else if (!isTheDay && configuration.screenNightBrightness in 1..255) {
-                Timber.d("calculated brightness ${configuration.screenNightBrightness}")
-                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenNightBrightness)
+            if (configuration.screenBrightness in 1..255 && !screenSaver) {
+                Timber.d("screenSaver $screenSaver")
+                Timber.d("brightness ${configuration.screenBrightness}")
+                val dimAmount = configuration.screenBrightness
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, dimAmount)
+            } else if (configuration.screenNightModeBrightness in 1..255 && configuration.screenBrightness in 1..255 && screenSaver) {
+                Timber.d("screenSaver $screenSaver")
+                val dimAmount = (configuration.screenBrightness * .75).toInt()
+                Timber.d("calculated brightness $dimAmount")
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, dimAmount)
             }
         } catch (e: SecurityException) {
             Timber.e(e.message)
@@ -77,25 +100,81 @@ constructor(context: Context, private val configuration: Configuration): Context
     fun setScreenBrightnessLevels() {
         Timber.d("setScreenBrightnessLevels")
         try {
-            val brightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-            configuration.screenBrightness = brightness
-            configuration.screenNightBrightness = (brightness * Configuration.PREF_BRIGHTNESS_FACTOR).toInt()
+            val brightness = getCurrentScreenBrightness()
+            updateScreenBrightness(brightness)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    // The user no longer has screen write permission or has chosen to not use this permission
-    fun restoreDeviceBrightnessControl() {
-        Timber.d("resetScreenBrightness remove write permissions")
-        setDeviceBrightnessMode(true)
-        configuration.useScreenBrightness = false
-        try {
-            Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, configuration.screenBrightness)
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun updateScreenBrightness(brightness: Int) {
+        Timber.d("setScreenBrightness $brightness")
+        if(canWriteScreenSetting()) {
+            try {
+                if (brightness in 1..255) {
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
+                    configuration.screenBrightness = brightness
+                    Timber.d("screenBrightness $brightness")
+                    Timber.d("screenSaverDimValue ${configuration.nightModeDimValue}")
+                    if(configuration.nightModeDimValue > 0) {
+                        val dimAmount = brightness - (brightness * configuration.nightModeDimValue/100)
+                        configuration.screenNightModeBrightness = dimAmount
+                    } else {
+                        configuration.screenNightModeBrightness = brightness
+                    }
+                    Timber.d("screenScreenSaverBrightness ${configuration.screenNightModeBrightness}")
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e.message)
+            }
         }
-        setScreenBrightnessLevels()
+    }
+
+    // The user no longer has screen write permission or has chosen to not use this permission
+    // we want reset device to automatic mode and reset the screen brightness to the last brightens settings
+    // we also want to stop using screen brightness
+    fun restoreDeviceBrightnessControl() {
+        if(canWriteScreenSetting()) {
+            Timber.d("restoreDeviceBrightnessControl")
+            configuration.useScreenBrightness = false
+            Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, getCurrentScreenBrightness())
+            configuration.screenBrightness = getCurrentScreenBrightness()
+            try {
+                if(configuration.nightModeDimValue > 0) {
+                    val dimAmount = configuration.screenBrightness - (configuration.screenBrightness * configuration.nightModeDimValue/100)
+                    Timber.d("dimAmount $dimAmount")
+                    configuration.screenNightModeBrightness = dimAmount
+                } else {
+                    configuration.screenNightModeBrightness = configuration.screenBrightness
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            setDeviceBrightnessMode(true)
+        }
+    }
+
+    private fun hasNightMode():Boolean {
+        Timber.d("hasNightMode ${configuration.useNightDayMode}")
+        return configuration.useNightDayMode
+    }
+
+    private fun setDeviceBrightnessControl() {
+        setDeviceBrightnessMode(false)
+        try {
+            Timber.d("configuration.dayNightMode: ${configuration.dayNightMode}")
+            if (configuration.screenBrightness in 1..255 && configuration.dayNightMode == Configuration.SUN_ABOVE_HORIZON) {
+                Timber.d("saved brightness ${configuration.screenBrightness}")
+                val dimAmount = configuration.screenBrightness
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, dimAmount)
+            } else if (configuration.screenNightModeBrightness in 1..255 && configuration.dayNightMode == Configuration.SUN_BELOW_HORIZON) {
+                val dimAmount = configuration.screenNightModeBrightness
+                Timber.d("calculated brightness ${configuration.screenNightModeBrightness}")
+                Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, dimAmount)
+            }
+        } catch (e: SecurityException) {
+            Timber.e(e.message)
+        }
     }
 
     private fun setDeviceBrightnessMode(automatic: Boolean = false) {
@@ -120,5 +199,18 @@ constructor(context: Context, private val configuration: Configuration): Context
         } catch (e: SecurityException) {
             Timber.e(e.message)
         }
+    }
+
+    private fun canWriteScreenSetting(): Boolean {
+        Timber.d("canWriteScreenSetting ")
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(applicationContext)) {
+            Timber.d("canWriteScreenSetting true")
+            return true
+        } else if (Build.VERSION.SDK_INT  < Build.VERSION_CODES.M ) {
+            Timber.d("canWriteScreenSetting true")
+            return true
+        }
+        Timber.d("canWriteScreenSetting false")
+        return false
     }
 }

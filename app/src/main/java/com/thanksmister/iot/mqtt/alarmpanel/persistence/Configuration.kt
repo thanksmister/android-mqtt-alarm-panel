@@ -63,9 +63,17 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 255)
         set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value)
 
-    var screenNightBrightness: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, 155)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS, value)
+    var screenNightModeBrightness: Int
+        get() = sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, 0)
+        set(value) {
+            sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, value)
+        }
+
+    var nightModeDimValue: Int
+        get() = sharedPreferences.getPrefInt(PREF_SCREEN_DIM_VALUE, 25)
+        set(value) {
+            sharedPreferences.setPrefInt(PREF_SCREEN_DIM_VALUE, value)
+        }
 
     var useScreenBrightness: Boolean
         get() = this.sharedPreferences.getPrefBoolean(PREF_SCREEN_BRIGHTNESS, false)
@@ -506,6 +514,8 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
         const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
         const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
+        const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_screen_saver_brightness"
+        const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
         const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
         const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
 
@@ -531,8 +541,8 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"
         const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
-        const val PREF_BRIGHTNESS_FACTOR = .10
-
+        const val PREF_SCREENSAVER_DIM_VALUE = "pref_screensaver_dim_value"
         const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
+        const val PREF_BUTTON_BRIGHTNESS = "pref_screen_saver_brightness"
     }
 }
