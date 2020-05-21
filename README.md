@@ -13,11 +13,12 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 - [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
 
+## Features
+
 The alarm panel acts as an interface for Home Assistant's manual alarm control panel component. You can set the alarm state to away or home, or disarm the alarm using a code. In addition it has some nice features such as weather forecast and screen saver mode.
 
 MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
 
-## Features
 - Stream video, detect motion, detect faces, and read QR Codes.
 - Capture and emailing images when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
