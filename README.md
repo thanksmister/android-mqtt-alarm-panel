@@ -2,6 +2,13 @@
 
 This project is an MQTT Alarm Control Panel was originally created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
 
+
+## Support
+
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community.  You can also join the [ThanksMister Community](https://community.thanksmister.com/) to ask questions or share any helpful information about this project. 
+
+***If you are looking for support for older devices, those running less than Android 4.4, then install one of the APK's from the release section prior to release v0.8.7-beta.0***
+
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ)
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 - [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
@@ -30,11 +37,6 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 
 - The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.  
 
-***If you are looking for support for older devices, those running less than Android 4.4, then install one of the APK's from the release section prior to release v0.8.7-beta.0***
-
-## Support
-
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community. 
 
 ## Screen Shots:
 
