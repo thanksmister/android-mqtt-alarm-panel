@@ -16,14 +16,14 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
@@ -32,16 +32,15 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmPendingView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_ARMED_AWAY
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_ARMED_HOME
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_ARMED_NIGHT
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_ARMING
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_DISABLED
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_DISARMED
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_DISARMING
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_PENDING
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -70,6 +69,7 @@ class ControlsFragment : BaseFragment() {
     interface OnControlsFragmentListener {
         fun publishArmedHome()
         fun publishArmedAway()
+        fun publishArmedNight()
         fun publishDisarmed()
     }
 
@@ -79,23 +79,10 @@ class ControlsFragment : BaseFragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
         super.onActivityCreated(savedInstanceState)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-
-        // TODO this may not be needed since we pick up the state from the mqtt service
-        if (viewModel.isArmed()) {
-            if (viewModel.getAlarmMode() == MODE_ARM_AWAY) {
-                setArmedAwayView()
-            } else if (viewModel.getAlarmMode() == MODE_ARM_HOME) {
-                setArmedHomeView()
-            }
-        } else {
-            setDisarmedView()
-        }
-
         observeViewModel(viewModel)
+        setAlarmDisabled(STATE_DISABLED)
     }
 
     override fun onAttach(context: Context) {
@@ -116,19 +103,16 @@ class ControlsFragment : BaseFragment() {
         alarmPendingView = view.findViewById<AlarmPendingView>(R.id.pendingView)
         alarmView.setOnClickListener {
             if (!hasNetworkConnectivity()) {
-                // we can't change the alarm state without network connection.
                 handleNetworkDisconnect()
             } else if (mqttOptions.isValid) {
-                if (viewModel.getAlarmMode() == MODE_DISARM) {
+                if (configuration.isAlarmDisarmedMode()) {
                     showArmOptionsDialog()
-                } else {
-                    // this isn't configurable, if you want to stop the alarm before it's set
-                    // then we show a countdown dialog with a default time
+                } else if (configuration.isAlarmArmedMode()){
                     showAlarmDisableDialog(configuration.disableTime)
                 }
             } else {
                 if (isAdded) {
-                    dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.text_error_no_alarm_setup))
+                    dialogUtils.showAlertDialog(requireActivity() as BaseActivity, getString(R.string.text_error_no_alarm_setup))
                 }
             }
         }
@@ -146,126 +130,170 @@ class ControlsFragment : BaseFragment() {
                 .subscribe({ state ->
                     Timber.d("Alarm state: " + state)
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
-                    activity?.runOnUiThread {
+                    requireActivity().runOnUiThread {
                         when (state) {
-                            AlarmUtils.STATE_ARM_AWAY -> {
+                            STATE_ARMED_AWAY -> {
                                 dialogUtils.clearDialogs()
-                                hideAlarmPendingView()
-                                viewModel.isArmed(true)
-                                viewModel.setAlarmMode(MODE_ARM_AWAY)
-                                setArmedAwayView()
+                                setArmedAwayView(state)
                             }
-                            AlarmUtils.STATE_ARM_HOME -> {
+                            STATE_ARMED_HOME -> {
                                 dialogUtils.clearDialogs()
-                                hideAlarmPendingView()
-                                viewModel.isArmed(true)
-                                viewModel.setAlarmMode(MODE_ARM_HOME)
-                                setArmedHomeView()
+                                setArmedHomeView(state)
                             }
-                            AlarmUtils.STATE_DISARM -> {
+                            STATE_ARMED_NIGHT -> {
                                 dialogUtils.clearDialogs()
-                                hideAlarmPendingView()
-                                viewModel.setAlarmMode(MODE_DISARM)
-                                setDisarmedView()
+                                setArmedNightView(state)
                             }
-                            AlarmUtils.STATE_PENDING ->
-                                if (configuration.isAlarmPendingMode()) {
-                                    if (viewModel.getAlarmMode() == MODE_ARM_HOME_PENDING || viewModel.getAlarmMode() == MODE_HOME_TRIGGERED_PENDING) {
-                                        setArmedHomeView()
-                                    } else if (viewModel.getAlarmMode() == MODE_ARM_AWAY_PENDING || viewModel.getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING) {
-                                        setArmedAwayView()
-                                    }
-                                } else if (viewModel.getAlarmMode() != MODE_ARM_HOME
-                                        && viewModel.getAlarmMode() != MODE_ARM_AWAY
-                                        && viewModel.getAlarmMode() != MODE_TRIGGERED_PENDING) {
-                                    setPendingView(MODE_ARM_PENDING)
-                                }
-                            AlarmUtils.STATE_ERROR -> {
-                                hideAlarmPendingView()
-                                setDisarmedView()
+                            STATE_DISARMED -> {
+                                dialogUtils.clearDialogs()
+                                setDisarmedView(state)
+                            }
+                            STATE_ARMING -> {
+                                setArmingMode(state)
+                            }
+                            STATE_DISARMING -> {
+                                setDisarmingMode(state)
+                            }
+                            STATE_PENDING ->
+                                setPendingMode(state)
+                            STATE_TRIGGERED ->
+                                setTriggeredMode(state)
+                            else -> {
+                                setDisarmedView(STATE_DISARMED)
                             }
                         }
                     }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
     }
 
-    private fun setArmedAwayView() {
+    private fun setAlarmDisabled(state: String) {
+        viewModel.setAlarmMode(state)
+        alarmText.text = "DISABLED"
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+    }
+
+    private fun setArmedAwayView(state: String) {
+        viewModel.setAlarmMode(state)
         alarmText.setText(R.string.text_armed_away)
         alarmText.setTextColor(resources.getColor(R.color.red))
         alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
+        hideAlarmPendingView()
     }
 
-    private fun setArmedHomeView() {
+    private fun setArmedHomeView(state: String) {
+        viewModel.setAlarmMode(state)
         alarmText.setText(R.string.text_armed_home)
         alarmText.setTextColor(resources.getColor(R.color.yellow))
         alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
+        hideAlarmPendingView()
+    }
+
+    private fun setArmingMode(state: String? = null) {
+        state?.let {
+            viewModel.setAlarmMode(it)
+        }
+        alarmText.text = "ARMING"
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        showArmingView(configuration.pendingTime)
+    }
+
+    private fun setArmedNightView(state: String) {
+        viewModel.setAlarmMode(state)
+        alarmText.text = "ARMED NIGHT"
+        alarmText.setTextColor(resources.getColor(R.color.yellow))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
+        hideAlarmPendingView()
+    }
+
+    private fun setDisarmingMode(state: String? = null) {
+        state?.let {
+            viewModel.setAlarmMode(it)
+        }
+        alarmText.text = "DISARMING"
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        showDisarmingView()
     }
 
     /**
-     * We want to show a pending countdown view for the given
-     * mode which can be arm home, arm away, or arm pending (from HASS).
-     * @param mode PREF_ARM_HOME_PENDING, PREF_ARM_AWAY_PENDING, PREF_ARM_PENDING
+     * We want to show a pending view when alarm triggered.
      */
-    private fun setPendingView(mode: String) {
-        Timber.d("setPendingView: " + mode)
-        viewModel.isArmed(true)
-        viewModel.setAlarmMode(mode)
-        if (MODE_ARM_HOME_PENDING == mode) {
-            alarmText.setText(R.string.text_armed_home)
-            alarmText.setTextColor(resources.getColor(R.color.yellow))
-            alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
-            showAlarmPendingView(configuration.pendingHomeTime)
-        } else if (MODE_ARM_AWAY_PENDING == mode) {
-            alarmText.setText(R.string.text_armed_away)
-            alarmText.setTextColor(resources.getColor(R.color.red))
-            alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
-            showAlarmPendingView(configuration.pendingAwayTime)
-        } else if (MODE_ARM_PENDING == mode) {
-            alarmText.setText(R.string.text_alarm_pending)
-            alarmText.setTextColor(resources.getColor(R.color.gray))
-            alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
-            showAlarmPendingView(configuration.pendingTime)
-            Toast.makeText(activity, "The alarm was set externally, using default pending time.", Toast.LENGTH_LONG).show()
-        }
+    private fun setPendingMode(state: String) {
+        viewModel.setAlarmMode(state)
+        alarmText.text = "TRIGGERED"
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        showArmingView(configuration.pendingTime)
     }
 
-    private fun setDisarmedView() {
-        viewModel.isArmed(false)
-        viewModel.setAlarmMode(MODE_DISARM)
+    private fun setTriggeredMode(state: String) {
+        viewModel.setAlarmMode(state)
+        alarmText.text = "TRIGGERED"
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        showTriggeredView()
+    }
+
+    private fun setDisarmedView(state: String) {
+        viewModel.setAlarmMode(state)
         alarmText.setText(R.string.text_disarmed)
         alarmText.setTextColor(resources.getColor(R.color.green))
         alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_green))
+        hideAlarmPendingView()
     }
 
-    private fun showAlarmPendingView(pendingTime : Int) {
+    private fun showTriggeredView() {
+        if (alarmPendingLayout.isShown) {
+            return
+        }
+        alarmPendingLayout.visibility = View.VISIBLE
+        alarmPendingView?.visibility = View.INVISIBLE
+    }
+
+    private fun showDisarmingView() {
+        if (alarmPendingLayout.isShown) {
+            return
+        }
+        alarmPendingLayout.visibility = View.VISIBLE
+        alarmPendingView?.visibility = View.INVISIBLE
+    }
+
+    private fun showArmingView(pendingTime : Int) {
         if (alarmPendingLayout.isShown || pendingTime == 0) {
             return
         }
         alarmPendingLayout.visibility = View.VISIBLE
-        alarmPendingView!!.alarmListener = (object : AlarmPendingView.ViewListener {
+        alarmPendingView?.visibility = View.VISIBLE
+        alarmPendingView?.alarmListener = (object : AlarmPendingView.ViewListener {
             override fun onTimeOut() {
                 hideAlarmPendingView()
             }
         })
-        alarmPendingView!!.startCountDown(pendingTime)
+        alarmPendingView?.startCountDown(pendingTime)
     }
 
     private fun hideAlarmPendingView() {
         alarmPendingLayout.visibility = View.GONE
-        alarmPendingView!!.stopCountDown()
+        alarmPendingView?.stopCountDown()
     }
 
     private fun showArmOptionsDialog() {
         dialogUtils.showArmOptionsDialog(activity as BaseActivity, object : ArmOptionsView.ViewListener {
             override fun onArmHome() {
-                mListener!!.publishArmedHome()
-                setPendingView(MODE_ARM_HOME_PENDING)
+                setArmingMode()
+                mListener?.publishArmedHome()
                 dialogUtils.clearDialogs()
             }
-
             override fun onArmAway() {
-                mListener!!.publishArmedAway()
-                setPendingView(MODE_ARM_AWAY_PENDING)
+                setArmingMode()
+                mListener?.publishArmedAway()
+                dialogUtils.clearDialogs()
+            }
+            override fun onArmNight() {
+                setArmingMode()
+                mListener?.publishArmedNight()
                 dialogUtils.clearDialogs()
             }
         })
@@ -285,7 +313,6 @@ class ControlsFragment : BaseFragment() {
                 Toast.makeText(activity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
             }
             override fun onCancel() {
-                Timber.d("onCancel")
                 dialogUtils.clearDialogs()
             }
         }, viewModel.getAlarmCode(), delayTime, configuration.fingerPrint)

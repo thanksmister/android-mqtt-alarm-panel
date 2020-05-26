@@ -52,7 +52,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     lateinit var viewModel: MainViewModel
+
     private lateinit var pagerAdapter: PagerAdapter
     private var alertDialog: AlertDialog? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
@@ -87,6 +89,18 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         decorView = window.decorView
 
+        if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        }
+
+        if (configuration.appPreventSleep) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            decorView?.keepScreenOn = true
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            decorView?.keepScreenOn = false
+        }
+
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)
         view_pager.adapter = pagerAdapter
         view_pager.addOnPageChangeListener(this)
@@ -103,7 +117,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.telegramChatId = BuildConfig.TELEGRAM_CHAT_ID
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
             imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
-            imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
+            imageOptions.imageSource = BuildConfig.IMGUR_TAG
             configuration.isFirstTime = false
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)
@@ -124,21 +138,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         // We must be sure we have the instantiated the view model before we observe.
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-
         observeViewModel()
-
-        if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
-        }
-        Timber.d("Prevent Sleep ${configuration.appPreventSleep}")
-        if (configuration.appPreventSleep) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            decorView?.keepScreenOn = true
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            decorView?.keepScreenOn = false
-        }
-
     }
 
     override fun onStart() {
@@ -163,7 +163,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         }
         resetInactivityTimer()
     }
-
+    
     private fun observeViewModel() {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
@@ -172,20 +172,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                     this@MainActivity.runOnUiThread {
                         Timber.d("onStart state: " + state)
                         when (state) {
-                            AlarmUtils.STATE_DISARM -> {
-                                awakenDeviceForAction()
-                                resetInactivityTimer()
-                            }
-                            AlarmUtils.STATE_ARM_AWAY,
-                            AlarmUtils.STATE_ARM_HOME -> {
-                                awakenDeviceForAction()
-                                resetInactivityTimer()
-                            }
                             AlarmUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction() // 3 hours
                                 stopDisconnectTimer() // stop screen saver mode
                                 clearInactivityTimer() // Remove inactivity timer
                             }
+                            AlarmUtils.STATE_DISARMED,
+                            AlarmUtils.STATE_ARMED_AWAY,
+                            AlarmUtils.STATE_ARMED_HOME,
+                            AlarmUtils.STATE_ARMING,
+                            AlarmUtils.STATE_DISARMING,
                             AlarmUtils.STATE_PENDING -> {
                                 awakenDeviceForAction()
                                 resetInactivityTimer()
@@ -242,6 +238,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         if(localBroadCastManager != null) {
             localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
         }
+        super.onPause()
+       /* val activityManager = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        activityManager.moveTaskToFront(taskId, 0)*/
     }
 
     override fun onDestroy() {
@@ -256,11 +255,12 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         }
     }
 
+    // TODO make this play nice for back button
     override fun onBackPressed() {
         if (view_pager.currentItem == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed()
+            //super.onBackPressed()
         } else if ((pagerAdapter as MainSlidePagerAdapter).getCurrentFragment()!!.onBackPressed()){
             // backpress handled by fragment do nothing
         } else {
@@ -335,6 +335,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         Timber.d("publishArmedAway")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_AWAY)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    override fun publishArmedNight() {
+        Timber.d("publishArmedNight")
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_NIGHT)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }

@@ -109,9 +109,7 @@ class MainFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        buttonSleep?.let {
-            it.setOnTouchListener(null)
-        }
+        buttonSleep?.setOnTouchListener(null)
         listener = null
         Timber.d("onDetach")
     }
@@ -125,16 +123,22 @@ class MainFragment : BaseFragment() {
                     Timber.d("Alarm mode: ${viewModel.getAlarmMode()}" )
                     activity?.runOnUiThread {
                         when (state) {
-                            AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
+                            AlarmUtils.STATE_ARMED_AWAY,
+                            AlarmUtils.STATE_ARMED_NIGHT,
+                            AlarmUtils.STATE_ARMED_HOME -> {
                                 dialogUtils.clearDialogs()
                             }
-                            AlarmUtils.STATE_DISARM -> {
+                            AlarmUtils.STATE_DISARMING,
+                            AlarmUtils.STATE_ARMING -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            AlarmUtils.STATE_DISARMED -> {
                                 dialogUtils.clearDialogs()
                                 hideTriggeredView()
                             }
                             AlarmUtils.STATE_PENDING -> {
                                 dialogUtils.clearDialogs()
-                                if (configuration.isAlarmDisableMode()) {
+                                if (configuration.isAlarmArmedMode()) {
                                     showAlarmDisableDialog(viewModel.getAlarmDelayTime())
                                 }
                             }

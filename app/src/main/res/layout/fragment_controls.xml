@@ -92,6 +92,7 @@
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@string/text_alarm_pending"
                     tools:text="@string/text_alarm_pending"/>
 
         </LinearLayout>

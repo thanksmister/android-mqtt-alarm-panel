@@ -418,6 +418,8 @@
     <string name="pref_button_brightness_summary">Click to update and save the current device screen brightness.</string>
     <string name="preference_title_screensaver_dim">Dim screen…</string>
     <string name="preference_summary_dim_screensaver" formatted="false">By a maximum of %1$s percent when screen brightness active.</string>
+    <string name="toast_alarm_set_by_server">The alarm was set externally, using default pending time.</string>
+    <string name="text_armed_night">ARMED NIGHT</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

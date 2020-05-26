@@ -17,6 +17,7 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -92,6 +93,7 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
     override fun onResume() {
         super.onResume()
         inactivityHandler.postDelayed(inactivityCallback, 60000)
+        checkPermissions()
     }
 
     override fun onDestroy() {
@@ -103,6 +105,25 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
         inactivityHandler.removeCallbacks(inactivityCallback)
         inactivityHandler.postDelayed(inactivityCallback, 60000)
     }
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                try {
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+
+                } catch (e: RuntimeException) {
+                    Timber.e("Permissions error: ${e.message}")
+                }
+                return
+            }
+        }
+    }
+
 
     private fun logs() {
         val intent = LogActivity.createStartIntent(this@SettingsActivity)

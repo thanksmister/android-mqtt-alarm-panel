@@ -21,6 +21,7 @@ import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.STATE_DISARMED
 
 import dpreference.DPreference
 import javax.inject.Inject
@@ -80,7 +81,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         set(value) = this.sharedPreferences.setPrefBoolean(PREF_SCREEN_BRIGHTNESS, value)
 
     var alarmMode: String
-        get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
+        get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, STATE_DISARMED)
         set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
 
     var fullScreen: Boolean
@@ -118,6 +119,10 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     var delayHomeTime: Int
         get() = this.sharedPreferences.getPrefInt(PREF_HOME_DELAY_TIME, AlarmUtils.DELAY_HOME_TIME)
         set(value) = this.sharedPreferences.setPrefInt(PREF_HOME_DELAY_TIME, value)
+
+    var delayNightTime: Int
+        get() = this.sharedPreferences.getPrefInt(PREF_NIGHT_DELAY_TIME, AlarmUtils.DELAY_NIGHT_TIME)
+        set(value) = this.sharedPreferences.setPrefInt(PREF_NIGHT_DELAY_TIME, value)
 
     var delayAwayTime: Int
         get() = this.sharedPreferences.getPrefInt(PREF_AWAY_DELAY_TIME, AlarmUtils.DELAY_AWAY_TIME)
@@ -397,25 +402,31 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun isAlarmTriggeredMode(): Boolean {
-        return alarmMode == AlarmUtils.MODE_TRIGGERED
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING
+        return alarmMode == AlarmUtils.STATE_TRIGGERED
     }
 
     fun isAlarmPendingMode(): Boolean {
-        return (alarmMode == AlarmUtils.MODE_ARM_AWAY_PENDING
-                || alarmMode == AlarmUtils.MODE_ARM_HOME_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING)
+        return alarmMode == AlarmUtils.STATE_PENDING
     }
 
-    fun isAlarmDisableMode(): Boolean {
-        return (alarmMode == AlarmUtils.MODE_ARM_HOME
-                || alarmMode == AlarmUtils.MODE_ARM_AWAY
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING)
+    fun isAlarmArmingMode(): Boolean {
+        return alarmMode == AlarmUtils.STATE_ARMING
+    }
+
+    fun isAlarmArmedMode(): Boolean {
+        return (alarmMode == AlarmUtils.STATE_ARMED_HOME
+                || alarmMode == AlarmUtils.STATE_ARMED_AWAY
+                || alarmMode == AlarmUtils.STATE_ARMED_NIGHT)
+    }
+
+    /*
+    == AlarmUtils.MODE_ARMED_HOME
+                                    || configuration.alarmMode == AlarmUtils.MODE_ARMED_NIGHT
+                                    || configuration.alarmMode == AlarmUtils.MODE_ARMED_AWAY
+     */
+
+    fun isAlarmDisarmedMode(): Boolean {
+        return alarmMode == AlarmUtils.STATE_DISARMED
     }
     
     /**
@@ -448,6 +459,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         sharedPreferences.removePreference(PREF_DEVICE_SCREEN_TIMEOUT)
         sharedPreferences.removePreference(PREF_AWAY_DELAY_TIME)
         sharedPreferences.removePreference(PREF_HOME_DELAY_TIME)
+        sharedPreferences.removePreference(PREF_NIGHT_DELAY_TIME)
         sharedPreferences.removePreference(PREF_DELAY_TIME)
         sharedPreferences.removePreference(PREF_AWAY_PENDING_TIME)
         sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
@@ -478,6 +490,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
         const val PREF_DELAY_TIME = "pref_delay_time"
         const val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
+        const val PREF_NIGHT_DELAY_TIME = "pref_night_delay_time"
         const val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
         const val PREF_ALARM_MODE = "pref_alarm_mode"
         const val PREF_ALARM_CODE = "pref_alarm_code"

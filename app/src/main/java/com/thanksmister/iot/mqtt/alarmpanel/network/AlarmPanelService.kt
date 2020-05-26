@@ -387,25 +387,33 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             insertMessage(id, topic, payload)
         } else if (mqttOptions.getAlarmStateTopic() == topic && AlarmUtils.hasSupportedStates(payload)) {
             when (payload) {
-                AlarmUtils.STATE_DISARM -> {
+                AlarmUtils.STATE_DISARMED -> {
                     switchScreenOn(AWAKE_TIME)
                     if (configuration.hasSystemAlerts()) {
                         notifications.clearNotification()
                     }
                 }
-                AlarmUtils.STATE_ARM_AWAY,
-                AlarmUtils.STATE_ARM_HOME -> {
+                AlarmUtils.STATE_ARMING,
+                AlarmUtils.STATE_DISARMING -> {
+                    switchScreenOn(AWAKE_TIME)
+                    if (configuration.hasSystemAlerts()) {
+                        notifications.clearNotification()
+                    }
+                }
+                AlarmUtils.STATE_ARMED_AWAY,
+                AlarmUtils.STATE_ARMED_NIGHT,
+                AlarmUtils.STATE_ARMED_HOME -> {
                     switchScreenOn(AWAKE_TIME)
                 }
                 AlarmUtils.STATE_TRIGGERED -> {
                     switchScreenOn(TRIGGERED_AWAKE_TIME) // 3 hours
-                    if (configuration.alarmMode == AlarmUtils.MODE_TRIGGERED && configuration.hasSystemAlerts()) {
+                    if (configuration.alarmMode == AlarmUtils.STATE_TRIGGERED && configuration.hasSystemAlerts()) {
                         notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
                     }
                 }
                 AlarmUtils.STATE_PENDING -> {
                     switchScreenOn(AWAKE_TIME)
-                    if ((configuration.alarmMode == AlarmUtils.MODE_ARM_HOME || configuration.alarmMode == AlarmUtils.MODE_ARM_AWAY) && configuration.hasSystemAlerts()) {
+                    if (configuration.isAlarmArmedMode() && configuration.hasSystemAlerts()) {
                         notifications.createAlarmNotification(getString(R.string.text_notification_entry_title), getString(R.string.text_notification_entry_description))
                     }
                 }

@@ -35,6 +35,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_FINGERPRINT
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_PENDING_TIME
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_NIGHT_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
@@ -197,6 +198,20 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                     delayAwayPreference!!.text = configuration.delayAwayTime.toString()
                 }
             }
+            // TODO configure preferences for new modes and delays
+            PREF_NIGHT_DELAY_TIME -> {
+                value = delayHomePreference!!.text
+                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
+                    val pendingTime = Integer.parseInt(value)
+                    configuration.delayHomeTime = pendingTime
+                    delayHomePreference!!.text = pendingTime.toString()
+                    delayHomePreference!!.summary = getString(R.string.pref_home_delay_summary, pendingTime.toString())
+                } else if (isAdded) {
+                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    delayHomePreference!!.text = configuration.delayHomeTime.toString()
+                }
+            }
+
             PREF_HOME_PENDING_TIME -> {
                 value = pendingHomePreference!!.text
                 if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {

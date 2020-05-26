@@ -24,12 +24,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_TYPE
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_AWAY
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_ARM_HOME
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_AWAY_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_HOME_TRIGGERED_PENDING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_TRIGGERED_PENDING
 
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Completable
@@ -45,7 +39,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
             private val mqttOptions: MQTTOptions) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
-    private var armed: Boolean = false
     private val toastText = ToastMessage()
     private val alertText = AlertMessage()
     private val snackbarText = SnackbarMessage()
@@ -75,19 +68,9 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     @AlarmUtils.AlarmStates
-    private fun setAlarmModeFromState(state: String) {
-        if(state == AlarmUtils.STATE_PENDING) {
-            if (getAlarmMode() == MODE_ARM_HOME || getAlarmMode() == MODE_ARM_AWAY) {
-                if (getAlarmMode() == MODE_ARM_HOME){
-                    setAlarmMode(MODE_HOME_TRIGGERED_PENDING);
-                } else if(getAlarmMode() == MODE_ARM_AWAY) {
-                    setAlarmMode(MODE_AWAY_TRIGGERED_PENDING);
-                } else {
-                    setAlarmMode(MODE_TRIGGERED_PENDING);
-                }
-            }
-        } else if (state == AlarmUtils.STATE_TRIGGERED) {
-            setAlarmMode(MODE_TRIGGERED)
+    private fun setAlarmModeFromState(state: String?) {
+        state?.let {
+            setAlarmMode(state)
         }
     }
 
@@ -102,12 +85,12 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     }
 
     fun getAlarmDelayTime(): Int {
-        if(getAlarmMode() == MODE_ARM_AWAY || getAlarmMode() == MODE_AWAY_TRIGGERED_PENDING) {
-            return configuration.delayAwayTime
-        } else if (getAlarmMode() == MODE_ARM_HOME || getAlarmMode() == MODE_HOME_TRIGGERED_PENDING) {
-            return configuration.delayHomeTime
+        return when(getAlarmMode()) {
+            AlarmUtils.STATE_ARMING -> {
+                configuration.delayAwayTime
+            }
+            else -> configuration.delayTime
         }
-        return configuration.delayTime
     }
 
     fun getAlarmCode(): Int {
@@ -116,14 +99,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
 
     fun getAlarmMode(): String {
         return configuration.alarmMode
-    }
-
-    fun isArmed(value: Boolean) {
-        armed = value
-    }
-
-    fun isArmed(): Boolean {
-        return armed
     }
 
     /**
@@ -141,7 +116,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
                 .map {messages -> messages[messages.size - 1]}
                 .map {message ->
                     Timber.d("state: " + message.payload)
-                    setAlarmModeFromState(message.payload!!)
+                    setAlarmModeFromState(message.payload)
                     message.payload
                 }
     }

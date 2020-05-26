@@ -17,6 +17,8 @@
 package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -88,7 +90,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
-        checkPermissions()
+        //checkPermissions()
         if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false // reset
             Timber.d("dayNightModeChanged")
@@ -113,8 +115,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun dayNightModeCheck(sunValue:String?, force: Boolean = false) {
-        Timber.d("dayNightModeCheck $sunValue")
-        Timber.d("configuration.dayNightMode ${configuration.dayNightMode}")
         val nightMode = AppCompatDelegate.getDefaultNightMode()
         if(sunValue == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) ) {
             configuration.dayNightMode = sunValue
@@ -138,7 +138,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     fun showScreenSaver() {
-        Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
         if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
             val hasWeather = configuration.showWeatherModule()
             val isImperial = configuration.weatherUnitsImperial
@@ -158,9 +157,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun hideScreenSaver() {
-        Timber.d("hideScreenSaver")
         dialogUtils.hideScreenSaverDialog()
-        //screenUtils.setScreenSaverBrightness(false)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
