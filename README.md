@@ -128,7 +128,7 @@ You can also use MQTT to publish the weather to the Alarm Panel application, whi
   condition: []
   action:
   - data:
-      payload_template: {% raw %}"{'weather':{{states.weather.dark_sky.attributes}}}"{% endraw %}
+      payload_template: "{'weather':{{states.weather.dark_sky.attributes}}}"
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
@@ -144,7 +144,7 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 
 ```
 {
-  "payload_template": {% raw %}"{'weather':{{states.weather.dark_sky.attributes}}}"{% endraw %},
+  "payload_template": "{'weather':{{states.weather.dark_sky.attributes}}}",
   "retain": true,
   "topic": "alarmpanel/command"
 }
@@ -182,7 +182,7 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 
 ```
 {
-  "payload_template": {% raw %}"{'sun':'{{states('sun.sun')}}'}"{% endraw %},
+  "payload_template": "{'sun':'{{states('sun.sun')}}'}",
   "topic": "alarmpanel/command"
 }
 ```
