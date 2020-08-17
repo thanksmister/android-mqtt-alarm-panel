@@ -155,18 +155,18 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon).  To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish an MQTT message on an interval:
 
 ```
-- alias: MQTT Sun
-  id: '1539017708085'
+- id: '1539017708085'
+  alias: MQTT Sun
   trigger:
+  - minutes: /30
     platform: time_pattern
-    minutes: '/30'
-      #  condition: []
+  condition: []
   action:
-    service: mqtt.publish
-    data:
-      payload_template: {% raw %}"{'sun':'{{states('sun.sun')}}'}"{% endraw %}
+  - data:
+      payload_template: '{''sun'':''{{states(''sun.sun'')}}''}'
       retain: true
       topic: alarmpanel/command
+    service: mqtt.publish
 ```
 
 The resulting payload will look like this:
