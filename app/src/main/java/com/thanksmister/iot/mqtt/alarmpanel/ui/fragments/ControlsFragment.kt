@@ -225,6 +225,7 @@ class ControlsFragment : BaseFragment() {
             alarmText.setTextColor(resources.getColor(R.color.gray))
             alarmButtonBackground.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
             showAlarmPendingView(configuration.pendingTime)
+            // TODO we need translations for this message
             Toast.makeText(activity, "The alarm was set externally, using default pending time.", Toast.LENGTH_LONG).show()
         }
     }
@@ -242,13 +243,14 @@ class ControlsFragment : BaseFragment() {
             return
         }
         alarmPendingLayout.visibility = View.VISIBLE
-        alarmPendingView!!.alarmListener = (object : AlarmPendingView.ViewListener {
+        alarmPendingView?.setListener( object : AlarmPendingView.ViewListener {
             override fun onTimeOut() {
                 hideAlarmPendingView()
             }
         })
-        alarmPendingView!!.setUseSound(configuration.systemSounds)
-        alarmPendingView!!.startCountDown(pendingTime)
+        // for home we do not need a pending sound
+        alarmPendingView?.setUseSound(configuration.systemSounds)
+        alarmPendingView?.startCountDown(pendingTime)
     }
 
     private fun hideAlarmPendingView() {

@@ -17,31 +17,27 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 
 import android.content.Context
-import android.os.CountDownTimer
-import android.util.AttributeSet
-import android.view.animation.RotateAnimation
-import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
-import timber.log.Timber
-import android.net.Uri
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
-import java.io.FileNotFoundException
+import android.net.Uri
+import android.os.CountDownTimer
+import android.os.Handler
+import android.util.AttributeSet
+import android.view.animation.RotateAnimation
+import android.widget.LinearLayout
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
+import timber.log.Timber
+import java.io.FileNotFoundException
 
 class AlarmPendingView : LinearLayout {
 
-    var alarmListener: ViewListener? = null
-    var useSystemSounds: Boolean = true
+    private var alarmListener: ViewListener? = null
+    private var useSystemSounds: Boolean = true
     private var mediaPlayer: MediaPlayer? = null
-
-    /**
-     * Method to return number of display seconds remaining on countdown.
-     * @return Integer for seconds remaining.
-     */
-    var countDownTimeRemaining: Int = 0
-
+    private var pendingSoundFlag = false
+    private var countDownTimeRemaining: Int = 0
     private var countDownTimer: CountDownTimer? = null
 
     constructor(context: Context) : super(context) {
@@ -53,14 +49,11 @@ class AlarmPendingView : LinearLayout {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         destroySoundUtils()
         stopCountDown()
+        alarmListener = null
     }
 
     fun setUseSound(value: Boolean) {
@@ -68,37 +61,39 @@ class AlarmPendingView : LinearLayout {
     }
 
     fun destroySoundUtils() {
-        if(mediaPlayer != null) {
+        pendingSoundFlag = false
+        if (mediaPlayer != null) {
             mediaPlayer?.stop()
         }
-	mediaPlayer = null
+        mediaPlayer = null
     }
 
-    fun playContinuousAlarm() {
-        if(useSystemSounds) {
+    private fun playContinuousAlarm() {
+        if (useSystemSounds && !pendingSoundFlag) {
             try {
-                var alert: Uri? = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                val alert: Uri? = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 if (alert == null) {
-                    alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                    if (alert == null) {
-                        alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-                    }
+                    playContinuousBeep()
+                    return
                 }
-                mediaPlayer = MediaPlayer.create(context!!, alert)
-                mediaPlayer?.isLooping = true
-                mediaPlayer?.start()
+                pendingSoundFlag = true
+                Handler().postDelayed(Runnable { // Do something after 5s = 5000ms
+                    if(pendingSoundFlag) {
+                        mediaPlayer = MediaPlayer.create(context!!, alert)
+                        mediaPlayer?.isLooping = true
+                        mediaPlayer?.start()
+                    }
+                }, 500)
             } catch (e: SecurityException) {
                 playContinuousBeep()
-            } catch(e: FileNotFoundException) {
+            } catch (e: FileNotFoundException) {
                 playContinuousBeep()
             }
-        } else {
-            playContinuousBeep()
         }
     }
 
     private fun playContinuousBeep() {
-        Timber.d("playContinuousBeep")
+        pendingSoundFlag = false
         mediaPlayer = MediaPlayer.create(context!!, R.raw.beep_loop)
         mediaPlayer?.isLooping = true
         mediaPlayer?.start()
@@ -113,7 +108,6 @@ class AlarmPendingView : LinearLayout {
      * @param pendingTime seconds
      */
     fun startCountDown(pendingTime: Int) {
-
         if (pendingTime <= 0) {
             stopCountDown()
             if (alarmListener != null) {
@@ -129,7 +123,6 @@ class AlarmPendingView : LinearLayout {
             countDownTimeRemaining = 0
         }
         playContinuousAlarm()
-        Timber.d("startCountDown: " + pendingTime * 1300)
         val divideBy = 360 / pendingTime
         countDownTimer = object : CountDownTimer((pendingTime * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -146,7 +139,7 @@ class AlarmPendingView : LinearLayout {
                     alarmListener!!.onTimeOut()
                     countDownTimeRemaining = 0
                 }
-		destroySoundUtils()
+                destroySoundUtils()
             }
         }.start()
     }
@@ -157,7 +150,7 @@ class AlarmPendingView : LinearLayout {
             countDownTimer = null
         }
         countDownTimeRemaining = 0
-	destroySoundUtils()
+        destroySoundUtils()
     }
 
     interface ViewListener {
