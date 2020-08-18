@@ -247,6 +247,7 @@ class ControlsFragment : BaseFragment() {
                 hideAlarmPendingView()
             }
         })
+        alarmPendingView!!.setUseSound(configuration.systemSounds)
         alarmPendingView!!.startCountDown(pendingTime)
     }
 
