@@ -73,7 +73,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
             screenSaverDialog?.let {
                 if (it.isShowing) {
                     it.dismiss()
-                    it.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    it.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     screenSaverDialog = null
                     return true
                 }

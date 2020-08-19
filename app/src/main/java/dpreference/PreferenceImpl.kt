@@ -27,7 +27,7 @@ internal class PreferenceImpl(private val mContext: Context, private val mPrefNa
     override fun getPrefString(key: String,
                                defaultValue: String): String {
         val settings = mContext.getSharedPreferences(mPrefName, Context.MODE_PRIVATE)
-        return settings.getString(key, defaultValue)
+        return settings.getString(key, defaultValue)?:""
     }
 
     override fun setPrefString(key: String, value: String) {
