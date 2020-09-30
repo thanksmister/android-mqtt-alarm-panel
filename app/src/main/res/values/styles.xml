@@ -117,6 +117,12 @@
         <item name="android:paddingTop">2dp</item>
     </style>
 
+    <style name="TextAppearance.TextStateTitle">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_state</item>
+    </style>
+
+
     <style name="TextAppearance" parent="@style/AppTextAppearance">
         <item name="android:ellipsize">end</item>
     </style>

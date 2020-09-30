@@ -1,20 +1,16 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
+
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
-
-repositories {
-    mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
-}
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 def versionMajor = 0
 def versionMinor = 8
 def versionPatch = 9
-def versionBuild = 1 // bump for dog food builds, public betas, etc.
+def versionBuild = 2 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -205,7 +201,7 @@ dependencies {
 
     // LiveData + ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
+    kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-reactivestreams:$versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$versions.lifecycle"
 
@@ -259,13 +255,12 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.9'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
 
-    // (Recommended) Add Analytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    // Add the Firebase Crashlytics SDK.
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
-    compile('com.crashlytics.sdk.android:answers:1.4.7@aar') {
-        transitive = true;
-    }
+    // Recommended: Add the Google Analytics SDK.
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
 }

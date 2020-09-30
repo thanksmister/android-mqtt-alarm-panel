@@ -18,15 +18,13 @@ package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.content.Context
 import androidx.multidex.MultiDex
-import com.crashlytics.android.Crashlytics
+
 import com.facebook.stetho.Stetho
 import com.thanksmister.iot.mqtt.alarmpanel.di.DaggerApplicationComponent
 import com.thanksmister.iot.mqtt.alarmpanel.utils.CrashlyticsTree
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import io.fabric.sdk.android.Fabric
 import timber.log.Timber
-import com.crashlytics.android.answers.Answers
 
 class BaseApplication : DaggerApplication() {
 
@@ -43,8 +41,8 @@ class BaseApplication : DaggerApplication() {
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
         } else {
-            Fabric.with(this, Answers())
-            Fabric.with(this, Crashlytics())
+            //Fabric.with(this, Answers())
+            //Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())
         }
     }

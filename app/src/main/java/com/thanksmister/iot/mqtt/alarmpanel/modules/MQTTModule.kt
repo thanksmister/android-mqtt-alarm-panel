@@ -27,14 +27,14 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
 
-class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val listener: MQTTListener) : ContextWrapper(base),
+class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQTTListener) : ContextWrapper(base),
         LifecycleObserver,
         MQTTService.MqttManagerListener {
 
     private var mqttService: MQTTService? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private fun start() {
+    fun start() {
         Timber.d("start")
         if (mqttService == null) {
             try {
@@ -56,7 +56,7 @@ class MQTTModule (base: Context?, var mqttOptions: MQTTOptions, private val list
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun stop() {
+    fun stop() {
         Timber.d("stop")
         mqttService?.let {
             try {
