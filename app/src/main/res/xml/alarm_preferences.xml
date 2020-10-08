@@ -31,7 +31,7 @@
             tools:visiblity="visible"
             android:visibility="gone"/>
 
-        <EditTextPreference
+        <!--<EditTextPreference
             android:key="pref_pending_time"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
@@ -76,7 +76,7 @@
         <Preference
             android:key="pref_description"
             android:selectable="false"
-            android:summary="@string/pref_pending_times_description" />
+            android:summary="@string/pref_pending_times_description" />-->
 
     </PreferenceCategory>
 

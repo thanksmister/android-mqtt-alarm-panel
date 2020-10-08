@@ -33,90 +33,106 @@ class MqttUtils {
 
     companion object {
 
+        // TODO use the rest of these in the app
         const val TYPE_ALARM = "alarm"
         const val TYPE_CONTROL = "control"
         const val TYPE_COMMAND = "command"
 
         const val PORT = 1883
-
-        const val BASE_TOPIC = "alarmpanel"
-
         const val TOPIC_COMMAND = "command"
-        const val VALUE = "value"
+        const val COMMAND_STATE = "state"
+        const val PANIC_STATE = "panic"
 
+        const val VALUE = "value"
+        const val ACTION = "value"
+        const val CODE = "code"
+
+        const val NOTIFICATION_STATE_TOPIC = "home/notification"
+        const val NOTIFICATION_TYPE = "NOTIFICATION"
+        
+        const val COMMAND_SENSOR_FACE = "sensor/face"
+        const val COMMAND_SENSOR_QR_CODE = "sensor/qrcode"
+        const val COMMAND_SENSOR_MOTION = "sensor/motion"
+
+        const val STATE_CURRENT_URL = "currentUrl"
+
+        const val STATE_SCREEN_ON = "screenOn"
+        const val STATE_BRIGHTNESS = "brightness"
+        const val COMMAND_SENSOR_PREFIX = "sensor/"
+
+        const val COMMAND_WAKE = "wake"
         const val COMMAND_AUDIO = "audio"
         const val COMMAND_SPEAK = "speak"
         const val COMMAND_NOTIFICATION = "notification"
         const val COMMAND_ALERT = "alert"
+        const val COMMAND_DEVICE_SENSOR = "sensor"
+        const val COMMAND_CAPTURE = "capture"
+        const val COMMAND_WEATHER = "weather"
+        const val COMMAND_SUN = "sun"
+
+        const val SENSOR_TYPE = "SENSOR"
+        const val SENSOR_GENERIC_TYPE = "GENERIC"
+        const val SENSOR_DOOR_TYPE = "DOOR"
+        const val SENSOR_WINDOW_TYPE = "WINDOW"
+        const val SENSOR_SOUND_TYPE = "SOUND"
+        const val SENSOR_MOTION_TYPE = "MOTION"
+        const val SENSOR_CAMERA_TYPE = "CAMERA"
 
         // commands
         const val COMMAND_ARM_HOME = "ARM_HOME"
         const val COMMAND_ARM_NIGHT = "ARM_NIGHT"
         const val COMMAND_ARM_AWAY = "ARM_AWAY"
         const val COMMAND_DISARM = "DISARM"
-        const val COMMAND_ARM_CUSTOM_BYPASS = "ARM_CUSTOM_BYPASS"
         const val COMMAND_ON = "ON"
-        const val COMMAND_OFF = "OFF"
-        const val COMMAND_OPEN = "OPEN"
-        const val COMMAND_CLOSE = "CLOSE"
-
-        const val ALARM_COMMAND_TOPIC = "home/alarm/set"
-        const val ALARM_STATE_TOPIC = "home/alarm"
-
-        const val GARAGE_COMMAND_TOPIC = "home/garage/set"
-        const val GARAGE_STATE_TOPIC = "home/garage"
-
-        const val DOOR_COMMAND_TOPIC = "home/door/set"
-        const val DOOR_STATE_TOPIC = "home/door"
-
-        const val ALERT_COMMAND_TOPIC = "home/alert/set"
-        const val ALERT_STATE_TOPIC = "home/alert"
 
         // mqtt states
         const val STATE_DISARMED = "disarmed"
         const val STATE_ARMED_AWAY = "armed_away"
         const val STATE_ARMED_HOME = "armed_home"
-        const val STATE_ARMED_CUSTOM_BYPASS = "armed_custom_bypass"
         const val STATE_ARMED_NIGHT = "armed_night"
         const val STATE_PENDING = "pending"
         const val STATE_ARMING = "arming"
-        const val STATE_DISARMING = "disarming"
+        const val STATE_ARMING_AWAY = "arming_away"
+        const val STATE_ARMING_HOME = "arming_home"
+        const val STATE_ARMING_NIGHT = "arming_night"
+
+        //const val DEFAULT_ALERT_TOPIC = "home/alert/set"
+        const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
+        const val DEFAULT_CONFIG_TOPIC = "home/alarm/config"
+        const val DEFAULT_STATE_TOPIC = "home/alarm"
+        const val DEFAULT_STATUS_TOPIC = "home/alarm/status"
+        const val DEFAULT_PANEL_COMMAND_TOPIC = "alarmpanel"
+        const val DEFAULT_INVALID = "INVALID"
+
         const val STATE_TRIGGERED = "triggered"
         const val STATE_DISABLED = "disabled"
-        const val STATE_ON = "on"
-        const val STATE_OFF = "off"
-        const val STATE_OPEN = "open"
-        const val STATE_CLOSE = "close"
 
         private val supportedCommands = ArrayList<String>()
         private val supportedStates = ArrayList<String>()
-
+        val sensorTypes = java.util.ArrayList<String>()
+        
         init {
             supportedCommands.add(COMMAND_ARM_HOME)
             supportedCommands.add(COMMAND_ARM_AWAY)
             supportedCommands.add(COMMAND_ARM_NIGHT)
             supportedCommands.add(COMMAND_DISARM)
-            supportedCommands.add(COMMAND_ARM_CUSTOM_BYPASS)
-            supportedCommands.add(COMMAND_ON)
-            supportedCommands.add(COMMAND_OFF)
-            supportedCommands.add(COMMAND_CLOSE)
-        }
-
-        init {
             supportedStates.add(STATE_DISARMED)
             supportedStates.add(STATE_ARMED_AWAY)
             supportedStates.add(STATE_ARMED_HOME)
-            supportedStates.add(STATE_ARMED_CUSTOM_BYPASS)
             supportedStates.add(STATE_PENDING)
             supportedStates.add(STATE_ARMING)
-            supportedStates.add(STATE_DISARMING)
+            supportedStates.add(STATE_ARMING_AWAY)
+            supportedStates.add(STATE_ARMING_HOME)
+            supportedStates.add(STATE_ARMING_NIGHT)
             supportedStates.add(STATE_TRIGGERED)
-            supportedStates.add(STATE_ON)
-            supportedStates.add(STATE_OFF)
-            supportedStates.add(STATE_OPEN)
-            supportedStates.add(STATE_CLOSE)
+            sensorTypes.add(SENSOR_GENERIC_TYPE)
+            sensorTypes.add(SENSOR_DOOR_TYPE)
+            sensorTypes.add(SENSOR_WINDOW_TYPE)
+            sensorTypes.add(SENSOR_SOUND_TYPE)
+            sensorTypes.add(SENSOR_MOTION_TYPE)
+            sensorTypes.add(SENSOR_CAMERA_TYPE)
         }
-
+        
         @Deprecated ("We don't need a callback for the client.")
         fun getMqttAndroidClient(context: Context, serverUri: String, clientId: String,
                                  mqttCallbackExtended: MqttCallbackExtended): MqttAndroidClient {

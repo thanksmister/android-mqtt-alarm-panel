@@ -79,15 +79,21 @@ class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQ
         stop()
     }
 
-    fun publishAlarm(command : String) {
-        Timber.d("command: $command")
-        mqttService?.publishAlarm(command)
+    fun publishAlarm(action : String, code: String?) {
+        Timber.d("action: $action")
+        Timber.d("code: $code")
+        mqttService?.publishAlarm(action, code)
     }
 
-    // TODO update service to have two different publishAlarm
+    fun publishCommand(command : String, message: String) {
+        Timber.d("state command: $command message $message")
+        mqttService?.publishCommand(command, message)
+    }
+
+    @Deprecated("use publish command")
     fun publishState(command : String, message: String) {
         Timber.d("state command: $command")
-        mqttService?.publishState(command, message)
+        mqttService?.publishCommand(command, message)
     }
 
     override fun subscriptionMessage(id: String, topic: String, payload: String) {

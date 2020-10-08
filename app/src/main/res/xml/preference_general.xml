@@ -1,0 +1,140 @@
+<!--
+  ~ Copyright (c) 2020 ThanksMister LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed
+  ~ under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <PreferenceCategory android:title="@string/preference_title_alarm">
+
+        <Preference
+            android:key="button_alarm_code"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:icon="@drawable/ic_lock"
+            android:summary="@string/preference_summary_security_code"
+            android:title="@string/preference_title_security_code" />
+
+        <SwitchPreference
+            android:key="pref_fingerprint"
+            android:summary="@string/pref_fingerprint_summary"
+            android:title="@string/pref_fingerprint_title"
+            android:icon="@drawable/ic_fingerprint"
+            tools:visiblity="visible"
+            android:visibility="gone"/>
+
+        <SwitchPreference
+            android:key="pref_panic_button"
+            android:summary="Displays a panic button on the main screen that when pressed sends a panic alert message."
+            android:icon="@drawable/alarm_light"
+            android:title="Panic Button" />
+
+        <SwitchPreference
+            android:key="pref_dark_theme"
+            android:summary="Use Dark theme (overrides Sun settings)"
+            android:title="Theme" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Settings">
+
+        <Preference
+            android:icon="@drawable/ic_cloud"
+            android:key="button_mqtt"
+            android:title="@string/text_mqtt_settings"
+            android:summary="@string/preference_summary_mqtt_server"/>
+
+        <Preference
+            android:icon="@drawable/ic_wallpaper"
+            android:key="button_screen"
+            android:title="@string/preference_title_display"
+            android:summary="Display settings and screensaver."/>
+
+        <Preference
+            android:icon="@drawable/ic_room_service"
+            android:key="button_notifications"
+            android:title="Notification Settings"
+            android:summary="@string/preference_summary_notification"/>
+
+        <Preference
+            android:icon="@drawable/ic_photo_camera"
+            android:key="button_camera"
+            android:title="@string/preference_camera"
+            android:summary="@string/preference_camera_summary"/>
+
+        <Preference
+            android:icon="@drawable/ic_wb_sunny"
+            android:key="button_weather"
+            android:title="@string/preference_title_weather_settings"
+            android:summary="@string/preference_summary_weather_settings"/>
+
+        <Preference
+            android:icon="@drawable/ic_sensor"
+            android:key="button_sensors"
+            android:title="@string/sensors_settings"
+            android:summary="@string/summary_enable_sensor_data"/>
+
+        <Preference
+            android:icon="@drawable/ic_home"
+            android:key="button_browser"
+            android:title="@string/preference_title_web_settings"
+            android:summary="@string/preference_summary_web_settings"/>
+
+
+    </PreferenceCategory>
+
+    <!--<PreferenceCategory android:title="Alarm Sensors">
+
+        <SwitchPreference
+            android:key="key_sensor_one"
+            android:summary="When active, displays sensor state."
+            android:title="Sensor One" />
+
+        <EditTextPreference
+            android:defaultValue="Sensor One Name"
+            android:key="key_sensor_one_name"
+            android:dependency="key_sensor_one"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="Enter sensor name."
+            android:title="Sensor Two" />
+
+        <SwitchPreference
+            android:key="key_sensor_two"
+            android:summary="When active, displays sensor state."
+            android:title="Sensor Two" />
+
+        <EditTextPreference
+            android:defaultValue="Sensor Two Name"
+            android:key="key_sensor_two_name"
+            android:dependency="key_sensor_two"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="Enter sensor name."
+            android:title="Sensor name" />
+
+    </PreferenceCategory>-->
+
+
+    <PreferenceCategory android:title="@string/text_about">
+
+        <Preference
+            android:icon="@drawable/ic_mister"
+            android:key="button_about"
+            android:title="@string/text_about"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

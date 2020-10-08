@@ -29,13 +29,12 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SensorAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditTextDialogView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_DEVICE_SENSOR
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.SENSOR_GENERIC_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DEVICE_SENSOR
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_GENERIC_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

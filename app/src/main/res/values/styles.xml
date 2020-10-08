@@ -122,6 +122,17 @@
         <item name="android:textSize">@dimen/text_size_state</item>
     </style>
 
+    <style name="TextAppearance.TextAlarmState">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_state</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearance.TextAlarmState.Large">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_login</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
     <style name="TextAppearance" parent="@style/AppTextAppearance">
         <item name="android:ellipsize">end</item>
@@ -177,6 +188,11 @@
 
     <style name="TextAppearance.Headline.White">
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextState">
+        <item name="android:textColor">@color/body_text_3</item>
+        <item name="android:textSize">@dimen/text_size_state</item>
     </style>
 
     <style name="TextAppearance.SmallText">

@@ -43,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="12dp"
                 android:gravity="left">
@@ -67,6 +68,15 @@
                     android:text="@string/text_disarmed"/>
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/closeDialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:src="@drawable/ic_close"
+            android:tint="@color/dark_gray"
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
     

@@ -37,10 +37,10 @@
     <string name="text_renter_alarm_code_title">Please enter the new code again to verify</string>
 
     <!-- Preferences -->
-    <string name="preference_summary_security_code">Set the alarm system code (default is 1234).</string>
+    <string name="preference_summary_security_code">Set the alarm admin code (default is 1234). Used for the default disarm code and to access settings.</string>
     <string name="preference_title_security_code">Security Code</string>
     <string name="preference_title_mqtt_server">MQTT</string>
-    <string name="preference_summary_mqtt_server">Set the values for the MQTT service</string>
+    <string name="preference_summary_mqtt_server">MQTT alarm and service settings</string>
     <string name="preference_title_broker">MQTT Broker</string>
     <string name="preference_summary_broker">Set MQTT broker service address. For tcp/ssl exclude the prefix (192.168.1.1). For others, include the prefix (http://192.168.1.1).</string>
     <string name="preference_client_id">Client Id</string>
@@ -169,7 +169,7 @@
     <string name="text_armed_away">ARMED AWAY</string>
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">DISARMED</string>
-    <string name="dialog_alarm_triggered">ENTER CODE TO DISMISS</string>
+    <string name="dialog_alarm_triggered">ENTER CODE</string>
     <string name="dialog_first_time">Since this is your first time, please setup your device, MQTT server, and alarm information (the default alarm code is 1234).</string>
     <string name="text_alarm_pending">ALARM PENDING</string>
 
@@ -279,7 +279,7 @@
     <string name="text_touch_sensor">Touch sensor</string>
     <string name="dialog_clear_logs">Do you want to clear the logs?</string>
     <string name="menu_item_clear_logs">Clear logs</string>
-    <string name="sensors_settings">Sensors</string>
+    <string name="sensors_settings">Device Sensors</string>
     <string name="button_add_sensor">+ ADD SENSOR</string>
     <string name="pref_sensor_title">Add Sensor</string>
     <string name="text_sensor_payload" translatable="false">%1$s / %2$s</string>
@@ -313,7 +313,7 @@
     <string name="pref_qr_code_summary">Will scan QR codes using the device\'s camera and publish the scanned code over MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publish Frequency (in seconds)</string>
     <string name="summary_setting_mqtt_basetopic">Identifier to receive MQTT commands for this panel. Each panel should have a unique identifier.</string>
-    <string name="title_setting_mqtt_basetopic">Base Topic</string>
+    <string name="title_setting_mqtt_basetopic">Alarm Command Topic</string>
     <string name="service_notification_message">Alarm Panel Running…</string>
     <string name="toast_camera_source_error">Could not start camera source, you may want to try again.</string>
     <string name="pref_user_agent_title">User Agent String (Optional)</string>
@@ -418,6 +418,16 @@
     <string name="pref_button_brightness_summary">Click to update and save the current device screen brightness.</string>
     <string name="preference_title_screensaver_dim">Dim screen…</string>
     <string name="preference_summary_dim_screensaver" formatted="false">By a maximum of %1$s percent when screen brightness active.</string>
+
+    <string name="text_triggered">TRIGGERED</string>
+    <string name="text_armed_night">ARMED NIGHT</string>
+    <string name="text_disarming">DISARMING</string>
+    <string name="text_arming">ARMING</string>
+    <string name="text_disabled">DISABLED</string>
+
+    <string name="text_broadcast_alert">BROADCAST ALERT</string>
+    <string name="text_send_alert_description">Send an alert message for help or other emergency.</string>
+    <string name="button_send_alert">SEND</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

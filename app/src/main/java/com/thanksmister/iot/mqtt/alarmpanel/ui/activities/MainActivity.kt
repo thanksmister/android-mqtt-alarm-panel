@@ -16,14 +16,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -32,14 +31,21 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager.widget.*
-import com.thanksmister.iot.mqtt.alarmpanel.*
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.snackbar.Snackbar
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
+import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
+import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
+import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.MainFragment
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.PlatformFragment
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_PUBLISH_PANIC
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -47,21 +53,28 @@ import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFragment.OnControlsFragmentListener,
-        MainFragment.OnMainFragmentListener, PlatformFragment.OnPlatformFragmentListener {
+class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
+        ControlsFragment.OnControlsFragmentListener,
+        BottomSheetFragment.OnBottomSheetFragmentListener,
+        MainFragment.OnMainFragmentListener,
+        CodeBottomSheetFragment.OnAlarmCodeFragmentListener,
+        PlatformFragment.OnPlatformFragmentListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MainViewModel
+
+    private lateinit var viewModel: MainViewModel
     private lateinit var pagerAdapter: PagerAdapter
+
     private var alertDialog: AlertDialog? = null
     private var localBroadCastManager: LocalBroadcastManager? = null
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private val inactivityHandler: Handler = Handler()
+    private var codeBottomSheet: CodeBottomSheetFragment? = null
+    private var forDisarm: Boolean = false
 
-    val inactivityCallback = Runnable {
-        Timber.d("inactivityCallback")
+    private val inactivityCallback = Runnable {
         dialogUtils.clearDialogs()
         userPresent = false
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
@@ -81,7 +94,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
 
-        if(configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+        if (configuration.userHardwareAcceleration && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
 
@@ -92,7 +105,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         view_pager.addOnPageChangeListener(this)
         view_pager.setPagingEnabled(false)
 
-       if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
             mqttOptions.setBroker(BuildConfig.BROKER)
             configuration.webUrl = BuildConfig.HASS_URL
@@ -127,7 +140,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
 
         observeViewModel()
 
-        if(configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
+        if (configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
         Timber.d("Prevent Sleep ${configuration.appPreventSleep}")
@@ -154,7 +167,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     override fun onUserInteraction() {
         onWindowFocusChanged(true)
         Timber.d("onUserInteraction")
-        if(!userPresent) {
+        if (!userPresent) {
             userPresent = true
             val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
             intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
@@ -168,49 +181,60 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({state ->
+                .subscribe({ state ->
                     this@MainActivity.runOnUiThread {
-                        Timber.d("onStart state: " + state)
                         when (state) {
-                            AlarmUtils.STATE_DISARM -> {
+                            MqttUtils.STATE_DISARMED -> {
                                 awakenDeviceForAction()
                                 resetInactivityTimer()
                             }
-                            AlarmUtils.STATE_ARM_AWAY,
-                            AlarmUtils.STATE_ARM_HOME -> {
+                            MqttUtils.STATE_ARMED_NIGHT,
+                            MqttUtils.STATE_ARMED_AWAY,
+                            MqttUtils.STATE_ARMED_HOME -> {
                                 awakenDeviceForAction()
                                 resetInactivityTimer()
                             }
-                            AlarmUtils.STATE_TRIGGERED -> {
+                            MqttUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction() // 3 hours
                                 stopDisconnectTimer() // stop screen saver mode
                                 clearInactivityTimer() // Remove inactivity timer
                             }
-                            AlarmUtils.STATE_PENDING -> {
+                            MqttUtils.STATE_ARMING_NIGHT,
+                            MqttUtils.STATE_ARMING_AWAY,
+                            MqttUtils.STATE_ARMING_HOME,
+                            MqttUtils.STATE_ARMING,
+                            MqttUtils.STATE_PENDING -> {
                                 awakenDeviceForAction()
                                 resetInactivityTimer()
                             }
                         }
                     }
-                }, { error -> Timber.e("Unable to get message: " + error)}))
+                }, { error -> Timber.e("Unable to get message: " + error) }))
 
         disposable.add(viewModel.getSun()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                /*.takeWhile { sunValue ->
-                    configuration.dayNightMode != sunValue.sun.orEmpty()
-                }*/
-                .subscribe({sunValue ->
+                .subscribe({ sunValue ->
                     this@MainActivity.runOnUiThread {
                         if (configuration.useNightDayMode) {
                             dayNightModeCheck(sunValue.sun)
                         }
                     }
-                }, { error -> Timber.e("Sun Data error: " + error)}))
+                }, { error -> Timber.e("Sun Data error: " + error) }))
+
+        /*viewModel.getAlertMessage().observe(this, Observer<String> { message ->
+            Timber.d("getAlertMessage")
+            dialogUtils.showAlertDialog(this@MainActivity, message)
+
+        })*/
 
         viewModel.getAlertMessage().observe(this, Observer<String> { message ->
             Timber.d("getAlertMessage")
-            dialogUtils.showAlertDialog(this@MainActivity, message)
+            Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
+                    .setAction(android.R.string.ok, View.OnClickListener() {
+                        val intent = SettingsActivity.createStartIntent(this@MainActivity)
+                        startActivity(intent)
+                    }).show()
 
         })
 
@@ -239,14 +263,19 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     override fun onPause() {
         super.onPause()
         clearInactivityTimer()
-        if(localBroadCastManager != null) {
+        if (localBroadCastManager != null) {
             localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
+        }
+        codeBottomSheet?.dismiss()
+        forDisarm = false
+        alertDialog?.let {
+            it.dismiss()
+            alertDialog = null
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.d("onDestroy")
         window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         hideScreenSaver()
         clearInactivityTimer()
@@ -254,6 +283,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             it.dismiss()
             alertDialog = null
         }
+        codeBottomSheet?.dismiss()
+        forDisarm = false
     }
 
     override fun onBackPressed() {
@@ -261,7 +292,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed()
-        } else if ((pagerAdapter as MainSlidePagerAdapter).getCurrentFragment()!!.onBackPressed()){
+        } else if ((pagerAdapter as MainSlidePagerAdapter).getCurrentFragment()!!.onBackPressed()) {
             // backpress handled by fragment do nothing
         } else {
             // Otherwise, if back key press is not handled by fragment, select the previous step.
@@ -280,10 +311,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                         or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         or View.SYSTEM_UI_FLAG_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
                 else -> {
                     visibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
                     window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -294,8 +321,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         } else if (hasFocus) {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_VISIBLE)
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_VISIBLE)
                 else -> visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
             }
@@ -323,29 +348,77 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         }
     }
 
+    // TODO check if code required for away
     override fun publishArmedHome() {
         Timber.d("publishArmedHome")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_HOME)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_HOME)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
+    // TODO check if code required for away
     override fun publishArmedAway() {
         Timber.d("publishArmedAway")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_ARM_AWAY)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_AWAY)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
-    override fun publishDisarmed() {
+    // TODO check if code required for away
+    override fun publishArmedNight() {
+        Timber.d("publishArmedNight")
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_NIGHT)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    // TODO check if code required for away
+    override fun publishDisarm() {
+        Timber.d("publishDisarm")
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_DISARM)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    override fun publishAlertCall() {
+        Timber.d("publishAlert")
+        val bottomSheetFragment = BottomSheetFragment()
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+    }
+
+    override fun showCodeDialog() {
+        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString())
+        codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+    }
+
+    override fun showCodeDialogDisarm() {
+        forDisarm = true
+        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString())
+        codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+    }
+
+    override fun onSendAlert() {
+        val intent = Intent(BROADCAST_EVENT_PUBLISH_PANIC)
+        intent.putExtra(BROADCAST_EVENT_PUBLISH_PANIC, MqttUtils.COMMAND_ON)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    /*override fun publishDisarmed() {
         Timber.d("publishDisarmed")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_DISARM)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
-    }
+    }*/
 
     /**
      * We need to awaken the device and allow the user to take action.
@@ -376,7 +449,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private inner class MainSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-        private var currentFragment : BaseFragment? = null
+        private var currentFragment: BaseFragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> MainFragment.newInstance()
@@ -384,16 +457,19 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 else -> MainFragment.newInstance()
             }
         }
+
         override fun getCount(): Int {
             return 2
         }
+
         override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
             super.setPrimaryItem(container, position, `object`)
 
-            if (currentFragment != `object`){
+            if (currentFragment != `object`) {
                 currentFragment = `object` as BaseFragment
             }
         }
+
         fun getCurrentFragment() = currentFragment
     }
 
@@ -414,7 +490,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
     }
 
     private fun stopDisconnectTimer() {
-        if(!userPresent) {
+        if (!userPresent) {
             userPresent = true
         }
         hideScreenSaver()
@@ -429,7 +505,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
                 try {
                     resetInactivityTimer()
-                    dialogUtils.showAlertDialog(this@MainActivity, message)
+                    dialogUtils.showAlertDialog(this@MainActivity, message.orEmpty())
                 } catch (e: Exception) {
                     Timber.e(e.message) // getting crashes on some devices
                 }
@@ -448,16 +524,23 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
         }
     }
 
-    /**
-     * Attempts to bring the application to the foreground if needed.
-     */
-    private fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground) {
-            Timber.d("bringApplicationToForegroundIfNeeded")
-            val intent = Intent("intent.alarm.action")
-            intent.component = ComponentName(this@MainActivity.packageName, MainActivity::class.java.name)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+    override fun onComplete() {
+        if(forDisarm) {
+            forDisarm = false
+            publishDisarm()
+        } else {
+            val intent = SettingsActivity.createStartIntent(this@MainActivity)
             startActivity(intent)
         }
+        codeBottomSheet?.dismiss()
+    }
+
+    override fun onCodeError() {
+        Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onCancel() {
+        forDisarm = false
+        codeBottomSheet?.dismiss()
     }
 }

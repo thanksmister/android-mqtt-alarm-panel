@@ -107,12 +107,6 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         }
 
         fingerprintPreference = findPreference(PREF_FINGERPRINT) as CheckBoxPreference
-        pendingPreference = findPreference(PREF_PENDING_TIME) as EditTextPreference
-        pendingHomePreference = findPreference(PREF_HOME_PENDING_TIME) as EditTextPreference
-        pendingAwayPreference = findPreference(PREF_AWAY_PENDING_TIME) as EditTextPreference
-        delayPreference = findPreference(PREF_DELAY_TIME) as EditTextPreference
-        delayHomePreference = findPreference(PREF_HOME_DELAY_TIME) as EditTextPreference
-        delayAwayPreference = findPreference(PREF_AWAY_DELAY_TIME) as EditTextPreference
 
         if (isFingerprintSupported()) {
             fingerprintPreference!!.isVisible = true
@@ -120,21 +114,6 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         } else {
             fingerprintPreference!!.isVisible = false
         }
-
-        pendingPreference!!.text = configuration.pendingTime.toString()
-        pendingHomePreference!!.text = configuration.pendingHomeTime.toString()
-        pendingAwayPreference!!.text = configuration.pendingAwayTime.toString()
-        delayPreference!!.text = configuration.delayTime.toString()
-        delayAwayPreference!!.text = configuration.delayAwayTime.toString()
-        delayHomePreference!!.text = configuration.delayHomeTime.toString()
-
-        pendingPreference!!.summary = getString(R.string.preference_summary_pending_time, configuration.pendingTime.toString())
-        pendingHomePreference!!.summary = getString(R.string.pref_home_pending_summary, configuration.pendingHomeTime.toString())
-        pendingAwayPreference!!.summary = getString(R.string.pref_away_pending_summary, configuration.pendingAwayTime.toString())
-        delayPreference!!.summary = getString(R.string.pref_delay_summary, configuration.delayTime.toString())
-        delayHomePreference!!.summary = getString(R.string.pref_home_delay_summary, configuration.delayHomeTime.toString())
-        delayAwayPreference!!.summary = getString(R.string.pref_away_delay_summary, configuration.delayAwayTime.toString())
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -149,78 +128,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val value: String
         when (key) {
-            PREF_PENDING_TIME -> {
-                value = pendingPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.pendingTime = pendingTime
-                    pendingPreference!!.text = pendingTime.toString()
-                    pendingPreference!!.summary = getString(R.string.preference_summary_pending_time, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    pendingPreference!!.text = configuration.pendingTime.toString()
-                }
-            }
-            PREF_DELAY_TIME -> {
-                value = delayPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.delayTime = pendingTime
-                    delayPreference!!.text = pendingTime.toString()
-                    delayPreference!!.summary = getString(R.string.pref_delay_summary, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    delayPreference!!.text = configuration.delayTime.toString()
-                }
-            }
-            PREF_HOME_DELAY_TIME -> {
-                value = delayHomePreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.delayHomeTime = pendingTime
-                    delayHomePreference!!.text = pendingTime.toString()
-                    delayHomePreference!!.summary = getString(R.string.pref_home_delay_summary, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    delayHomePreference!!.text = configuration.delayHomeTime.toString()
-                }
-            }
-            PREF_AWAY_DELAY_TIME -> {
-                value = delayAwayPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.delayAwayTime = pendingTime
-                    delayAwayPreference!!.text = pendingTime.toString()
-                    delayAwayPreference!!.summary = getString(R.string.pref_away_delay_summary, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    delayAwayPreference!!.text = configuration.delayAwayTime.toString()
-                }
-            }
-            PREF_HOME_PENDING_TIME -> {
-                value = pendingHomePreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.pendingHomeTime = pendingTime
-                    pendingHomePreference!!.text = pendingTime.toString()
-                    pendingHomePreference!!.summary = getString(R.string.pref_home_pending_summary, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    pendingHomePreference!!.text = configuration.pendingHomeTime.toString()
-                }
-            }
-            PREF_AWAY_PENDING_TIME -> {
-                value = pendingAwayPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    val pendingTime = Integer.parseInt(value)
-                    configuration.pendingAwayTime = pendingTime
-                    pendingAwayPreference!!.text = pendingTime.toString()
-                    pendingAwayPreference!!.summary = getString(R.string.pref_away_pending_summary, pendingTime.toString())
-                } else if (isAdded) {
-                    Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    pendingAwayPreference!!.text = configuration.pendingTime.toString()
-                }
-            }
+
             PREF_FINGERPRINT -> {
                 val checked = fingerprintPreference!!.isChecked
                 if (isFingerprintSupported()) {

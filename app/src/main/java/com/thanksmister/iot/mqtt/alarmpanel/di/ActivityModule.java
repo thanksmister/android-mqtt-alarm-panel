@@ -73,13 +73,13 @@ class ActivityModule {
     }
 
     @Provides
-    static Configuration provideConfiguration(Application application, DPreference preference) {
+    static Configuration provideConfiguration(Application application, SharedPreferences preference) {
         return new Configuration(application, preference);
     }
 
     @Provides
-    static MQTTOptions provideMQTTOptions(Application application, DPreference preference) {
-        return new MQTTOptions(application, preference);
+    static MQTTOptions provideMQTTOptions(SharedPreferences preference) {
+        return new MQTTOptions(preference);
     }
 
     @Provides

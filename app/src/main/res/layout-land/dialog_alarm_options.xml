@@ -43,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="12dp"
                 android:gravity="left">
@@ -66,13 +67,22 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/closeDialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:src="@drawable/ic_close"
+            android:tint="@color/dark_gray"
+            tools:ignore="ContentDescription" />
+
     </LinearLayout>
 
     <Space
             android:layout_width="match_parent"
             android:layout_weight="2"
             android:layout_height="8dp"/>
-    
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

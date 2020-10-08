@@ -177,7 +177,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         val displayRectangle = Rect()
         val window = activity.window
         window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             view.minimumWidth = (displayRectangle.width() * 0.4f).toInt()
             view.minimumHeight = (displayRectangle.height() * 0.4f).toInt()
         }
@@ -240,8 +240,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         dialog = buildFullscreenDialog(activity, true, view, true)
     }
 
-    fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener,
-                       onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
+    fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener, onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_alarm_code_set, null, false)
@@ -252,8 +251,10 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         }
         alarmCodeView.setListener(listener)
         alarmCodeView.setUseSound(systemSounds)
-        dialog = buildFullscreenDialog(activity, true, view, true)
-        dialog!!.setOnCancelListener(onCancelListener)
+        dialog = Dialog(activity, R.style.CustomAlertDialog)
+        dialog?.setContentView(view)
+        dialog?.setOnCancelListener(onCancelListener)
+        dialog?.show()
     }
 
     fun showSensorDialog(activity: AppCompatActivity, sensor: Sensor, topic: String, listener: SensorDialogView.ViewListener) {

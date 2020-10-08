@@ -167,7 +167,7 @@
     <string name="text_armed_away">LARM BORTALÄGE</string>
     <string name="text_system">SYSTEM</string>
     <string name="text_disarmed">FRÅNKOPPLAT</string>
-    <string name="dialog_alarm_triggered">ANGE KOD FÖR FRÅNKOPPLING</string>
+    <string name="dialog_alarm_triggered">ANGE KOD</string>
     <string name="dialog_first_time">Efterson detta är första gången så var god att ange MQTT-server och larminformation (standardkod är 1234).</string>
     <string name="text_alarm_pending">LARM AVVAKTAR</string>
 
@@ -414,6 +414,16 @@
     <string name="pref_button_brightness_summary">Click to update and save the current device brightness.</string>
     <string name="preference_title_screensaver_dim">Dim screen…</string>
     <string name="preference_summary_dim_screensaver" formatted="false">By %1$s percent when screensaver is active (requires screen brightness permission).</string>
+
+    <string name="text_triggered">TRIGGERED</string>
+    <string name="text_armed_night">ARMED NIGHT</string>
+    <string name="text_disarming">DISARMING</string>
+    <string name="text_arming">ARMING</string>
+    <string name="text_disabled">DISABLED</string>
+
+    <string name="text_broadcast_alert">BROADCAST ALERT</string>
+    <string name="text_send_alert_description">Send an alert message for help or other emergency.</string>
+    <string name="button_send_alert">SEND</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

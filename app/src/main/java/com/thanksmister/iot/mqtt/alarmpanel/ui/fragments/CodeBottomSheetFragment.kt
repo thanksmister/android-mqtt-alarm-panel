@@ -22,8 +22,12 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import kotlinx.android.synthetic.main.fragment_code_bottom_sheet.*
@@ -109,6 +113,15 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
             removePinCode()
         }
 
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val dialog = dialog as BottomSheetDialog
+                val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
+                val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        })
     }
 
     @Nullable
@@ -211,7 +224,7 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
         private var currentCode: String = ""
 
         fun newInstance(code: String): CodeBottomSheetFragment {
-            currentCode = code;
+            currentCode = code
             return CodeBottomSheetFragment()
         }
     }

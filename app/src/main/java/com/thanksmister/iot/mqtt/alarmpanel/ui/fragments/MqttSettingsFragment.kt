@@ -22,12 +22,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
-import androidx.preference.CheckBoxPreference
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BASE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PANEL_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BROKER
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_CLIENT_ID
@@ -53,10 +51,18 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var commandTopicPreference: EditTextPreference? = null
     private var stateTopicPreference: EditTextPreference? = null
     private var userNamePreference: EditTextPreference? = null
-    private var sslPreference: CheckBoxPreference? = null
-    private var retainPreference: CheckBoxPreference? = null
+    private var sslPreference: SwitchPreference? = null
+    private var retainPreference: SwitchPreference? = null
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
+
+    private val remoteConfigPreference: SwitchPreference by lazy {
+        findPreference("pref_alarm_manual_configuration") as SwitchPreference
+    }
+
+    private val remoteConfigTopicPreference: EditTextPreference by lazy {
+        findPreference("pref_alarm_manual_configuration") as EditTextPreference
+    }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -71,7 +77,6 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_mqtt_server))
         }
     }
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey : String?) {
         addPreferencesFromResource(R.xml.mqtt_preferences)
@@ -98,11 +103,11 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         stateTopicPreference = findPreference(PREF_STATE_TOPIC) as EditTextPreference
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
-        sslPreference = findPreference(PREF_TLS_CONNECTION) as CheckBoxPreference
-        retainPreference = findPreference(PREF_RETAIN) as CheckBoxPreference
-        baseTopicPreference = findPreference(PREF_BASE_TOPIC) as EditTextPreference
+        sslPreference = findPreference(PREF_TLS_CONNECTION) as SwitchPreference
+        retainPreference = findPreference(PREF_RETAIN) as SwitchPreference
+        baseTopicPreference = findPreference(PREF_PANEL_COMMAND_TOPIC) as EditTextPreference
 
-        baseTopicPreference!!.text = mqttOptions.getBaseTopic()
+        baseTopicPreference!!.text = mqttOptions.getBaseCommand()
         brokerPreference!!.text = mqttOptions.getBroker()
         clientPreference!!.text = mqttOptions.getClientId()
         portPreference!!.text = mqttOptions.getPort().toString()
@@ -134,9 +139,9 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         if (!TextUtils.isEmpty(mqttOptions.getPassword())) {
             passwordPreference!!.summary = toStars(mqttOptions.getPassword())
         }
-        if (!TextUtils.isEmpty(mqttOptions.getBaseTopic())) {
-            baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseTopic())
-            baseTopicPreference!!.summary = mqttOptions.getBaseTopic()
+        if (!TextUtils.isEmpty(mqttOptions.getBaseCommand())) {
+            baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseCommand())
+            baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
         }
     }
 
@@ -165,7 +170,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             PREF_PORT -> {
                 value = portPreference!!.text
                 if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
-                    mqttOptions.setPort(Integer.valueOf(value)!!)
+                    mqttOptions.setPort(value)
                     portPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
@@ -182,15 +187,15 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
                 }
             }
-            PREF_BASE_TOPIC -> {
+            PREF_PANEL_COMMAND_TOPIC -> {
                 value = baseTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
                     mqttOptions.setBaseTopic(value)
                     baseTopicPreference!!.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    baseTopicPreference!!.text = mqttOptions.getBaseTopic()
-                    baseTopicPreference!!.summary = mqttOptions.getBaseTopic()
+                    baseTopicPreference!!.text = mqttOptions.getBaseCommand()
+                    baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
                 }
             }
             PREF_STATE_TOPIC -> {

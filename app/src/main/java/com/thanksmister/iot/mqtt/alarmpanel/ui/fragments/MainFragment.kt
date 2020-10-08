@@ -23,19 +23,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Toast
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SettingsCodeView
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -53,8 +46,10 @@ class MainFragment : BaseFragment() {
 
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
-        fun publishDisarmed()
         fun navigatePlatformPanel()
+        fun publishDisarm()
+        fun publishAlertCall()
+        fun showCodeDialog()
     }
 
     override fun onAttach(context: Context) {
@@ -83,6 +78,9 @@ class MainFragment : BaseFragment() {
         buttonSleep.setOnClickListener {
             listener?.manuallyLaunchScreenSaver()
         }
+        alertButton.setOnClickListener {
+            listener?.publishAlertCall()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -91,7 +89,6 @@ class MainFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        Timber.d("onResume")
         if (viewModel.hasPlatform()) {
             platformButton.visibility = View.VISIBLE;
             platformButton.setOnClickListener {
@@ -99,6 +96,12 @@ class MainFragment : BaseFragment() {
             }
         } else {
             platformButton.visibility = View.INVISIBLE;
+        }
+
+        if(configuration.panicButton.not()) {
+            alertButton.visibility = View.GONE
+        } else {
+            alertButton.visibility = View.VISIBLE
         }
     }
 
@@ -109,14 +112,48 @@ class MainFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        buttonSleep?.let {
-            it.setOnTouchListener(null)
+        buttonSleep.apply {
+            setOnTouchListener(null)
         }
         listener = null
         Timber.d("onDetach")
     }
 
     private fun observeViewModel(viewModel: MainViewModel) {
+        disposable.add(viewModel.getAlarmState()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ state ->
+                    Timber.d("Alarm state: $state")
+                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}" )
+                    activity?.runOnUiThread {
+                        when (state) {
+                            MqttUtils.STATE_ARMED_AWAY,
+                            MqttUtils.STATE_ARMED_NIGHT,
+                            MqttUtils.STATE_ARMED_HOME -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_ARMING_NIGHT,
+                            MqttUtils.STATE_ARMING_AWAY,
+                            MqttUtils.STATE_ARMING_HOME,
+                            MqttUtils.STATE_ARMING -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_DISARMED -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_PENDING -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_TRIGGERED -> {
+                                dialogUtils.clearDialogs()
+                            }
+                        }
+                    }
+                }, { error -> Timber.e("Unable to get message: " + error) }))
+    }
+
+    /*private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -145,9 +182,20 @@ class MainFragment : BaseFragment() {
                         }
                     }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
-    }
+    }*/
 
     private fun showSettingsCodeDialog() {
+        if (configuration.isFirstTime) {
+            activity?.let {
+                val intent = SettingsActivity.createStartIntent(it.applicationContext)
+                startActivity(intent)
+            }
+        } else {
+            listener?.showCodeDialog()
+        }
+    }
+
+   /* private fun showSettingsCodeDialog() {
         if (configuration.isFirstTime) {
             activity?.let {
                 val intent = SettingsActivity.createStartIntent(it.applicationContext)
@@ -174,14 +222,14 @@ class MainFragment : BaseFragment() {
                 }
             }, configuration.systemSounds, configuration.fingerPrint)
         }
-    }
+    }*/
 
     /**
      * We show the disarm dialog if we have delay time and a sensor was triggered in home or away mode.
      * This will be the time before the alarm is triggered, otherwise the expected behavior is the
      * alarm will trigger immediately.
      */
-    private fun showAlarmDisableDialog(delayTime: Int) {
+    /*private fun showAlarmDisableDialog(delayTime: Int) {
         activity.takeIf { isAdded }?.let {
             if(delayTime > 0) {
                 dialogUtils.showAlarmDisableDialog(it as BaseActivity, object : AlarmDisableView.ViewListener {
@@ -198,9 +246,9 @@ class MainFragment : BaseFragment() {
                 }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
             }
         }
-    }
+    }*/
 
-    private fun showAlarmTriggered() {
+    /*private fun showAlarmTriggered() {
         activity.takeIf { isAdded }?.let {
             it.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
             mainView.visibility = View.GONE
@@ -219,13 +267,13 @@ class MainFragment : BaseFragment() {
                 }
             }
         }
-    }
+    }*/
 
-    private fun hideTriggeredView() {
+    /*private fun hideTriggeredView() {
         mainView.visibility = View.VISIBLE
         triggeredView.visibility = View.GONE
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
-    }
+    }*/
 
     companion object {
         @JvmStatic fun newInstance(): MainFragment {

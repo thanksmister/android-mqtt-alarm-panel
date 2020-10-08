@@ -139,7 +139,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      */
     fun showScreenSaver() {
         Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
-        if (!configuration.isAlarmTriggeredMode() && configuration.hasScreenSaver()) {
+        if (!configuration.isAlarmTriggered() && configuration.hasScreenSaver()) {
             val hasWeather = configuration.showWeatherModule()
             val isImperial = configuration.weatherUnitsImperial
             try {

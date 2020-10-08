@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.thanksmister.iot.mqtt.alarmpanel.network
 
-package com.thanksmister.iot.mqtt.alarmpanel.network;
+import android.content.Context
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService.MqttManagerListener
+import org.eclipse.paho.client.mqttv3.MqttException
 
-import android.content.Context;
-
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-public interface MQTTServiceInterface {
-    boolean isReady();
-    void publishAlarm(String payload);
-    void publishState(String command, String payload);
-    void reconfigure(Context context, MQTTOptions options, MQTTService.MqttManagerListener listener);
-    void close() throws MqttException;
+interface MQTTServiceInterface {
+    val isReady: Boolean
+    fun publishAlarm(action: String, code: String?)
+    fun publishCommand(command: String, payload: String)
+    fun reconfigure(context: Context, newOptions: MQTTOptions, listener: MqttManagerListener)
+    @Throws(MqttException::class)
+    fun close()
 }

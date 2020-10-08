@@ -17,26 +17,102 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.Navigation
-import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.SwitchPreference
+import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import kotlinx.android.synthetic.main.fragment_settings.*
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
+import dagger.android.support.AndroidSupportInjection
 
-class SettingsFragment : BaseFragment() {
+class SettingsFragment : BaseSettingsFragment() {
 
-    private var listener: SettingsFragmentListener? = null
+    private var defaultCode: Int = 0
+    private var tempCode: Int = 0
+    private var confirmCode = false
 
-    interface SettingsFragmentListener {
-        fun navigatePageNumber(page:Int)
+    // Buttons
+
+    private val mqttPreference: Preference by lazy {
+        findPreference("button_mqtt") as Preference
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+    private val aboutPreference: Preference by lazy {
+        findPreference("button_about") as Preference
+    }
+
+    private val themePreference: SwitchPreference by lazy {
+        findPreference("button_dark_theme") as SwitchPreference
+    }
+
+    private val panicPreference: SwitchPreference by lazy {
+        findPreference("pref_panic_button") as SwitchPreference
+    }
+
+    private val notificationsPreference: Preference by lazy {
+        findPreference("button_notifications") as Preference
+    }
+
+    private val codePreference: Preference by lazy {
+        findPreference("button_alarm_code") as Preference
+    }
+
+    private val cameraPreference: Preference by lazy {
+        findPreference("button_camera") as Preference
+    }
+
+    private val browserPreference: Preference by lazy {
+        findPreference("button_browser") as Preference
+    }
+
+    private val weatherPreference: Preference by lazy {
+        findPreference("button_weather") as Preference
+    }
+
+    private val screenPreference: Preference by lazy {
+        findPreference("button_screen") as Preference
+    }
+
+    private val sensorsPreference: Preference by lazy {
+        findPreference("button_sensors") as Preference
+    }
+
+    private val sensorOnePreference: SwitchPreference by lazy {
+        findPreference("key_sensor_one") as SwitchPreference
+    }
+
+    private val sensorOneNamePreference: EditTextPreference by lazy {
+        findPreference("key_sensor_two_name") as EditTextPreference
+    }
+
+    private val sensorTwoPreference: SwitchPreference by lazy {
+        findPreference("key_sensor_two") as SwitchPreference
+    }
+
+    private val sensorTwoNamePreference: EditTextPreference by lazy {
+        findPreference("key_sensor_two_name") as EditTextPreference
+    }
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.preference_general)
+        lifecycle.addObserver(dialogUtils)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -48,26 +124,109 @@ class SettingsFragment : BaseFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SettingsFragmentListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement SettingsFragmentListener")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        super.onViewCreated(view, savedInstanceState)
+
+        mqttPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.mqtt_action) }
+            false
+        }
+        aboutPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.about_action) }
+            false
+        }
+        panicPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.notifications_action) }
+            false
+        }
+        codePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            showAlarmCodeDialog()
+            true
+        }
+
+        //themePreference.isChecked = configuration.useNightDayMode
+
+        val code = configuration.alarmCode.toString()
+        if(code.isNotEmpty()) {
+            codePreference.summary = toStars(code)
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        buttonAlarmSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.alarm_action) }}
-        buttonMqttSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.mqtt_action) } }
-        buttonNotificationSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.notifications_action) }}
-        buttonCameraSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.camera_action) }}
-        buttonScreenSaverSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.screen_action) }}
-        buttonWeatherSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.weather_action) }}
-        buttonPlatformSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.platform_action) } }
-        buttonAboutSettings.setOnClickListener {view.let { Navigation.findNavController(it).navigate(R.id.about_action) } }
-        buttonSensorSettings.setOnClickListener { view.let { Navigation.findNavController(it).navigate(R.id.sensors_action) }}
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            "pref_dark_theme" -> {
+                configuration.useDarkTheme = themePreference.isChecked
+            }
+            "pref_panic_button" -> {
+                configuration.panicButton = panicPreference.isChecked
+            }
+            /*"key_sensor_one" -> {
+                configuration.sensorOne = sensorOnePreference.isChecked
+            }
+            "key_sensor_two" -> {
+                configuration.sensorTwo = sensorTwoPreference.isChecked
+            }
+            "key_sensor_one_name" -> {
+                configuration.sensorOneName = sensorOneNamePreference.text
+            }
+            "key_sensor_two_name" -> {
+                configuration.sensorTwoName = sensorTwoNamePreference.text
+            }*/
+        }
+    }
+
+    private fun showAlarmCodeDialog() {
+        defaultCode = configuration.alarmCode
+        if (activity != null && isAdded) {
+            dialogUtils.showCodeDialog(activity as BaseActivity, confirmCode, object : AlarmCodeView.ViewListener {
+                override fun onComplete(code: Int) {
+                    if (code == defaultCode) {
+                        confirmCode = false
+                        dialogUtils.clearDialogs()
+                        Toast.makeText(activity, R.string.toast_code_match, Toast.LENGTH_LONG).show()
+                    } else if (!confirmCode) {
+                        tempCode = code
+                        confirmCode = true
+                        dialogUtils.clearDialogs()
+                        if (activity != null && isAdded) {
+                            showAlarmCodeDialog()
+                        }
+                    } else if (code == tempCode) {
+                        configuration.isFirstTime = false;
+                        configuration.alarmCode = tempCode
+                        tempCode = 0
+                        confirmCode = false
+                        dialogUtils.clearDialogs()
+                        Toast.makeText(activity, R.string.toast_code_changed, Toast.LENGTH_LONG).show()
+                    } else {
+                        tempCode = 0
+                        confirmCode = false
+                        dialogUtils.clearDialogs()
+                        Toast.makeText(activity, R.string.toast_code_not_match, Toast.LENGTH_LONG).show()
+                    }
+                }
+                override fun onError() {}
+                override fun onCancel() {
+                    confirmCode = false
+                    dialogUtils.clearDialogs()
+                    Toast.makeText(activity, R.string.toast_code_unchanged, Toast.LENGTH_SHORT).show()
+                }
+            }, DialogInterface.OnCancelListener {
+                confirmCode = false
+                Toast.makeText(activity, R.string.toast_code_unchanged, Toast.LENGTH_SHORT).show()
+            }, configuration.systemSounds)
+        }
+    }
+
+    private fun toStars(textToStars: String?): String {
+        var text = textToStars
+        val sb = StringBuilder()
+        for (i in text.orEmpty().indices) {
+            sb.append('*')
+        }
+        text = sb.toString()
+        return text
     }
 
     companion object {

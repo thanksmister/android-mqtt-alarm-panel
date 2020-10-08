@@ -16,17 +16,17 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.network
 
-import android.content.Context
+import android.content.SharedPreferences
 import android.text.TextUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_COMMAND_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.ALARM_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.BASE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.NOTIFICATION_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.TOPIC_COMMAND
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
-import dpreference.DPreference
-import timber.log.Timber
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_COMMAND_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PANEL_COMMAND_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATE_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PORT
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -35,7 +35,7 @@ import kotlin.collections.ArrayList
  * For original implementation see https://github.com/androidthings/sensorhub-cloud-iot.
  */
 class MQTTOptions @Inject
-constructor(private val context: Context, private val sharedPreferences: DPreference) {
+constructor(private val sharedPreferences: SharedPreferences) {
 
     val brokerUrl: String
         get() = if (!TextUtils.isEmpty(getBroker())) {
@@ -63,135 +63,143 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
                 !TextUtils.isEmpty(getAlarmCommandTopic())
 
     fun getBroker(): String {
-        return sharedPreferences.getPrefString(PREF_BROKER, "")
+        return sharedPreferences.getString(PREF_BROKER, "").orEmpty()
     }
 
-    fun getBaseTopic(): String {
-        return sharedPreferences.getPrefString(PREF_BASE_TOPIC, BASE_TOPIC)
+    fun getBaseCommand(): String {
+        return sharedPreferences.getString(PREF_PANEL_COMMAND_TOPIC, DEFAULT_PANEL_COMMAND_TOPIC).orEmpty()
     }
 
     private fun getCommandTopic(): String {
-        return getBaseTopic() + "/" + TOPIC_COMMAND
+        return getBaseCommand() + "/" + TOPIC_COMMAND
     }
 
     fun getClientId(): String {
-        var clientId = sharedPreferences.getPrefString(PREF_CLIENT_ID, "")
-        if (TextUtils.isEmpty(clientId)) {
+        var clientId = sharedPreferences.getString(PREF_CLIENT_ID, "")
+        if (clientId.isNullOrEmpty()) {
             clientId = DeviceUtils.uuIdHash
         }
         return clientId
     }
 
     fun getAlarmCommandTopic(): String {
-        return sharedPreferences.getPrefString(PREF_COMMAND_TOPIC, ALARM_COMMAND_TOPIC)
+        return sharedPreferences.getString(PREF_COMMAND_TOPIC, DEFAULT_COMMAND_TOPIC).orEmpty()
     }
 
     fun getAlarmStateTopic(): String {
-        return sharedPreferences.getPrefString(PREF_STATE_TOPIC, ALARM_STATE_TOPIC)
+        return sharedPreferences.getString(PREF_STATE_TOPIC, DEFAULT_STATE_TOPIC).orEmpty()
     }
 
-    // TODO we need to add all the topics from sensor database
+    private fun getAlarmConfigTopic(): String {
+        return sharedPreferences.getString(PREF_ALARM_CONFIG, DEFAULT_CONFIG_TOPIC).orEmpty()
+    }
+
+    private fun getAlarmStatusTopic(): String {
+        return sharedPreferences.getString(PREF_ALARM_STATUS, DEFAULT_STATUS_TOPIC).orEmpty()
+    }
+
+    // TODO we need to add all the topics based on remote or override
     fun getStateTopics(): Array<String> {
         val topics = ArrayList<String>()
         topics.add(getCommandTopic())
         topics.add(getAlarmStateTopic())
+        topics.add(getAlarmConfigTopic())
+        topics.add(getAlarmStatusTopic())
         return topics.toArray(arrayOf<String>())
     }
 
     @Deprecated ("We will move to commands")
     fun getNotificationTopic(): String {
-        return sharedPreferences.getPrefString(PREF_NOTIFICATION_TOPIC, NOTIFICATION_STATE_TOPIC)
+        return sharedPreferences.getString(PREF_NOTIFICATION_TOPIC, NOTIFICATION_STATE_TOPIC).orEmpty()
     }
 
     fun getUsername(): String {
-        return sharedPreferences.getPrefString(PREF_USERNAME, "")
+        return sharedPreferences.getString(PREF_USERNAME, "").orEmpty()
     }
 
     fun getPassword(): String {
-        return sharedPreferences.getPrefString(PREF_PASSWORD, "")
+        return sharedPreferences.getString(PREF_PASSWORD, "").orEmpty()
     }
 
     fun getPort(): Int {
-        return sharedPreferences.getPrefInt(PREF_PORT, AlarmUtils.PORT)
+        return sharedPreferences.getString(PREF_PORT, PORT.toString())?.toIntOrNull()?:PORT
     }
 
     fun getTlsConnection(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_TLS_CONNECTION, false)
+        return sharedPreferences.getBoolean(PREF_TLS_CONNECTION, false)
     }
 
     fun setUsername(value: String) {
-        this.sharedPreferences.setPrefString(PREF_USERNAME, value)
+        this.sharedPreferences.edit().putString(PREF_USERNAME, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setClientId(value: String) {
-        this.sharedPreferences.setPrefString(PREF_CLIENT_ID, value)
+        this.sharedPreferences.edit().putString(PREF_CLIENT_ID, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setBroker(value: String) {
-        this.sharedPreferences.setPrefString(PREF_BROKER, value)
+        this.sharedPreferences.edit().putString(PREF_BROKER, value).apply()
         setOptionsUpdated(true)
     }
 
-    fun setPort(value: Int) {
-        this.sharedPreferences.setPrefInt(PREF_PORT, value)
+    fun setPort(value: String) {
+        this.sharedPreferences.edit().putString(PREF_PORT, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setPassword(value: String) {
-        this.sharedPreferences.setPrefString(PREF_PASSWORD, value)
+        this.sharedPreferences.edit().putString(PREF_PASSWORD, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setBaseTopic(value: String) {
-        sharedPreferences.setPrefString(PREF_BASE_TOPIC, value)
+        sharedPreferences.edit().putString(PREF_PANEL_COMMAND_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setCommandTopic(value: String) {
-        this.sharedPreferences.setPrefString(PREF_COMMAND_TOPIC, value)
+        this.sharedPreferences.edit().putString(PREF_COMMAND_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setAlarmTopic(value: String) {
-        this.sharedPreferences.setPrefString(PREF_STATE_TOPIC, value)
+        this.sharedPreferences.edit().putString(PREF_STATE_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
     fun getRetain(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_RETAIN, true)
+        return sharedPreferences.getBoolean(PREF_RETAIN, true)
     }
 
     fun setRetain(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_RETAIN, value)
+        this.sharedPreferences.edit().putBoolean(PREF_RETAIN, value).apply()
         setOptionsUpdated(true)
     }
 
     @Deprecated ("We will move to commands")
     fun setNotificationTopic(value: String) {
-        this.sharedPreferences.setPrefString(PREF_NOTIFICATION_TOPIC, value)
+        this.sharedPreferences.edit().putString(PREF_NOTIFICATION_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setSensorTopic(value: String) {
-        this.sharedPreferences.setPrefString(PREF_SENSOR_TOPIC, value)
+        this.sharedPreferences.edit().putString(PREF_SENSOR_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setTlsConnection(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_TLS_CONNECTION, value)
+        this.sharedPreferences.edit().putBoolean(PREF_TLS_CONNECTION, value).apply()
         setOptionsUpdated(true)
     }
 
     fun setOptionsUpdated(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(MQTT_OPTIONS_UPDATED, value)
+        this.sharedPreferences.edit().putBoolean(MQTT_OPTIONS_UPDATED, value).apply()
     }
 
     fun hasUpdates(): Boolean {
-        val updates = sharedPreferences.getPrefBoolean(MQTT_OPTIONS_UPDATED, false)
-        Timber.d("Updates: " + updates)
-        return updates
+        return sharedPreferences.getBoolean(MQTT_OPTIONS_UPDATED, false)
     }
 
     companion object {
@@ -199,7 +207,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val TCP_BROKER_URL_FORMAT = "tcp://%s:%d"
         const val HTTP_BROKER_URL_FORMAT = "%s:%d"
         const val PREF_STATE_TOPIC = "pref_alarm_topic"
-        const val PREF_BASE_TOPIC = "pref_base_topic"
+        const val PREF_PANEL_COMMAND_TOPIC = "pref_base_topic"
         const val PREF_NOTIFICATION_TOPIC = "pref_notification_topic"
         const val PREF_SENSOR_TOPIC = "pref_sensor_topic"
         const val PREF_USERNAME = "pref_username"
@@ -211,5 +219,7 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
         const val PREF_BROKER = "pref_broker"
         const val PREF_RETAIN = "pref_retain"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
+        const val PREF_ALARM_CONFIG = "pref_config_command"
+        const val PREF_ALARM_STATUS = "pref_status_command"
     }
 }

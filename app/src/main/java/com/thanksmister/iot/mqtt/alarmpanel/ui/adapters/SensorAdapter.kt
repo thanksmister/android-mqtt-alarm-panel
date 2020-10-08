@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import kotlinx.android.synthetic.main.adapter_sensor_preference.view.*
 
 class SensorAdapter(private val items: List<Sensor>?, private val sensorTopic: String, private val listener: OnItemClickListener) : RecyclerView.Adapter<SensorAdapter.ViewHolder>() {
@@ -56,19 +56,19 @@ class SensorAdapter(private val items: List<Sensor>?, private val sensorTopic: S
             itemView.payloadSensorText.text = itemView.context.getString(R.string.text_sensor_payload, item.payloadActive, item.payloadInactive)
 
             when {
-                item.type == ComponentUtils.SENSOR_DOOR_TYPE -> {
+                item.type == MqttUtils.SENSOR_DOOR_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_door)
                 }
-                item.type == ComponentUtils.SENSOR_WINDOW_TYPE -> {
+                item.type == MqttUtils.SENSOR_WINDOW_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_window_open)
                 }
-                item.type == ComponentUtils.SENSOR_MOTION_TYPE -> {
+                item.type == MqttUtils.SENSOR_MOTION_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_run_fast)
                 }
-                item.type == ComponentUtils.SENSOR_CAMERA_TYPE -> {
+                item.type == MqttUtils.SENSOR_CAMERA_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_video)
                 }
-                item.type == ComponentUtils.SENSOR_SOUND_TYPE -> {
+                item.type == MqttUtils.SENSOR_SOUND_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_volume_high)
                 }
                 else -> {

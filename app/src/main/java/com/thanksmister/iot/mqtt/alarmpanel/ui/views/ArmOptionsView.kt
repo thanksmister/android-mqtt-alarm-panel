@@ -27,15 +27,15 @@ class ArmOptionsView : LinearLayout {
     private var listener: ViewListener? = null
 
     private fun armAwayButtonClick() {
-        if (listener != null) {
-            listener!!.onArmAway()
-        }
+        listener?.onArmAway()
     }
 
     private fun armHomeButtonClick() {
-        if (listener != null) {
-            listener!!.onArmHome()
-        }
+        listener?.onArmHome()
+    }
+
+    private fun armNightButtonClick() {
+        listener?.onArmHome()
     }
 
     constructor(context: Context) : super(context) {}
@@ -46,6 +46,7 @@ class ArmOptionsView : LinearLayout {
         super.onFinishInflate()
         armAwayButton.setOnClickListener { armAwayButtonClick() }
         armStayButton.setOnClickListener { armHomeButtonClick() }
+        closeDialogButton.setOnClickListener { listener?.onCloseArmOptions() }
     }
 
     fun setListener(listener: ViewListener) {
@@ -55,5 +56,7 @@ class ArmOptionsView : LinearLayout {
     interface ViewListener {
         fun onArmHome()
         fun onArmAway()
+        fun onArmNight()
+        fun onCloseArmOptions()
     }
 }
