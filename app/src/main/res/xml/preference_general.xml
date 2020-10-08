@@ -43,6 +43,7 @@
 
         <SwitchPreference
             android:key="pref_dark_theme"
+            android:icon="@drawable/ic_theme_light_dark"
             android:summary="Use Dark theme (overrides Sun settings)"
             android:title="Theme" />
 

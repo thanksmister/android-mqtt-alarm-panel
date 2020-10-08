@@ -16,6 +16,9 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.content.Context
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -23,19 +26,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SensorAdapter
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditTextDialogView
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DEVICE_SENSOR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_GENERIC_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorViewModel
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_sensors.*
@@ -43,119 +53,89 @@ import kotlinx.android.synthetic.main.fragment_sensors.view.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class SensorsFragment : BaseFragment(), SensorAdapter.OnItemClickListener {
+class SensorsFragment : BaseSettingsFragment() {
 
     @Inject lateinit var sensorViewModel: SensorViewModel
-    @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var mqttOptions: MQTTOptions
 
+    private val sensorsPreference: Preference by lazy {
+        findPreference("button_sensors") as Preference
+    }
+
+    private val sensorOnePreference: SwitchPreference by lazy {
+        findPreference("key_sensor_one") as SwitchPreference
+    }
+
+    private val sensorOneNamePreference: EditTextPreference by lazy {
+        findPreference("key_sensor_two_name") as EditTextPreference
+    }
+
+    private val sensorTwoPreference: SwitchPreference by lazy {
+        findPreference("key_sensor_two") as SwitchPreference
+    }
+
+    private val sensorTwoNamePreference: EditTextPreference by lazy {
+        findPreference("key_sensor_two_name") as EditTextPreference
+    }
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.preference_general)
+        lifecycle.addObserver(dialogUtils)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
         super.onActivityCreated(savedInstanceState)
-
-        observeViewModel(sensorViewModel)
-
-        if((activity as AppCompatActivity).supportActionBar != null) {
-            (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
-            (activity as AppCompatActivity).supportActionBar!!.title = (getString(R.string.sensors_settings))
+        if((activity as SettingsActivity).supportActionBar != null) {
+            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.activity_settings_title))
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val context = view.context
-        view.sensorList.layoutManager = LinearLayoutManager(context)
-        view.sensorList.adapter =  SensorAdapter(ArrayList<Sensor>(), COMMAND_DEVICE_SENSOR, this)
-        addSensorButton.setOnClickListener {
-            showAddSensorDialog(Sensor())
-        }
-        sensorTopic.setOnClickListener {
-            showTopicDialog(COMMAND_DEVICE_SENSOR)
-        }
-        sensorTopicPrefixValue.text = COMMAND_DEVICE_SENSOR
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_sensors, container, false)
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        when (key) {
+            "key_sensor_one" -> {
+               configuration.sensorOne = sensorOnePreference.isChecked
+           }
+           "key_sensor_two" -> {
+               configuration.sensorTwo = sensorTwoPreference.isChecked
+           }
+           "key_sensor_one_name" -> {
+               configuration.sensorOneName = sensorOneNamePreference.text
+           }
+           "key_sensor_two_name" -> {
+               configuration.sensorTwoName = sensorTwoNamePreference.text
+           }
+        }
     }
 
-    private fun observeViewModel(viewModel: SensorViewModel) {
-        disposable.add(viewModel.getItems()
-               .subscribeOn(Schedulers.io())
-               .observeOn(AndroidSchedulers.mainThread())
-               .subscribe({items ->
-                   sensorList.adapter = SensorAdapter(items, COMMAND_DEVICE_SENSOR, this)
-                   sensorList.invalidate()
-               }, { error -> Timber.e("Unable to get sensors: " + error)}))
+    private fun toStars(textToStars: String?): String {
+        var text = textToStars
+        val sb = StringBuilder()
+        for (i in text.orEmpty().indices) {
+            sb.append('*')
+        }
+        text = sb.toString()
+        return text
     }
 
     companion object {
         fun newInstance(): SensorsFragment {
             return SensorsFragment()
         }
-    }
-
-    override fun onItemClick(sensor: Sensor) {
-        showAddSensorDialog(sensor)
-    }
-
-    private fun showTopicDialog(topic: String) {
-        if (isAdded) {
-            dialogUtils.showEditTextDialog(activity as BaseActivity, topic, object : EditTextDialogView.ViewListener {
-                override fun onComplete(value: String) {
-                    if(TextUtils.isEmpty(value)) {
-                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    } else {
-                        mqttOptions.setSensorTopic(value)
-                    }
-                }
-                override fun onCancel() =
-                        Toast.makeText(activity, getString(R.string.toast_changes_cancelled), Toast.LENGTH_SHORT).show()
-            })
-        }
-    }
-
-    private fun showAddSensorDialog(sensor: Sensor) {
-        if (isAdded) {
-            dialogUtils.showSensorDialog(activity as BaseActivity, sensor, COMMAND_DEVICE_SENSOR, object : SensorDialogView.ViewListener {
-                override fun onComplete(sensor: Sensor) {
-                    verifySensorAndCommit(sensor)
-                }
-                override fun onCancel() =
-                        Toast.makeText(activity, getString(R.string.toast_changes_cancelled), Toast.LENGTH_SHORT).show()
-            })
-        }
-    }
-
-    private fun verifySensorAndCommit(sensor: Sensor) {
-        Timber.d("verifySensorAndCommit")
-
-        var valid = true
-        if(TextUtils.isEmpty(sensor.topic)) {
-            valid = false
-        } else if(TextUtils.isEmpty(sensor.payloadActive)) {
-            valid = false
-        } else if(TextUtils.isEmpty(sensor.payloadInactive)) {
-            valid = false
-        }
-
-        // if not valid show error and make no changes
-        if(!valid) {
-            dialogUtils.showAlertDialog(requireActivity(), getString(R.string.error_sensor_empty_data))
-            return;
-        }
-
-        // if not type set to generic
-        if(TextUtils.isEmpty(sensor.type)) {
-            sensor.type = SENSOR_GENERIC_TYPE
-        }
-
-        // just set the name if its empty
-        if(TextUtils.isEmpty(sensor.name)) {
-            sensor.name = context?.getString(R.string.text_sensor)
-        }
-
-        sensorViewModel.insertItem(sensor)
     }
 }

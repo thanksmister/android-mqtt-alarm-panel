@@ -18,6 +18,8 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.content.SharedPreferences
 import android.text.TextUtils
+import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
@@ -178,6 +180,34 @@ constructor(private val sharedPreferences: SharedPreferences) {
         setOptionsUpdated(true)
     }
 
+    var useRemoteConfig: Boolean
+        get() = sharedPreferences.getBoolean(PREF_REMOTE_CONFIG, false)
+        set(value) {
+            this.sharedPreferences.edit().putBoolean(PREF_REMOTE_CONFIG, value).apply()
+            setOptionsUpdated(true)
+        }
+
+    var useManualConfig: Boolean
+        get() = sharedPreferences.getBoolean(PREF_MANUAL_CONFIG, false)
+        set(value) {
+            this.sharedPreferences.edit().putBoolean(PREF_MANUAL_CONFIG, value).apply()
+            setOptionsUpdated(true)
+        }
+
+    var remoteConfigTopic: String
+        get() = sharedPreferences.getString(PREF_ALARM_CONFIG, DEFAULT_CONFIG_TOPIC).orEmpty()
+        set(value) {
+            this.sharedPreferences.edit().putString(PREF_ALARM_CONFIG, value).apply()
+            setOptionsUpdated(true)
+        }
+
+    var remoteStatusTopic: String
+        get() = sharedPreferences.getString(PREF_ALARM_STATUS, DEFAULT_STATUS_TOPIC).orEmpty()
+        set(value) {
+            this.sharedPreferences.edit().putString(PREF_ALARM_STATUS, value).apply()
+            setOptionsUpdated(true)
+        }
+
     @Deprecated ("We will move to commands")
     fun setNotificationTopic(value: String) {
         this.sharedPreferences.edit().putString(PREF_NOTIFICATION_TOPIC, value).apply()
@@ -218,6 +248,8 @@ constructor(private val sharedPreferences: SharedPreferences) {
         const val PREF_CLIENT_ID = "pref_client_id"
         const val PREF_BROKER = "pref_broker"
         const val PREF_RETAIN = "pref_retain"
+        const val PREF_REMOTE_CONFIG = "pref_remote_config"
+        const val PREF_MANUAL_CONFIG = "pref_manual_config"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
         const val PREF_ALARM_CONFIG = "pref_config_command"
         const val PREF_ALARM_STATUS = "pref_status_command"

@@ -94,7 +94,8 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
         fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toInt().toString())
 
-        rotatePreference = findPreference(Configuration.PREF_CAMERA_ROTATE) as ListPreference
+        rotatePreference = findPreference("pref_settings_camera_rotate") as ListPreference
+
         rotatePreference!!.setDefaultValue(configuration.cameraRotate)
         rotatePreference!!.value = configuration.cameraRotate.toString()
         if(configuration.cameraRotate == 0f) {
@@ -234,7 +235,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     }
                 }
             }
-            Configuration.PREF_CAMERA_ROTATE -> {
+            "pref_settings_camera_rotate"-> {
                 val valueFloat = rotatePreference!!.value
                 val valueName = rotatePreference!!.entry.toString()
                 rotatePreference!!.summary = getString(R.string.preference_camera_flip_summary, valueName)

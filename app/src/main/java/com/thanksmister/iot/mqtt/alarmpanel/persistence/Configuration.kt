@@ -23,6 +23,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMED
+import java.lang.Exception
 import javax.inject.Inject
 
 class Configuration @Inject
@@ -33,8 +34,8 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DAY_NIGHT_MODE, value).apply()
 
     var useDarkTheme: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_DAY_NIGHT_MODE, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DAY_NIGHT_MODE, value).apply()
+        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
 
     var sensorOne: Boolean
         get() = this.sharedPreferences.getBoolean(PREF_SENSOR_ONE, false)
@@ -61,7 +62,14 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_SYSTEM_NOTIFICATIONS, value).apply()
 
     var inactivityTime: Long
-        get() = this.sharedPreferences.getLong(PREF_INACTIVITY_TIME, 300000)
+        get() {
+            return try {
+                this.sharedPreferences.getLong(PREF_INACTIVITY_TIME, 300000)
+            } catch (e: Exception) {
+                this.sharedPreferences.edit().putLong(PREF_INACTIVITY_TIME, 300000).apply()
+                300000
+            }
+        }
         set(value) = this.sharedPreferences.edit().putLong(PREF_INACTIVITY_TIME, value).apply()
 
     var isFirstTime: Boolean
@@ -207,7 +215,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_camera_motionminluma), value).apply()
 
     var cameraRotate: Float
-        get() = this.sharedPreferences.getString(PREF_CAMERA_ROTATE, "0f")?.toFloat() ?: 15f
+        get() = this.sharedPreferences.getFloat(PREF_CAMERA_ROTATE, 0f)
         set(value) = this.sharedPreferences.edit().putString(PREF_CAMERA_ROTATE, value.toString()).apply()
 
     var mqttSensorFrequency: Int
@@ -268,22 +276,19 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_sensors_enabled), value).apply()
 
     var deviceSensorFrequency: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
-                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_SENSOR_FREQUENCY, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_SENSOR_FREQUENCY, value).apply()
 
     var appShowActivity: Boolean
         get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_app_showactivity), false)
         set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_app_showactivity), value).apply()
 
     var testZoomLevel: Float
-        get() = this.sharedPreferences.getString(context.getString(R.string.key_setting_test_zoomlevel),
-                context.getString(R.string.default_setting_test_zoomlevel))?.toFloat() ?: 15f
-        set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_test_zoomlevel), value.toString()).apply()
+        get() = this.sharedPreferences.getFloat(PREF_ZOOM_LEVEL, 0F)
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_ZOOM_LEVEL, value).apply()
 
     var browserUserAgent: String
-        get() = sharedPreferences.getString(context.getString(R.string.key_setting_browser_user_agent),
-                context.getString(R.string.default_browser_user_agent)).orEmpty()
+        get() = sharedPreferences.getString(context.getString(R.string.key_setting_browser_user_agent), context.getString(R.string.default_browser_user_agent)).orEmpty()
         set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_browser_user_agent), value).apply()
 
     var writeScreenPermissionsShown: Boolean
@@ -304,7 +309,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     var panicButton: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_PANIC_ALERT, true)
+        get() = this.sharedPreferences.getBoolean(PREF_PANIC_ALERT, false)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_PANIC_ALERT, value).apply()
 
     fun setWebModule(value: Boolean) {
@@ -414,25 +419,14 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
     companion object {
         const val PREF_FINGERPRINT = "pref_fingerprint"
-        const val PREF_PENDING_TIME = "pref_pending_time"
-        const val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
-        const val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
-        const val PREF_DELAY_TIME = "pref_delay_time"
-        const val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
-        const val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
         const val PREF_ALARM_MODE = "pref_alarm_mode"
         const val PREF_ALARM_CODE = "pref_alarm_code"
         const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        const val PREF_IMAGE_SOURCE = "pref_image_source"
-        const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
-        const val PREF_IMAGE_ROTATION = "pref_image_rotation"
-        const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
         const val PREF_FULL_SCREEN = "pref_full_screen"
         const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         const val PREF_MODULE_TSS = "pref_module_tss"
         const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
-        const val PREF_USE_DARK_THEME = "pref_use_dark_theme"
         const val PREF_SENSOR_ONE = "pref_sensor_one"
         const val PREF_SENSOR_TWO = "pref_sensor_two"
         const val PREF_SENSOR_ONE_NAME = "pref_sensor_one_name"
@@ -472,6 +466,8 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
         const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
         const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
+        const val PREF_SENSOR_FREQUENCY = "pref_sensors_frequency"
+        const val PREF_ZOOM_LEVEL = "pref_zoom_level"
         const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"

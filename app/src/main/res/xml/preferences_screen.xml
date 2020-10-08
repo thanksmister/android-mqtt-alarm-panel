@@ -23,12 +23,12 @@
         <SwitchPreference
             android:title="@string/pref_title_acceleration"
             android:summary="@string/pref_summary_acceleration"
-            android:key="pref_hardware_acceleration"/>
+            android:key="pref_settings_hardware_acceleration"/>
 
         <SwitchPreference
             android:title="@string/pref_fullscreen_title"
             android:summary="@string/pref_fullscreen_description"
-            android:key="pref_full_screen"/>
+            android:key="pref_settings_fullscreen"/>
 
         <SwitchPreference
             android:defaultValue="@string/default_setting_app_preventsleep"
@@ -37,12 +37,13 @@
             android:summary="@string/pref_summary_prevent_sleep"/>
 
         <SwitchPreference
-            android:key="pref_day_night_mode"
+            android:key="pref_settings_day_night"
             android:summary="@string/pref_night_mode_description"
             android:title="@string/pref_title_night_mode"/>
 
         <EditTextPreference
             android:selectable="false"
+            android:dependency="pref_settings_day_night"
             android:summary="@string/summary_sun_topic"
             android:title="@string/preference_title_sun"
             android:textSize="12sp"/>
@@ -53,20 +54,20 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="pref_use_screen_brightness"
+            android:key="pref_settings_screen_brightness"
             android:title="@string/pref_title_screen_brightness"
             android:summary="@string/pref_description_screen_brightness"/>
 
         <Preference
-            android:dependency="pref_use_screen_brightness"
-            android:key="pref_screen_saver_brightness"
+            android:dependency="pref_settings_screen_brightness"
+            android:key="pref_settings_brightness"
             android:title="@string/pref_brightness_button"
             android:icon="@drawable/ic_settings_brightness"
             android:summary="@string/pref_button_brightness_summary"/>
 
         <ListPreference
-            android:dependency="pref_use_screen_brightness"
-            android:key="pref_screensaver_dim_value"
+            android:dependency="pref_settings_screen_brightness"
+            android:key="pref_settings_dim"
             android:title="@string/preference_title_screensaver_dim"
             android:entries="@array/dim_title"
             android:entryValues="@array/dim_values"/>
@@ -76,7 +77,7 @@
     <PreferenceCategory android:title="@string/preference_title_screen_saver_settings">
 
         <ListPreference
-            android:key="pref_inactivity_time"
+            android:key="pref_settings_inactivity_time"
             android:title="@string/preference_title_inactivity"
             android:entries="@array/inactivity_times"
             android:entryValues="@array/inactivity_values"/>
@@ -85,7 +86,7 @@
             android:defaultValue="false"
             android:title="@string/preference_title_screen_saver"
             android:summary="@string/preference_summary_screen_saver_settings"
-            android:key="pref_module_saver_clock"/>
+            android:key="pref_settings_clock_saver"/>
 
         <SwitchPreference
             android:defaultValue="false"
@@ -108,7 +109,7 @@
             android:key="@string/key_saver_photo"/>
 
         <EditTextPreference
-            android:key="pref_image_source"
+            android:key="pref_settings_image_url"
             android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_source"
             android:summary="@string/preference_summary_image_source"
@@ -116,7 +117,7 @@
             android:positiveButtonText="@android:string/ok"/>
 
         <EditTextPreference
-            android:key="pref_image_client_id"
+            android:key="pref_settings_client_id"
             android:dependency="@string/key_saver_photo"
             android:title="@string/pref_title_image_client_id"
             android:summary="@string/preference_summary_image_client_id"
@@ -124,13 +125,13 @@
             android:positiveButtonText="@android:string/ok"/>
 
         <SwitchPreference
-            android:key="pref_image_fit"
+            android:key="pref_settings_image_fit"
             android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_fit"
             android:summary="@string/preference_summary_image_fit"/>
 
         <EditTextPreference
-            android:key="pref_image_rotation"
+            android:key="pref_settings_image_rotation"
             android:dependency="@string/key_saver_photo"
             android:title="@string/preference_title_image_rotation"
             android:summary="@string/preference_summary_image_rotation"

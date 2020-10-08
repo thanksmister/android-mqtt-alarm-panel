@@ -21,35 +21,31 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
-import androidx.preference.*
+import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_AWAY_DELAY_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_AWAY_PENDING_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_DELAY_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_FINGERPRINT
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_DELAY_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_HOME_PENDING_TIME
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PENDING_TIME
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
 import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
-import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint
+import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var configuration: Configuration
+    @Inject
+    lateinit var dialogUtils: DialogUtils
 
     private var pendingPreference: EditTextPreference? = null
     private var pendingHomePreference: EditTextPreference? = null
@@ -66,14 +62,14 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
-        if((activity as SettingsActivity).supportActionBar != null) {
+        if ((activity as SettingsActivity).supportActionBar != null) {
             (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_alarm))
         }
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey : String?) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.alarm_preferences)
         lifecycle.addObserver(dialogUtils)
     }
@@ -119,7 +115,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         // the first time we need to set the alarm code
-        if(configuration.isFirstTime) {
+        if (configuration.isFirstTime) {
             showAlarmCodeDialog();
         }
     }
@@ -148,7 +144,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             val fingerPrintIdentity = FingerprintIdentify(context)
             Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
             Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
-            if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
+            if (fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
                 return true
             }
         } catch (e: ClassNotFoundException) {
@@ -188,6 +184,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                         Toast.makeText(activity, R.string.toast_code_not_match, Toast.LENGTH_LONG).show()
                     }
                 }
+
                 override fun onError() {}
                 override fun onCancel() {
                     confirmCode = false

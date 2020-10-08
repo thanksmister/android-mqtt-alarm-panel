@@ -16,6 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
@@ -23,14 +24,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.navigation.Navigation
-import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
+import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
 import dagger.android.support.AndroidSupportInjection
+import timber.log.Timber
 
 class SettingsFragment : BaseSettingsFragment() {
 
@@ -49,7 +52,7 @@ class SettingsFragment : BaseSettingsFragment() {
     }
 
     private val themePreference: SwitchPreference by lazy {
-        findPreference("button_dark_theme") as SwitchPreference
+        findPreference("pref_dark_theme") as SwitchPreference
     }
 
     private val panicPreference: SwitchPreference by lazy {
@@ -84,20 +87,8 @@ class SettingsFragment : BaseSettingsFragment() {
         findPreference("button_sensors") as Preference
     }
 
-    private val sensorOnePreference: SwitchPreference by lazy {
-        findPreference("key_sensor_one") as SwitchPreference
-    }
-
-    private val sensorOneNamePreference: EditTextPreference by lazy {
-        findPreference("key_sensor_two_name") as EditTextPreference
-    }
-
-    private val sensorTwoPreference: SwitchPreference by lazy {
-        findPreference("key_sensor_two") as SwitchPreference
-    }
-
-    private val sensorTwoNamePreference: EditTextPreference by lazy {
-        findPreference("key_sensor_two_name") as EditTextPreference
+    private val fingerprintPreference: SwitchPreference by lazy {
+        findPreference("pref_fingerprint") as SwitchPreference
     }
 
     override fun onAttach(context: Context) {
@@ -136,21 +127,50 @@ class SettingsFragment : BaseSettingsFragment() {
             view.let { Navigation.findNavController(it).navigate(R.id.about_action) }
             false
         }
-        panicPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        notificationsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             view.let { Navigation.findNavController(it).navigate(R.id.notifications_action) }
+            false
+        }
+        screenPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.screen_action) }
+            false
+        }
+        cameraPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.camera_action) }
+            false
+        }
+        weatherPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.weather_action) }
             false
         }
         codePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             showAlarmCodeDialog()
             true
         }
+        browserPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.platform_action) }
+            false
+        }
+        sensorsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.sensors_action) }
+            false
+        }
 
-        //themePreference.isChecked = configuration.useNightDayMode
+        themePreference.isChecked = configuration.useNightDayMode
+        panicPreference.isChecked == configuration.panicButton
+
+        if (isFingerprintSupported()) {
+            fingerprintPreference.isVisible = true
+            fingerprintPreference.isChecked = configuration.fingerPrint
+        } else {
+            fingerprintPreference.isVisible = false
+        }
 
         val code = configuration.alarmCode.toString()
         if(code.isNotEmpty()) {
             codePreference.summary = toStars(code)
         }
+
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -161,19 +181,32 @@ class SettingsFragment : BaseSettingsFragment() {
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked
             }
-            /*"key_sensor_one" -> {
-                configuration.sensorOne = sensorOnePreference.isChecked
+            Configuration.PREF_FINGERPRINT -> {
+                val checked = fingerprintPreference.isChecked
+                if (isFingerprintSupported()) {
+                    configuration.fingerPrint = checked
+                } else {
+                    Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
+                    fingerprintPreference.isChecked = false
+                    configuration.fingerPrint = false
+                }
             }
-            "key_sensor_two" -> {
-                configuration.sensorTwo = sensorTwoPreference.isChecked
-            }
-            "key_sensor_one_name" -> {
-                configuration.sensorOneName = sensorOneNamePreference.text
-            }
-            "key_sensor_two_name" -> {
-                configuration.sensorTwoName = sensorTwoNamePreference.text
-            }*/
         }
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun isFingerprintSupported(): Boolean {
+        try {
+            val fingerPrintIdentity = FingerprintIdentify(context)
+            Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
+            Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
+            if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
+                return true
+            }
+        } catch (e: ClassNotFoundException) {
+            Timber.w("Fingerprint: " + e.message)
+        }
+        return false
     }
 
     private fun showAlarmCodeDialog() {

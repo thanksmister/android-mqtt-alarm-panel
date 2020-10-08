@@ -25,18 +25,17 @@ import android.widget.Toast
 import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PANEL_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_BROKER
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_CLIENT_ID
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PASSWORD
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_PORT
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_RETAIN
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -56,12 +55,20 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
-    private val remoteConfigPreference: SwitchPreference by lazy {
+    private val manualConfigSwitchPreference: SwitchPreference by lazy {
         findPreference("pref_alarm_manual_configuration") as SwitchPreference
     }
 
+    private val remoteConfigSwitchPreference: SwitchPreference by lazy {
+        findPreference("pref_alarm_configuration") as SwitchPreference
+    }
+
     private val remoteConfigTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_alarm_manual_configuration") as EditTextPreference
+        findPreference("pref_mqtt_remote_config_topic") as EditTextPreference
+    }
+
+    private val remoteStatusPreference: EditTextPreference by lazy {
+        findPreference("pref_mqtt_remote_status_topic") as EditTextPreference
     }
 
     override fun onAttach(context: Context) {
@@ -98,51 +105,48 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
 
         brokerPreference = findPreference(PREF_BROKER) as EditTextPreference
         clientPreference = findPreference(PREF_CLIENT_ID) as EditTextPreference
-        portPreference = findPreference(PREF_PORT) as EditTextPreference
+        portPreference = findPreference("pref_mqtt_port") as EditTextPreference
         commandTopicPreference = findPreference(PREF_COMMAND_TOPIC) as EditTextPreference
         stateTopicPreference = findPreference(PREF_STATE_TOPIC) as EditTextPreference
         userNamePreference = findPreference(PREF_USERNAME) as EditTextPreference
         passwordPreference = findPreference(PREF_PASSWORD) as EditTextPreference
         sslPreference = findPreference(PREF_TLS_CONNECTION) as SwitchPreference
-        retainPreference = findPreference(PREF_RETAIN) as SwitchPreference
-        baseTopicPreference = findPreference(PREF_PANEL_COMMAND_TOPIC) as EditTextPreference
+        retainPreference = findPreference("pref_mqtt_retain") as SwitchPreference
+        baseTopicPreference = findPreference("pref_mqtt_base_topic") as EditTextPreference
 
-        baseTopicPreference!!.text = mqttOptions.getBaseCommand()
         brokerPreference!!.text = mqttOptions.getBroker()
         clientPreference!!.text = mqttOptions.getClientId()
+
         portPreference!!.text = mqttOptions.getPort().toString()
+        portPreference!!.summary = mqttOptions.getPort().toString()
+
         commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
         stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
         userNamePreference!!.text = mqttOptions.getUsername()
+
         passwordPreference!!.text = mqttOptions.getPassword()
+        userNamePreference!!.text = mqttOptions.getPassword()
+
+
         sslPreference!!.isChecked = mqttOptions.getTlsConnection()
         retainPreference!!.isChecked = mqttOptions.getRetain()
 
-        if (!TextUtils.isEmpty(mqttOptions.getBroker())) {
-            brokerPreference!!.summary = mqttOptions.getBroker()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getClientId())) {
-            clientPreference!!.summary = mqttOptions.getClientId()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getPort().toString())) {
-            portPreference!!.summary = mqttOptions.getPort().toString()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getAlarmCommandTopic())) {
-            commandTopicPreference!!.summary = mqttOptions.getAlarmCommandTopic()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getAlarmStateTopic())) {
-            stateTopicPreference!!.summary = mqttOptions.getAlarmStateTopic()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getUsername())) {
-            userNamePreference!!.summary = mqttOptions.getUsername()
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getPassword())) {
-            passwordPreference!!.summary = toStars(mqttOptions.getPassword())
-        }
-        if (!TextUtils.isEmpty(mqttOptions.getBaseCommand())) {
-            baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseCommand())
-            baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
-        }
+        brokerPreference!!.summary = mqttOptions.getBroker()
+        clientPreference!!.summary = mqttOptions.getClientId()
+
+        commandTopicPreference!!.summary = mqttOptions.getAlarmCommandTopic()
+        stateTopicPreference!!.summary = mqttOptions.getAlarmStateTopic()
+        userNamePreference!!.summary = mqttOptions.getUsername()
+        passwordPreference!!.summary = toStars(mqttOptions.getPassword())
+
+        baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseCommand())
+        baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
+
+        remoteConfigTopicPreference.text = mqttOptions.remoteConfigTopic
+        remoteStatusPreference.text = mqttOptions.remoteStatusTopic
+
+        remoteConfigTopicPreference.summary = mqttOptions.remoteConfigTopic
+        remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -167,7 +171,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     clientPreference!!.text = mqttOptions.getClientId()
                 }
             }
-            PREF_PORT -> {
+            "pref_mqtt_port" -> {
                 value = portPreference!!.text
                 if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
                     mqttOptions.setPort(value)
@@ -187,7 +191,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                     commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
                 }
             }
-            PREF_PANEL_COMMAND_TOPIC -> {
+            "pref_mqtt_base_topic" -> {
                 value = baseTopicPreference!!.text
                 if (!TextUtils.isEmpty(value)) {
                     mqttOptions.setBaseTopic(value)
@@ -222,9 +226,31 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 val checked = sslPreference!!.isChecked
                 mqttOptions.setTlsConnection(checked)
             }
-            PREF_RETAIN -> {
+            "pref_mqtt_retain" -> {
                 val checked = sslPreference!!.isChecked
                 mqttOptions.setRetain(checked)
+            }
+            "pref_alarm_manual_configuration" -> {
+                mqttOptions.useManualConfig = manualConfigSwitchPreference.isChecked
+                if(mqttOptions.useManualConfig) {
+                    mqttOptions.useRemoteConfig = false
+                    remoteConfigSwitchPreference.isChecked = false
+                }
+            }
+            "pref_alarm_configuration" -> {
+                mqttOptions.useRemoteConfig = remoteConfigSwitchPreference.isChecked
+                if(mqttOptions.useRemoteConfig) {
+                    mqttOptions.useManualConfig = false
+                    manualConfigSwitchPreference.isChecked = false
+                }
+            }
+            "pref_mqtt_remote_config_topic" -> {
+                mqttOptions.remoteStatusTopic = remoteConfigTopicPreference.text?:DEFAULT_CONFIG_TOPIC
+                remoteConfigTopicPreference.summary = mqttOptions.remoteStatusTopic
+            }
+            "pref_mqtt_remote_status_topic" -> {
+                mqttOptions.remoteStatusTopic = remoteStatusPreference.text?:DEFAULT_STATUS_TOPIC
+                remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
             }
         }
     }

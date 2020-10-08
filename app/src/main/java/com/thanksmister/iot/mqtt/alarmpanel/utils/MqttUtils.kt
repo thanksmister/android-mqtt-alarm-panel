@@ -99,8 +99,8 @@ class MqttUtils {
         //const val DEFAULT_ALERT_TOPIC = "home/alert/set"
         const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
         const val DEFAULT_CONFIG_TOPIC = "home/alarm/config"
-        const val DEFAULT_STATE_TOPIC = "home/alarm"
         const val DEFAULT_STATUS_TOPIC = "home/alarm/status"
+        const val DEFAULT_STATE_TOPIC = "home/alarm"
         const val DEFAULT_PANEL_COMMAND_TOPIC = "alarmpanel"
         const val DEFAULT_INVALID = "INVALID"
 

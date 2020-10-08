@@ -14,7 +14,6 @@
   ~ limitations under the License.
   -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preferenceView">
 
     <PreferenceCategory
@@ -40,7 +39,7 @@
             android:summary="@string/preference_summary_tls_connection"
             android:title="@string/preference_tls_connection" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="pref_mqtt_retain"
             android:summary="@string/pref_retain_summary"
             android:title="@string/pref_retrain_title" />
@@ -99,7 +98,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Alarm Configuration">
+   <PreferenceCategory android:title="Alarm Configuration">
 
         <SwitchPreference
             android:key="pref_alarm_configuration"
@@ -108,23 +107,15 @@
 
         <EditTextPreference
             android:dependency="pref_alarm_configuration"
-            android:key="pref_mqtt_base_topic"
+            android:key="pref_mqtt_remote_config_topic"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="home/alarm/config"
-            android:title="Configuration Topic"/>
+            android:title="Config Topic"/>
 
         <EditTextPreference
             android:dependency="pref_alarm_configuration"
-            android:paddingTop="0dp"
-            android:selectable="false"
-            android:summary="Subscribe topic to receive the configuration settings for alarm panel."
-            android:textColor="@color/light_gray"
-            android:textSize="12sp"/>
-
-        <EditTextPreference
-            android:dependency="pref_alarm_configuration"
-            android:key="pref_mqtt_alarm_status_topic"
+            android:key="pref_mqtt_remote_status_topic"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="home/alarm/status"
@@ -134,7 +125,7 @@
             android:dependency="pref_alarm_configuration"
             android:paddingTop="0dp"
             android:selectable="false"
-            android:summary="Subscribe topic to receive the status on code entry."
+            android:summary="Using the remote config will retrieve the alarm configuration, including any codes from the server. For more information, see the documentation."
             android:textColor="@color/light_gray"
             android:textSize="12sp"/>
 
@@ -157,15 +148,6 @@
 
         <EditTextPreference
             android:dependency="pref_alarm_manual_configuration"
-            android:paddingTop="0dp"
-            android:selectable="false"
-            android:textColor="@color/light_gray"
-            android:textSize="12sp"
-            android:summary="@string/preference_summary_command_topic"
-            android:title="@string/preference_title_command_topic" />
-
-        <EditTextPreference
-            android:dependency="pref_alarm_manual_configuration"
             android:key="pref_alarm_topic"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
@@ -176,16 +158,7 @@
             android:dependency="pref_alarm_manual_configuration"
             android:paddingTop="0dp"
             android:selectable="false"
-            android:textColor="@color/light_gray"
-            android:textSize="12sp"
-            android:summary="Set the status topic to receive the status of alarm code entered, invalid responses are handled in the application."
-            android:title="Alarm Status" />
-
-        <EditTextPreference
-            android:dependency="pref_alarm_configuration"
-            android:paddingTop="0dp"
-            android:selectable="false"
-            android:summary="Using manual configuration overrides remote configuration. Use manual configuration when remote configuration is not an option or you have a custom setup."
+            android:summary="Using manual configuration overrides the remote configuration. Use manual configuration when you require a custom setup."
             android:textColor="@color/light_gray"
             android:textSize="12sp"/>
 

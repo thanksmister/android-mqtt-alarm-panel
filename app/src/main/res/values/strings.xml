@@ -312,7 +312,7 @@
     <string name="pref_sensor_list_summary">Below is a list of sensor data available on this device to be published as MQTT data.</string>
     <string name="pref_qr_code_summary">Will scan QR codes using the device\'s camera and publish the scanned code over MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publish Frequency (in seconds)</string>
-    <string name="summary_setting_mqtt_basetopic">Identifier to receive MQTT commands for this panel. Each panel should have a unique identifier.</string>
+    <string name="summary_setting_mqtt_basetopic">Identifier to receive commands for this panel. Each panel should have a unique identifier.</string>
     <string name="title_setting_mqtt_basetopic">Alarm Command Topic</string>
     <string name="service_notification_message">Alarm Panel Running…</string>
     <string name="toast_camera_source_error">Could not start camera source, you may want to try again.</string>

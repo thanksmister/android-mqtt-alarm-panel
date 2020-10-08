@@ -97,22 +97,22 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         super.onViewCreated(view, savedInstanceState)
 
-        clockSaverPreference = findPreference(Configuration.PREF_MODULE_CLOCK_SAVER) as SwitchPreference
+        clockSaverPreference = findPreference("pref_settings_clock_saver") as SwitchPreference
         photoSaverPreference = findPreference(getString(R.string.key_saver_photo)) as SwitchPreference
-        hardwareAcceleration = findPreference(Configuration.PREF_HARDWARE_ACCELERATION) as SwitchPreference
+        hardwareAcceleration = findPreference("pref_settings_hardware_acceleration") as SwitchPreference
         webSaverPreference = findPreference(getString(R.string.key_setting_web_screensaver)) as SwitchPreference
-        clientIdPreference = findPreference(Configuration.PREF_IMAGE_CLIENT_ID) as EditTextPreference
-        urlPreference = findPreference(Configuration.PREF_IMAGE_SOURCE) as EditTextPreference
+        clientIdPreference = findPreference("pref_settings_client_id") as EditTextPreference
+        urlPreference = findPreference("pref_settings_image_url") as EditTextPreference
         webUrlPreference = findPreference(getString(R.string.key_setting_web_url)) as EditTextPreference
-        imageFitPreference = findPreference(Configuration.PREF_IMAGE_FIT_SIZE) as SwitchPreference
-        rotationPreference = findPreference(Configuration.PREF_IMAGE_ROTATION) as EditTextPreference
-        inactivityPreference = findPreference(Configuration.PREF_INACTIVITY_TIME) as ListPreference
-        fullScreenPreference = findPreference(Configuration.PREF_FULL_SCREEN) as SwitchPreference
+        imageFitPreference = findPreference("pref_settings_image_fit") as SwitchPreference
+        rotationPreference = findPreference("pref_settings_image_rotation") as EditTextPreference
+        inactivityPreference = findPreference("pref_settings_inactivity_time") as ListPreference
+        fullScreenPreference = findPreference("pref_settings_fullscreen") as SwitchPreference
         preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as SwitchPreference
-        screenBrightness = findPreference(Configuration.PREF_SCREEN_BRIGHTNESS) as SwitchPreference
-        dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as SwitchPreference
-        dimPreference = findPreference(Configuration.PREF_SCREENSAVER_DIM_VALUE) as ListPreference
-        brightnessPreference = findPreference(Configuration.PREF_BUTTON_BRIGHTNESS) as Preference
+        screenBrightness = findPreference("pref_settings_screen_brightness") as SwitchPreference
+        dayNightPreference = findPreference("pref_settings_day_night") as SwitchPreference
+        dimPreference = findPreference("pref_settings_dim") as ListPreference
+        brightnessPreference = findPreference("pref_settings_brightness") as Preference
 
         webUrlPreference?.text = configuration.webScreenSaverUrl
         dayNightPreference?.isChecked = configuration.useNightDayMode
@@ -239,7 +239,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            Configuration.PREF_MODULE_CLOCK_SAVER -> {
+            "pref_settings_clock_saver" -> {
                 clockSaverPreference?.let {
                     val checked = it.isChecked
                     setClockScreenSaver(checked)
@@ -251,7 +251,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     setPhotoScreenSaver(checked)
                 }
             }
-            Configuration.PREF_IMAGE_SOURCE -> {
+            "pref_settings_image_url" -> {
                 val value = urlPreference!!.text
                 if(TextUtils.isEmpty(value)) {
                     Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
@@ -260,7 +260,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     imageOptions.imageSource = value
                 }
             }
-            Configuration.PREF_IMAGE_CLIENT_ID -> {
+            "pref_settings_client_id" -> {
                 val value = clientIdPreference!!.text
                 if (TextUtils.isEmpty(value)) {
                     Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
@@ -268,15 +268,15 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     imageOptions.imageClientId = value
                 }
             }
-            Configuration.PREF_IMAGE_FIT_SIZE -> {
+            "pref_settings_image_fit" -> {
                 val fitScreen = imageFitPreference!!.isChecked
                 imageOptions.imageFitScreen = fitScreen
             }
-            Configuration.PREF_FULL_SCREEN -> {
+            "pref_settings_fullscreen" -> {
                 val fullscreen = fullScreenPreference!!.isChecked
                 configuration.fullScreen = fullscreen
             }
-            Configuration.PREF_SCREEN_BRIGHTNESS -> {
+            "pref_settings_screen_brightness" -> {
                 val useBright = screenBrightness!!.isChecked
                 configuration.useScreenBrightness = useBright
                 if(useBright) {
@@ -285,14 +285,14 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     screenUtils.restoreDeviceBrightnessControl()
                 }
             }
-            Configuration.PREF_IMAGE_ROTATION -> {
+            "pref_settings_image_rotation"-> {
                 rotationPreference?.text?.let {
                     val rotation = Integer.valueOf(it)
                     imageOptions.imageRotation = rotation
                     rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotation.toString())
                 }
             }
-            Configuration.PREF_INACTIVITY_TIME -> {
+            "pref_settings_inactivity_time" -> {
                 val inactivity = inactivityPreference?.value!!.toLong()
                 configuration.inactivityTime = inactivity
                 if (inactivity < SECONDS_VALUE) {
@@ -301,12 +301,12 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
                 }
             }
-            Configuration.PREF_DAY_NIGHT_MODE -> {
+            "pref_settings_day_night" -> {
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
                 configuration.nightModeChanged = true
             }
-            Configuration.PREF_HARDWARE_ACCELERATION -> {
+            "pref_settings_hardware_acceleration" -> {
                 val checked = hardwareAcceleration!!.isChecked
                 configuration.userHardwareAcceleration = checked
             }
@@ -327,7 +327,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val checked = webSaverPreference!!.isChecked
                 setWebScreenSaver(checked)
             }
-            Configuration.PREF_SCREENSAVER_DIM_VALUE -> {
+            "pref_settings_dim" -> {
                 val dim = dimPreference?.value!!.toInt()
                 configuration.nightModeDimValue = dim
                 screenUtils.setScreenBrightnessLevels()
