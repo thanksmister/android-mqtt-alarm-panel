@@ -96,7 +96,8 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
 
         super.onViewCreated(view, savedInstanceState)
 
-        val buttonPreference = findPreference(Configuration.PREF_ALARM_CODE)
+        val buttonPreference = findPreference("pref_alarm_code")
+
         buttonPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             showAlarmCodeDialog()
             true

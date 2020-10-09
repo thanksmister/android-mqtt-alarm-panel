@@ -72,13 +72,16 @@ class MainFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated")
-        buttonSettings.setOnClickListener {
+        buttonSettings?.setOnClickListener {
             showSettingsCodeDialog()
         }
-        buttonSleep.setOnClickListener {
+        platformButton?.setOnClickListener {
+            listener?.navigatePlatformPanel()
+        }
+        buttonSleep?.setOnClickListener {
             listener?.manuallyLaunchScreenSaver()
         }
-        alertButton.setOnClickListener {
+        alertButton?.setOnClickListener {
             listener?.publishAlertCall()
         }
     }
@@ -87,21 +90,25 @@ class MainFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
+    /**
+     * Here we setup the visibility of the bottom navigation bar buttons based on changes in the settings.
+     */
     override fun onResume() {
         super.onResume()
         if (viewModel.hasPlatform()) {
-            platformButton.visibility = View.VISIBLE;
-            platformButton.setOnClickListener {
-                listener?.navigatePlatformPanel()
-            }
+            buttonPlatformLayout?.visibility = View.VISIBLE;
         } else {
-            platformButton.visibility = View.INVISIBLE;
+            buttonPlatformLayout?.visibility = View.INVISIBLE;
         }
-
-        if(configuration.panicButton.not()) {
-            alertButton.visibility = View.GONE
+        if(configuration.hasScreenSaver()) {
+            buttonSleepLayout?.visibility = View.VISIBLE
         } else {
-            alertButton.visibility = View.VISIBLE
+            buttonSleepLayout?.visibility = View.GONE
+        }
+        if(configuration.panicButton.not()) {
+            alertButton?.visibility = View.GONE
+        } else {
+            alertButton?.visibility = View.VISIBLE
         }
     }
 
@@ -112,7 +119,7 @@ class MainFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        buttonSleep.apply {
+        buttonSleep?.apply {
             setOnTouchListener(null)
         }
         listener = null
@@ -153,37 +160,6 @@ class MainFragment : BaseFragment() {
                 }, { error -> Timber.e("Unable to get message: " + error) }))
     }
 
-    /*private fun observeViewModel(viewModel: MainViewModel) {
-        disposable.add(viewModel.getAlarmState()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ state ->
-                    Timber.d("Alarm state: $state")
-                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}" )
-                    activity?.runOnUiThread {
-                        when (state) {
-                            AlarmUtils.STATE_ARM_AWAY, AlarmUtils.STATE_ARM_HOME -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            AlarmUtils.STATE_DISARM -> {
-                                dialogUtils.clearDialogs()
-                                hideTriggeredView()
-                            }
-                            AlarmUtils.STATE_PENDING -> {
-                                dialogUtils.clearDialogs()
-                                if (configuration.isAlarmDisableMode()) {
-                                    showAlarmDisableDialog(viewModel.getAlarmDelayTime())
-                                }
-                            }
-                            AlarmUtils.STATE_TRIGGERED -> {
-                                dialogUtils.clearDialogs()
-                                showAlarmTriggered()
-                            }
-                        }
-                    }
-                }, { error -> Timber.e("Unable to get message: " + error) }))
-    }*/
-
     private fun showSettingsCodeDialog() {
         if (configuration.isFirstTime) {
             activity?.let {
@@ -194,86 +170,6 @@ class MainFragment : BaseFragment() {
             listener?.showCodeDialog()
         }
     }
-
-   /* private fun showSettingsCodeDialog() {
-        if (configuration.isFirstTime) {
-            activity?.let {
-                val intent = SettingsActivity.createStartIntent(it.applicationContext)
-                startActivity(intent)
-            }
-        } else {
-            dialogUtils.showSettingsCodeDialog(activity as MainActivity, configuration.alarmCode, object : SettingsCodeView.ViewListener {
-                override fun onComplete(code: Int) {
-                    if (code == configuration.alarmCode) {
-                        activity?.let {
-                            val intent = SettingsActivity.createStartIntent(activity!!.applicationContext)
-                            startActivity(intent)
-                        }
-                    }
-                    dialogUtils.clearDialogs()
-                }
-                override fun onError() {
-                    activity?.let {
-                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
-                }
-                override fun onCancel() {
-                    dialogUtils.clearDialogs()
-                }
-            }, configuration.systemSounds, configuration.fingerPrint)
-        }
-    }*/
-
-    /**
-     * We show the disarm dialog if we have delay time and a sensor was triggered in home or away mode.
-     * This will be the time before the alarm is triggered, otherwise the expected behavior is the
-     * alarm will trigger immediately.
-     */
-    /*private fun showAlarmDisableDialog(delayTime: Int) {
-        activity.takeIf { isAdded }?.let {
-            if(delayTime > 0) {
-                dialogUtils.showAlarmDisableDialog(it as BaseActivity, object : AlarmDisableView.ViewListener {
-                    override fun onComplete(code: Int) {
-                        listener?.publishDisarmed()
-                        dialogUtils.clearDialogs()
-                    }
-                    override fun onError() {
-                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
-                    override fun onCancel() {
-                        dialogUtils.clearDialogs()
-                    }
-                }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
-            }
-        }
-    }*/
-
-    /*private fun showAlarmTriggered() {
-        activity.takeIf { isAdded }?.let {
-            it.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
-            mainView.visibility = View.GONE
-            triggeredView.visibility = View.VISIBLE
-            val code = configuration.alarmCode
-            val disarmView = it.findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
-            disarmView.setCode(code)
-            disarmView.setUseSound(configuration.systemSounds)
-            disarmView.useFingerprint = configuration.fingerPrint
-            disarmView.listener = object : AlarmTriggeredView.ViewListener {
-                override fun onComplete() {
-                    listener?.publishDisarmed()
-                }
-                override fun onError() {
-                    Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }*/
-
-    /*private fun hideTriggeredView() {
-        mainView.visibility = View.VISIBLE
-        triggeredView.visibility = View.GONE
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
-    }*/
 
     companion object {
         @JvmStatic fun newInstance(): MainFragment {

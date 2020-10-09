@@ -107,6 +107,12 @@
                 android:layout_width="16dp"
                 android:layout_height="24dp" />
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/buttonPlatformLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
             <ImageButton
                 android:id="@+id/platformButton"
                 style="@style/BorderlessButtonStyle"
@@ -122,20 +128,30 @@
                 android:layout_width="16dp"
                 android:layout_height="24dp" />
 
-            <ImageButton
-                android:id="@+id/buttonSleep"
-                style="@style/BorderlessButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_sleep"
-                android:tint="@color/dark_gray"
-                tools:ignore="ContentDescription" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="24dp" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/buttonSleepLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/buttonSleep"
+                    style="@style/BorderlessButtonStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_sleep"
+                    android:tint="@color/dark_gray"
+                    tools:ignore="ContentDescription" />
+
+                <Space
+                    android:layout_width="16dp"
+                    android:layout_height="24dp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <ImageButton
                 android:id="@+id/buttonSettings"

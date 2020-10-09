@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,168 +14,226 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/armOptionsView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="16dp"
-        android:orientation="vertical">
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/armOptionsView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:id="@+id/lockImage"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:src="@drawable/ic_lock_open_variant"
             android:tint="@color/green"
-            android:src="@drawable/ic_unlock_large"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/titleText"
+            style="@style/TextAppearance.SubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginRight="16dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:gravity="start">
+            android:layout_marginStart="8dp"
+            android:text="@string/text_system"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/lockImage"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                style="@style/TextAppearance.SubTitle"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_system"/>
-
-            <TextView
-                style="@style/TextAppearance.SubTitle"
-                android:textSize="20sp"
-                android:textColor="@color/green"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_disarmed"/>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/stateText"
+            style="@style/TextAppearance.SubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_disarmed"
+            android:textColor="@color/green"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/lockImage"
+            app:layout_constraintTop_toBottomOf="@id/titleText" />
 
         <ImageView
             android:id="@+id/closeDialogButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:layout_marginStart="8dp"
             android:src="@drawable/ic_close"
             android:tint="@color/dark_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="48dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:gravity="center|bottom"
-        android:orientation="horizontal">
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|bottom"
-            android:orientation="vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
+            app:layout_constraintTop_toBottomOf="@id/guidelineMiddle">
 
             <FrameLayout
                 android:id="@+id/armStayButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_round_yellow"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:padding="34dp"
-                android:background="@drawable/button_round_yellow">
+                android:padding="22dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_lock_large"/>
+                    android:src="@drawable/ic_lock"
+                    android:tint="@color/white"/>
 
             </FrameLayout>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="4dp"/>
-
             <TextView
                 style="@style/TextAppearance.SubTitle"
-                android:textStyle="bold"
-                android:textSize="22sp"
-                android:lines="1"
-                android:ellipsize="end"
-                android:textColor="@color/yellow"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_arm_home"/>
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/text_arm_home"
+                android:textColor="@color/yellow"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <Space
-            android:layout_width="8dp"
-            android:layout_weight="0"
-            android:layout_height="match_parent"/>
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintStart_toEndOf="@id/guidelineCenter"
+            app:layout_constraintTop_toBottomOf="@id/guidelineMiddle"
             android:orientation="vertical">
 
             <FrameLayout
                 android:id="@+id/armAwayButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/button_round_red"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:padding="34dp"
-                android:background="@drawable/button_round_red">
+                android:padding="22dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_lock_large"/>
+                    android:tint="@color/white"
+                    android:src="@drawable/ic_lock" />
 
             </FrameLayout>
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp"/>
+                android:layout_height="4dp" />
 
             <TextView
                 style="@style/TextAppearance.SubTitle"
-                android:textStyle="bold"
-                android:textSize="22sp"
-                android:lines="1"
-                android:ellipsize="end"
-                android:textColor="@color/red"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_arm_away"/>
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@string/text_arm_away"
+                android:textColor="@color/red"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelineBottom">
+
+            <FrameLayout
+                android:id="@+id/armNightButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_round_black"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="22dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:tint="@color/white"
+                    android:src="@drawable/ic_lock" />
+
+            </FrameLayout>
+
+            <TextView
+                style="@style/TextAppearance.SubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="ARM NIGHT"
+                android:textColor="@color/white_alpha"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="80dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="210dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="20dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView>

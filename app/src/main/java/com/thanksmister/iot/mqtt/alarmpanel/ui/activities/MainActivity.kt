@@ -440,10 +440,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun manuallyLaunchScreenSaver() {
-        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
-        val bm = LocalBroadcastManager.getInstance(applicationContext)
-        bm.sendBroadcast(intent)
         clearInactivityTimer()
         showScreenSaver()
     }

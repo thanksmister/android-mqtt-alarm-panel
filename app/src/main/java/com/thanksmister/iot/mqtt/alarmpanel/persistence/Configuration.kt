@@ -189,13 +189,12 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_facewake), value).apply()
 
     var cameraFPS: Float
-        get() = this.sharedPreferences.getString(context.getString(R.string.key_setting_camera_fps), "15f")?.toFloat()
-                ?: 15f
-        set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_camera_fps), value.toString()).apply()
+        get() = this.sharedPreferences.getFloat(PREF_CAMERA_FPS, 15f)
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_CAMERA_FPS, value).apply()
 
     var cameraId: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_camera_cameraid), 0)
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_camera_cameraid), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_CAMERA_ID, 0)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_ID, value).apply()
 
     var cameraOrientation: Int
         get() = this.sharedPreferences.getInt(PREF_CAMERA_ORIENTATION, 0)
@@ -210,23 +209,20 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_HEIGHT, value).apply()
 
     var cameraMotionMinLuma: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_camera_motionminluma),
-                context.getString(R.string.default_setting_camera_motionminluma).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_camera_motionminluma), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_MOTION_LUMA, 1000)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_LUMA, value).apply()
 
     var cameraRotate: Float
         get() = this.sharedPreferences.getFloat(PREF_CAMERA_ROTATE, 0f)
         set(value) = this.sharedPreferences.edit().putString(PREF_CAMERA_ROTATE, value.toString()).apply()
 
     var mqttSensorFrequency: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
-                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_SENSOR_FREQUENCY, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_SENSOR_FREQUENCY, value).apply()
 
     var httpPort: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_http_port),
-                context.getString(R.string.default_setting_http_port).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_http_port), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_HTTP_PORT, 2971)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_HTTP_PORT, value).apply()
 
     var cameraMotionLeniency: Int
         get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_camera_motionleniency),
@@ -234,14 +230,12 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_camera_motionleniency), value).apply()
 
     var httpMJPEGMaxStreams: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_http_mjpegmaxstreams),
-                context.getString(R.string.default_setting_http_mjpegmaxstreams).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_http_mjpegmaxstreams), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_MAX_STREAMS, 1)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MAX_STREAMS, value).apply()
 
     var motionResetTime: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_motion_clear),
-                context.getString(R.string.default_motion_clear).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_motion_clear), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_MOTION_CLEAR, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_CLEAR, value).apply()
 
     var cameraEnabled: Boolean
         get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_enabled), false)
@@ -420,7 +414,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     companion object {
         const val PREF_FINGERPRINT = "pref_fingerprint"
         const val PREF_ALARM_MODE = "pref_alarm_mode"
-        const val PREF_ALARM_CODE = "pref_alarm_code"
+        private const val PREF_ALARM_CODE = "pref_alarm_code"
         const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
         const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
         const val PREF_FULL_SCREEN = "pref_full_screen"
@@ -436,19 +430,20 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         const val PREF_MAIL_API_KEY = "pref_mail_api_key"
         const val PREF_MAIL_URL = "pref_mail_url"
         const val PREF_CAMERA_CAPTURE = "pref_module_camera"
-        const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
-        const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
-        const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
-        const val PREF_CAMERA_HEIGHT = "pref_camera_height"
+        private const val PREF_MOTION_LUMA = "pref_motion_luma"
+        private const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
+        private const val PREF_CAMERA_ID = "pref_camera_id"
+        private const val PREF_CAMERA_FPS = "pref_camera_fps"
+        private const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
+        private const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
+        private const val PREF_CAMERA_HEIGHT = "pref_camera_height"
         const val PREF_MODULE_WEATHER = "pref_module_weather"
-
         const val PREF_MODULE_WEB = "pref_module_web"
-
         const val PREF_WEB_URL = "pref_web_url"
         const val PREF_FIRST_TIME = "pref_first_time"
-        const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
+        private const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
         const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_screen_saver_brightness"
-        const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
+        private const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
 
         const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
         const val PREF_PLATFORM_BAR = "pref_platform_bar"
@@ -466,16 +461,17 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
         const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
         const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
-        const val PREF_SENSOR_FREQUENCY = "pref_sensors_frequency"
-        const val PREF_ZOOM_LEVEL = "pref_zoom_level"
+        private const val PREF_SENSOR_FREQUENCY = "pref_sensors_frequency"
+        private const val PREF_ZOOM_LEVEL = "pref_zoom_level"
         const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"
         const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
-        const val PREF_SCREENSAVER_DIM_VALUE = "pref_screensaver_dim_value"
         const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
-        const val PREF_BUTTON_BRIGHTNESS = "pref_screen_saver_brightness"
         const val PREF_PANIC_ALERT = "pref_panic_alert"
         const val PREF_DARK_THEME = "pref_dark_theme"
+        private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
+        private const val PREF_MAX_STREAMS  = "pref_max_streams"
+        private const val PREF_HTTP_PORT  = "pref_http_port"
     }
 }
