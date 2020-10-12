@@ -60,6 +60,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_CURR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_SCREEN_ON
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.VALUE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_INVALID
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PANIC_STATE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_COMMAND
@@ -340,7 +341,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         if (mqttModule == null && mqttOptions.isValid) {
             mqttModule = MQTTModule(this@AlarmPanelService.applicationContext, mqttOptions, this@AlarmPanelService)
             lifecycle.addObserver(mqttModule!!)
-            publishState(COMMAND_STATE, state.toString())
+            this.publishCommand(COMMAND_STATE, state.toString())
         }
     }
 
@@ -371,7 +372,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             mqttConnected = false
             if (mqttInitConnection.get()) {
                 mqttInitConnection.set(false)
-                sendAlertMessage(getString(R.string.error_mqtt_exception))
+                sendSnackMessage(getString(R.string.error_mqtt_exception))
                 mqttAlertMessageShown = true
             }
             if(!mqttConnecting) {
@@ -385,6 +386,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         Timber.i("onMQTTMessage topic: $topic")
         if (mqttOptions.getAlarmStateTopic() == topic) {
             when (payload) {
+                MqttUtils.STATE_ARMING -> {
+                    if (configuration.hasSystemAlerts()) {
+                        notifications.clearNotification()
+                    }
+                }
                 MqttUtils.STATE_DISARMED -> {
                     if (configuration.hasSystemAlerts()) {
                         notifications.clearNotification()
@@ -412,12 +418,16 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 }
             }
             insertMessage(id, topic, payload, TYPE_ALARM)
+        } else if (mqttOptions.getAlarmConfigTopic() == topic && mqttOptions.useRemoteConfig) {
+            processConfig(payload)
+        } else if (mqttOptions.getAlarmStatusTopic() == topic && payload == DEFAULT_INVALID && mqttOptions.useRemoteConfig) {
+            sendSnackMessage(getString(R.string.toast_code_invalid))
         } else {
             processCommand(id, topic, payload)
         }
     }
 
-    private fun publishAlarm(action: String, code: String?) {
+    private fun publishAlarm(action: String, code: Int) {
         mqttModule?.let {
             Timber.d("publishAlarm $action")
             it.publishAlarm(action, code)
@@ -427,28 +437,21 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
-    private fun publishCommand(command: String, payload: String) {
-        mqttModule?.let {
-            Timber.d("publishCommand $command payload $payload")
-            it.publishCommand(command, payload)
-        }
-    }
-
     /**
      * Publish command with json formatted payload.
      */
-    private fun publishState(command: String, data: JSONObject) {
-        publishState(command, data.toString())
+    private fun publishCommand(command: String, data: JSONObject) {
+        this.publishCommand(command, data.toString())
     }
 
     /**
      * Publish command with default payload.
      */
-    private fun publishState(command: String, message: String) {
+    private fun publishCommand(command: String, message: String) {
         mqttModule?.let {
             Timber.d("publishState command $command")
             Timber.d("publishState message $message")
-            it.publishState(command, message)
+            it.publishCommand(command, message)
         }
     }
 
@@ -583,7 +586,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun processCommand(id: String, topic: String, commandJson: JSONObject) {
         // Timber.d("processCommand ${commandJson}")
-        var payload: String = ""
+       var payload: String = ""
         try {
             if (commandJson.has(COMMAND_WAKE)) {
                 payload = commandJson.getString(COMMAND_WAKE)
@@ -630,7 +633,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
-    // TODO this assumes that the command can be converted to json
     private fun processCommand(id: String, topic: String, command: String) {
         Timber.d("processCommand")
         return try {
@@ -641,8 +643,47 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    /**
+     * Processes the remote config file from the payload as json and sets the values
+     * on the mqtt configuration. A restart is most likely needed to set all the
+     * remote config changes.
+     *
+     * {"version": 1,
+     * "code_arm_required": false,
+     * "code_disarm_required": true,
+     * "state_topic": "home/alarm",
+     * "status_topic": "home/alarm/status",
+     * "command_topic": "home/alarm/set",
+     * "delay_times": {"disarmed": 20, "armed_away": 20, "armed_home": 0, "armed_night": 20},
+     * "arming_times": {"armed_away": 30, "armed_home": 0, "armed_night": 30},
+     * "trigger_times": {"disarmed": 0, "armed_away": 4, "armed_home": 4, "armed_night": 4}}
+     */
+    private fun processConfig(payload: String) {
+        try {
+            val configJson = JSONObject(payload)
+            if(configJson.has("state_topic")) {
+                mqttOptions.setAlarmTopic(configJson.getString("state_topic"))
+            }
+            if(configJson.has("command_topic")) {
+                mqttOptions.setCommandTopic(configJson.getString("command_topic"))
+            }
+            if(configJson.has("status_topic")) {
+                mqttOptions.remoteStatusTopic = configJson.getString("status_topic")
+            }
+            if(configJson.has("code_arm_required")) {
+                mqttOptions.requireCodeForArming = configJson.getBoolean("code_arm_required")
+            }
+            if(configJson.has("code_disarm_required")) {
+                mqttOptions.requireCodeForDisarming = configJson.getBoolean("code_disarm_required")
+            }
+        } catch (ex: JSONException) {
+            Timber.e("JSON Error: " + ex.message)
+            Timber.e("Invalid config JSON: $payload")
+            sendSnackMessage(getString(R.string.toast_config_invalid))
+        }
+    }
+
     private fun playAudio(audioUrl: String) {
-        Timber.d("audioPlayer")
         var isPlaying = false
         audioPlayer?.let {
             isPlaying = it.isPlaying
@@ -695,7 +736,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         val data = JSONObject()
         data.put(VALUE, true)
         motionDetected = true
-        publishState(COMMAND_SENSOR_MOTION, data)
+        publishCommand(COMMAND_SENSOR_MOTION, data)
         motionClearHandler.postDelayed({ clearMotionDetected() }, delay)
     }
 
@@ -704,7 +745,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         val data = JSONObject()
         data.put(VALUE, true)
         faceDetected = true
-        publishState(COMMAND_SENSOR_FACE, data)
+        publishCommand(COMMAND_SENSOR_FACE, data)
         faceClearHandler.postDelayed({ clearFaceDetected() }, 1000)
     }
 
@@ -713,7 +754,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         motionDetected = false
         val data = JSONObject()
         data.put(VALUE, false)
-        publishState(COMMAND_SENSOR_MOTION, data)
+        publishCommand(COMMAND_SENSOR_MOTION, data)
     }
 
     private fun clearFaceDetected() {
@@ -721,7 +762,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         val data = JSONObject()
         data.put(VALUE, false)
         faceDetected = false
-        publishState(COMMAND_SENSOR_FACE, data)
+        publishCommand(COMMAND_SENSOR_FACE, data)
     }
 
     private fun clearQrCodeRead() {
@@ -741,7 +782,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             qrCodeRead = true
             sendToastMessage(getString(R.string.toast_qr_code_read))
-            publishState(COMMAND_SENSOR_QR_CODE, jdata)
+            publishCommand(COMMAND_SENSOR_QR_CODE, jdata)
             qrCodeClearHandler.postDelayed({ clearQrCodeRead() }, 5000)
         }
     }
@@ -766,6 +807,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             val weather = gson.fromJson<Weather>(payload, Weather::class.java)
             disposable.add(Completable.fromAction {
                 weather.createdAt = DateUtils.generateCreatedAtDate()
+                //weatherDao.deleteAllItems()
                 weatherDao.updateItem(weather)
             }.subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -820,6 +862,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         bm.sendBroadcast(intent)
     }
 
+    private fun sendSnackMessage(message: String) {
+        Timber.d("sendSnackMessage")
+        val intent = Intent(BROADCAST_SNACK_MESSAGE)
+        intent.putExtra(BROADCAST_SNACK_MESSAGE, message)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
     private fun sendServiceStarted() {
         Timber.d("clearAlertMessage")
         val intent = Intent(BROADCAST_SERVICE_STARTED)
@@ -854,26 +904,25 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         override fun onReceive(context: Context, intent: Intent) {
             if (BROADCAST_EVENT_URL_CHANGE == intent.action) {
                 currentUrl = intent.getStringExtra(BROADCAST_EVENT_URL_CHANGE)
-                publishState(COMMAND_STATE, state.toString())
+                this@AlarmPanelService.publishCommand(COMMAND_STATE, state.toString())
             } else if (Intent.ACTION_SCREEN_OFF == intent.action ||
                     intent.action == Intent.ACTION_SCREEN_ON ||
                     intent.action == Intent.ACTION_USER_PRESENT) {
-                publishState(COMMAND_STATE, state.toString())
+                this@AlarmPanelService.publishCommand(COMMAND_STATE, state.toString())
             } else if (BROADCAST_EVENT_SCREEN_TOUCH == intent.action) {
                 //
-                publishState(COMMAND_STATE, state.toString())
+                this@AlarmPanelService.publishCommand(COMMAND_STATE, state.toString())
             } else if (BROADCAST_EVENT_USER_INACTIVE == intent.action) {
                 //
             } else if (BROADCAST_EVENT_ALARM_MODE == intent.action) {
-                val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE)
-                val alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE)
-                alarmMode?.let {
-                    publishAlarm(it, alarmCode)
-                }
+                val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE).orEmpty()
+                var alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE).orEmpty().toIntOrNull()
+                if(alarmCode == null) alarmCode = 0
+                publishAlarm(alarmMode, alarmCode)
             } else if (BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
                 val payload = intent.getStringExtra(BROADCAST_EVENT_PUBLISH_PANIC)
                 payload?.let {
-                    publishState(PANIC_STATE, payload)
+                    this@AlarmPanelService.publishCommand(PANIC_STATE, payload)
                 }
             }
         }
@@ -881,7 +930,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private val sensorCallback = object : SensorCallback {
         override fun publishSensorData(sensorName: String, sensorData: JSONObject) {
-            publishState(COMMAND_SENSOR_PREFIX + sensorName, sensorData)
+            publishCommand(COMMAND_SENSOR_PREFIX + sensorName, sensorData)
         }
     }
 
@@ -1037,6 +1086,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_EVENT_ALARM_MODE = "BROADCAST_EVENT_ALARM_MODE"
         const val BROADCAST_EVENT_ALARM_CODE = "BROADCAST_EVENT_ALARM_CODE"
         const val BROADCAST_ALERT_MESSAGE = "BROADCAST_ALERT_MESSAGE"
+        const val BROADCAST_SNACK_MESSAGE = "BROADCAST_SNACK_MESSAGE"
         const val BROADCAST_TOAST_MESSAGE = "BROADCAST_TOAST_MESSAGE"
         const val BROADCAST_SCREEN_WAKE = "BROADCAST_SCREEN_WAKE"
         const val BROADCAST_CLEAR_ALERT_MESSAGE = "BROADCAST_CLEAR_ALERT_MESSAGE"

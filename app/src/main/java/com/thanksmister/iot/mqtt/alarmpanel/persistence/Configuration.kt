@@ -76,6 +76,13 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = sharedPreferences.getBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.edit().putBoolean(PREF_FIRST_TIME, value).apply()
 
+
+
+
+    /**
+     * This is the default code for accessing the setting or disarming the alarm.
+     * This will be used only for accessing settings if the remote config is set.
+     */
     var alarmCode: Int
         get() = this.sharedPreferences.getInt(PREF_ALARM_CODE, 1234)
         set(value) = this.sharedPreferences.edit().putInt(PREF_ALARM_CODE, value).apply()
@@ -96,9 +103,11 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
     fun isAlarmArming(): Boolean {
         return (alarmMode == MqttUtils.STATE_ARMING
+                || alarmMode == MqttUtils.COMMAND_ARM_HOME
+                || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
+                || alarmMode == MqttUtils.COMMAND_ARM_AWAY
                 || alarmMode == MqttUtils.STATE_PENDING)
     }
-
 
     fun isAlarmDisarmedMode(): Boolean {
         return alarmMode == MqttUtils.STATE_DISARMED
@@ -403,6 +412,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     fun hasScreenSaver(): Boolean {
         return (showPhotoScreenSaver() || showClockScreenSaverModule() || webScreenSaver)
     }
+
 
     /**
      * Reset the `SharedPreferences` and database

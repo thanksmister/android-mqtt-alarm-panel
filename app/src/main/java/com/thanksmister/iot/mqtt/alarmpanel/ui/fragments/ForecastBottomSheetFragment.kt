@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 ThanksMister LLC
+ * Copyright (c) 2020 ThanksMister LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,39 +14,66 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.ui.views
+package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
-import android.util.AttributeSet
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.FrameLayout
-import android.widget.LinearLayout
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.ForecastCardAdapter
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ForecastDisplay
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
-
+import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.*
+import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.closeDialogButton
+import kotlinx.android.synthetic.main.dialog_extended_forecast.*
 import kotlinx.android.synthetic.main.dialog_extended_forecast.view.*
 import timber.log.Timber
 import java.util.*
 
-class ExtendedForecastView : RecyclerView {
+class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragment() {
 
-    constructor(context: Context) : super(context) {}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        closeDialogButton.setOnClickListener {
+            this.dismiss()
+        }
+        setExtendedForecast(weather)
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val dialog = dialog as BottomSheetDialog
+                val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
+                val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        })
+    }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
 
-    fun setExtendedForecast(weather: Weather) {
+    @Nullable
+    override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_extended_forecast, container, false)
+    }
+
+    private fun setExtendedForecast(weather: Weather) {
         val forecastList = weather.forecast
         if(forecastList.isNotEmpty()) {
             val groupedForecastList = ArrayList<ForecastDisplay>()
             var groupDay = DateUtils.dayOfWeek(forecastList[0].datetime)
-            Timber.d(" group day start ${forecastList[0].datetime}")
-            Timber.d(" forecast list ${forecastList.size}")
             var group = ArrayList<Forecast>()
             var count = 0
             for (forecast in forecastList) {
@@ -54,11 +81,9 @@ class ExtendedForecastView : RecyclerView {
                 if (day == groupDay) {
                     group.add(forecast)
                 } else {
-                    if(!group.isEmpty()){
+                    if(group.isNotEmpty()){
                         val today = (count == 0)
                         val forecastDisplay = groupForecastsByDay(today, group)
-                        Timber.d(" add today ${today}")
-                        Timber.d(" add forecastDisplay ${forecastDisplay.day}")
                         groupedForecastList.add(forecastDisplay)
                         count++
                     }
@@ -89,7 +114,9 @@ class ExtendedForecastView : RecyclerView {
     private fun groupForecastsByDay(today: Boolean = false, group: ArrayList<Forecast>): ForecastDisplay {
         val forecastDisplay = ForecastDisplay()
         if(group.isNotEmpty()) {
-            forecastDisplay.condition = calculateCurrentConditionString(today, group, context)
+            context?.let {
+                forecastDisplay.condition = calculateCurrentConditionString(today, group, it)
+            }
             forecastDisplay.conditionImage = calculateCurrentConditionImage(today, group)
             forecastDisplay.day = DateUtils.dayOfWeek(group[0].datetime)
             forecastDisplay.precipitation = calculatePrecipitation(group)
@@ -141,7 +168,6 @@ class ExtendedForecastView : RecyclerView {
 
     private fun calculateCurrentConditionString(today: Boolean = false, forecastList: ArrayList<Forecast>, context: Context): String {
         if(forecastList.isNotEmpty()) {
-            Timber.d("calculateCurrentConditionString -------------------")
             val condition = getCondition(today, forecastList)
             return WeatherUtils.getOutlookForWeatherCondition(condition, context)
         }
@@ -150,9 +176,7 @@ class ExtendedForecastView : RecyclerView {
 
     private fun calculateCurrentConditionImage(today: Boolean = false, forecastList: ArrayList<Forecast>): Int {
         if(forecastList.isNotEmpty()) {
-            Timber.d("calculateCurrentConditionImage -------------------")
             val condition = getCondition(today, forecastList)
-            Timber.d("Current condition ${condition} -----------------------")
             return WeatherUtils.getIconForWeatherCondition(condition)
         }
         return WeatherUtils.getIconForWeatherCondition(forecastList[0].condition)

@@ -31,6 +31,7 @@
     <string name="toast_code_changed">Code de l\'alarme modifiée avec succès!</string>
     <string name="toast_code_not_match">Le code ne correspond pas, essayez à nouveau.</string>
     <string name="toast_code_invalid">Le code est invalide, essayez à nouveau.</string>
+    <string name="toast_config_invalid">Error parsing remote configuration file, check your configuration.</string>
 
     <!-- Text Content -->
     <string name="text_enter_alarm_code_title">Veuillez saisir un nouveau code</string>

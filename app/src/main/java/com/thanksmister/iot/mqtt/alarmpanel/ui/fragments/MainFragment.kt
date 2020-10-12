@@ -16,15 +16,20 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_ALARM_MODE
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
@@ -36,20 +41,22 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
+
 class MainFragment : BaseFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
-    @Inject lateinit var configuration: Configuration;
-    @Inject lateinit var dialogUtils: DialogUtils;
+    @Inject lateinit var configuration: Configuration
+    @Inject lateinit var dialogUtils: DialogUtils
+
     private var listener: OnMainFragmentListener? = null
 
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
         fun navigatePlatformPanel()
-        fun publishDisarm()
+        fun publishDisarm(code: String)
         fun publishAlertCall()
-        fun showCodeDialog()
+        fun showCodeDialog(type: CodeTypes)
     }
 
     override fun onAttach(context: Context) {
@@ -167,7 +174,7 @@ class MainFragment : BaseFragment() {
                 startActivity(intent)
             }
         } else {
-            listener?.showCodeDialog()
+            listener?.showCodeDialog(CodeTypes.SETTINGS)
         }
     }
 

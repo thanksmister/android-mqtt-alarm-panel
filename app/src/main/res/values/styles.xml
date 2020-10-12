@@ -452,7 +452,6 @@
     </style>
 
     <style name="ButtonStyle" parent="@android:style/Widget.Button">
-       
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAllCaps">true</item>
@@ -512,7 +511,23 @@
     <style name="ButtonRed" parent="ButtonStyle">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#fff</item>
-        <item name="android:background">@drawable/button_red_selector</item>
+        <item name="android:background">@drawable/background_rounded_away</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonBlack" parent="ButtonStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/background_rounded_night</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonYellow" parent="ButtonStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/background_rounded_home</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
     </style>

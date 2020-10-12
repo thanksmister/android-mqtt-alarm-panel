@@ -44,7 +44,7 @@ class MqttUtils {
         const val PANIC_STATE = "panic"
 
         const val VALUE = "value"
-        const val ACTION = "value"
+        const val ACTION = "action"
         const val CODE = "code"
 
         const val NOTIFICATION_STATE_TOPIC = "home/notification"
@@ -92,16 +92,17 @@ class MqttUtils {
         const val STATE_ARMED_NIGHT = "armed_night"
         const val STATE_PENDING = "pending"
         const val STATE_ARMING = "arming"
+        const val STATE_DISARMING = "disarming"
         const val STATE_ARMING_AWAY = "arming_away"
         const val STATE_ARMING_HOME = "arming_home"
         const val STATE_ARMING_NIGHT = "arming_night"
 
-        //const val DEFAULT_ALERT_TOPIC = "home/alert/set"
         const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
         const val DEFAULT_CONFIG_TOPIC = "home/alarm/config"
         const val DEFAULT_STATUS_TOPIC = "home/alarm/status"
         const val DEFAULT_STATE_TOPIC = "home/alarm"
         const val DEFAULT_PANEL_COMMAND_TOPIC = "alarmpanel"
+
         const val DEFAULT_INVALID = "INVALID"
 
         const val STATE_TRIGGERED = "triggered"

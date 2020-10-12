@@ -67,10 +67,21 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/alarmImage"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_large"
+                android:visibility="invisible"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/alarmImageUnlocked"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_lock_open_variant"
+                android:tint="@color/white"
                 tools:ignore="ContentDescription" />
 
         </FrameLayout>

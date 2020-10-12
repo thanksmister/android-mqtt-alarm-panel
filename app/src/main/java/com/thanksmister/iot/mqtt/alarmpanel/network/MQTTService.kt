@@ -33,8 +33,10 @@ import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MQTTService(private var context: Context, options: MQTTOptions,
-                  private var listener: MqttManagerListener?) : MQTTServiceInterface {
+class MQTTService(private var context: Context,
+                  options: MQTTOptions,
+                  private var listener: MqttManagerListener?) :
+        MQTTServiceInterface {
 
     private var mqttClient: MqttAndroidClient? = null
     private var mqttOptions: MQTTOptions? = null
@@ -83,7 +85,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         mReady.set(false)
     }
 
-    override fun publishAlarm(action: String, code: String?) {
+    override fun publishAlarm(action: String, code: Int) {
         try {
             if (isReady) {
                 mqttClient?.let {
@@ -110,10 +112,11 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                 val mqttMessage = MqttMessage()
                 val payloadJson = JSONObject()
                 payloadJson.put(MqttUtils.ACTION, action)
-                code?.let {
+                if(code > 0) {
                     payloadJson.put(MqttUtils.CODE, code)
                 }
-                mqttMessage.payload = payloadJson.toString().toByteArray()
+                val payloadString = payloadJson.toString()
+                mqttMessage.payload = payloadString.toByteArray()
                 mqttOptions?.let {
                     mqttMessage.isRetained = it.getRetain()
                     sendMessage(it.getAlarmCommandTopic(), mqttMessage)

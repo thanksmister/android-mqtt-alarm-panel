@@ -123,10 +123,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
         stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
         userNamePreference!!.text = mqttOptions.getUsername()
-
         passwordPreference!!.text = mqttOptions.getPassword()
-        userNamePreference!!.text = mqttOptions.getPassword()
-
 
         sslPreference!!.isChecked = mqttOptions.getTlsConnection()
         retainPreference!!.isChecked = mqttOptions.getRetain()
@@ -136,10 +133,11 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
 
         commandTopicPreference!!.summary = mqttOptions.getAlarmCommandTopic()
         stateTopicPreference!!.summary = mqttOptions.getAlarmStateTopic()
+
         userNamePreference!!.summary = mqttOptions.getUsername()
         passwordPreference!!.summary = toStars(mqttOptions.getPassword())
 
-        baseTopicPreference!!.setDefaultValue(mqttOptions.getBaseCommand())
+        baseTopicPreference!!.text = mqttOptions.getBaseCommand()
         baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
 
         remoteConfigTopicPreference.text = mqttOptions.remoteConfigTopic

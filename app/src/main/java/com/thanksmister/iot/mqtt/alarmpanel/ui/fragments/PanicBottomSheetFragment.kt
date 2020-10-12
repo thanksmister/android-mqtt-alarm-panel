@@ -21,13 +21,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import kotlinx.android.synthetic.main.fragment_bottom_sheet.*
+import kotlinx.android.synthetic.main.fragment_alert_bottom_sheet.*
 
-class BottomSheetFragment : BottomSheetDialogFragment() {
+class PanicBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var mListener: OnBottomSheetFragmentListener? = null
 
@@ -44,11 +48,20 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             mListener?.onSendAlert()
             this.dismiss()
         }
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val dialog = dialog as BottomSheetDialog
+                val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
+                val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        })
     }
 
     @Nullable
     override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
+        return inflater.inflate(R.layout.fragment_alert_bottom_sheet, container, false)
     }
 
     override fun onAttach(context: Context) {

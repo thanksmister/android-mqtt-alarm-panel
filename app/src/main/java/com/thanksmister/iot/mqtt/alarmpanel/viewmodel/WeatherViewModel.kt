@@ -20,6 +20,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber

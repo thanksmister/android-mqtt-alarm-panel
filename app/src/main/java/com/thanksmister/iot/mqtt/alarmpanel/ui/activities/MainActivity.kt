@@ -42,10 +42,15 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.BuildConfig
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_PUBLISH_PANIC
+import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARMING
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMING
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -55,13 +60,14 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         ControlsFragment.OnControlsFragmentListener,
-        BottomSheetFragment.OnBottomSheetFragmentListener,
+        PanicBottomSheetFragment.OnBottomSheetFragmentListener,
         MainFragment.OnMainFragmentListener,
-        CodeBottomSheetFragment.OnAlarmCodeFragmentListener,
+        InformationFragment.InformationFragmentListener,
         PlatformFragment.OnPlatformFragmentListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
 
     private lateinit var viewModel: MainViewModel
     private lateinit var pagerAdapter: PagerAdapter
@@ -71,10 +77,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     private var decorView: View? = null
     private var userPresent: Boolean = false
     private val inactivityHandler: Handler = Handler()
+
+    private var forecastBottomSheet: ForecastBottomSheetFragment? = null
+    private var optionsBottomSheet: OptionsBottomSheetFragment? = null
     private var codeBottomSheet: CodeBottomSheetFragment? = null
-    private var forDisarm: Boolean = false
 
     private val inactivityCallback = Runnable {
+        dismissBottomSheets()
         dialogUtils.clearDialogs()
         userPresent = false
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE)
@@ -203,6 +212,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                             MqttUtils.STATE_ARMING_AWAY,
                             MqttUtils.STATE_ARMING_HOME,
                             MqttUtils.STATE_ARMING,
+                            MqttUtils.STATE_DISARMING,
                             MqttUtils.STATE_PENDING -> {
                                 awakenDeviceForAction()
                                 resetInactivityTimer()
@@ -266,8 +276,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         if (localBroadCastManager != null) {
             localBroadCastManager!!.unregisterReceiver(mBroadcastReceiver)
         }
-        codeBottomSheet?.dismiss()
-        forDisarm = false
+        dismissBottomSheets()
         alertDialog?.let {
             it.dismiss()
             alertDialog = null
@@ -279,12 +288,12 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         window.clearFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         hideScreenSaver()
         clearInactivityTimer()
+        dismissBottomSheets()
         alertDialog?.let {
             it.dismiss()
             alertDialog = null
         }
         codeBottomSheet?.dismiss()
-        forDisarm = false
     }
 
     override fun onBackPressed() {
@@ -378,31 +387,96 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         bm.sendBroadcast(intent)
     }
 
-    // TODO check if code required for away
-    override fun publishDisarm() {
+    override fun publishDisarm(code: String) {
         Timber.d("publishDisarm")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_DISARM)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
     override fun publishAlertCall() {
         Timber.d("publishAlert")
-        val bottomSheetFragment = BottomSheetFragment()
+        val bottomSheetFragment = PanicBottomSheetFragment()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
 
-    override fun showCodeDialog() {
-        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString())
+    /**
+     * Show the code dialog with a CodeTypes value take different actions on code such as disarm, settings, or arming.
+     */
+    override fun showCodeDialog(type: CodeTypes) {
+        var codeType = type
+        if(mqttOptions.useRemoteConfig) {
+            if(mqttOptions.requireCodeForDisarming && type == CodeTypes.DISARM) {
+                codeType = CodeTypes.DISARM_REMOTE
+            } else if (mqttOptions.requireCodeForArming && type == CodeTypes.ARM) {
+                codeType = CodeTypes.ARM_REMOTE
+            }
+        }
+        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), codeType,
+                object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
+            override fun onComplete(code: String) {
+                when (type) {
+                    CodeTypes.DISARM -> {
+                        publishDisarm(code)
+                    }
+                    CodeTypes.SETTINGS -> {
+                        val intent = SettingsActivity.createStartIntent(this@MainActivity)
+                        startActivity(intent)
+                    }
+                    CodeTypes.ARM_HOME -> {
+                        publishArmedHome()
+                    }
+                    CodeTypes.ARM_AWAY -> {
+                        publishArmedAway()
+                    }
+                    CodeTypes.ARM_NIGHT -> {
+                        publishArmedNight()
+                    }
+                    else -> {
+                        // na-da
+                    }
+                }
+                codeBottomSheet?.dismiss()
+            }
+
+            override fun onCodeError() {
+                Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onCancel() {
+                codeBottomSheet?.dismiss()
+            }
+        })
         codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
     }
 
-    override fun showCodeDialogDisarm() {
-        forDisarm = true
-        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString())
-        codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+    override fun showArmOptionsDialog() {
+        optionsBottomSheet = OptionsBottomSheetFragment(object: OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
+            override fun onArmHome() {
+                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                    showCodeDialog(CodeTypes.ARM_HOME)
+                } else {
+                    publishArmedHome()
+                }
+            }
+            override fun onArmAway() {
+                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                    showCodeDialog(CodeTypes.ARM_AWAY)
+                } else {
+                    publishArmedAway()
+                }
+            }
+            override fun onArmNight() {
+                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                    showCodeDialog(CodeTypes.ARM_NIGHT)
+                } else {
+                    publishArmedNight()
+                }
+            }
+        })
+        optionsBottomSheet?.show(supportFragmentManager, optionsBottomSheet?.tag)
     }
 
     override fun onSendAlert() {
@@ -412,14 +486,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         bm.sendBroadcast(intent)
     }
 
-    /*override fun publishDisarmed() {
-        Timber.d("publishDisarmed")
-        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, AlarmUtils.COMMAND_DISARM)
-        val bm = LocalBroadcastManager.getInstance(applicationContext)
-        bm.sendBroadcast(intent)
-    }*/
-
     /**
      * We need to awaken the device and allow the user to take action.
      */
@@ -428,6 +494,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         if (view_pager != null && pagerAdapter.count > 0) {
             view_pager.currentItem = 0
         }
+    }
+
+    /**
+     * As part of cleanup we should dismiss any bottom sheets either due to user inaction or other events.
+     */
+    private fun dismissBottomSheets() {
+        forecastBottomSheet?.dismiss()
+        codeBottomSheet?.dismiss()
+        optionsBottomSheet?.dismiss()
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -505,6 +580,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 } catch (e: Exception) {
                     Timber.e(e.message) // getting crashes on some devices
                 }
+            } else if (BROADCAST_SNACK_MESSAGE == intent.action && !isFinishing) {
+                val message = intent.getStringExtra(AlarmPanelService.BROADCAST_SNACK_MESSAGE)
+                message?.let {
+                    Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
+                            .setAction(android.R.string.ok, View.OnClickListener() {
+                                // na-da
+                            }).show()
+                }
             } else if (AlarmPanelService.BROADCAST_TOAST_MESSAGE == intent.action && !isFinishing) {
                 resetInactivityTimer()
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
@@ -520,23 +603,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         }
     }
 
-    override fun onComplete() {
-        if(forDisarm) {
-            forDisarm = false
-            publishDisarm()
-        } else {
-            val intent = SettingsActivity.createStartIntent(this@MainActivity)
-            startActivity(intent)
+    override fun openExtendedForecast(weather: Weather) {
+        supportFragmentManager.let {
+            forecastBottomSheet = ForecastBottomSheetFragment(weather)
+            forecastBottomSheet?.show(it, forecastBottomSheet?.tag)
         }
-        codeBottomSheet?.dismiss()
-    }
-
-    override fun onCodeError() {
-        Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onCancel() {
-        forDisarm = false
-        codeBottomSheet?.dismiss()
     }
 }

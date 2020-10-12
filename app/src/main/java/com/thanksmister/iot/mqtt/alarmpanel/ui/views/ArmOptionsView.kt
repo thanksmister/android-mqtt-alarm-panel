@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 
-import kotlinx.android.synthetic.main.dialog_alarm_options.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.view.*
 
 class ArmOptionsView : LinearLayout {
 
@@ -44,8 +44,8 @@ class ArmOptionsView : LinearLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        armAwayButton.setOnClickListener { armAwayButtonClick() }
-        armStayButton.setOnClickListener { armHomeButtonClick() }
+        //armAwayButton.setOnClickListener { armAwayButtonClick() }
+        //armStayButton.setOnClickListener { armHomeButtonClick() }
         closeDialogButton.setOnClickListener { listener?.onCloseArmOptions() }
     }
 

@@ -14,14 +14,13 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/armOptionsView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:gravity="center"
+    app:behavior_hideable="true"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -35,7 +34,7 @@
             android:layout_height="52dp"
             android:src="@drawable/ic_lock_open_variant"
             android:tint="@color/green"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guidelineLeft"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -70,154 +69,155 @@
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_close"
             android:tint="@color/dark_gray"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonArmHome"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="32dp"
-            app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
-            app:layout_constraintTop_toBottomOf="@id/guidelineMiddle">
+            android:padding="12dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/background_rounded_home"
+            app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+            app:layout_constraintTop_toBottomOf="@id/guidelineTop"
+            tools:ignore="UnusedAttribute">
 
-            <FrameLayout
-                android:id="@+id/armStayButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:background="@drawable/button_round_yellow"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:padding="22dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_lock"
-                    android:tint="@color/white"/>
-
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/homeLockImage"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 style="@style/TextAppearance.SubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginStart="12dp"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@string/text_arm_home"
-                android:textColor="@color/yellow"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textColor="@color/white_alpha"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/homeLockImage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonArmAway"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            app:layout_constraintStart_toEndOf="@id/guidelineCenter"
+            android:padding="12dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/background_rounded_away"
+            app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
             app:layout_constraintTop_toBottomOf="@id/guidelineMiddle"
-            android:orientation="vertical">
+            tools:ignore="UnusedAttribute">
 
-            <FrameLayout
-                android:id="@+id/armAwayButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:background="@drawable/button_round_red"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:padding="22dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:tint="@color/white"
-                    android:src="@drawable/ic_lock" />
-
-            </FrameLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="4dp" />
+            <ImageView
+                android:id="@+id/awayLockImage"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 style="@style/TextAppearance.SubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginStart="12dp"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@string/text_arm_away"
-                android:textColor="@color/red"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textColor="@color/white_alpha"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/awayLockImage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonArmNight"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guidelineBottom">
+            android:padding="12dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/background_rounded_night"
+            app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+            app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
+            tools:ignore="UnusedAttribute">
 
-            <FrameLayout
-                android:id="@+id/armNightButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:background="@drawable/button_round_black"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:padding="22dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:tint="@color/white"
-                    android:src="@drawable/ic_lock" />
-
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/nightLockImage"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:tint="@color/white"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 style="@style/TextAppearance.SubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:layout_marginStart="12dp"
                 android:lines="1"
                 android:text="ARM NIGHT"
                 android:textColor="@color/white_alpha"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/nightLockImage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineMiddle"
+            android:id="@+id/guidelineTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="80dp" />
 
         <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="160dp" />
+
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="210dp" />
+            app:layout_constraintGuide_begin="240dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp" />
+            app:layout_constraintGuide_begin="10dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineCenter"
@@ -231,9 +231,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="20dp" />
+            app:layout_constraintGuide_end="10dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-</com.thanksmister.iot.mqtt.alarmpanel.ui.views.ArmOptionsView>
+</androidx.appcompat.widget.LinearLayoutCompat>

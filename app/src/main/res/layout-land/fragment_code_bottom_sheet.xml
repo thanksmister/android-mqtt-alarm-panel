@@ -21,8 +21,6 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="36dp"
-    android:layout_marginEnd="36dp"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -40,30 +38,30 @@
 
     <TextView
         android:id="@+id/codeTitle"
+        android:layout_margin="16dp"
         style="@style/TextAppearance.TextStateTitle"
-        android:layout_marginTop="48dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dialog_alarm_triggered"
         android:textAllCaps="true"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/codeDotsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/codeDotsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="32dp"
-        android:paddingBottom="32dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="18dp"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/codeTitle"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/codeTitle">
 
         <ImageView
             android:id="@+id/pinCode1"
@@ -106,8 +104,14 @@
     <include
         android:id="@+id/include"
         layout="@layout/view_keypad"
-        android:layout_width="match_parent"
-        android:layout_height="340dp"
+        android:layout_width="0dp"
+        android:layout_height="260dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/codeDotsLayout"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

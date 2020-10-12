@@ -155,91 +155,6 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    // TODO possibly add password text value
-    fun showEditTextDialog(activity: AppCompatActivity, value: String, listener: EditTextDialogView.ViewListener) {
-        clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_edit_text, null, false)
-        val editTextDialogView = view.findViewById<EditTextDialogView>(R.id.editTextDialogView)
-        editTextDialogView.setListener(listener)
-        editTextDialogView.setValue(value)
-        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                .setView(editTextDialogView)
-                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onComplete(editTextDialogView.value)}
-                .setNegativeButton(android.R.string.cancel, { _, _ -> listener.onCancel() })
-                .show()
-    }
-
-    fun showArmOptionsDialog(activity: AppCompatActivity, armListener: ArmOptionsView.ViewListener) {
-        clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_alarm_options, null, false)
-        val displayRectangle = Rect()
-        val window = activity.window
-        window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            view.minimumWidth = (displayRectangle.width() * 0.4f).toInt()
-            view.minimumHeight = (displayRectangle.height() * 0.4f).toInt()
-        }
-        val optionsView = view.findViewById<ArmOptionsView>(R.id.armOptionsView)
-        optionsView.setListener(armListener)
-        dialog = buildImmersiveDialog(activity, true, view, false)
-    }
-
-    /**
-     * Shows the disable alarm dialog with countdown. It is important that this
-     * dialog only be shown once and not relaunched when already displayed as
-     * it resets the timer.  Also plays a system sounds (if settings true).
-     */
-    fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
-                               code: Int, timeRemaining: Int, systemSounds: Boolean,
-                               useFingerprint: Boolean) {
-        clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
-        val alarmCodeView = view.findViewById<AlarmDisableView>(R.id.alarmDisableView)
-        alarmCodeView.setListener(alarmCodeListener)
-        alarmCodeView.setCode(code)
-        alarmCodeView.setUseSound(systemSounds)
-        alarmCodeView.setUseFingerPrint(useFingerprint)
-        alarmCodeView.startCountDown(timeRemaining)
-        alarmCodeView.playContinuousAlarm()
-        dialog = buildFullscreenDialog(activity, true, view, true)
-        dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
-    }
-
-    /**
-     * Shows the disable alarm dialog with countdown. It is important that this
-     * dialog only be shown once and not relaunched when already displayed as
-     * it resets the timer.
-     */
-    fun showAlarmDisableDialog(activity: AppCompatActivity, alarmCodeListener: AlarmDisableView.ViewListener,
-                               code: Int, timeRemaining: Int, useFingerprint: Boolean) {
-        clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_alarm_disable, null, false)
-        val alarmCodeView = view.findViewById<AlarmDisableView>(R.id.alarmDisableView)
-        alarmCodeView.setListener(alarmCodeListener)
-        alarmCodeView.setCode(code)
-        alarmCodeView.setUseSound(false)
-        alarmCodeView.setUseFingerPrint(useFingerprint)
-        alarmCodeView.startCountDown(timeRemaining)
-        dialog = buildFullscreenDialog(activity, true, view, true)
-        dialog!!.setOnDismissListener { alarmCodeView.destroySoundUtils() }
-    }
-
-    fun showSettingsCodeDialog(activity: AppCompatActivity, code: Int, listener: SettingsCodeView.ViewListener, systemSounds: Boolean, useFingerprint: Boolean) {
-        clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.dialog_settings_code, null, false)
-        val settingsCodeView = view.findViewById<SettingsCodeView>(R.id.settingsCodeView)
-        settingsCodeView.setCode(code)
-        settingsCodeView.setListener(listener)
-        settingsCodeView.setUseSound(systemSounds)
-        settingsCodeView.setUseFingerPrint(useFingerprint)
-        dialog = buildFullscreenDialog(activity, true, view, true)
-    }
-
     fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener, onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -271,28 +186,28 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showExtendedForecastDialog(activity: AppCompatActivity, weather: Weather) {
+   /* fun showExtendedForecastDialog(activity: AppCompatActivity, weather: Weather) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_extended_forecast, null, false)
         val displayRectangle = Rect()
         val window = activity.window
         window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-        view.minimumWidth = (displayRectangle.width() * 0.7f).toInt()
+        view.minimumWidth = (displayRectangle.width() * 0.9f).toInt()
         val density = activity.resources.displayMetrics.densityDpi
         if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             if (density == DisplayMetrics.DENSITY_MEDIUM) {
-                view.minimumHeight = (displayRectangle.height() * 0.6f).toInt()
+                view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
             } else {
-                view.minimumHeight = (displayRectangle.height() * 0.7f).toInt()
+                view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
             }
         } else {
-            view.minimumHeight = (displayRectangle.height() * 0.45f).toInt()
+            view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
         }
         val extendedForecastView = view.findViewById<ExtendedForecastView>(R.id.extendedForecastView)
         extendedForecastView.setExtendedForecast(weather)
         dialog = buildImmersiveDialog(activity, true, view, false)
-    }
+    }*/
 
 
     /**

@@ -30,6 +30,7 @@
     <string name="toast_code_changed">Alarm code aangepast!</string>
     <string name="toast_code_not_match">Code komt niet overeen, probeer het opnieuw.</string>
     <string name="toast_code_invalid">Code is ongeldig, probeer het opnieuw.</string>
+    <string name="toast_config_invalid">Error parsing remote configuration file, check your configuration.</string>
 
     <!-- Text Content -->
     <string name="text_enter_alarm_code_title">Voer een nieuwe alarm code in</string>

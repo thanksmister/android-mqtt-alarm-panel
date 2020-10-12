@@ -16,6 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.content.Context
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -32,7 +33,11 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.dayOfWeek
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.generateCreatedAtDate
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.parseCreatedAtDate
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.stringToDouble
@@ -46,16 +51,26 @@ import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
 
-class InformationFragment : BaseFragment() {
+class InformationFragment() : BaseFragment() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var weatherViewModel: WeatherViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var weatherViewModel: WeatherViewModel
 
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var configuration: Configuration
+    @Inject
+    lateinit var dialogUtils: DialogUtils
 
     private var weather: Weather? = null
     private var timeHandler: Handler? = null
+
+    private var listener: InformationFragmentListener? = null
+
+    interface InformationFragmentListener {
+        fun openExtendedForecast(weather: Weather)
+    }
 
     private val timeRunnable = object : Runnable {
         override fun run() {
@@ -85,14 +100,23 @@ class InformationFragment : BaseFragment() {
         timeHandler!!.postDelayed(timeRunnable, 1000)
         weatherLayout.visibility = View.VISIBLE
         weatherLayout.setOnClickListener {
-            if (weather != null) {
-                dialogUtils.showExtendedForecastDialog(activity as BaseActivity, weather!!)
+            weather?.let { weather ->
+                listener?.openExtendedForecast(weather)
             }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_information, container, false)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is InformationFragmentListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement InformationFragmentListener")
+        }
     }
 
     override fun onResume() {
@@ -128,31 +152,28 @@ class InformationFragment : BaseFragment() {
                 viewModel.getLatestItem()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .onErrorReturn {
+                            Weather()
+                        }
                         .subscribe { item ->
-                            if(item != null) {
+                            item?.let {
                                 weather = item
                                 weatherLayout.visibility = View.VISIBLE
-                                val displayUnits =  if(configuration.weatherUnitsImperial) getString(R.string.text_f) else getString(R.string.text_c)
+                                val displayUnits = if (configuration.weatherUnitsImperial) getString(R.string.text_f) else getString(R.string.text_c)
                                 temperatureText.text = getString(R.string.text_temperature, weather?.temperature.toString(), displayUnits)
-                                weather?.forecast?.let { it ->
-                                    if(it.size > 0) {
-                                        val forecast = it[0]
-                                        try {
-                                            val precipitation = forecast.precipitation
-                                            if(isDouble(precipitation) && viewModel.shouldTakeUmbrellaToday(stringToDouble(precipitation))) {
-                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
-                                            } else {
-                                                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (activity as BaseActivity).theme))
-                                            }
-                                            context?.let { context ->
-                                                outlookText.text = WeatherUtils.getOutlookForWeatherCondition(forecast.condition, context)
-                                            }
-                                        } catch (e : Exception) {
-                                            Timber.e(e.message)
-                                        }
+                                weather?.let {
+                                    val precipitation = it.precipitation.orEmpty()
+                                    if (isDouble(precipitation) && viewModel.shouldTakeUmbrellaToday(stringToDouble(precipitation))) {
+                                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (activity as BaseActivity).theme))
+                                    } else {
+                                        conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(it.condition.orEmpty()), (activity as BaseActivity).theme))
+                                    }
+                                    context?.let { context ->
+                                        outlookText.text = WeatherUtils.getOutlookForWeatherCondition(it.condition.orEmpty(), context)
                                     }
                                 }
                             }
+
                         }
         )
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2020 ThanksMister LLC
+  ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,13 +15,31 @@
   ~ limitations under the License.
   -->
 
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item>
 
-        <shape android:shape="oval" >
+        <shape android:shape="rectangle">
 
-            <solid android:color="@color/green" />
+            <corners android:radius="15dp"/>
+
+            <solid android:color="@color/yellow"/>
+
+        </shape>
+
+    </item>
+
+    <item
+            android:bottom="2dp"
+            android:top="2dp"
+            android:left="2dp"
+            android:right="2dp">
+
+        <shape android:shape="rectangle">
+
+            <corners android:radius="15dp"/>
+
+            <solid android:color="@color/yellow"/>
 
         </shape>
 

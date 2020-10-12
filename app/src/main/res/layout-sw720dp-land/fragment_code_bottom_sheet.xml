@@ -38,7 +38,7 @@
 
     <TextView
         android:id="@+id/codeTitle"
-        android:layout_margin="16dp"
+        android:layout_margin="32dp"
         style="@style/TextAppearance.TextStateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="16dp"
-        android:paddingBottom="32dp"
+        android:paddingBottom="48dp"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +105,9 @@
         android:id="@+id/include"
         layout="@layout/view_keypad"
         android:layout_width="0dp"
-        android:layout_height="340dp"
+        android:layout_height="540dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

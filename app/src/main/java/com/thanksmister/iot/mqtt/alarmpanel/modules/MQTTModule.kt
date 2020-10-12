@@ -27,7 +27,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
 
-class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQTTListener) : ContextWrapper(base),
+class MQTTModule (base: Context?,
+                  val mqttOptions: MQTTOptions,
+                  val listener: MQTTListener) :
+        ContextWrapper(base),
         LifecycleObserver,
         MQTTService.MqttManagerListener {
 
@@ -79,7 +82,7 @@ class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQ
         stop()
     }
 
-    fun publishAlarm(action : String, code: String?) {
+    fun publishAlarm(action : String, code: Int) {
         Timber.d("action: $action")
         Timber.d("code: $code")
         mqttService?.publishAlarm(action, code)

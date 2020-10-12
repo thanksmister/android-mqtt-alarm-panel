@@ -30,6 +30,7 @@
     <string name="toast_code_changed">¡El código se cambió con éxito!</string>
     <string name="toast_code_not_match">El código no coincide, prueba de nuevo.</string>
     <string name="toast_code_invalid">El código no es válido, inténtalo de nuevo.</string>
+    <string name="toast_config_invalid">Error parsing remote configuration file, check your configuration.</string>
 
     <!-- Text Content -->
     <string name="text_enter_alarm_code_title">Introduce un nuevo código</string>

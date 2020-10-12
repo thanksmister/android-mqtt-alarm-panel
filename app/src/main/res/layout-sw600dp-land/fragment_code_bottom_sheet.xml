@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -38,7 +38,8 @@
 
     <TextView
         android:id="@+id/codeTitle"
-        android:layout_margin="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
         style="@style/TextAppearance.TextStateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -105,8 +106,10 @@
         android:id="@+id/include"
         layout="@layout/view_keypad"
         android:layout_width="0dp"
-        android:layout_height="340dp"
+        android:layout_height="360dp"
         android:layout_marginBottom="32dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginStart="56dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/codeDotsLayout"

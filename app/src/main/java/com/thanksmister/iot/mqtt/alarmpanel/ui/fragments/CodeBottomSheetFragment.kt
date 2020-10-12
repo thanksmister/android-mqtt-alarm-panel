@@ -16,7 +16,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -30,10 +29,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import kotlinx.android.synthetic.main.fragment_code_bottom_sheet.*
 import kotlinx.android.synthetic.main.view_keypad.*
 
-class CodeBottomSheetFragment : BottomSheetDialogFragment() {
+class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentListener) : BottomSheetDialogFragment() {
 
     private var codeComplete = false
     private var enteredCode = ""
@@ -45,17 +45,15 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
         override fun run() {
             handler.removeCallbacks(this)
             if(codeComplete) {
-                onComplete()
+                onComplete(enteredCode)
             } else {
                 onError()
             }
         }
     }
 
-    private var alarmListener: OnAlarmCodeFragmentListener? = null
-
     interface OnAlarmCodeFragmentListener {
-        fun onComplete()
+        fun onComplete(code: String)
         fun onCodeError()
         fun onCancel()
     }
@@ -129,30 +127,21 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
         return inflater.inflate(R.layout.fragment_code_bottom_sheet, container, false)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnAlarmCodeFragmentListener) {
-            alarmListener = context
-        } else {
-            throw RuntimeException("$context must implement OnAlarmCodeFragmentListener")
-        }
-    }
-
     private fun onCancel() {
         enteredCode = ""
         showFilledPins(0)
-        alarmListener?.onCancel()
+        alarmListener.onCancel()
         dismiss()
     }
 
-    private fun onComplete() {
-        alarmListener?.onComplete()
+    private fun onComplete(code: String) {
+        alarmListener.onComplete(code)
         dismiss()
     }
 
     private fun onError() {
         codeComplete = false
-        alarmListener?.onCodeError()
+        alarmListener.onCodeError()
         enteredCode = ""
         showFilledPins(0)
     }
@@ -166,7 +155,12 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
         if (codeComplete) return
         enteredCode += code
         showFilledPins(enteredCode.length)
-        if (enteredCode.length == MAX_CODE_LENGTH && enteredCode == currentCode) {
+        if(codeType == CodeTypes.ARM_REMOTE || codeType == CodeTypes.DISARM_REMOTE) {
+            if(enteredCode.length == MAX_CODE_LENGTH) {
+                codeComplete = true
+                handler.postDelayed(delayRunnable, 500)
+            }
+        } else if (enteredCode.length == MAX_CODE_LENGTH && enteredCode == currentCode) {
             codeComplete = true
             handler.postDelayed(delayRunnable, 500)
         } else if (enteredCode.length == MAX_CODE_LENGTH) {
@@ -222,10 +216,12 @@ class CodeBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private  val MAX_CODE_LENGTH = 4
         private var currentCode: String = ""
+        private var codeType: CodeTypes = CodeTypes.SETTINGS
 
-        fun newInstance(code: String): CodeBottomSheetFragment {
+        fun newInstance(code: String, type: CodeTypes, listener : OnAlarmCodeFragmentListener): CodeBottomSheetFragment {
+            codeType = type
             currentCode = code
-            return CodeBottomSheetFragment()
+            return CodeBottomSheetFragment(listener)
         }
     }
 }

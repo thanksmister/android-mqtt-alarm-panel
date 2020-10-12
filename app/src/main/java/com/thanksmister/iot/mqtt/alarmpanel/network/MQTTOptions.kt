@@ -18,8 +18,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.content.SharedPreferences
 import android.text.TextUtils
-import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
@@ -92,11 +90,11 @@ constructor(private val sharedPreferences: SharedPreferences) {
         return sharedPreferences.getString(PREF_STATE_TOPIC, DEFAULT_STATE_TOPIC).orEmpty()
     }
 
-    private fun getAlarmConfigTopic(): String {
-        return sharedPreferences.getString(PREF_ALARM_CONFIG, DEFAULT_CONFIG_TOPIC).orEmpty()
+    fun getAlarmConfigTopic(): String {
+        return sharedPreferences.getString(PREF_CONFIG_TOPIC, DEFAULT_CONFIG_TOPIC).orEmpty()
     }
 
-    private fun getAlarmStatusTopic(): String {
+    fun getAlarmStatusTopic(): String {
         return sharedPreferences.getString(PREF_ALARM_STATUS, DEFAULT_STATUS_TOPIC).orEmpty()
     }
 
@@ -171,6 +169,11 @@ constructor(private val sharedPreferences: SharedPreferences) {
         setOptionsUpdated(true)
     }
 
+    fun setStatusTopic(value: String) {
+        this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
+        setOptionsUpdated(true)
+    }
+
     fun getRetain(): Boolean {
         return sharedPreferences.getBoolean(PREF_RETAIN, true)
     }
@@ -188,36 +191,40 @@ constructor(private val sharedPreferences: SharedPreferences) {
         }
 
     var useManualConfig: Boolean
-        get() = sharedPreferences.getBoolean(PREF_MANUAL_CONFIG, false)
+        get() = sharedPreferences.getBoolean(PREF_MANUAL_CONFIG, true)
         set(value) {
             this.sharedPreferences.edit().putBoolean(PREF_MANUAL_CONFIG, value).apply()
             setOptionsUpdated(true)
         }
 
+    /**
+     * Used for remote config to requires a code entered to arm the alarm.
+     */
+    var requireCodeForArming: Boolean
+        get() = sharedPreferences.getBoolean(PREF_REQUIRE_CODE_TO_ARM, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_REQUIRE_CODE_TO_ARM, value).apply()
+
+    /**
+     * Used for remote config to requires a code entered to disarm the alarm.
+     */
+    var requireCodeForDisarming: Boolean
+        get() = sharedPreferences.getBoolean(PREF_REQUIRE_CODE_TO_DISARM, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_REQUIRE_CODE_TO_DISARM, value).apply()
+
+
     var remoteConfigTopic: String
-        get() = sharedPreferences.getString(PREF_ALARM_CONFIG, DEFAULT_CONFIG_TOPIC).orEmpty()
+        get() = sharedPreferences.getString(PREF_CONFIG_TOPIC, DEFAULT_CONFIG_TOPIC).orEmpty()
         set(value) {
-            this.sharedPreferences.edit().putString(PREF_ALARM_CONFIG, value).apply()
+            this.sharedPreferences.edit().putString(PREF_CONFIG_TOPIC, value).apply()
             setOptionsUpdated(true)
         }
 
     var remoteStatusTopic: String
-        get() = sharedPreferences.getString(PREF_ALARM_STATUS, DEFAULT_STATUS_TOPIC).orEmpty()
+        get() = sharedPreferences.getString(PREF_STATUS_TOPIC, DEFAULT_STATUS_TOPIC).orEmpty()
         set(value) {
-            this.sharedPreferences.edit().putString(PREF_ALARM_STATUS, value).apply()
+            this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
             setOptionsUpdated(true)
         }
-
-    @Deprecated ("We will move to commands")
-    fun setNotificationTopic(value: String) {
-        this.sharedPreferences.edit().putString(PREF_NOTIFICATION_TOPIC, value).apply()
-        setOptionsUpdated(true)
-    }
-
-    fun setSensorTopic(value: String) {
-        this.sharedPreferences.edit().putString(PREF_SENSOR_TOPIC, value).apply()
-        setOptionsUpdated(true)
-    }
 
     fun setTlsConnection(value: Boolean) {
         this.sharedPreferences.edit().putBoolean(PREF_TLS_CONNECTION, value).apply()
@@ -237,6 +244,7 @@ constructor(private val sharedPreferences: SharedPreferences) {
         const val TCP_BROKER_URL_FORMAT = "tcp://%s:%d"
         const val HTTP_BROKER_URL_FORMAT = "%s:%d"
         const val PREF_STATE_TOPIC = "pref_alarm_topic"
+        const val PREF_STATUS_TOPIC = "pref_status_topic"
         const val PREF_PANEL_COMMAND_TOPIC = "pref_base_topic"
         const val PREF_NOTIFICATION_TOPIC = "pref_notification_topic"
         const val PREF_SENSOR_TOPIC = "pref_sensor_topic"
@@ -251,7 +259,11 @@ constructor(private val sharedPreferences: SharedPreferences) {
         const val PREF_REMOTE_CONFIG = "pref_remote_config"
         const val PREF_MANUAL_CONFIG = "pref_manual_config"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
-        const val PREF_ALARM_CONFIG = "pref_config_command"
-        const val PREF_ALARM_STATUS = "pref_status_command"
+        const val PREF_CONFIG_TOPIC = "pref_config_topic"
+        const val PREF_ALARM_STATUS = "pref_status_topic"
+
+        private const val PREF_REQUIRE_CODE_TO_ARM = "pref_require_arm_code"
+        private const val PREF_REQUIRE_CODE_TO_DISARM = "pref_require_disarm_code"
+
     }
 }

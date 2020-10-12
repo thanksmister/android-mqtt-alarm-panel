@@ -60,6 +60,14 @@ class Weather {
     @SerializedName("visibility")
     var visibility: Double? = null
 
+    @ColumnInfo(name = "precipitation")
+    @SerializedName("precipitation")
+    var precipitation: String? = null
+
+    @ColumnInfo(name = "condition")
+    @SerializedName("condition")
+    var condition: String? = null
+
     @ColumnInfo(name = "attribution")
     @SerializedName("attribution")
     var attribution: String? = null
