@@ -194,9 +194,7 @@ class ControlsFragment : BaseFragment() {
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
                     requireActivity().runOnUiThread {
                         // removes disarming or arming view when receiving response from server
-                        if(configuration.isAlarmArmedMode()) {
-                            delayTimerHandler?.removeCallbacks(delayTimerRunnable)
-                        }
+                        delayTimerHandler?.removeCallbacks(delayTimerRunnable)
                         when (state) {
                             STATE_ARMED_AWAY -> {
                                 dialogUtils.clearDialogs()
