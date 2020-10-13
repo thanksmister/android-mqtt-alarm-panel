@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -37,7 +38,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ARM_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ARM_HOME
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ARM_NIGHT
@@ -51,7 +51,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARMI
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARMING_NIGHT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMED
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_PENDING
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -59,7 +58,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_controls.*
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -80,11 +78,11 @@ class ControlsFragment : BaseFragment() {
 
     var filter = IntentFilter(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
 
-    private var disarmingHandler: Handler? = null
+    private var delayTimerHandler: Handler? = null
 
-    private val disarmingRunnable = object : Runnable {
+    private val delayTimerRunnable = object : Runnable {
         override fun run() {
-            disarmingHandler?.removeCallbacks(this)
+            delayTimerHandler?.removeCallbacks(this)
             when (configuration.alarmMode) {
                 STATE_ARMED_HOME -> {
                     setArmedAwayView(configuration.alarmMode)
@@ -94,6 +92,9 @@ class ControlsFragment : BaseFragment() {
                 }
                 STATE_ARMED_NIGHT -> {
                     setArmedAwayView(configuration.alarmMode)
+                }
+                STATE_DISARMED -> {
+                    setDisarmedView(configuration.alarmMode)
                 }
             }
         }
@@ -148,6 +149,7 @@ class ControlsFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(alarmBroadcastReceiver)
+        delayTimerHandler?.removeCallbacks(delayTimerRunnable)
     }
 
     override fun onAttach(context: Context) {
@@ -162,7 +164,6 @@ class ControlsFragment : BaseFragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
-        disarmingHandler?.removeCallbacks(disarmingRunnable)
     }
 
     /**
@@ -174,8 +175,10 @@ class ControlsFragment : BaseFragment() {
             if (AlarmPanelService.BROADCAST_EVENT_ALARM_MODE == intent.action) {
                 val alarmMode = intent.getStringExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE).orEmpty()
                 if (alarmMode == COMMAND_DISARM) {
+                    delayTimerHandler?.removeCallbacks(delayTimerRunnable)
                     setDisarmingMode(alarmMode)
                 } else if (alarmMode == COMMAND_ARM_AWAY || alarmMode == COMMAND_ARM_HOME || alarmMode == COMMAND_ARM_NIGHT)  {
+                    delayTimerHandler?.removeCallbacks(delayTimerRunnable)
                     setArmingMode(alarmMode)
                 }
             }
@@ -190,9 +193,9 @@ class ControlsFragment : BaseFragment() {
                     Timber.d("Alarm state: " + state)
                     Timber.d("Alarm mode: " + viewModel.getAlarmMode())
                     requireActivity().runOnUiThread {
-                        // removes disarming view with response from server
+                        // removes disarming or arming view when receiving response from server
                         if(configuration.isAlarmArmedMode()) {
-                            disarmingHandler?.removeCallbacks(disarmingRunnable)
+                            delayTimerHandler?.removeCallbacks(delayTimerRunnable)
                         }
                         when (state) {
                             STATE_ARMED_AWAY -> {
@@ -234,6 +237,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_disabled)
         alarmImage.visibility = View.VISIBLE
         alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.GONE
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
@@ -245,6 +249,7 @@ class ControlsFragment : BaseFragment() {
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmImage.visibility = View.VISIBLE
         alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.GONE
         alarmText.setText(R.string.text_armed_away)
         alarmText.setTextColor(resources.getColor(R.color.red))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
@@ -256,20 +261,10 @@ class ControlsFragment : BaseFragment() {
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmImage.visibility = View.VISIBLE
         alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.GONE
         alarmText.setText(R.string.text_armed_home)
         alarmText.setTextColor(resources.getColor(R.color.yellow))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
-        showStateView()
-    }
-
-    private fun setArmingMode(state: String) {
-        viewModel.setAlarmMode(state)
-        systemText.setTextColor(resources.getColor(R.color.body_text_2))
-        alarmImage.visibility = View.VISIBLE
-        alarmImageUnlocked.visibility = View.INVISIBLE
-        alarmText.text = getString(R.string.text_arming)
-        alarmText.setTextColor(resources.getColor(R.color.gray))
-        alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
         showStateView()
     }
 
@@ -278,22 +273,59 @@ class ControlsFragment : BaseFragment() {
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmImage.visibility = View.VISIBLE
         alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.GONE
         alarmText.text = getString(R.string.text_armed_night)
         alarmText.setTextColor(resources.getColor(R.color.black))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black))
         showStateView()
     }
 
+    private fun setArmingMode(state: String) {
+        viewModel.setAlarmMode(state)
+        systemText.setTextColor(resources.getColor(R.color.body_text_2))
+        alarmImage.visibility = View.VISIBLE
+        alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.VISIBLE
+        when(state) {
+            STATE_ARMING_HOME -> {
+                pendingAnimation.setColor(Color.YELLOW)
+                if(mqttOptions.useRemoteConfig) {
+                    delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingHomeTime*10000+ 3000).toLong())
+                }
+            }
+            STATE_ARMING_AWAY -> {
+                pendingAnimation.setColor(Color.RED)
+                if(mqttOptions.useRemoteConfig) {
+                    delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingAwayTime*10000 + 3000).toLong())
+                }
+            }
+            STATE_ARMING_NIGHT -> {
+                pendingAnimation.setColor(Color.BLACK)
+                if(mqttOptions.useRemoteConfig) {
+                    delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingNightTime*10000).toLong()+ 3000)
+                }
+            } else -> {
+                pendingAnimation.setColor(Color.WHITE)
+            }
+        }
+        alarmText.text = getString(R.string.text_arming)
+        alarmText.setTextColor(resources.getColor(R.color.gray))
+        alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        showStateView()
+
+    }
+
     private fun setDisarmingMode(state: String) {
         //viewModel.setAlarmMode(state)
-        disarmingHandler?.postDelayed(disarmingRunnable, 10000)
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmImage.visibility = View.INVISIBLE
         alarmImageUnlocked.visibility = View.VISIBLE
+        pendingAnimation.visibility = View.VISIBLE
         alarmText.text = getString(R.string.text_disarming)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
         showStateView()
+        delayTimerHandler?.postDelayed(delayTimerRunnable, 10000)
     }
 
     /**
@@ -302,8 +334,9 @@ class ControlsFragment : BaseFragment() {
     private fun setPendingMode(state: String) {
         viewModel.setAlarmMode(state)
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
-        alarmImage.visibility = View.VISIBLE
-        alarmImageUnlocked.visibility = View.INVISIBLE
+        //alarmImage.visibility = View.VISIBLE
+        //alarmImageUnlocked.visibility = View.INVISIBLE
+        pendingAnimation.visibility = View.GONE
         alarmText.text = resources.getText(R.string.text_alarm_pending)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
@@ -326,6 +359,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setTextColor(resources.getColor(R.color.green))
         alarmImage.visibility = View.INVISIBLE
         alarmImageUnlocked.visibility = View.VISIBLE
+        pendingAnimation.visibility = View.GONE
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_green))
         showStateView()
     }

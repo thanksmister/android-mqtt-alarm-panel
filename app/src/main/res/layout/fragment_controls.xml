@@ -66,6 +66,15 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent">
 
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/pendingAnimation"
+                style="@style/SpinKitView.Large.Pulse"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                app:SpinKit_Color="@color/white" />
+
             <ImageView
                 android:id="@+id/alarmImage"
                 android:layout_width="50dp"

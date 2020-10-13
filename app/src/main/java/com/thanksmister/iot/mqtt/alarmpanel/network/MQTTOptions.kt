@@ -211,7 +211,6 @@ constructor(private val sharedPreferences: SharedPreferences) {
         get() = sharedPreferences.getBoolean(PREF_REQUIRE_CODE_TO_DISARM, false)
         set(value) = sharedPreferences.edit().putBoolean(PREF_REQUIRE_CODE_TO_DISARM, value).apply()
 
-
     var remoteConfigTopic: String
         get() = sharedPreferences.getString(PREF_CONFIG_TOPIC, DEFAULT_CONFIG_TOPIC).orEmpty()
         set(value) {
@@ -225,6 +224,18 @@ constructor(private val sharedPreferences: SharedPreferences) {
             this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
             setOptionsUpdated(true)
         }
+
+    var remoteArmingHomeTime: Int
+        get() = sharedPreferences.getInt(PREF_ARMING_HOME_TIME, 0)
+        set(value) = sharedPreferences.edit().putInt(PREF_ARMING_HOME_TIME, value).apply()
+
+    var remoteArmingAwayTime: Int
+        get() = sharedPreferences.getInt(PREF_ARMING_AWAY_TIME, 30)
+        set(value) = sharedPreferences.edit().putInt(PREF_ARMING_AWAY_TIME, value).apply()
+
+    var remoteArmingNightTime: Int
+        get() = sharedPreferences.getInt(PREF_ARMING_NIGHT_TIME, 30)
+        set(value) = sharedPreferences.edit().putInt(PREF_ARMING_NIGHT_TIME, value).apply()
 
     fun setTlsConnection(value: Boolean) {
         this.sharedPreferences.edit().putBoolean(PREF_TLS_CONNECTION, value).apply()
@@ -264,6 +275,9 @@ constructor(private val sharedPreferences: SharedPreferences) {
 
         private const val PREF_REQUIRE_CODE_TO_ARM = "pref_require_arm_code"
         private const val PREF_REQUIRE_CODE_TO_DISARM = "pref_require_disarm_code"
+        private const val PREF_ARMING_HOME_TIME = "pref_arming_home_time"
+        private const val PREF_ARMING_AWAY_TIME = "pref_arming_away_time"
+        private const val PREF_ARMING_NIGHT_TIME = "pref_arming_night_time"
 
     }
 }

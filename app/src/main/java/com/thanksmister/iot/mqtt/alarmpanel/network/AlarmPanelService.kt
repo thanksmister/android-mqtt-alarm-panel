@@ -396,11 +396,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                         notifications.clearNotification()
                     }
                 }
-                MqttUtils.STATE_ARMING -> {
-                    if (configuration.hasSystemAlerts()) {
-                        notifications.clearNotification()
-                    }
-                }
                 MqttUtils.STATE_ARMED_AWAY,
                 MqttUtils.STATE_ARMED_NIGHT,
                 MqttUtils.STATE_ARMED_HOME -> {
@@ -676,6 +671,19 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             if(configJson.has("code_disarm_required")) {
                 mqttOptions.requireCodeForDisarming = configJson.getBoolean("code_disarm_required")
             }
+            if(configJson.has("arming_times")) {
+                val armingTimesJson = configJson.getJSONObject("arming_times")
+                if(armingTimesJson.has("armed_away")) {
+                    mqttOptions.remoteArmingAwayTime = configJson.getInt("armed_away")
+                }
+                if(armingTimesJson.has("armed_home")) {
+                    mqttOptions.remoteArmingHomeTime = configJson.getInt("armed_home")
+                }
+                if(armingTimesJson.has("armed_night")) {
+                    mqttOptions.remoteArmingNightTime = configJson.getInt("armed_night")
+                }
+            }
+
         } catch (ex: JSONException) {
             Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid config JSON: $payload")
