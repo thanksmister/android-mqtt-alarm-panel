@@ -39,7 +39,7 @@
 
         <ImageView
             android:id="@+id/conditionImage"
-            android:layout_width="40dp"
+            android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="2dp"
@@ -51,8 +51,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center_vertical"
-            android:paddingStart="8dp"
-            android:paddingLeft="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
             tools:ignore="RtlSymmetry">
 
             <TextView
@@ -60,7 +60,7 @@
                 style="@style/TextAppearance.TextLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 tools:text="18°C" />
 
@@ -69,7 +69,7 @@
                 style="@style/TextAppearance.TextLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 tools:text="Partly Cloudy" />
 
         </LinearLayout>
@@ -89,7 +89,7 @@
             style="@style/TextAppearance.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             tools:text="12:55 PM" />
 
@@ -98,7 +98,7 @@
             style="@style/TextAppearance.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="18sp"
             tools:text="Monday, June 6th" />
 
     </LinearLayout>

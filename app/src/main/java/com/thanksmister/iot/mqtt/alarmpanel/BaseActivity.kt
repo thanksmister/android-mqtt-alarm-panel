@@ -61,6 +61,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onStart(){
         super.onStart()
+        if(configuration.useDarkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else  {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
         screenUtils.setScreenBrightness()
     }
 
@@ -112,24 +117,30 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    fun dayNightModeCheck(sunValue:String?, force: Boolean = false) {
-        Timber.d("dayNightModeCheck $sunValue")
-        Timber.d("configuration.dayNightMode ${configuration.dayNightMode}")
+    fun dayNightModeCheck(sunValue:String?) {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
-        if(sunValue == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) ) {
+        if (sunValue == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
             configuration.dayNightMode = sunValue
             stopService(alarmPanelService)
             serviceStarted = false
             screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            recreate()
-        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && serviceStarted  && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+            this.recreate()
+        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
             configuration.dayNightMode = sunValue
             stopService(alarmPanelService)
             serviceStarted = false
             screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            recreate()
+            this.recreate()
+        }
+    }
+
+    fun setNightMode() {
+        if(configuration.useDarkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 

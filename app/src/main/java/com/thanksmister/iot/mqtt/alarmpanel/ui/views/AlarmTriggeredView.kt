@@ -21,14 +21,28 @@ import android.os.Handler
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
+import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
+import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.CodeBottomSheetFragment
 import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
 
 class AlarmTriggeredView : BaseAlarmView {
 
     var listener: ViewListener? = null
 
+    private val delayRunnable = object : Runnable {
+        override fun run() {
+            handler.removeCallbacks(this)
+            if(codeComplete) {
+                listener?.onComplete(enteredCode)
+            } else {
+                listener?.onError()
+            }
+            reset()
+        }
+    }
+
     interface ViewListener {
-        fun onComplete()
+        fun onComplete(code: String)
         fun onError()
     }
 
@@ -42,31 +56,23 @@ class AlarmTriggeredView : BaseAlarmView {
     }
 
     override fun onCancel() {
-        // na-da
-    }
-
-    fun setUseFingerPrint(value: Boolean) {
-        useFingerprint = value
-        if(value) {
-            disable_fingerprint_layout.visibility = View.VISIBLE
-        } else {
-            disable_fingerprint_layout.visibility = View.INVISIBLE
-        }
-    }
-
-    override fun fingerNoMatch() {
-        listener?.onError()
+        // user cannot cancel
     }
 
     override fun addPinCode(code: String) {
-        if (codeComplete)
-            return
-
+        if (codeComplete) return
         enteredCode += code
-
-        if (enteredCode.length == MAX_CODE_LENGTH) {
+        showFilledPins(enteredCode.length)
+        if(codeType == CodeTypes.DISARM_REMOTE) {
+            if(enteredCode.length == MAX_CODE_LENGTH) {
+                codeComplete = true
+                handler.postDelayed(delayRunnable, 500)
+            }
+        } else if (enteredCode.length == MAX_CODE_LENGTH && enteredCode == currentCode) {
             codeComplete = true
-            validateCode(enteredCode)
+            handler.postDelayed(delayRunnable, 500)
+        } else if (enteredCode.length == MAX_CODE_LENGTH) {
+            handler.postDelayed(delayRunnable, 500)
         }
     }
 
@@ -74,23 +80,8 @@ class AlarmTriggeredView : BaseAlarmView {
         if (codeComplete) {
             return
         }
-
         if (!TextUtils.isEmpty(enteredCode)) {
             enteredCode = enteredCode.substring(0, enteredCode.length - 1)
         }
-    }
-
-    private fun validateCode(validateCode: String) {
-        val codeInt = validateCode.toInt()
-        if (codeInt == currentCode) {
-            if (listener != null) {
-                listener!!.onComplete()
-            }
-        } else {
-            if (listener != null) {
-                listener!!.onError()
-            }
-        }
-        reset()
     }
 }

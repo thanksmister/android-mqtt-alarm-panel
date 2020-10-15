@@ -55,7 +55,6 @@ class AlarmCodeView : BaseAlarmView {
     override fun onFinishInflate() {
         super.onFinishInflate()
         codeTitle.setText(R.string.text_enter_alarm_code_title)
-        useFingerprint = false // we don't use fingerprint for this view
     }
 
    override fun onCancel() {
@@ -79,8 +78,6 @@ class AlarmCodeView : BaseAlarmView {
     }
 
     override fun reset() {}
-
-    override fun fingerNoMatch() {}
 
     override fun addPinCode(code: String) {
         if (codeComplete)

@@ -45,7 +45,7 @@
             <ImageView
                     android:id="@+id/conditionImage"
                     android:layout_marginTop="2dp"
-                    android:layout_width="40dp"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:tint="@color/dark_gray_color"
                     tools:src="@drawable/ic_thunderstorm"/>
@@ -53,14 +53,14 @@
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingLeft="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp"
                     android:orientation="vertical">
 
                 <TextView
                         android:id="@+id/temperatureText"
                         style="@style/TextAppearance.TextLarge"
-                        android:textSize="22sp"
+                        android:textSize="24sp"
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 <TextView
                         android:id="@+id/outlookText"
                         style="@style/TextAppearance.TextLarge"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="Partly Cloudy"/>
@@ -91,7 +91,7 @@
         <TextView
                 android:id="@+id/timeText"
                 style="@style/TextAppearance.TextLarge"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
         <TextView
                 android:id="@+id/dateText"
                 style="@style/TextAppearance.TextLarge"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Monday, June 6th"/>

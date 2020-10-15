@@ -24,14 +24,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_ALARM_MODE
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
+import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -48,6 +53,7 @@ class MainFragment : BaseFragment() {
     lateinit var viewModel: MainViewModel
     @Inject lateinit var configuration: Configuration
     @Inject lateinit var dialogUtils: DialogUtils
+    @Inject lateinit var mqttOptions: MQTTOptions
 
     private var listener: OnMainFragmentListener? = null
 
@@ -57,6 +63,8 @@ class MainFragment : BaseFragment() {
         fun publishDisarm(code: String)
         fun publishAlertCall()
         fun showCodeDialog(type: CodeTypes)
+        fun showAlarmTriggered()
+        fun hideTriggeredView()
     }
 
     override fun onAttach(context: Context) {
@@ -155,16 +163,45 @@ class MainFragment : BaseFragment() {
                             }
                             MqttUtils.STATE_DISARMED -> {
                                 dialogUtils.clearDialogs()
+                                listener?.hideTriggeredView()
                             }
                             MqttUtils.STATE_PENDING -> {
                                 dialogUtils.clearDialogs()
+                                if (configuration.isAlarmArmedMode()) {
+                                    listener?.showAlarmTriggered()
+                                }
                             }
                             MqttUtils.STATE_TRIGGERED -> {
                                 dialogUtils.clearDialogs()
+                                listener?.showAlarmTriggered()
                             }
                         }
                     }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
+    }
+
+    /**
+     * We show the disarm dialog if we have delay time and a sensor was triggered in home or away mode.
+     * This will be the time before the alarm is triggered, otherwise the expected behavior is the
+     * alarm will trigger immediately.
+     */
+    private fun showAlarmDisableDialog(delayTime: Int) {
+        /*activity.takeIf { isAdded }?.let {
+            if(delayTime > 0) {
+                dialogUtils.showAlarmDisableDialog(it as BaseActivity, object : AlarmDisableView.ViewListener {
+                    override fun onComplete(code: Int) {
+                        listener?.publishDisarmed()
+                        dialogUtils.clearDialogs()
+                    }
+                    override fun onError() {
+                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onCancel() {
+                        dialogUtils.clearDialogs()
+                    }
+                }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
+            }
+        }*/
     }
 
     private fun showSettingsCodeDialog() {

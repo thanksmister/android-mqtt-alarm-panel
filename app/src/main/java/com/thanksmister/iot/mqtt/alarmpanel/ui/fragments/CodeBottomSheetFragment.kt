@@ -66,47 +66,36 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         button0.setOnClickListener {
             addPinCode("0")
         }
-
         button1.setOnClickListener {
             addPinCode("1")
         }
-
         button2.setOnClickListener {
             addPinCode("2")
         }
-
         button3.setOnClickListener {
             addPinCode("3")
         }
-
         button4.setOnClickListener {
             addPinCode("4")
         }
-
         button5.setOnClickListener {
             addPinCode("5")
         }
-
         button6.setOnClickListener {
             addPinCode("6")
         }
-
         button7.setOnClickListener {
             addPinCode("7")
         }
-
         button8.setOnClickListener {
             addPinCode("8")
         }
-
         button9.setOnClickListener {
             addPinCode("9")
         }
-
         buttonDel.setOnClickListener {
             removePinCode()
         }
-
         buttonDel.setOnClickListener {
             removePinCode()
         }

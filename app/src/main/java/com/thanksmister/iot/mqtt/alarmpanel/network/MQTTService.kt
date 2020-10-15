@@ -109,15 +109,18 @@ class MQTTService(private var context: Context,
                         }
                     }
                 }
-                val mqttMessage = MqttMessage()
-                val payloadJson = JSONObject()
-                payloadJson.put(MqttUtils.ACTION, action)
-                if(code > 0) {
-                    payloadJson.put(MqttUtils.CODE, code)
-                }
-                val payloadString = payloadJson.toString()
-                mqttMessage.payload = payloadString.toByteArray()
                 mqttOptions?.let {
+                    val mqttMessage = MqttMessage()
+                    var payloadString = action
+                    if(it.useRemoteConfig) {
+                        val payloadJson = JSONObject()
+                        payloadJson.put(MqttUtils.ACTION, action)
+                        if (code > 0) {
+                            payloadJson.put(MqttUtils.CODE, code)
+                        }
+                        payloadString = payloadJson.toString()
+                    }
+                    mqttMessage.payload = payloadString.toByteArray()
                     mqttMessage.isRetained = it.getRetain()
                     sendMessage(it.getAlarmCommandTopic(), mqttMessage)
                 }

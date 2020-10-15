@@ -38,7 +38,7 @@ class AlarmDisableView : BaseAlarmView {
     }
 
     interface ViewListener {
-        fun onComplete(code: Int)
+        fun onComplete(code: String)
         fun onError()
         fun onCancel()
     }
@@ -53,15 +53,6 @@ class AlarmDisableView : BaseAlarmView {
 
     fun setListener(listener: ViewListener) {
         this.alarmListener = listener
-    }
-
-    fun setUseFingerPrint(value: Boolean) {
-        useFingerprint = value
-        if(value) {
-            disable_fingerprint_layout.visibility = View.VISIBLE
-        } else {
-            disable_fingerprint_layout.visibility = View.GONE
-        }
     }
 
     override fun onCancel() {
@@ -103,10 +94,6 @@ class AlarmDisableView : BaseAlarmView {
 
     override fun reset() {}
 
-    override fun fingerNoMatch() {
-        alarmListener?.onError()
-    }
-
     override fun addPinCode(code: String) {
         if (codeComplete)
             return
@@ -132,8 +119,7 @@ class AlarmDisableView : BaseAlarmView {
     }
 
     private fun validateCode(validateCode: String) {
-        val codeInt = Integer.parseInt(validateCode)
-        if (codeInt == currentCode) {
+        if (validateCode == currentCode) {
             countDownTimer?.cancel()
             countDownTimer = null
             alarmListener?.onComplete(currentCode)

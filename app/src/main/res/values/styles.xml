@@ -28,7 +28,8 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 
@@ -55,6 +56,10 @@
 
     <style name="PreferenceButtonStyle" parent="android:Widget.Holo.Button.Borderless">
         <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:tint">@color/dark_gray_color</item>
     </style>
 
     <style name="BorderlessButtonStyle" parent="android:Widget.Holo.Button.Borderless">

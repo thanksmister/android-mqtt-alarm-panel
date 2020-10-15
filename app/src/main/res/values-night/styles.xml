@@ -22,7 +22,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="windowNoTitle">false</item>
         <item name="windowActionBar">true</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheet</item>
     </style>
@@ -41,6 +41,10 @@
     <style name="CustomBottomSheet" parent="@style/Theme.MaterialComponents.BottomSheetDialog">
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:tint">@color/white</item>
     </style>
 
 </resources>

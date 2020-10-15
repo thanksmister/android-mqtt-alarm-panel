@@ -22,8 +22,6 @@ import android.util.AttributeSet
 import android.view.View
 
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import kotlinx.android.synthetic.main.dialog_alarm_disable.view.*
-import kotlinx.android.synthetic.main.dialog_alarm_triggered_code.view.*
 import kotlinx.android.synthetic.main.dialog_settings_code.view.*
 
 class SettingsCodeView : BaseAlarmView {
@@ -38,7 +36,7 @@ class SettingsCodeView : BaseAlarmView {
     }
 
     interface ViewListener {
-        fun onComplete(code: Int)
+        fun onComplete(code: String)
         fun onError()
         fun onCancel()
     }
@@ -54,15 +52,6 @@ class SettingsCodeView : BaseAlarmView {
 
     fun setListener(listener: ViewListener) {
         this.settingsListener = listener
-    }
-
-    fun setUseFingerPrint(value: Boolean) {
-        useFingerprint = value
-        if(value) {
-            settings_fingerprint_layout.visibility = View.VISIBLE
-        } else {
-            settings_fingerprint_layout.visibility = View.GONE
-        }
     }
 
     override fun onCancel() {
@@ -82,10 +71,6 @@ class SettingsCodeView : BaseAlarmView {
     }
 
     override fun reset() {}
-
-    override fun fingerNoMatch() {
-        settingsListener?.onError()
-    }
 
     override fun addPinCode(code: String) {
 
@@ -113,8 +98,7 @@ class SettingsCodeView : BaseAlarmView {
     }
 
     private fun validateCode(validateCode: String) {
-        val codeInt = Integer.parseInt(validateCode)
-        if (codeInt == currentCode) {
+        if (validateCode == currentCode) {
             if (settingsListener != null) {
                 settingsListener!!.onComplete(currentCode)
             }

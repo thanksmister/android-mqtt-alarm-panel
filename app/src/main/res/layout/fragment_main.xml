@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,19 +31,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_information" />
 
-    <!--<fragment
-        android:id="@+id/controlContainer"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="h,12:7"
-        app:layout_constraintVertical_bias="0.45"
-        app:layout_constraintBottom_toTopOf="@id/settingsContainer"
-        app:layout_constraintEnd_toStartOf="@id/guidelineHR"
-        app:layout_constraintStart_toStartOf="@id/guidelineHL"
-        app:layout_constraintTop_toBottomOf="@id/informationContainer"
-        tools:layout="@layout/fragment_controls" />-->
-
     <fragment
         android:id="@+id/controlContainer"
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
@@ -53,25 +41,6 @@
         app:layout_constraintEnd_toStartOf="@id/guidelineVR"
         app:layout_constraintStart_toStartOf="@id/guidelineVL"
         tools:layout="@layout/fragment_controls" />
-
-
-    <FrameLayout
-        android:id="@+id/triggeredView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/red"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
-
-        <include
-            android:id="@+id/alarmTriggeredView"
-            layout="@layout/dialog_alarm_triggered_code" />
-
-    </FrameLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/settingsContainer"

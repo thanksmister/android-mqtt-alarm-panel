@@ -28,6 +28,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -48,13 +49,13 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARMING
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMING
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -68,6 +69,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private val triggeredView: View by lazy {
+        findViewById<View>(R.id.triggeredView)
+    }
 
     private lateinit var viewModel: MainViewModel
     private lateinit var pagerAdapter: PagerAdapter
@@ -95,8 +99,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
+        if(configuration.useDarkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else  {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
         setContentView(R.layout.activity_main)
 
         this.window.setFlags(
@@ -160,12 +170,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             decorView?.keepScreenOn = false
         }
-
     }
 
     override fun onStart() {
         super.onStart()
-        Timber.d("onStart")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(alarmPanelService)
         } else {
@@ -175,7 +183,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
     override fun onUserInteraction() {
         onWindowFocusChanged(true)
-        Timber.d("onUserInteraction")
         if (!userPresent) {
             userPresent = true
             val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
@@ -226,7 +233,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ sunValue ->
                     this@MainActivity.runOnUiThread {
-                        if (configuration.useNightDayMode) {
+                        if (configuration.useNightDayMode && configuration.useDarkTheme.not()) {
                             dayNightModeCheck(sunValue.sun)
                         }
                     }
@@ -255,7 +262,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun onResume() {
-        Timber.d("onResume")
         super.onResume()
         resetInactivityTimer()
         setViewPagerState()
@@ -357,9 +363,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         }
     }
 
-    // TODO check if code required for away
     override fun publishArmedHome() {
-        Timber.d("publishArmedHome")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_HOME)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -367,9 +371,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         bm.sendBroadcast(intent)
     }
 
-    // TODO check if code required for away
     override fun publishArmedAway() {
-        Timber.d("publishArmedAway")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_AWAY)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -377,9 +379,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         bm.sendBroadcast(intent)
     }
 
-    // TODO check if code required for away
     override fun publishArmedNight() {
-        Timber.d("publishArmedNight")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_NIGHT)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -388,7 +388,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishDisarm(code: String) {
-        Timber.d("publishDisarm")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_DISARM)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -397,7 +396,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishAlertCall() {
-        Timber.d("publishAlert")
         val bottomSheetFragment = PanicBottomSheetFragment()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
@@ -450,6 +448,34 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             }
         })
         codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+    }
+
+    override fun showAlarmTriggered() {
+        var codeType = CodeTypes.DISARM
+        if(mqttOptions.useRemoteConfig) {
+            if(mqttOptions.requireCodeForDisarming) {
+                codeType = CodeTypes.DISARM_REMOTE
+            }
+        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
+            triggeredView.visibility = View.VISIBLE
+            val disarmView = findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
+            disarmView.setCode(configuration.alarmCode.toString())
+            disarmView.setAlarmCodeType(codeType)
+            disarmView.setUseSound(configuration.systemSounds)
+            disarmView.listener = object : AlarmTriggeredView.ViewListener {
+                override fun onComplete(code: String) {
+                    publishDisarm(code)
+                }
+                override fun onError() {
+                    Toast.makeText(applicationContext, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    override fun hideTriggeredView() {
+        triggeredView.visibility = View.GONE
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
     }
 
     override fun showArmOptionsDialog() {

@@ -23,6 +23,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
@@ -156,7 +157,7 @@ class SettingsFragment : BaseSettingsFragment() {
             false
         }
 
-        themePreference.isChecked = configuration.useNightDayMode
+        themePreference.isChecked = configuration.useDarkTheme
         panicPreference.isChecked == configuration.panicButton
 
         if (isFingerprintSupported()) {
@@ -177,6 +178,7 @@ class SettingsFragment : BaseSettingsFragment() {
         when (key) {
             "pref_dark_theme" -> {
                 configuration.useDarkTheme = themePreference.isChecked
+                this.requireActivity().recreate()
             }
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked

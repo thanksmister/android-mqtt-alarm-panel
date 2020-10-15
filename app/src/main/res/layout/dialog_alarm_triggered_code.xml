@@ -371,7 +371,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/triggered_fingerprint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -398,6 +398,6 @@
             android:layout_height="wrap_content"
             android:text="@string/text_touch_sensor" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>
