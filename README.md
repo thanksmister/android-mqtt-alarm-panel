@@ -116,19 +116,22 @@ You can also interact and control the application and device remotely using eith
 
 ![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky: 
+You can use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky and sends a message anytime the weather updates: 
 
 ```
 
 - id: '1538595661244'
   alias: MQTT Weather
   trigger:
-  - minutes: /30
-    platform: time_pattern
+  - platform: state
+    entity_id: weather.dark_sky
   condition: []
   action:
   - data:
-      payload_template: "{'weather':{{states.weather.dark_sky.attributes}}}"
+      payload_template: >-
+        {% set attrs = states.weather.dark_sky.attributes %}
+        {% set result = dict(attrs, condition = states('weather.dark_sky')) %}
+        {'weather':{{result}}}
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
@@ -137,7 +140,7 @@ You can also use MQTT to publish the weather to the Alarm Panel application, whi
 The resulting payload will look like this:
 
 ```
-{"topic": "alarmpanel/command","payload":"{'weather':{'summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
+{"topic": "alarmpanel/command","payload":"{'weather':{'condition':'partlycloudy','summary':'Partly Cloudy','precipitation':'0','icon':'partly-cloudy-day','temperature':'22.5','units':'°C'}}
 ```
 
 You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
@@ -150,14 +153,14 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 }
 ```
 
-Note that some other weather sources may also work.  For example, the Accuweather integration has been tested and at least shows the current weather and status on the panel.  Also note that the template engine has an issue if you have a weather entity of the form weather.x_y_z where x or y are fully digits, so if you have an entity like weather.1234_main_st you will have to use a different template method:
+Note that many weather sources work.  For example, the Accuweather integration has been affirmatively tested.  Also note that the template engine has an issue if you have an entity where a section starts with a digit.  This means that if you have an entity like `weather.1234_main_st` you will have to use a different template method to access the entity data:
 ```
-      payload_template: "{'weather':{{states.weather['1234_main_st'].attributes}}}"
+      states.weather['1234_main_st'].attributes
 ```
 
-This will produce a payload that looks like this:
+If you plug this into the above automation, this will produce a payload that looks like:
 ```
-{'weather':{'temperature': 82, 'humidity': 88, 'pressure': 30.06, 'wind_bearing': 180, 'wind_speed': 1.7, 'visibility': 10.0, 'attribution': 'Data provided by AccuWeather', 'forecast': [{'datetime': '2020-08-27T11:00:00+00:00', 'temperature': 90, 'templow': 73, 'precipitation': 0.0, 'precipitation_probability': 25, 'wind_speed': 4.6, 'wind_bearing': 151, 'condition': 'partlycloudy'}, {'datetime': '2020-08-28T11:00:00+00:00', 'temperature': 87, 'templow': 73, 'precipitation': 0.2, 'precipitation_probability': 47, 'wind_speed': 5.8, 'wind_bearing': 215, 'condition': 'lightning'}, {'datetime': '2020-08-29T11:00:00+00:00', 'temperature': 86, 'templow': 72, 'precipitation': 0.2, 'precipitation_probability': 41, 'wind_speed': 9.2, 'wind_bearing': 265, 'condition': 'partlycloudy'}, {'datetime': '2020-08-30T11:00:00+00:00', 'temperature': 86, 'templow': 67, 'precipitation': 0.1, 'precipitation_probability': 40, 'wind_speed': 4.6, 'wind_bearing': 279, 'condition': 'partlycloudy'}, {'datetime': '2020-08-31T11:00:00+00:00', 'temperature': 86, 'templow': 73, 'precipitation': 0.5, 'precipitation_probability': 40, 'wind_speed': 5.8, 'wind_bearing': 166, 'condition': 'cloudy'}], 'friendly_name': '1234 Main St'}}
+{'weather':{'condition': 'partlycloudy', 'temperature': 82, 'humidity': 88, 'pressure': 30.06, 'wind_bearing': 180, 'wind_speed': 1.7, 'visibility': 10.0, 'attribution': 'Data provided by AccuWeather', 'forecast': [{'datetime': '2020-08-27T11:00:00+00:00', 'temperature': 90, 'templow': 73, 'precipitation': 0.0, 'precipitation_probability': 25, 'wind_speed': 4.6, 'wind_bearing': 151, 'condition': 'partlycloudy'}, {'datetime': '2020-08-28T11:00:00+00:00', 'temperature': 87, 'templow': 73, 'precipitation': 0.2, 'precipitation_probability': 47, 'wind_speed': 5.8, 'wind_bearing': 215, 'condition': 'lightning'}, {'datetime': '2020-08-29T11:00:00+00:00', 'temperature': 86, 'templow': 72, 'precipitation': 0.2, 'precipitation_probability': 41, 'wind_speed': 9.2, 'wind_bearing': 265, 'condition': 'partlycloudy'}, {'datetime': '2020-08-30T11:00:00+00:00', 'temperature': 86, 'templow': 67, 'precipitation': 0.1, 'precipitation_probability': 40, 'wind_speed': 4.6, 'wind_bearing': 279, 'condition': 'partlycloudy'}, {'datetime': '2020-08-31T11:00:00+00:00', 'temperature': 86, 'templow': 73, 'precipitation': 0.5, 'precipitation_probability': 40, 'wind_speed': 5.8, 'wind_bearing': 166, 'condition': 'cloudy'}], 'friendly_name': '1234 Main St'}}
 ```
 
 
