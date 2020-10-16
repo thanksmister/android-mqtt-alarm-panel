@@ -16,7 +16,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,12 +32,18 @@ import javax.inject.Inject
 
 class SensorControlFragment : BaseFragment() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: SensorControlViewModel
 
-    @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var mqttOptions: MQTTOptions
+    @Inject
+    lateinit var dialogUtils: DialogUtils
+
+    @Inject
+    lateinit var configuration: Configuration
+
+    @Inject
+    lateinit var mqttOptions: MQTTOptions
     private var mListener: OnDoorControlFragmentListener? = null
 
 
@@ -62,14 +67,14 @@ class SensorControlFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SensorControlViewModel::class.java)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnDoorControlFragmentListener) {
-            mListener = context
-        } else {
-            throw RuntimeException("$context must implement OnDoorControlFragmentListener")
-        }
-    }
+    /* override fun onAttach(context: Context) {
+         super.onAttach(context)
+         if (context is OnDoorControlFragmentListener) {
+             mListener = context
+         } else {
+             throw RuntimeException("$context must implement OnDoorControlFragmentListener")
+         }
+     }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sensor_control, container, false)

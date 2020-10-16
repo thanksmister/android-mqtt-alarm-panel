@@ -133,6 +133,18 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextAppearance.TextSensorTitle">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_sensor_title</item>
+    </style>
+
+    <style name="TextAppearance.TextSensorState">
+        <item name="android:textColor">@color/body_text_3</item>
+        <item name="android:textSize">@dimen/text_size_sensor_state</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
     <style name="TextAppearance.TextAlarmState.Large">
         <item name="android:textColor">@color/body_text_2</item>
         <item name="android:textSize">@dimen/text_size_login</item>

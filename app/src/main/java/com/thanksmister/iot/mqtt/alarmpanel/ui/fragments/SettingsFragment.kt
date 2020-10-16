@@ -16,25 +16,20 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
-import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
 
 class SettingsFragment : BaseSettingsFragment() {
 
@@ -84,12 +79,12 @@ class SettingsFragment : BaseSettingsFragment() {
         findPreference("button_screen") as Preference
     }
 
-    private val sensorsPreference: Preference by lazy {
-        findPreference("button_sensors") as Preference
+    private val alarmSensorsPreference: Preference by lazy {
+        findPreference("button_alarm_sensors") as Preference
     }
 
-    private val fingerprintPreference: SwitchPreference by lazy {
-        findPreference("pref_fingerprint") as SwitchPreference
+    private val sensorsPreference: Preference by lazy {
+        findPreference("button_sensors") as Preference
     }
 
     override fun onAttach(context: Context) {
@@ -109,7 +104,7 @@ class SettingsFragment : BaseSettingsFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if((activity as SettingsActivity).supportActionBar != null) {
+        if ((activity as SettingsActivity).supportActionBar != null) {
             (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.activity_settings_title))
@@ -136,6 +131,10 @@ class SettingsFragment : BaseSettingsFragment() {
             view.let { Navigation.findNavController(it).navigate(R.id.screen_action) }
             false
         }
+        alarmSensorsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            view.let { Navigation.findNavController(it).navigate(R.id.alarm_action) }
+            false
+        }
         cameraPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             view.let { Navigation.findNavController(it).navigate(R.id.camera_action) }
             false
@@ -160,15 +159,15 @@ class SettingsFragment : BaseSettingsFragment() {
         themePreference.isChecked = configuration.useDarkTheme
         panicPreference.isChecked == configuration.panicButton
 
-        if (isFingerprintSupported()) {
+        /*if (isFingerprintSupported()) {
             fingerprintPreference.isVisible = true
             fingerprintPreference.isChecked = configuration.fingerPrint
         } else {
             fingerprintPreference.isVisible = false
-        }
+        }*/
 
         val code = configuration.alarmCode.toString()
-        if(code.isNotEmpty()) {
+        if (code.isNotEmpty()) {
             codePreference.summary = toStars(code)
         }
 
@@ -183,7 +182,7 @@ class SettingsFragment : BaseSettingsFragment() {
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked
             }
-            Configuration.PREF_FINGERPRINT -> {
+            /*Configuration.PREF_FINGERPRINT -> {
                 val checked = fingerprintPreference.isChecked
                 if (isFingerprintSupported()) {
                     configuration.fingerPrint = checked
@@ -192,24 +191,24 @@ class SettingsFragment : BaseSettingsFragment() {
                     fingerprintPreference.isChecked = false
                     configuration.fingerPrint = false
                 }
-            }
+            }*/
         }
     }
 
-    @SuppressLint("InlinedApi")
-    private fun isFingerprintSupported(): Boolean {
-        try {
-            val fingerPrintIdentity = FingerprintIdentify(context)
-            Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
-            Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
-            if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
-                return true
-            }
-        } catch (e: ClassNotFoundException) {
-            Timber.w("Fingerprint: " + e.message)
-        }
-        return false
-    }
+    /* @SuppressLint("InlinedApi")
+     private fun isFingerprintSupported(): Boolean {
+         try {
+             val fingerPrintIdentity = FingerprintIdentify(context)
+             Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
+             Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
+             if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
+                 return true
+             }
+         } catch (e: ClassNotFoundException) {
+             Timber.w("Fingerprint: " + e.message)
+         }
+         return false
+     }*/
 
     private fun showAlarmCodeDialog() {
         defaultCode = configuration.alarmCode
@@ -241,6 +240,7 @@ class SettingsFragment : BaseSettingsFragment() {
                         Toast.makeText(activity, R.string.toast_code_not_match, Toast.LENGTH_LONG).show()
                     }
                 }
+
                 override fun onError() {}
                 override fun onCancel() {
                     confirmCode = false

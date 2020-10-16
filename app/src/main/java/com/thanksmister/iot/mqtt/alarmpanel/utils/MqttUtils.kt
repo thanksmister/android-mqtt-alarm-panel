@@ -98,6 +98,7 @@ class MqttUtils {
         const val STATE_ARMING_NIGHT = "arming_night"
 
         const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
+        const val DEFAULT_SENSOR_TOPIC = "home/sensor/"
         const val DEFAULT_CONFIG_TOPIC = "home/alarm/config"
         const val DEFAULT_STATUS_TOPIC = "home/alarm/status"
         const val DEFAULT_STATE_TOPIC = "home/alarm"

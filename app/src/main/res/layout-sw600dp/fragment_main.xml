@@ -35,20 +35,62 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/guideControlBottom"
         app:layout_constraintDimensionRatio="h,12:7"
-        app:layout_constraintVertical_bias="0.45"
-        app:layout_constraintBottom_toTopOf="@id/settingsContainer"
-        app:layout_constraintEnd_toStartOf="@id/guidelineHR"
-        app:layout_constraintStart_toStartOf="@id/guidelineHL"
-        app:layout_constraintTop_toBottomOf="@id/informationContainer"
+        app:layout_constraintEnd_toStartOf="@id/guidelineVR"
+        app:layout_constraintStart_toStartOf="@id/guidelineVL"
         tools:layout="@layout/fragment_controls" />
+
+    <fragment
+        android:id="@+id/oneSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineMiddle"
+        app:layout_constraintStart_toEndOf="@id/guidelineVL"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorOne"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/twoSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVR"
+        app:layout_constraintStart_toEndOf="@id/guidelineMiddle"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorOne"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/threeSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineMiddle"
+        app:layout_constraintStart_toEndOf="@id/guidelineVL"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/fourSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@+id/guidelineMiddle"
+        app:layout_constraintEnd_toStartOf="@id/guidelineVR"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
+        tools:layout="@layout/fragment_sensor_control" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
         app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -157,17 +199,52 @@
     </FrameLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHL"
+        android:id="@+id/guidelineVL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.06" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHR"
+        android:id="@+id/guidelineVR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.94" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideControlBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.58" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.62" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.78" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineMiddle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

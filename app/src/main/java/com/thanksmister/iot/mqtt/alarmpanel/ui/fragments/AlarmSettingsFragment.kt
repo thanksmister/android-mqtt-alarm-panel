@@ -23,18 +23,15 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.preference.CheckBoxPreference
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_FINGERPRINT
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
-import com.wei.android.lib.fingerprintidentify.FingerprintIdentify
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,20 +41,73 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
 
     @Inject
     lateinit var configuration: Configuration
+
     @Inject
-    lateinit var dialogUtils: DialogUtils
+    lateinit var mqttOptions: MQTTOptions
 
-    private var pendingPreference: EditTextPreference? = null
-    private var pendingHomePreference: EditTextPreference? = null
-    private var pendingAwayPreference: EditTextPreference? = null
-    private var delayPreference: EditTextPreference? = null
-    private var delayHomePreference: EditTextPreference? = null
-    private var delayAwayPreference: EditTextPreference? = null
-    private var fingerprintPreference: CheckBoxPreference? = null
+    private val sensorOnePreference: SwitchPreference by lazy {
+        findPreference("pref_sensor_one") as SwitchPreference
+    }
 
-    private var defaultCode: Int = 0
-    private var tempCode: Int = 0
-    private var confirmCode = false
+    private val sensorOneNamePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_one_name") as EditTextPreference
+    }
+
+    private val sensorOneTopicPreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_one_topic") as EditTextPreference
+    }
+
+    private val sensorOneStatePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_one_state") as EditTextPreference
+    }
+
+    private val sensorTwoPreference: SwitchPreference by lazy {
+        findPreference("pref_sensor_two") as SwitchPreference
+    }
+
+    private val sensorTwoNamePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_two_name") as EditTextPreference
+    }
+
+    private val sensorTwoTopicPreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_two_topic") as EditTextPreference
+    }
+
+    private val sensorTwoStatePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_two_state") as EditTextPreference
+    }
+
+    private val sensorThreePreference: SwitchPreference by lazy {
+        findPreference("pref_sensor_three") as SwitchPreference
+    }
+
+    private val sensorThreeNamePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_three_name") as EditTextPreference
+    }
+
+    private val sensorThreeTopicPreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_three_topic") as EditTextPreference
+    }
+
+    private val sensorThreeStatePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_three_state") as EditTextPreference
+    }
+
+    private val sensorFourPreference: SwitchPreference by lazy {
+        findPreference("pref_sensor_four") as SwitchPreference
+    }
+
+    private val sensorFourNamePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_four_name") as EditTextPreference
+    }
+
+    private val sensorFourTopicPreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_four_topic") as EditTextPreference
+    }
+
+    private val sensorFourStatePreference: EditTextPreference by lazy {
+        findPreference("pref_sensor_four_state") as EditTextPreference
+    }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -71,7 +121,6 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.alarm_preferences)
-        lifecycle.addObserver(dialogUtils)
     }
 
     override fun onResume() {
@@ -93,109 +142,84 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
+        sensorOnePreference.isChecked = mqttOptions.sensorOneActive
+        sensorOneNamePreference.text = mqttOptions.sensorOneName
+        sensorOneNamePreference.summary = mqttOptions.sensorOneName
+        sensorOneTopicPreference.text = mqttOptions.sensorOneTopic
+        sensorOneTopicPreference.summary = mqttOptions.sensorOneTopic
+        sensorOneStatePreference.text = mqttOptions.sensorOneState
+        sensorOneStatePreference.summary = mqttOptions.sensorOneState
 
-        val buttonPreference = findPreference("pref_alarm_code")
+        sensorTwoPreference.isChecked = mqttOptions.sensorTwoActive
+        sensorTwoNamePreference.text = mqttOptions.sensorTwoName
+        sensorTwoNamePreference.summary = mqttOptions.sensorTwoName
+        sensorTwoTopicPreference.text = mqttOptions.sensorTwoTopic
+        sensorTwoTopicPreference.summary = mqttOptions.sensorTwoTopic
+        sensorTwoStatePreference.text = mqttOptions.sensorTwoState
+        sensorTwoStatePreference.summary = mqttOptions.sensorTwoState
 
-        buttonPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            showAlarmCodeDialog()
-            true
-        }
+        sensorThreePreference.isChecked = mqttOptions.sensorThreeActive
+        sensorThreeNamePreference.text = mqttOptions.sensorThreeName
+        sensorThreeNamePreference.summary = mqttOptions.sensorThreeName
+        sensorThreeTopicPreference.text = mqttOptions.sensorThreeTopic
+        sensorThreeTopicPreference.summary = mqttOptions.sensorThreeTopic
+        sensorThreeStatePreference.text = mqttOptions.sensorThreeState
+        sensorThreeStatePreference.summary = mqttOptions.sensorThreeState
 
-        fingerprintPreference = findPreference(PREF_FINGERPRINT) as CheckBoxPreference
-
-        if (isFingerprintSupported()) {
-            fingerprintPreference!!.isVisible = true
-            fingerprintPreference!!.isChecked = configuration.fingerPrint
-        } else {
-            fingerprintPreference!!.isVisible = false
-        }
+        sensorFourPreference.isChecked = mqttOptions.sensorFourActive
+        sensorFourNamePreference.text = mqttOptions.sensorFourName
+        sensorFourNamePreference.summary = mqttOptions.sensorFourName
+        sensorFourTopicPreference.text = mqttOptions.sensorFourTopic
+        sensorFourTopicPreference.summary = mqttOptions.sensorFourTopic
+        sensorFourStatePreference.text = mqttOptions.sensorFourState
+        sensorFourStatePreference.summary = mqttOptions.sensorFourState
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // the first time we need to set the alarm code
-        if (configuration.isFirstTime) {
-            showAlarmCodeDialog();
-        }
     }
 
     @SuppressLint("InlinedApi")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val value: String
         when (key) {
-
-            PREF_FINGERPRINT -> {
-                val checked = fingerprintPreference!!.isChecked
-                if (isFingerprintSupported()) {
-                    configuration.fingerPrint = checked
-                } else {
-                    Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
-                    fingerprintPreference!!.isChecked = false
-                    configuration.fingerPrint = false
-                }
+            "pref_sensor_one" -> {
+                //mqttOptions.setCommandTopic()
             }
-        }
-    }
+            "pref_sensor_one_name" -> {
 
-    @SuppressLint("InlinedApi")
-    private fun isFingerprintSupported(): Boolean {
-        try {
-            val fingerPrintIdentity = FingerprintIdentify(context)
-            Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
-            Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
-            if (fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
-                return true
             }
-        } catch (e: ClassNotFoundException) {
-            Timber.w("Fingerprint: " + e.message)
-        }
-        return false
-    }
+            "pref_sensor_one_topic" -> {
 
-    private fun showAlarmCodeDialog() {
-        // store the default alarm code
-        defaultCode = configuration.alarmCode
-        if (activity != null && isAdded) {
-            dialogUtils.showCodeDialog(activity as BaseActivity, confirmCode, object : AlarmCodeView.ViewListener {
-                override fun onComplete(code: Int) {
-                    if (code == defaultCode) {
-                        confirmCode = false
-                        dialogUtils.clearDialogs()
-                        Toast.makeText(activity, R.string.toast_code_match, Toast.LENGTH_LONG).show()
-                    } else if (!confirmCode) {
-                        tempCode = code
-                        confirmCode = true
-                        dialogUtils.clearDialogs()
-                        if (activity != null && isAdded) {
-                            showAlarmCodeDialog()
-                        }
-                    } else if (code == tempCode) {
-                        configuration.isFirstTime = false;
-                        configuration.alarmCode = tempCode
-                        tempCode = 0
-                        confirmCode = false
-                        dialogUtils.clearDialogs()
-                        Toast.makeText(activity, R.string.toast_code_changed, Toast.LENGTH_LONG).show()
-                    } else {
-                        tempCode = 0
-                        confirmCode = false
-                        dialogUtils.clearDialogs()
-                        Toast.makeText(activity, R.string.toast_code_not_match, Toast.LENGTH_LONG).show()
-                    }
-                }
+            }
+            "pref_sensor_two" -> {
 
-                override fun onError() {}
-                override fun onCancel() {
-                    confirmCode = false
-                    dialogUtils.clearDialogs()
-                    Toast.makeText(activity, R.string.toast_code_unchanged, Toast.LENGTH_SHORT).show()
-                }
-            }, DialogInterface.OnCancelListener {
-                confirmCode = false
-                Toast.makeText(activity, R.string.toast_code_unchanged, Toast.LENGTH_SHORT).show()
-            }, configuration.systemSounds)
+            }
+            "pref_sensor_two_name" -> {
+
+            }
+            "pref_sensor_two_topic" -> {
+
+            }
+            "pref_sensor_three" -> {
+
+            }
+            "pref_sensor_three_name" -> {
+
+            }
+            "pref_sensor_three_topic" -> {
+
+            }
+            "pref_sensor_four" -> {
+
+            }
+            "pref_sensor_four_name" -> {
+
+            }
+            "pref_sensor_four_topic" -> {
+
+            }
         }
     }
 }

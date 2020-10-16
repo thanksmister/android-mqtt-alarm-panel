@@ -27,13 +27,13 @@
             android:summary="@string/preference_summary_security_code"
             android:title="@string/preference_title_security_code" />
 
-        <SwitchPreference
-            android:key="pref_fingerprint"
-            android:summary="@string/pref_fingerprint_summary"
-            android:title="@string/pref_fingerprint_title"
-            android:icon="@drawable/ic_fingerprint"
-            tools:visiblity="visible"
-            android:visibility="gone"/>
+        <Preference
+            android:key="button_alarm_sensors"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:icon="@drawable/ic_sensor"
+            android:summary="Add and display your door, window, or motion sensors on the alarm panel."
+            android:title="Alarm Sensors" />
 
         <SwitchPreference
             android:key="pref_panic_button"
@@ -82,7 +82,7 @@
             android:summary="@string/preference_summary_weather_settings"/>
 
         <Preference
-            android:icon="@drawable/ic_sensor"
+            android:icon="@drawable/ic_baseline_phone_android"
             android:key="button_sensors"
             android:title="@string/sensors_settings"
             android:summary="@string/summary_enable_sensor_data"/>
@@ -95,38 +95,6 @@
 
 
     </PreferenceCategory>
-
-    <!--<PreferenceCategory android:title="Alarm Sensors">
-
-        <SwitchPreference
-            android:key="key_sensor_one"
-            android:summary="When active, displays sensor state."
-            android:title="Sensor One" />
-
-        <EditTextPreference
-            android:defaultValue="Sensor One Name"
-            android:key="key_sensor_one_name"
-            android:dependency="key_sensor_one"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="Enter sensor name."
-            android:title="Sensor Two" />
-
-        <SwitchPreference
-            android:key="key_sensor_two"
-            android:summary="When active, displays sensor state."
-            android:title="Sensor Two" />
-
-        <EditTextPreference
-            android:defaultValue="Sensor Two Name"
-            android:key="key_sensor_two_name"
-            android:dependency="key_sensor_two"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="Enter sensor name."
-            android:title="Sensor name" />
-
-    </PreferenceCategory>-->
 
 
     <PreferenceCategory android:title="@string/text_about">

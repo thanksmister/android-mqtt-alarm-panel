@@ -55,7 +55,8 @@
 
     <color name="transparent">#00000000</color>
 
-    <color name="light_green">#ff7dac2f</color>
+    <color name="light_red">#CDEB5757</color>
+    <color name="light_green">#CD219653</color>
     <color name="light_green_pressed">#ff67932c</color>
     <color name="text_green">#ff67932c</color>
     <color name="preference_green">#ff7dac2f</color>

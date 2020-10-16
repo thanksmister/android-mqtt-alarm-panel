@@ -58,8 +58,8 @@
 
         <FrameLayout
             android:id="@+id/alarmStateLayout"
-            android:layout_width="190dp"
-            android:layout_height="190dp"
+            android:layout_width="170dp"
+            android:layout_height="170dp"
             android:layout_gravity="center"
             android:background="@drawable/button_round_gray"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,16 +69,16 @@
             <com.github.ybq.android.spinkit.SpinKitView
                 android:id="@+id/pendingAnimation"
                 style="@style/SpinKitView.Large.Pulse"
-                android:layout_width="190dp"
-                android:layout_height="190dp"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
                 android:layout_gravity="center"
                 android:visibility="invisible"
                 app:SpinKit_Color="@color/white" />
 
             <ImageView
                 android:id="@+id/alarmImage"
-                android:layout_width="86dp"
-                android:layout_height="86dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_large"
                 android:visibility="invisible"
@@ -132,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.4" />
+            app:layout_constraintGuide_percent="0.44" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

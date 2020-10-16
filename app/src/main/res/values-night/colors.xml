@@ -23,8 +23,8 @@
     <color name="dialogBackgroundColor">#121212</color>
 
     <color name="body_text_1">#f4f4f4</color>
-    <color name="body_text_2">#f4f4f4</color>
-    <color name="body_text_3">#f4f4f4</color>
+    <color name="body_text_2">#E5F4F4F4</color>
+    <color name="body_text_3">#CCF4F4F4</color>
     <color name="dark_gray_color">#fff4f4f4</color>
     <color name="dark_gray">#fff4f4f4</color>
 

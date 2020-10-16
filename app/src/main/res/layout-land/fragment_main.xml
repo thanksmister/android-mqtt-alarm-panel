@@ -38,8 +38,8 @@
         app:layout_constraintDimensionRatio="h,16:8"
         app:layout_constraintVertical_bias="0.45"
         app:layout_constraintBottom_toTopOf="@id/settingsContainer"
-        app:layout_constraintEnd_toStartOf="@id/guidelineHR"
-        app:layout_constraintStart_toStartOf="@id/guidelineHL"
+        app:layout_constraintEnd_toStartOf="@id/guidelineVR"
+        app:layout_constraintStart_toStartOf="@id/guidelineVL"
         app:layout_constraintTop_toBottomOf="@id/informationContainer"
         android:layout_height="0dp"
         tools:layout="@layout/fragment_controls" />
@@ -158,14 +158,14 @@
     </FrameLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHL"
+        android:id="@+id/guidelineVL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.2" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineHR"
+        android:id="@+id/guidelineVR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

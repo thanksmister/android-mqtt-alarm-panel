@@ -17,66 +17,156 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preferenceView">
 
-    <PreferenceCategory android:title="@string/preference_title_alarm">
+    <PreferenceCategory android:title="Alarm Sensors">
 
         <Preference
             android:key="pref_alarm_code"
-            android:summary="@string/preference_summary_security_code"
-            android:title="@string/preference_title_security_code" />
+            android:summary="Add up to four alarm sensors to display sensor state on the alarm panel screen. Set the name, active state, and MQTT topic. The active state toggles the color of the sensor icon, green for active state, red for other state."
+            android:title="" />
 
-        <CheckBoxPreference
-            android:key="pref_fingerprint"
-            android:summary="@string/pref_fingerprint_summary"
-            android:title="@string/pref_fingerprint_title"
-            tools:visiblity="visible"
-            android:visibility="gone"/>
+    </PreferenceCategory>
 
-        <!--<EditTextPreference
-            android:key="pref_pending_time"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="@string/preference_summary_pending_time"
-            android:title="@string/preference_title_pending_time"/>
+    <PreferenceCategory android:title="">
 
-        <EditTextPreference
-            android:key="pref_delay_time"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="@string/pref_delay_summary"
-            android:title="@string/pref_delay_title"/>
+       <SwitchPreference
+           android:key="pref_sensor_one"
+           android:summary="When active, displays sensor state."
+           android:title="Sensor One" />
+
+       <EditTextPreference
+           android:defaultValue="Sensor one"
+           android:key="pref_sensor_one_name"
+           android:dependency="pref_sensor_one"
+           android:negativeButtonText="@android:string/cancel"
+           android:positiveButtonText="@android:string/ok"
+           android:summary="Enter sensor name."
+           android:title="Sensor name" />
 
         <EditTextPreference
-            android:key="pref_home_pending_time"
+            android:defaultValue="home/sensor/one/"
+            android:key="pref_sensor_one_topic"
+            android:dependency="pref_sensor_one"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
-            android:summary="@string/pref_home_pending_summary"
-            android:title="@string/pref_home_pending_title"/>
+            android:summary="home/sensor/one/"
+            android:title="Sensor topic" />
 
         <EditTextPreference
-            android:key="pref_away_pending_time"
+            android:defaultValue="ON"
+            android:key="pref_sensor_one_state"
+            android:dependency="pref_sensor_one"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
-            android:summary="@string/pref_away_pending_summary"
-            android:title="@string/pref_away_pending_title"/>
+            android:summary="ON"
+            android:title="Active state" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="">
+
+       <SwitchPreference
+           android:key="pref_sensor_two"
+           android:summary="When active, displays sensor state."
+           android:title="Sensor Two" />
+
+       <EditTextPreference
+           android:defaultValue="Sensor two"
+           android:key="pref_sensor_two_name"
+           android:dependency="pref_sensor_two"
+           android:negativeButtonText="@android:string/cancel"
+           android:positiveButtonText="@android:string/ok"
+           android:summary="Enter sensor name."
+           android:title="Sensor name" />
 
         <EditTextPreference
-            android:key="pref_home_delay_time"
+            android:defaultValue="home/sensor/two/"
+            android:key="pref_sensor_two_topic"
+            android:dependency="pref_sensor_two"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
-            android:summary="@string/pref_home_delay_summary"
-            android:title="@string/pref_home_delay_title"/>
+            android:summary="home/sensor/two/"
+            android:title="Sensor topic" />
 
         <EditTextPreference
-            android:key="pref_away_delay_time"
+            android:defaultValue="ON"
+            android:key="pref_sensor_two_state"
+            android:dependency="pref_sensor_two"
             android:negativeButtonText="@android:string/cancel"
             android:positiveButtonText="@android:string/ok"
-            android:summary="@string/pref_away_delay_summary"
-            android:title="@string/pref_away_delay_title"/>
+            android:summary="ON"
+            android:title="Active state" />
 
-        <Preference
-            android:key="pref_description"
-            android:selectable="false"
-            android:summary="@string/pref_pending_times_description" />-->
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="">
+
+        <SwitchPreference
+            android:key="pref_sensor_three"
+            android:summary="When active, displays sensor state."
+            android:title="Sensor Three" />
+
+        <EditTextPreference
+            android:defaultValue="Sensor three"
+            android:key="pref_sensor_three_name"
+            android:dependency="pref_sensor_three"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="Enter sensor name."
+            android:title="Sensor name" />
+
+        <EditTextPreference
+            android:defaultValue="home/sensor/three/"
+            android:key="pref_sensor_three_topic"
+            android:dependency="pref_sensor_three"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="home/sensor/three/"
+            android:title="Sensor topic" />
+
+        <EditTextPreference
+            android:defaultValue="ON"
+            android:key="pref_sensor_three_state"
+            android:dependency="pref_sensor_three"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="ON"
+            android:title="Active state" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="">
+
+        <SwitchPreference
+            android:key="pref_sensor_four"
+            android:summary="When active, displays sensor state."
+            android:title="Sensor Four" />
+
+        <EditTextPreference
+            android:defaultValue="Sensor four"
+            android:key="pref_sensor_four_name"
+            android:dependency="pref_sensor_four"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="Enter sensor name."
+            android:title="Sensor name" />
+
+        <EditTextPreference
+            android:defaultValue="home/sensor/four/"
+            android:key="pref_sensor_four_topic"
+            android:dependency="pref_sensor_four"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="home/sensor/four/"
+            android:title="Sensor topic" />
+
+        <EditTextPreference
+            android:defaultValue="ON"
+            android:key="pref_sensor_four_state"
+            android:dependency="pref_sensor_four"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:summary="ON"
+            android:title="Active state" />
 
     </PreferenceCategory>
 

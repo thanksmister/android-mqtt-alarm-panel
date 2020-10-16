@@ -21,9 +21,11 @@ import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ON
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PANEL_COMMAND_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_SENSOR_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PORT
@@ -236,6 +238,70 @@ constructor(private val sharedPreferences: SharedPreferences) {
     var remoteArmingNightTime: Int
         get() = sharedPreferences.getInt(PREF_ARMING_NIGHT_TIME, 30)
         set(value) = sharedPreferences.edit().putInt(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorOneActive: Boolean
+        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorOneName: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor one").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorOneTopic: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/one").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorOneState: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorTwoActive: Boolean
+        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorTwoName: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor two").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorTwoTopic: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/two").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorTwoState: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorThreeActive: Boolean
+        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorThreeName: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor three").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorThreeTopic: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/three").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorThreeState: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorFourActive: Boolean
+        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorFourName: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor four").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorFourTopic: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/four").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+
+    var sensorFourState: String
+        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
 
     fun setTlsConnection(value: Boolean) {
         this.sharedPreferences.edit().putBoolean(PREF_TLS_CONNECTION, value).apply()
