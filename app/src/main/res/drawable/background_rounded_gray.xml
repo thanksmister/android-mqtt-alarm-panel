@@ -23,7 +23,7 @@
 
             <corners android:radius="15dp"/>
 
-            <solid android:color="@color/background_gray_color"/>
+            <solid android:color="@color/weather_card_border"/>
 
         </shape>
 
@@ -39,7 +39,7 @@
 
             <corners android:radius="15dp"/>
 
-            <solid android:color="@color/white"/>
+            <solid android:color="@color/weather_card_background"/>
 
         </shape>
 

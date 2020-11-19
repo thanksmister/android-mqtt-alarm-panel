@@ -51,7 +51,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:src="@drawable/alarm_light"
-                android:tint="@color/red"
+                app:tint="@color/red"
                 tools:ignore="ContentDescription" />
 
         </FrameLayout>
@@ -81,7 +81,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 tools:ignore="ContentDescription"
                 android:visibility="gone"/>
 
@@ -91,7 +91,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_open_variant"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 tools:ignore="ContentDescription" />
 
         </FrameLayout>

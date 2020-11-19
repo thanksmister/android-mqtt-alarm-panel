@@ -37,9 +37,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="h,11:7"
+
         app:layout_constraintBottom_toTopOf="@+id/guideControlBottom"
-        app:layout_constraintEnd_toStartOf="@id/guidelineVR"
-        app:layout_constraintStart_toStartOf="@id/guidelineVL"
+        app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         tools:layout="@layout/fragment_controls" />
 
     <fragment
@@ -47,9 +48,10 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineVR"
-        app:layout_constraintStart_toEndOf="@id/guidelineVL"
-        app:layout_constraintTop_toBottomOf="@+id/guideSensorOne"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/guideControlBottom"
         tools:layout="@layout/fragment_sensor_control" />
 
     <fragment
@@ -57,8 +59,8 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineVR"
-        app:layout_constraintStart_toEndOf="@id/guidelineVL"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
         tools:layout="@layout/fragment_sensor_control" />
 
@@ -67,8 +69,8 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineVR"
-        app:layout_constraintStart_toEndOf="@id/guidelineVL"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/guideSensorThree"
         tools:layout="@layout/fragment_sensor_control" />
 
@@ -77,8 +79,8 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineVR"
-        app:layout_constraintStart_toEndOf="@id/guidelineVL"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/guideSensorFour"
         tools:layout="@layout/fragment_sensor_control" />
 
@@ -185,11 +187,11 @@
         app:layout_constraintGuide_percent="0.54" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideSensorOne"
+        android:id="@+id/guideControlTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.56" />
+        app:layout_constraintGuide_percent="0.26" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideSensorTwo"
@@ -213,21 +215,21 @@
         app:layout_constraintGuide_percent="0.80" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/verticalGuide"
+        android:id="@+id/guidelineMiddle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineVL"
+        android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.06" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineVR"
+        android:id="@+id/guidelineEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

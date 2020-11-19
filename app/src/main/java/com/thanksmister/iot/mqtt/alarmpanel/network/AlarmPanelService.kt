@@ -417,6 +417,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             processConfig(payload)
         } else if (mqttOptions.getAlarmStatusTopic() == topic && payload == DEFAULT_INVALID && mqttOptions.useRemoteConfig) {
             sendSnackMessage(getString(R.string.toast_code_invalid))
+        } else if (mqttOptions.sensorOneTopic == topic ||
+                mqttOptions.sensorTwoTopic == topic ||
+                mqttOptions.sensorThreeTopic == topic ||
+                mqttOptions.sensorFourTopic== topic ) {
+            insertMessage(id, topic, payload, MqttUtils.TYPE_SENSOR)
         } else {
             processCommand(id, topic, payload)
         }
@@ -683,7 +688,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     mqttOptions.remoteArmingNightTime = configJson.getInt("armed_night")
                 }
             }
-
         } catch (ex: JSONException) {
             Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid config JSON: $payload")
@@ -726,7 +730,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     @SuppressLint("WakelockTimeout")
     private fun switchScreenOn(awakeTime: Long) {
-        Timber.d("switchScreenOn")
         partialWakeLock?.let {
             if (!it.isHeld) {
                 it.acquire(awakeTime)
@@ -739,7 +742,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun publishMotionDetected() {
-        Timber.d("publishMotionDetected")
         val delay = (configuration.motionResetTime * 1000).toLong()
         val data = JSONObject()
         data.put(VALUE, true)
@@ -749,7 +751,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun publishFaceDetected() {
-        Timber.d("publishFaceDetected")
         val data = JSONObject()
         data.put(VALUE, true)
         faceDetected = true
@@ -758,7 +759,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun clearMotionDetected() {
-        Timber.d("Motion cleared")
         motionDetected = false
         val data = JSONObject()
         data.put(VALUE, false)
@@ -766,7 +766,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun clearFaceDetected() {
-        Timber.d("Face cleared")
         val data = JSONObject()
         data.put(VALUE, false)
         faceDetected = false
@@ -781,7 +780,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun publishQrCode(data: String) {
         if (!qrCodeRead) {
-            Timber.d("publishQrCode")
             val jdata = JSONObject()
             try {
                 jdata.put(VALUE, data)
@@ -796,7 +794,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun insertSun(payload: String) {
-        Timber.d("insertSun $payload")
         disposable.add(Completable.fromAction {
             val sun = Sun()
             sun.sun = payload
@@ -815,7 +812,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             val weather = gson.fromJson<Weather>(payload, Weather::class.java)
             disposable.add(Completable.fromAction {
                 weather.createdAt = DateUtils.generateCreatedAtDate()
-                //weatherDao.deleteAllItems()
                 weatherDao.updateItem(weather)
             }.subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -827,8 +823,8 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun insertMessage(messageId: String, topic: String, payload: String, type: String) {
-        Timber.d("insertMessage: " + topic)
-        Timber.d("insertMessage: " + payload)
+        Timber.d("insertMessage topic: $topic")
+        Timber.d("insertMessage payload: $payload")
         disposable.add(Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()
             val message = MessageMqtt()

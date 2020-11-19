@@ -49,12 +49,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     @Inject lateinit var screenUtils: ScreenUtils
  
     private var clockSaverPreference: SwitchPreference? = null
-    private var photoSaverPreference: SwitchPreference? = null
+    private var unsplashScreenSaver: SwitchPreference? = null
     private var hardwareAcceleration: SwitchPreference? = null
     private var webSaverPreference: SwitchPreference? = null
-    private var urlPreference: EditTextPreference? = null
-    private var clientIdPreference: EditTextPreference? = null
-    private var imageFitPreference: SwitchPreference? = null
+
     private var fullScreenPreference: SwitchPreference? = null
     private var rotationPreference: EditTextPreference? = null
     private var webUrlPreference: EditTextPreference? = null
@@ -98,14 +96,15 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         super.onViewCreated(view, savedInstanceState)
 
         clockSaverPreference = findPreference("pref_settings_clock_saver") as SwitchPreference
-        photoSaverPreference = findPreference(getString(R.string.key_saver_photo)) as SwitchPreference
+        unsplashScreenSaver = findPreference("pref_screensaver_wallpaper") as SwitchPreference
+
         hardwareAcceleration = findPreference("pref_settings_hardware_acceleration") as SwitchPreference
+
         webSaverPreference = findPreference(getString(R.string.key_setting_web_screensaver)) as SwitchPreference
-        clientIdPreference = findPreference("pref_settings_client_id") as EditTextPreference
-        urlPreference = findPreference("pref_settings_image_url") as EditTextPreference
         webUrlPreference = findPreference(getString(R.string.key_setting_web_url)) as EditTextPreference
-        imageFitPreference = findPreference("pref_settings_image_fit") as SwitchPreference
+
         rotationPreference = findPreference("pref_settings_image_rotation") as EditTextPreference
+
         inactivityPreference = findPreference("pref_settings_inactivity_time") as ListPreference
         fullScreenPreference = findPreference("pref_settings_fullscreen") as SwitchPreference
         preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as SwitchPreference
@@ -121,12 +120,6 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         rotationPreference?.text = imageOptions.imageRotation.toString()
         rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, imageOptions.imageRotation.toString())
         rotationPreference?.setDefaultValue(imageOptions.imageRotation.toString())
-
-        urlPreference?.text = imageOptions.imageSource
-        urlPreference?.summary = getString(R.string.preference_summary_image_source)
-
-        clientIdPreference?.text = imageOptions.imageClientId
-        clientIdPreference?.summary = getString(R.string.preference_summary_image_client_id)
 
         inactivityPreference?.setDefaultValue(configuration.inactivityTime)
         inactivityPreference?.value = configuration.inactivityTime.toString()
@@ -149,12 +142,11 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             false
         }
 
-        imageFitPreference?.isChecked = imageOptions.imageFitScreen
         fullScreenPreference?.isChecked = configuration.fullScreen
 
-        setPhotoScreenSaver(configuration.showPhotoScreenSaver())
-        setClockScreenSaver(configuration.showClockScreenSaverModule())
-        setWebScreenSaver(configuration.webScreenSaver)
+        setUnsplashScreenSaver(configuration.showUnsplashScreenSaver())
+        setClockScreenSaver(configuration.showClockScreenSaver())
+        setWebScreenSaver(configuration.showWebScreenSaver())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -206,15 +198,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         startActivityForResult(intent, 200)
     }
 
-    private fun setPhotoScreenSaver (value : Boolean) {
-        photoSaverPreference?.isChecked = value
-        imageFitPreference?.isEnabled = value
-        rotationPreference?.isEnabled = value
-        urlPreference?.isEnabled = value
-        clientIdPreference?.isEnabled = value
-        configuration.setPhotoScreenSaver(value)
-        if(value) {
-            setClockScreenSaver(false)
+    private fun setUnsplashScreenSaver (value : Boolean) {
+        unsplashScreenSaver?.isChecked = value
+        configuration.setUnsplashScreenSaver(value)
+        if(value == true) {
             setWebScreenSaver(false)
         }
     }
@@ -222,18 +209,13 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private fun setClockScreenSaver(value: Boolean) {
         clockSaverPreference?.isChecked = value
         configuration.setClockScreenSaverModule(value)
-        if(value) {
-            setPhotoScreenSaver(false)
-            setWebScreenSaver(false)
-        }
     }
 
     private fun setWebScreenSaver(value: Boolean) {
         webSaverPreference?.isChecked = value
         configuration.webScreenSaver = value
-        if(value) {
-            setPhotoScreenSaver(false)
-            setClockScreenSaver(false)
+        if(value == true) {
+            setUnsplashScreenSaver(false)
         }
     }
 
@@ -245,32 +227,11 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     setClockScreenSaver(checked)
                 }
             }
-            getString(R.string.key_saver_photo) -> {
-                photoSaverPreference?.let {
+            "pref_screensaver_wallpaper" -> {
+                unsplashScreenSaver?.let {
                     val checked = it.isChecked
-                    setPhotoScreenSaver(checked)
+                    setUnsplashScreenSaver(checked)
                 }
-            }
-            "pref_settings_image_url" -> {
-                val value = urlPreference!!.text
-                if(TextUtils.isEmpty(value)) {
-                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    urlPreference?.text = imageOptions.imageSource
-                } else {
-                    imageOptions.imageSource = value
-                }
-            }
-            "pref_settings_client_id" -> {
-                val value = clientIdPreference!!.text
-                if (TextUtils.isEmpty(value)) {
-                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                } else {
-                    imageOptions.imageClientId = value
-                }
-            }
-            "pref_settings_image_fit" -> {
-                val fitScreen = imageFitPreference!!.isChecked
-                imageOptions.imageFitScreen = fitScreen
             }
             "pref_settings_fullscreen" -> {
                 val fullscreen = fullScreenPreference!!.isChecked

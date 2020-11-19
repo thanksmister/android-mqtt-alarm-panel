@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMED
 import java.lang.Exception
@@ -36,22 +35,6 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     var useDarkTheme: Boolean
         get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
-
-    var sensorOne: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_SENSOR_ONE, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_SENSOR_ONE, value).apply()
-
-    var sensorOneName: String
-        get() = this.sharedPreferences.getString(PREF_SENSOR_ONE_NAME, "Sensor").orEmpty()
-        set(value) = this.sharedPreferences.edit().putString(PREF_SENSOR_ONE_NAME, value).apply()
-
-    var sensorTwo: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_SENSOR_TWO, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_SENSOR_TWO, value).apply()
-
-    var sensorTwoName: String
-        get() = this.sharedPreferences.getString(PREF_SENSOR_TWO_NAME, "Sensor").orEmpty()
-        set(value) = this.sharedPreferences.edit().putString(PREF_SENSOR_TWO_NAME, value).apply()
 
     var alarmMode: String
         get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISARMED).orEmpty()
@@ -306,7 +289,6 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = sharedPreferences.getString(context.getString(R.string.key_setting_web_url), WEB_SCREEN_SAVER).orEmpty()
         set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_web_url), value).apply()
 
-
     fun hasPlatformModule(): Boolean {
         return sharedPreferences.getBoolean(PREF_MODULE_WEB, false)
     }
@@ -327,8 +309,11 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         sharedPreferences.edit().putBoolean(PREF_PLATFORM_CHANGED, value).apply()
     }
 
+    fun showWebScreenSaver(): Boolean {
+        return sharedPreferences.getBoolean(context.getString(R.string.key_setting_web_screensaver), false)
+    }
 
-    fun showClockScreenSaverModule(): Boolean {
+    fun showClockScreenSaver(): Boolean {
         return sharedPreferences.getBoolean(PREF_MODULE_CLOCK_SAVER, false)
     }
 
@@ -336,12 +321,12 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         this.sharedPreferences.edit().putBoolean(PREF_MODULE_CLOCK_SAVER, value).apply()
     }
 
-    fun showPhotoScreenSaver(): Boolean {
-        return sharedPreferences.getBoolean(context.getString(R.string.key_saver_photo), false)
+    fun showUnsplashScreenSaver(): Boolean {
+        return sharedPreferences.getBoolean(PREF_UNSPLASH_SCREENSAVER, false)
     }
 
-    fun setPhotoScreenSaver(value: Boolean) {
-        this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_saver_photo), value).apply()
+    fun setUnsplashScreenSaver(value: Boolean) {
+        this.sharedPreferences.edit().putBoolean(PREF_UNSPLASH_SCREENSAVER, value).apply()
     }
 
     fun setShowWeatherModule(show: Boolean) {
@@ -410,9 +395,8 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     fun hasScreenSaver(): Boolean {
-        return (showPhotoScreenSaver() || showClockScreenSaverModule() || webScreenSaver)
+        return (showUnsplashScreenSaver() || showClockScreenSaver() || showWebScreenSaver())
     }
-
 
     /**
      * Reset the `SharedPreferences` and database
@@ -422,66 +406,70 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     companion object {
-        const val PREF_FINGERPRINT = "pref_fingerprint"
-        const val PREF_ALARM_MODE = "pref_alarm_mode"
+        private const val PREF_FINGERPRINT = "pref_fingerprint"
+        private const val PREF_ALARM_MODE = "pref_alarm_mode"
         private const val PREF_ALARM_CODE = "pref_alarm_code"
-        const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
-        const val PREF_FULL_SCREEN = "pref_full_screen"
-        const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
-        const val PREF_MODULE_TSS = "pref_module_tss"
-        const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
-        const val PREF_SENSOR_ONE = "pref_sensor_one"
-        const val PREF_SENSOR_TWO = "pref_sensor_two"
-        const val PREF_SENSOR_ONE_NAME = "pref_sensor_one_name"
-        const val PREF_SENSOR_TWO_NAME = "pref_sensor_two_name"
-        const val PREF_MAIL_TO = "pref_mail_to"
-        const val PREF_MAIL_FROM = "pref_mail_from"
-        const val PREF_MAIL_API_KEY = "pref_mail_api_key"
-        const val PREF_MAIL_URL = "pref_mail_url"
-        const val PREF_CAMERA_CAPTURE = "pref_module_camera"
+        private const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
+        private const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
+        private const val PREF_FULL_SCREEN = "pref_full_screen"
+        private const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
+        private const val PREF_MODULE_TSS = "pref_module_tss"
+        private const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
+        private const val PREF_SENSOR_ONE = "pref_sensor_one"
+        private const val PREF_SENSOR_TWO = "pref_sensor_two"
+        private const val PREF_SENSOR_ONE_NAME = "pref_sensor_one_name"
+        private const val PREF_SENSOR_TWO_NAME = "pref_sensor_two_name"
+        private const val PREF_MAIL_TO = "pref_mail_to"
+        private const val PREF_MAIL_FROM = "pref_mail_from"
+        private const val PREF_MAIL_API_KEY = "pref_mail_api_key"
+        private const val PREF_MAIL_URL = "pref_mail_url"
+        private const val PREF_CAMERA_CAPTURE = "pref_module_camera"
         private const val PREF_MOTION_LUMA = "pref_motion_luma"
-        private const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
+        private const val PREF_CAMERA_ROTATE = "pref_device_camera_rotate"
         private const val PREF_CAMERA_ID = "pref_camera_id"
         private const val PREF_CAMERA_FPS = "pref_camera_fps"
         private const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
         private const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
         private const val PREF_CAMERA_HEIGHT = "pref_camera_height"
-        const val PREF_MODULE_WEATHER = "pref_module_weather"
-        const val PREF_MODULE_WEB = "pref_module_web"
-        const val PREF_WEB_URL = "pref_web_url"
-        const val PREF_FIRST_TIME = "pref_first_time"
-        private const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
-        const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_screen_saver_brightness"
+        private const val PREF_MODULE_WEATHER = "pref_module_weather"
+        private const val PREF_UNSPLASH_SCREENSAVER = "pref_use_unsplash_screensaver"
+        private const val PREF_MODULE_WEB = "pref_module_web"
+        private const val PREF_WEB_URL = "pref_web_url"
+        private const val PREF_FIRST_TIME = "pref_first_time"
+        private const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_screen_brightness"
+        private const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_device_screen_saver_brightness"
         private const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
 
-        const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
-        const val PREF_PLATFORM_BAR = "pref_platform_bar"
-        const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
-        const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
-        const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
-        const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
-        const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
-        const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
-        const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
-        const val DISPLAY_MODE_DAY = "mode_day"
-        const val DISPLAY_MODE_NIGHT = "mode_night"
-        const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
-        const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
-        const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
-        const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
-        const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
+        private const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
+        private const val PREF_PLATFORM_BAR = "pref_platform_bar"
+        private const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
+        private const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
+        private const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
+        private const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
+        private const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
+        private const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
+        private const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
+        private const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
+        private const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
+        private const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
+        private const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
+        private const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
         private const val PREF_SENSOR_FREQUENCY = "pref_sensors_frequency"
         private const val PREF_ZOOM_LEVEL = "pref_zoom_level"
-        const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
-        const val SUN_ABOVE_HORIZON = "above_horizon"
-        const val SUN_BELOW_HORIZON = "below_horizon"
-        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
-        const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
-        const val PREF_PANIC_ALERT = "pref_panic_alert"
-        const val PREF_DARK_THEME = "pref_dark_theme"
+        private const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
+
+        private const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
+        private const val PREF_PANIC_ALERT = "pref_panic_alert"
+        private const val PREF_DARK_THEME = "pref_dark_theme"
         private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
         private const val PREF_MAX_STREAMS  = "pref_max_streams"
         private const val PREF_HTTP_PORT  = "pref_http_port"
+
+        // TODO move to constants
+        const val SUN_ABOVE_HORIZON = "above_horizon"
+        const val SUN_BELOW_HORIZON = "below_horizon"
+        const val DISPLAY_MODE_NIGHT = "mode_night"
+        const val DISPLAY_MODE_DAY = "mode_day"
+        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html"
     }
 }

@@ -89,50 +89,24 @@
             android:key="pref_settings_clock_saver"/>
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:key="@string/key_setting_web_screensaver"
             android:title="@string/pref_web_screensaver_title"
-            android:summary="@string/pref_web_screensaver_summary"
-            android:key="@string/key_setting_web_screensaver"/>
+            android:summary="@string/pref_web_screensaver_summary" />
 
         <EditTextPreference
             android:key="@string/key_setting_web_url"
             android:dependency="@string/key_setting_web_screensaver"
             android:title="@string/pref_web_screensaver_url_title"
-            android:summary="@string/pref_web_screensaver_url_summary"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"/>
+            android:summary="@string/pref_web_screensaver_url_summary" />
 
         <SwitchPreference
-            android:defaultValue="false"
-            android:title="@string/preference_title_screen_saver_photo"
-            android:summary="@string/preference_summary_screen_saver_photo_settings"
-            android:key="@string/key_saver_photo"/>
-
-        <EditTextPreference
-            android:key="pref_settings_image_url"
-            android:dependency="@string/key_saver_photo"
-            android:title="@string/preference_title_image_source"
-            android:summary="@string/preference_summary_image_source"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"/>
-
-        <EditTextPreference
-            android:key="pref_settings_client_id"
-            android:dependency="@string/key_saver_photo"
-            android:title="@string/pref_title_image_client_id"
-            android:summary="@string/preference_summary_image_client_id"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"/>
-
-        <SwitchPreference
-            android:key="pref_settings_image_fit"
-            android:dependency="@string/key_saver_photo"
-            android:title="@string/preference_title_image_fit"
-            android:summary="@string/preference_summary_image_fit"/>
+            android:title="Wallpaper Screen Saver"
+            android:summary="When active, uses unsplash.it to get random wallpapers"
+            android:key="pref_screensaver_wallpaper" />
 
         <EditTextPreference
             android:key="pref_settings_image_rotation"
-            android:dependency="@string/key_saver_photo"
+            android:dependency="pref_screensaver_wallpaper"
             android:title="@string/preference_title_image_rotation"
             android:summary="@string/preference_summary_image_rotation"
             android:digits="0123456789"

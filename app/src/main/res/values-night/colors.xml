@@ -25,7 +25,13 @@
     <color name="body_text_1">#f4f4f4</color>
     <color name="body_text_2">#E5F4F4F4</color>
     <color name="body_text_3">#CCF4F4F4</color>
-    <color name="dark_gray_color">#fff4f4f4</color>
+    <color name="dark_gray_color">#A3A1A1</color>
     <color name="dark_gray">#fff4f4f4</color>
+
+    <color name="text">#CCC6C6C5</color>
+
+    <color name="weather_card_background">#393C44</color>
+    <color name="weather_card_icon">#C9EFEDED</color>
+    <color name="weather_card_border">#292929</color>
 
 </resources>

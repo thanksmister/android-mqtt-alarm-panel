@@ -18,17 +18,18 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.content.SharedPreferences
 import android.text.TextUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ON
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SPEAK
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PANEL_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_SENSOR_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PORT
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -100,17 +101,20 @@ constructor(private val sharedPreferences: SharedPreferences) {
         return sharedPreferences.getString(PREF_ALARM_STATUS, DEFAULT_STATUS_TOPIC).orEmpty()
     }
 
-    // TODO we need to add all the topics based on remote or override
     fun getStateTopics(): Array<String> {
         val topics = ArrayList<String>()
         topics.add(getCommandTopic())
         topics.add(getAlarmStateTopic())
         topics.add(getAlarmConfigTopic())
         topics.add(getAlarmStatusTopic())
+        topics.add(sensorOneTopic)
+        topics.add(sensorTwoTopic)
+        topics.add(sensorThreeTopic)
+        topics.add(sensorFourTopic)
         return topics.toArray(arrayOf<String>())
     }
 
-    @Deprecated ("We will move to commands")
+    @Deprecated("We will move to commands")
     fun getNotificationTopic(): String {
         return sharedPreferences.getString(PREF_NOTIFICATION_TOPIC, NOTIFICATION_STATE_TOPIC).orEmpty()
     }
@@ -124,7 +128,7 @@ constructor(private val sharedPreferences: SharedPreferences) {
     }
 
     fun getPort(): Int {
-        return sharedPreferences.getString(PREF_PORT, PORT.toString())?.toIntOrNull()?:PORT
+        return sharedPreferences.getString(PREF_PORT, PORT.toString())?.toIntOrNull() ?: PORT
     }
 
     fun getTlsConnection(): Boolean {
@@ -168,11 +172,6 @@ constructor(private val sharedPreferences: SharedPreferences) {
 
     fun setAlarmTopic(value: String) {
         this.sharedPreferences.edit().putString(PREF_STATE_TOPIC, value).apply()
-        setOptionsUpdated(true)
-    }
-
-    fun setStatusTopic(value: String) {
-        this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
         setOptionsUpdated(true)
     }
 
@@ -240,68 +239,68 @@ constructor(private val sharedPreferences: SharedPreferences) {
         set(value) = sharedPreferences.edit().putInt(PREF_ARMING_NIGHT_TIME, value).apply()
 
     var sensorOneActive: Boolean
-        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
-        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getBoolean(PREF_ONE_SENSOR_ACTIVE, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_ONE_SENSOR_ACTIVE, value).apply()
 
     var sensorOneName: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor one").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_ONE_SENSOR_NAME, "Sensor one").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ONE_SENSOR_NAME, value).apply()
 
     var sensorOneTopic: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/one").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_ONE_SENSOR_TOPIC, "${DEFAULT_SENSOR_TOPIC}one").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ONE_SENSOR_TOPIC, value).apply()
 
     var sensorOneState: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_ONE_SENSOR_STATE, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_ONE_SENSOR_STATE, value).apply()
 
     var sensorTwoActive: Boolean
-        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
-        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getBoolean(PREF_TWO_SENSOR_ACTIVE, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_TWO_SENSOR_ACTIVE, value).apply()
 
     var sensorTwoName: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor two").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_TWO_SENSOR_NAME, "Sensor two").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_TWO_SENSOR_NAME, value).apply()
 
     var sensorTwoTopic: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/two").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_TWO_SENSOR_TOPIC, "${DEFAULT_SENSOR_TOPIC}two").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_TWO_SENSOR_TOPIC, value).apply()
 
     var sensorTwoState: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_TWO_SENSOR_STATE, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_TWO_SENSOR_STATE, value).apply()
 
     var sensorThreeActive: Boolean
-        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
-        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getBoolean(PREF_THREE_SENSOR_ACTIVE, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_THREE_SENSOR_ACTIVE, value).apply()
 
     var sensorThreeName: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor three").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_THREE_SENSOR_NAME, "Sensor three").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_THREE_SENSOR_NAME, value).apply()
 
     var sensorThreeTopic: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/three").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_THREE_SENSOR_TOPIC, "${DEFAULT_SENSOR_TOPIC}three").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_THREE_SENSOR_TOPIC, value).apply()
 
     var sensorThreeState: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_THREE_SENSOR_STATE, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_THREE_SENSOR_STATE, value).apply()
 
     var sensorFourActive: Boolean
-        get() = sharedPreferences.getBoolean(PREF_ARMING_NIGHT_TIME, false)
-        set(value) = sharedPreferences.edit().putBoolean(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getBoolean(PREF_FOUR_SENSOR_ACTIVE, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_FOUR_SENSOR_ACTIVE, value).apply()
 
     var sensorFourName: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "Sensor four").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_FOUR_SENSOR_NAME, "Sensor four").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_FOUR_SENSOR_NAME, value).apply()
 
     var sensorFourTopic: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, "$DEFAULT_SENSOR_TOPIC/four").orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_FOUR_SENSOR_TOPIC, "${DEFAULT_SENSOR_TOPIC}four").orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_FOUR_SENSOR_TOPIC, value).apply()
 
     var sensorFourState: String
-        get() = sharedPreferences.getString(PREF_ARMING_NIGHT_TIME, COMMAND_ON).orEmpty()
-        set(value) = sharedPreferences.edit().putString(PREF_ARMING_NIGHT_TIME, value).apply()
+        get() = sharedPreferences.getString(PREF_FOUR_SENSOR_STATE, COMMAND_ON).orEmpty()
+        set(value) = sharedPreferences.edit().putString(PREF_FOUR_SENSOR_STATE, value).apply()
 
     fun setTlsConnection(value: Boolean) {
         this.sharedPreferences.edit().putBoolean(PREF_TLS_CONNECTION, value).apply()
@@ -324,7 +323,6 @@ constructor(private val sharedPreferences: SharedPreferences) {
         const val PREF_STATUS_TOPIC = "pref_status_topic"
         const val PREF_PANEL_COMMAND_TOPIC = "pref_base_topic"
         const val PREF_NOTIFICATION_TOPIC = "pref_notification_topic"
-        const val PREF_SENSOR_TOPIC = "pref_sensor_topic"
         const val PREF_USERNAME = "pref_username"
         const val PREF_COMMAND_TOPIC = "pref_command_topic"
         const val PREF_TLS_CONNECTION = "pref_tls_connection"
@@ -345,5 +343,24 @@ constructor(private val sharedPreferences: SharedPreferences) {
         private const val PREF_ARMING_AWAY_TIME = "pref_arming_away_time"
         private const val PREF_ARMING_NIGHT_TIME = "pref_arming_night_time"
 
+        private const val PREF_ONE_SENSOR_ACTIVE = "pref_sensor_active_one"
+        private const val PREF_ONE_SENSOR_NAME = "pref_sensor_name_one"
+        private const val PREF_ONE_SENSOR_TOPIC = "pref_sensor_topic_one"
+        private const val PREF_ONE_SENSOR_STATE = "pref_sensor_state_one"
+
+        private const val PREF_TWO_SENSOR_ACTIVE = "pref_sensor_active_two"
+        private const val PREF_TWO_SENSOR_NAME = "pref_sensor_name_two"
+        private const val PREF_TWO_SENSOR_TOPIC = "pref_sensor_topic_two"
+        private const val PREF_TWO_SENSOR_STATE = "pref_sensor_state_two"
+
+        private const val PREF_THREE_SENSOR_ACTIVE = "pref_sensor_active_three"
+        private const val PREF_THREE_SENSOR_NAME = "pref_sensor_name_three"
+        private const val PREF_THREE_SENSOR_TOPIC = "pref_sensor_topic_three"
+        private const val PREF_THREE_SENSOR_STATE = "pref_sensor_state_three"
+
+        private const val PREF_FOUR_SENSOR_ACTIVE = "pref_sensor_active_four"
+        private const val PREF_FOUR_SENSOR_NAME = "pref_sensor_name_four"
+        private const val PREF_FOUR_SENSOR_TOPIC = "pref_sensor_topic_four"
+        private const val PREF_FOUR_SENSOR_STATE = "pref_sensor_state_four"
     }
 }

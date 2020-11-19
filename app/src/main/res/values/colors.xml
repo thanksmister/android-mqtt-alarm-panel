@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +47,7 @@
     <color name="stroke_gray">#d8d8d8</color>
     <color name="text">#7e7e7c</color>
 
- 
+
     <color name="body_text">#9E9E9E</color>
 
     <color name="body_text_1_inverse">#FFFFFF</color>
@@ -56,7 +55,11 @@
     <color name="transparent">#00000000</color>
 
     <color name="light_red">#CDEB5757</color>
+    <color name="light_red_alpha">#7DEB5757</color>
+
     <color name="light_green">#CD219653</color>
+    <color name="light_green_alpha">#7B219653</color>
+
     <color name="light_green_pressed">#ff67932c</color>
     <color name="text_green">#ff67932c</color>
     <color name="preference_green">#ff7dac2f</color>
@@ -72,5 +75,9 @@
     <color name="background_gray_color">#eeeeee</color>
 
     <color name="gray_up">#e5e5e5</color>
+
+    <color name="weather_card_background">#FFFFFF</color>
+    <color name="weather_card_icon">#818181</color>
+    <color name="weather_card_border">#eeeeee</color>
 
 </resources>

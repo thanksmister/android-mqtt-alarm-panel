@@ -51,7 +51,7 @@
                 android:layout_height="86dp"
                 android:layout_gravity="center"
                 android:src="@drawable/alarm_light"
-                android:tint="@color/red"
+                app:tint="@color/red"
                 tools:ignore="ContentDescription" />
 
         </FrameLayout>
@@ -90,7 +90,7 @@
                 android:layout_height="86dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_open_variant"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 android:visibility="visible"
                 tools:ignore="ContentDescription" />
 
@@ -123,7 +123,6 @@
                 android:gravity="start"
                 android:text="@string/text_disarmed"
                 tools:text="@string/text_disarmed" />
-
 
         </LinearLayout>
 

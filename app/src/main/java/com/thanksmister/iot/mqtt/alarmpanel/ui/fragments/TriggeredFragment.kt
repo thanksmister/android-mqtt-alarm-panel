@@ -21,8 +21,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -41,7 +39,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainFragment : BaseFragment() {
+class TriggeredFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -56,26 +54,21 @@ class MainFragment : BaseFragment() {
     @Inject
     lateinit var mqttOptions: MQTTOptions
 
-    private var listener: OnMainFragmentListener? = null
+    private var listener: OnTriggeredFragmentListener? = null
 
-
-    interface OnMainFragmentListener {
-        fun manuallyLaunchScreenSaver()
-        fun navigatePlatformPanel()
-        fun publishDisarm(code: String)
+    interface OnTriggeredFragmentListener {
         fun publishAlertCall()
         fun showCodeDialog(type: CodeTypes)
-        fun showAlarmTriggered()
         fun hideTriggeredView()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Timber.d("onAttach")
-        if (context is OnMainFragmentListener) {
+        if (context is OnTriggeredFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnMainFragmentListener")
+            throw RuntimeException(context.toString() + " must implement OnTriggeredFragmentListener")
         }
     }
 
@@ -94,21 +87,13 @@ class MainFragment : BaseFragment() {
             showSettingsCodeDialog()
         }
 
-        platformButton?.setOnClickListener {
-            listener?.navigatePlatformPanel()
-        }
-
-        buttonSleep?.setOnClickListener {
-            listener?.manuallyLaunchScreenSaver()
-        }
-
         alertButton?.setOnClickListener {
             listener?.publishAlertCall()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.dialog_alarm_triggered_code, container, false)
     }
 
     /**
@@ -218,35 +203,6 @@ class MainFragment : BaseFragment() {
                 .subscribe({ state ->
                     Timber.d("Alarm state: $state")
                     Timber.d("Alarm mode: ${viewModel.getAlarmMode()}")
-                    activity?.runOnUiThread {
-                        when (state) {
-                            MqttUtils.STATE_ARMED_AWAY,
-                            MqttUtils.STATE_ARMED_NIGHT,
-                            MqttUtils.STATE_ARMED_HOME -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            MqttUtils.STATE_ARMING_NIGHT,
-                            MqttUtils.STATE_ARMING_AWAY,
-                            MqttUtils.STATE_ARMING_HOME,
-                            MqttUtils.STATE_ARMING -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            MqttUtils.STATE_DISARMED -> {
-                                dialogUtils.clearDialogs()
-                                listener?.hideTriggeredView()
-                            }
-                            MqttUtils.STATE_PENDING -> {
-                                dialogUtils.clearDialogs()
-                                if (configuration.isAlarmArmedMode()) {
-                                    listener?.showAlarmTriggered()
-                                }
-                            }
-                            MqttUtils.STATE_TRIGGERED -> {
-                                dialogUtils.clearDialogs()
-                                listener?.showAlarmTriggered()
-                            }
-                        }
-                    }
                 }, { error -> Timber.e("Unable to get message: $error") }))
     }
 
@@ -263,8 +219,8 @@ class MainFragment : BaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(): MainFragment {
-            return MainFragment()
+        fun newInstance(): TriggeredFragment {
+            return TriggeredFragment()
         }
     }
 }

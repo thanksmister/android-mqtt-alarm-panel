@@ -14,65 +14,66 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|top"
-        android:paddingBottom="4dp"
-        android:paddingTop="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:gravity="center_vertical|top"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="4dp">
 
     <FrameLayout
-            android:id="@+id/weatherLayout"
-            android:foreground="?selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_weight="1">
+        android:id="@+id/weatherLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:foreground="?selectableItemBackground"
+        android:visibility="invisible">
 
         <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
 
             <ImageView
-                    android:id="@+id/conditionImage"
-                    android:layout_marginTop="2dp"
-                    android:layout_width="48dp"
-                    android:layout_height="match_parent"
-                    android:tint="@color/dark_gray_color"
-                    tools:src="@drawable/ic_thunderstorm"/>
+                android:id="@+id/conditionImage"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
+                app:tint="@color/dark_gray_color"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/ic_thunderstorm" />
 
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp">
+
+                <TextView
+                    android:id="@+id/temperatureText"
+                    style="@style/TextAppearance.TextLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="8dp"
-                    android:orientation="vertical">
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:text="18°C" />
 
                 <TextView
-                        android:id="@+id/temperatureText"
-                        style="@style/TextAppearance.TextLarge"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="18°C"/>
-
-                <TextView
-                        android:id="@+id/outlookText"
-                        style="@style/TextAppearance.TextLarge"
-                        android:textSize="18sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="Partly Cloudy"/>
+                    android:id="@+id/outlookText"
+                    style="@style/TextAppearance.TextLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    tools:text="Partly Cloudy" />
 
             </LinearLayout>
 
@@ -81,29 +82,29 @@
     </FrameLayout>
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/timeText"
+            style="@style/TextAppearance.TextLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:textSize="24sp"
+            android:textStyle="bold"
+            tools:text="12:55 PM" />
 
         <TextView
-                android:id="@+id/timeText"
-                style="@style/TextAppearance.TextLarge"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="12:55 PM"/>
-
-        <TextView
-                android:id="@+id/dateText"
-                style="@style/TextAppearance.TextLarge"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Monday, June 6th"/>
+            android:id="@+id/dateText"
+            style="@style/TextAppearance.TextLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="Monday, June 6th" />
 
     </LinearLayout>
 

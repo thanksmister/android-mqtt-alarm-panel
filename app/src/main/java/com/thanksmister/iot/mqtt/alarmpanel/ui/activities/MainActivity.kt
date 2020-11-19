@@ -48,6 +48,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_PUBLISH_PANIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
+import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
@@ -55,7 +56,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,6 +71,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
     private val triggeredView: View by lazy {
         findViewById<View>(R.id.triggeredView)
+    }
+
+    private val pagerView: CustomViewPager by lazy {
+        findViewById<CustomViewPager>(R.id.view_pager)
     }
 
     private lateinit var viewModel: MainViewModel
@@ -120,9 +124,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         decorView = window.decorView
 
         pagerAdapter = MainSlidePagerAdapter(supportFragmentManager)
-        view_pager.adapter = pagerAdapter
-        view_pager.addOnPageChangeListener(this)
-        view_pager.setPagingEnabled(false)
+        pagerView.adapter = pagerAdapter
+        pagerView.addOnPageChangeListener(this)
+        pagerView.setPagingEnabled(false)
 
         if (BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
@@ -137,11 +141,25 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
             imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
             configuration.isFirstTime = false
-            configuration.setPhotoScreenSaver(false)
+            configuration.setClockScreenSaverModule(true)
             configuration.setHasCameraCapture(true)
             configuration.setWebModule(true)
             configuration.setShowWeatherModule(true)
             configuration.setTssModule(true)
+
+            // Sensors
+            mqttOptions.sensorOneActive = true
+            mqttOptions.sensorOneName = "Main Door"
+            mqttOptions.sensorOneState = "closed"
+            mqttOptions.sensorTwoActive = true
+            mqttOptions.sensorTwoName = "Service Door"
+            mqttOptions.sensorTwoState = "closed"
+            mqttOptions.sensorThreeActive = true
+            mqttOptions.sensorThreeName = "Outside Motion"
+            mqttOptions.sensorThreeState = "clear"
+            mqttOptions.sensorFourActive = true
+            mqttOptions.sensorFourName = "Inside Door"
+            mqttOptions.sensorFourState = "clear"
         }
 
         if (configuration.isFirstTime) {
@@ -239,14 +257,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                     }
                 }, { error -> Timber.e("Sun Data error: " + error) }))
 
-        /*viewModel.getAlertMessage().observe(this, Observer<String> { message ->
-            Timber.d("getAlertMessage")
-            dialogUtils.showAlertDialog(this@MainActivity, message)
-
-        })*/
 
         viewModel.getAlertMessage().observe(this, Observer<String> { message ->
-            Timber.d("getAlertMessage")
             Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, View.OnClickListener() {
                         val intent = SettingsActivity.createStartIntent(this@MainActivity)
@@ -256,7 +268,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         })
 
         viewModel.getToastMessage().observe(this, Observer<String> { message ->
-            Timber.d("getToastMessage")
             Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
         })
     }
@@ -303,7 +314,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun onBackPressed() {
-        if (view_pager.currentItem == 0) {
+        if (pagerView.currentItem == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed()
@@ -311,7 +322,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             // backpress handled by fragment do nothing
         } else {
             // Otherwise, if back key press is not handled by fragment, select the previous step.
-            view_pager.currentItem = view_pager.currentItem - 1
+            pagerView.currentItem = pagerView.currentItem - 1
         }
     }
 
@@ -344,22 +355,22 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun navigateAlarmPanel() {
-        view_pager.currentItem = 0
+        pagerView.currentItem = 0
     }
 
     override fun setPagingEnabled(value: Boolean) {
-        view_pager.setPagingEnabled(value)
+        pagerView.setPagingEnabled(value)
     }
 
     override fun navigatePlatformPanel() {
-        view_pager.currentItem = 1
+        pagerView.currentItem = 1
     }
 
     private fun setViewPagerState() {
         if (viewModel.hasPlatform()) {
-            view_pager.setPagingEnabled(true)
+            pagerView.setPagingEnabled(true)
         } else {
-            view_pager.setPagingEnabled(false)
+            pagerView.setPagingEnabled(false)
         }
     }
 
@@ -451,30 +462,32 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun showAlarmTriggered() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
         var codeType = CodeTypes.DISARM
         if(mqttOptions.useRemoteConfig) {
             if(mqttOptions.requireCodeForDisarming) {
                 codeType = CodeTypes.DISARM_REMOTE
             }
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
-            triggeredView.visibility = View.VISIBLE
-            val disarmView = findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
-            disarmView.setCode(configuration.alarmCode.toString())
-            disarmView.setAlarmCodeType(codeType)
-            disarmView.setUseSound(configuration.systemSounds)
-            disarmView.listener = object : AlarmTriggeredView.ViewListener {
-                override fun onComplete(code: String) {
-                    publishDisarm(code)
-                }
-                override fun onError() {
-                    Toast.makeText(applicationContext, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                }
+        triggeredView.visibility = View.VISIBLE
+        pagerView.visibility = View.INVISIBLE
+        val disarmView = findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
+        disarmView.setCode(configuration.alarmCode.toString())
+        disarmView.setAlarmCodeType(codeType)
+        disarmView.setUseSound(configuration.systemSounds)
+        disarmView.listener = object : AlarmTriggeredView.ViewListener {
+            override fun onComplete(code: String) {
+                publishDisarm(code)
             }
+            override fun onError() {
+                Toast.makeText(applicationContext, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun hideTriggeredView() {
-        triggeredView.visibility = View.GONE
+        pagerView.visibility = View.VISIBLE
+        triggeredView.visibility = View.INVISIBLE
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
     }
 
@@ -517,8 +530,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
      */
     private fun awakenDeviceForAction() {
         Timber.d("awakenDeviceForAction")
-        if (view_pager != null && pagerAdapter.count > 0) {
-            view_pager.currentItem = 0
+        if (pagerAdapter.count > 0) {
+            pagerView.currentItem = 0
         }
     }
 

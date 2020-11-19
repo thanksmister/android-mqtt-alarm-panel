@@ -66,13 +66,13 @@ class CaptureSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
         super.onViewCreated(view, savedInstanceState)
 
-        telegramChatIdPreference = findPreference(Configuration.PREF_TELEGRAM_CHAT_ID) as EditTextPreference
-        telegramTokenPreference = findPreference(Configuration.PREF_TELEGRAM_TOKEN) as EditTextPreference
-        tolPreference = findPreference(Configuration.PREF_MAIL_TO) as EditTextPreference
-        fromPreference = findPreference(Configuration.PREF_MAIL_FROM) as EditTextPreference
-        domainPreference = findPreference(Configuration.PREF_MAIL_URL) as EditTextPreference
-        keyPreference = findPreference(Configuration.PREF_MAIL_API_KEY) as EditTextPreference
-        activePreference = findPreference(Configuration.PREF_CAMERA_CAPTURE) as CheckBoxPreference
+        telegramChatIdPreference = findPreference("pref_telegram_chat_id") as EditTextPreference
+        telegramTokenPreference = findPreference("pref_telegram_token") as EditTextPreference
+        tolPreference = findPreference("pref_mail_to") as EditTextPreference
+        fromPreference = findPreference("pref_mail_from") as EditTextPreference
+        domainPreference = findPreference("pref_mail_url") as EditTextPreference
+        keyPreference = findPreference("pref_mail_api_key") as EditTextPreference
+        activePreference = findPreference("pref_module_camera") as CheckBoxPreference
 
         activePreference!!.isChecked = configuration.hasCameraCapture()
 
@@ -110,37 +110,37 @@ class CaptureSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
 
         when (key) {
-            Configuration.PREF_MAIL_TO -> {
+            "pref_mail_to" -> {
                 val value = tolPreference!!.text
                 configuration.setMailTo(value)
                 tolPreference!!.summary = value
             }
-            Configuration.PREF_MAIL_FROM -> {
+            "pref_mail_from" -> {
                 val value = fromPreference!!.text
                 configuration.setMailFrom(value)
                 fromPreference!!.summary = value
             }
-            Configuration.PREF_MAIL_URL -> {
+            "pref_mail_url" -> {
                 val value = domainPreference!!.text
                 configuration.setMailGunUrl(value)
                 domainPreference!!.summary = value
             }
-            Configuration.PREF_MAIL_API_KEY -> {
+            "pref_mail_api_key" -> {
                 val value = keyPreference!!.text
                 configuration.setMailGunApiKey(value)
                 keyPreference!!.summary = value
             }
-            Configuration.PREF_TELEGRAM_CHAT_ID -> {
+            "pref_telegram_chat_id" -> {
                 val value = telegramChatIdPreference!!.text
                 configuration.telegramChatId = value
                 telegramChatIdPreference!!.summary = value
             }
-            Configuration.PREF_TELEGRAM_TOKEN -> {
+            "pref_telegram_token" -> {
                 val value = telegramTokenPreference!!.text
                 configuration.telegramToken = value
                 telegramTokenPreference!!.summary = value
             }
-            Configuration.PREF_CAMERA_CAPTURE -> {
+            "pref_module_camera" -> {
                 val checked = activePreference!!.isChecked
                 configuration.setHasCameraCapture(checked)
             }

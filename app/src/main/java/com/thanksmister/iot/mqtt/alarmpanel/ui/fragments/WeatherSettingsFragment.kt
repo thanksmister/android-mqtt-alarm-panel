@@ -24,8 +24,6 @@ import android.view.View
 import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_MODULE_WEATHER
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEATHER_UNITS
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
@@ -69,8 +67,8 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weatherModulePreference = findPreference(PREF_MODULE_WEATHER) as SwitchPreference
-        weatherUnitsPreference = findPreference(PREF_WEATHER_UNITS) as SwitchPreference
+        weatherModulePreference = findPreference("pref_module_weather") as SwitchPreference
+        weatherUnitsPreference = findPreference("pref_weather_units_imperial") as SwitchPreference
 
         weatherModulePreference!!.isChecked = configuration.showWeatherModule()
         weatherUnitsPreference!!.isChecked = configuration.weatherUnitsImperial
@@ -78,11 +76,11 @@ class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.On
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_MODULE_WEATHER -> {
+            "pref_module_weather" -> {
                 val checked = weatherModulePreference!!.isChecked
                 configuration.setShowWeatherModule(checked)
             }
-            PREF_WEATHER_UNITS -> {
+            "pref_weather_units_imperial" -> {
                 val checked = weatherUnitsPreference!!.isChecked
                 configuration.weatherUnitsImperial = checked
             }

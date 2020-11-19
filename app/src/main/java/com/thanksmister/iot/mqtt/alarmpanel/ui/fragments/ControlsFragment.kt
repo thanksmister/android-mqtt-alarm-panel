@@ -239,6 +239,7 @@ class ControlsFragment : BaseFragment() {
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -251,6 +252,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setText(R.string.text_armed_away)
         alarmText.setTextColor(resources.getColor(R.color.red))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -263,6 +265,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setText(R.string.text_armed_home)
         alarmText.setTextColor(resources.getColor(R.color.yellow))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -275,6 +278,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_armed_night)
         alarmText.setTextColor(resources.getColor(R.color.black))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -309,12 +313,12 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_arming)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
-
     }
 
     private fun setDisarmingMode(state: String) {
-        //viewModel.setAlarmMode(state)
+        viewModel.setAlarmMode(state)
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmImage.visibility = View.INVISIBLE
         alarmImageUnlocked.visibility = View.VISIBLE
@@ -322,6 +326,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_disarming)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
         delayTimerHandler?.postDelayed(delayTimerRunnable, 10000)
     }
@@ -338,6 +343,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = resources.getText(R.string.text_alarm_pending)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -359,6 +365,7 @@ class ControlsFragment : BaseFragment() {
         alarmImageUnlocked.visibility = View.VISIBLE
         pendingAnimation.visibility = View.GONE
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_green))
+        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 

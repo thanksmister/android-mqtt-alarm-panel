@@ -18,46 +18,35 @@ package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageMqtt
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 import javax.inject.Inject
 
 class SensorControlViewModel @Inject
-constructor(application: Application) : AndroidViewModel(application) {
+constructor(application: Application, private val messageDataSource: MessageDao,
+            private val configuration: Configuration) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
-    private val toastText = ToastMessage()
-    private val alertText = AlertMessage()
-    private val snackbarText = SnackbarMessage()
-
-    fun getToastMessage(): ToastMessage {
-        return toastText
-    }
-
-    fun getAlertMessage(): AlertMessage {
-        return alertText
-    }
-
-    fun getSnackBarMessage(): SnackbarMessage {
-        return snackbarText
-    }
-
-    private fun showSnackbarMessage(message: Int) {
-        snackbarText.value = message
-    }
-
-    private fun showAlertMessage(message: String) {
-        alertText.value = message
-    }
-
-    private fun showToastMessage(message: String) {
-        toastText.value = message
-    }
 
     public override fun onCleared() {
-        //prevents memory leaks by disposing pending observable objects
         if (!disposable.isDisposed) {
             disposable.clear()
         }
+    }
+
+    fun getSensorState(): Flowable<MessageMqtt> {
+        return messageDataSource.getMessages(MqttUtils.TYPE_SENSOR)
+                .filter {messages -> messages.isNotEmpty()}
+                .map {messages -> messages[messages.size - 1]}
+                .map {message ->
+                    Timber.d("sensor state: " + message.payload)
+                    message
+                }
     }
 
     companion object {

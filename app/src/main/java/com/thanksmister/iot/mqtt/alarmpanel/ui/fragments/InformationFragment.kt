@@ -17,27 +17,23 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper.getMainLooper
-import androidx.core.content.res.ResourcesCompat
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.dayOfWeek
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.generateCreatedAtDate
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils.parseCreatedAtDate
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.isDouble
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils.stringToDouble
@@ -55,11 +51,13 @@ class InformationFragment() : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var weatherViewModel: WeatherViewModel
 
     @Inject
     lateinit var configuration: Configuration
+
     @Inject
     lateinit var dialogUtils: DialogUtils
 

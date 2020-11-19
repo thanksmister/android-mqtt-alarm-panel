@@ -35,7 +35,7 @@ class MqttUtils {
 
         // TODO use the rest of these in the app
         const val TYPE_ALARM = "alarm"
-        const val TYPE_CONTROL = "control"
+        const val TYPE_SENSOR = "sensor"
         const val TYPE_COMMAND = "command"
 
         const val PORT = 1883
@@ -70,7 +70,7 @@ class MqttUtils {
         const val COMMAND_WEATHER = "weather"
         const val COMMAND_SUN = "sun"
 
-        const val SENSOR_TYPE = "SENSOR"
+
         const val SENSOR_GENERIC_TYPE = "GENERIC"
         const val SENSOR_DOOR_TYPE = "DOOR"
         const val SENSOR_WINDOW_TYPE = "WINDOW"
@@ -84,6 +84,7 @@ class MqttUtils {
         const val COMMAND_ARM_AWAY = "ARM_AWAY"
         const val COMMAND_DISARM = "DISARM"
         const val COMMAND_ON = "ON"
+        const val NO_RESPONSE = "NO RESPONSE"
 
         // mqtt states
         const val STATE_DISARMED = "disarmed"

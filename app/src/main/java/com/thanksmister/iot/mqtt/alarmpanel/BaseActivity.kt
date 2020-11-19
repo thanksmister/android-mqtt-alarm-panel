@@ -149,18 +149,23 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     fun showScreenSaver() {
-        Timber.d("showScreenSaver ${configuration.hasScreenSaver()}")
         if (!configuration.isAlarmTriggered() && configuration.hasScreenSaver()) {
             val hasWeather = configuration.showWeatherModule()
             val isImperial = configuration.weatherUnitsImperial
             try {
                 dialogUtils.showScreenSaver(this@BaseActivity,
-                        configuration.showPhotoScreenSaver(),
+                        configuration.showUnsplashScreenSaver(),
+                        configuration.showClockScreenSaver(),
+                        hasWeather,
+                        isImperial,
+                        configuration.webScreenSaver,
                         imageOptions,
+                        weatherDao,
+                        configuration.webScreenSaverUrl,
                         View.OnClickListener {
                             dialogUtils.hideScreenSaverDialog()
                             onUserInteraction()
-                        },  hasWeather, isImperial, weatherDao, configuration.webScreenSaver, configuration.webScreenSaverUrl)
+                        })
                 screenUtils.setScreenSaverBrightness(true)
             } catch (e: Throwable) {
                 Timber.e(e.message)
@@ -221,19 +226,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             }
         }
     }
-
-    /**
-     * Attempts to bring the application to the foreground if needed.
-     */
-   /* private fun bringApplicationToForegroundIfNeeded() {
-        if (!LifecycleHandler.isApplicationInForeground()) {
-            Timber.d("bringApplicationToForegroundIfNeeded")
-            val intent = Intent("intent.alarm.action")
-            intent.component = ComponentName(this@BaseActivity.packageName, MainActivity::class.java.name)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-            startActivity(intent)
-        }
-    }*/
 
     companion object {
         const val REQUEST_PERMISSIONS = 88

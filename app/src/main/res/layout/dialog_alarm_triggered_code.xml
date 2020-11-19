@@ -18,6 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:background="@color/red"
     android:orientation="vertical"
@@ -360,7 +361,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_backspace_black"
-                        android:tint="@color/white"
+                        app:tint="@color/white"
                         tools:ignore="ContentDescription" />
 
                 </FrameLayout>
@@ -370,34 +371,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <!--<LinearLayout
-        android:id="@+id/triggered_fingerprint_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:padding="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        tools:ignore="UseCompoundDrawables"
-        android:gravity="center"
-        tools:visibility="visible">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:src="@drawable/ic_fingerprint"
-            android:tint="@color/white" />
-
-        <TextView
-            style="@style/TextAppearance.AppCompat.Inverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_touch_sensor" />
-
-    </LinearLayout>-->
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>

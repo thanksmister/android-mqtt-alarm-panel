@@ -18,22 +18,18 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.preference.*
-import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
+import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_FINGERPRINT
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
-import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.AndroidSupportInjection
-import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 
@@ -185,40 +181,79 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         val value: String
         when (key) {
             "pref_sensor_one" -> {
-                //mqttOptions.setCommandTopic()
+                mqttOptions.sensorOneActive = sensorOnePreference.isChecked
             }
             "pref_sensor_one_name" -> {
-
+                mqttOptions.sensorOneName = sensorOneNamePreference.text
+                sensorOneNamePreference.text = mqttOptions.sensorOneName
+                sensorOneNamePreference.summary = mqttOptions.sensorOneName
             }
             "pref_sensor_one_topic" -> {
-
+                mqttOptions.sensorOneTopic = sensorOneTopicPreference.text
+                sensorOneTopicPreference.text = mqttOptions.sensorOneTopic
+                sensorOneTopicPreference.summary = mqttOptions.sensorOneTopic
             }
-            "pref_sensor_two" -> {
+            "pref_sensor_one_state" -> {
+                mqttOptions.sensorOneState = sensorOneStatePreference.text.toUpperCase(Locale.getDefault())
+                sensorOneStatePreference.text = mqttOptions.sensorOneState
+                sensorOneStatePreference.summary = mqttOptions.sensorOneState
+            }
 
+            "pref_sensor_two" -> {
+                mqttOptions.sensorTwoActive = sensorTwoPreference.isChecked
             }
             "pref_sensor_two_name" -> {
-
+                mqttOptions.sensorTwoName = sensorTwoNamePreference.text
+                sensorTwoNamePreference.text = mqttOptions.sensorTwoName
+                sensorTwoNamePreference.summary = mqttOptions.sensorTwoName
             }
             "pref_sensor_two_topic" -> {
-
+                mqttOptions.sensorTwoTopic = sensorTwoTopicPreference.text
+                sensorTwoTopicPreference.text = mqttOptions.sensorTwoTopic
+                sensorTwoTopicPreference.summary = mqttOptions.sensorTwoTopic
             }
-            "pref_sensor_three" -> {
+            "pref_sensor_two_state" -> {
+                mqttOptions.sensorTwoState = sensorTwoStatePreference.text.toUpperCase(Locale.getDefault())
+                sensorTwoStatePreference.text = mqttOptions.sensorTwoState
+                sensorTwoStatePreference.summary = mqttOptions.sensorTwoState
+            }
 
+            "pref_sensor_three" -> {
+                mqttOptions.sensorThreeActive = sensorThreePreference.isChecked
             }
             "pref_sensor_three_name" -> {
-
+                mqttOptions.sensorThreeName = sensorThreeNamePreference.text
+                sensorThreeNamePreference.text = mqttOptions.sensorThreeName
+                sensorThreeNamePreference.summary = mqttOptions.sensorThreeName
             }
             "pref_sensor_three_topic" -> {
-
+                mqttOptions.sensorThreeTopic = sensorThreeTopicPreference.text
+                sensorThreeTopicPreference.text = mqttOptions.sensorThreeTopic
+                sensorThreeTopicPreference.summary = mqttOptions.sensorThreeTopic
             }
-            "pref_sensor_four" -> {
+            "pref_sensor_three_state" -> {
+                mqttOptions.sensorThreeState = sensorThreeStatePreference.text.toUpperCase(Locale.getDefault())
+                sensorThreeStatePreference.text = mqttOptions.sensorThreeState
+                sensorThreeStatePreference.summary = mqttOptions.sensorThreeState
+            }
 
+            "pref_sensor_four" -> {
+                mqttOptions.sensorFourActive = sensorFourPreference.isChecked
             }
             "pref_sensor_four_name" -> {
-
+                mqttOptions.sensorFourName = sensorFourNamePreference.text
+                sensorFourNamePreference.text = mqttOptions.sensorFourName
+                sensorFourNamePreference.summary = mqttOptions.sensorFourName
             }
             "pref_sensor_four_topic" -> {
-
+                mqttOptions.sensorFourTopic = sensorFourTopicPreference.text
+                sensorFourTopicPreference.text = mqttOptions.sensorFourTopic
+                sensorFourTopicPreference.summary = mqttOptions.sensorFourTopic
+            }
+            "pref_sensor_four_state" -> {
+                mqttOptions.sensorFourState = sensorFourStatePreference.text.toUpperCase(Locale.getDefault())
+                sensorFourStatePreference.text = mqttOptions.sensorFourState
+                sensorFourStatePreference.summary = mqttOptions.sensorFourState
             }
         }
     }

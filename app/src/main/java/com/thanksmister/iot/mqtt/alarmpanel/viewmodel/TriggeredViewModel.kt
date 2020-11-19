@@ -27,38 +27,11 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainViewModel @Inject
+class TriggeredViewModel @Inject
 constructor(application: Application, private val messageDataSource: MessageDao,
             private val sunSource: SunDao, private val configuration: Configuration) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
-    private val toastText = ToastMessage()
-    private val alertText = AlertMessage()
-    private val snackbarText = SnackbarMessage()
-
-    fun getToastMessage(): ToastMessage {
-        return toastText
-    }
-
-    fun getAlertMessage(): AlertMessage {
-        return alertText
-    }
-
-    fun getSnackBarMessage(): SnackbarMessage {
-        return snackbarText
-    }
-
-    private fun showSnackbarMessage(message: Int) {
-        snackbarText.value = message
-    }
-
-    private fun showAlertMessage(message: String) {
-        alertText.value = message
-    }
-
-    private fun showToastMessage(message: String) {
-        toastText.value = message
-    }
 
     fun getMessages():Flowable<List<MessageMqtt>> {
         return messageDataSource.getMessages()
@@ -82,10 +55,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
         }
     }
 
-    fun hasPlatform() : Boolean {
-        return (configuration.hasPlatformModule() && configuration.webUrl?.isNotEmpty()?:false)
-    }
-
     private fun setAlarmModeFromState(state: String?) {
         state?.let {
             setAlarmMode(state)
@@ -98,12 +67,6 @@ constructor(application: Application, private val messageDataSource: MessageDao,
 
     fun getAlarmMode(): String {
         return configuration.alarmMode
-    }
-
-    fun getSun(): Flowable<Sun> {
-        return sunSource.getItems()
-                .filter {items -> items.isNotEmpty()}
-                .map { items -> items[items.size - 1] }
     }
 
     public override fun onCleared() {

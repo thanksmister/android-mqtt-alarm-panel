@@ -16,10 +16,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -27,13 +30,21 @@ import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.SensorControlViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_sensor_control.*
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class SensorControlFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     lateinit var viewModel: SensorControlViewModel
 
     @Inject
@@ -44,37 +55,32 @@ class SensorControlFragment : BaseFragment() {
 
     @Inject
     lateinit var mqttOptions: MQTTOptions
-    private var mListener: OnDoorControlFragmentListener? = null
 
+    private var topic: String = ""
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface OnDoorControlFragmentListener {
-        fun publishOpenDoor()
+    private var state: String = ""
+
+    fun setSensorTitle(name: String) {
+        titleText.text = name
+    }
+
+    fun setSensorState(state: String) {
+        this.state = state
+    }
+
+    fun setSensorTopic(topic: String) {
+        this.topic = topic
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(dialogUtils)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SensorControlViewModel::class.java)
+        observeViewModel(viewModel)
     }
-
-    /* override fun onAttach(context: Context) {
-         super.onAttach(context)
-         if (context is OnDoorControlFragmentListener) {
-             mListener = context
-         } else {
-             throw RuntimeException("$context must implement OnDoorControlFragmentListener")
-         }
-     }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sensor_control, container, false)
@@ -82,23 +88,62 @@ class SensorControlFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.setOnClickListener {
-            if (!hasNetworkConnectivity()) {
-                handleNetworkDisconnect()
-            } else if (mqttOptions.isValid) {
-                mListener?.publishOpenDoor()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //titleText.text = configuration.doorName
     }
 
     override fun onDetach() {
         super.onDetach()
-        mListener = null
+    }
+
+    private fun observeViewModel(viewModel: SensorControlViewModel) {
+        disposable.add(viewModel.getSensorState()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ message ->
+                    activity?.runOnUiThread {
+                        when (message.topic?.toLowerCase(Locale.getDefault())) {
+                            mqttOptions.sensorOneTopic -> {
+                                if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    stateText.text = message.payload?.toUpperCase(Locale.getDefault())
+                                    if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorOneState.toLowerCase(Locale.getDefault())) {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
+                                    } else {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
+                                    }
+                                }
+                            }
+                            mqttOptions.sensorTwoTopic -> {
+                                if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    stateText.text = message.payload?.toUpperCase(Locale.getDefault())
+                                    if (message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorTwoState.toLowerCase(Locale.getDefault())) {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
+                                    } else {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
+                                    }
+                                }
+                            }
+                            mqttOptions.sensorThreeTopic -> {
+                                if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    stateText.text = message.payload?.toUpperCase(Locale.getDefault())
+                                    if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorThreeState.toLowerCase(Locale.getDefault())) {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
+                                    } else {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
+                                    }
+                                }
+                            }
+                            mqttOptions.sensorFourTopic -> {
+                                if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    stateText.text = message.payload?.toUpperCase(Locale.getDefault())
+                                    if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorFourState.toLowerCase(Locale.getDefault())) {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
+                                    } else {
+                                        iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, { error -> Timber.e("Unable to get sensor message: $error") }))
     }
 
     companion object {

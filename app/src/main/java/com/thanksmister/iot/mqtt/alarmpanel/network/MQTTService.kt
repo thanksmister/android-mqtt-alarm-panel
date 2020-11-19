@@ -175,16 +175,18 @@ class MQTTService(private var context: Context,
         Timber.d("initialize")
         try {
             mqttOptions = options
-            Timber.i("Service Configuration:")
-            Timber.i("Client ID: " + mqttOptions!!.getClientId())
-            Timber.i("Username: " + mqttOptions!!.getUsername())
-            Timber.i("Password: " + mqttOptions!!.getPassword())
-            Timber.i("TslConnect: " + mqttOptions!!.getTlsConnection())
-            Timber.i("MQTT Configuration:")
-            Timber.i("Broker: " + mqttOptions?.brokerUrl)
-            Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
-            Timber.i("Publishing to alarm topic: " + mqttOptions!!.getAlarmCommandTopic())
-            Timber.i("Publishing to command topic: " + mqttOptions!!.getBaseCommand())
+            mqttOptions?.let {
+                Timber.i("Service Configuration:")
+                Timber.i("Client ID: " + it.getClientId())
+                Timber.i("Username: " + it.getUsername())
+                Timber.i("Password: " + it.getPassword())
+                Timber.i("TslConnect: " + it.getTlsConnection())
+                Timber.i("MQTT Configuration:")
+                Timber.i("Broker: " + it.brokerUrl)
+                Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(it.getStateTopics()))
+                Timber.i("Publishing to alarm topic: " + it.getAlarmCommandTopic())
+                Timber.i("Publishing to command topic: " + it.getBaseCommand())
+            }
             mqttOptions?.let {
                 if (it.isValid) {
                     initializeMqttClient()
@@ -212,7 +214,6 @@ class MQTTService(private var context: Context,
                         Timber.d("connect to broker completed, reconnected: $reconnect")
                         subscribeToTopics(mqttOptions.getStateTopics())
                     }
-
                     override fun connectionLost(cause: Throwable?) {}
                     override fun messageArrived(topic: String?, message: MqttMessage?) {}
                     override fun deliveryComplete(token: IMqttDeliveryToken?) {}

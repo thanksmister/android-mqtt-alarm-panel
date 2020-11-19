@@ -69,8 +69,8 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
 
         super.onViewCreated(view, savedInstanceState)
 
-        soundPreference = findPreference(Configuration.PREF_SYSTEM_SOUNDS) as CheckBoxPreference
-        systemPreference = findPreference(Configuration.PREF_SYSTEM_NOTIFICATIONS) as CheckBoxPreference
+        soundPreference = findPreference("pref_system_sounds") as CheckBoxPreference
+        systemPreference = findPreference("pref_system_notifications") as CheckBoxPreference
 
         systemPreference!!.isChecked = configuration.hasSystemAlerts()
         soundPreference!!.isChecked = configuration.systemSounds
@@ -78,11 +78,11 @@ class NotificationsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            Configuration.PREF_SYSTEM_SOUNDS -> {
+            "pref_system_sounds" -> {
                 val sounds = soundPreference!!.isChecked
                 configuration.systemSounds = sounds
             }
-            Configuration.PREF_SYSTEM_NOTIFICATIONS -> {
+            "pref_system_notifications" -> {
                 val checked = systemPreference!!.isChecked
                 configuration.systemAlerts = checked
             }
