@@ -51,7 +51,8 @@
         app:layout_constraintTop_toBottomOf="@+id/guideSensorsOne"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/guideControlMiddle"
-        tools:layout="@layout/fragment_sensor_control" />
+        tools:layout="@layout/fragment_sensor_control"
+        tools:visibility="invisible"/>
 
     <fragment
         android:id="@+id/twoSensorContainer"
@@ -62,7 +63,8 @@
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/guideControlMiddle"
         app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
-        tools:layout="@layout/fragment_sensor_control" />
+        tools:layout="@layout/fragment_sensor_control"
+        tools:visibility="invisible"/>
 
     <fragment
         android:id="@+id/threeSensorContainer"
@@ -73,7 +75,8 @@
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/guideControlMiddle"
         app:layout_constraintTop_toBottomOf="@+id/guideSensorThree"
-        tools:layout="@layout/fragment_sensor_control" />
+        tools:layout="@layout/fragment_sensor_control"
+        tools:visibility="invisible"/>
 
     <fragment
         android:id="@+id/fourSensorContainer"
@@ -84,7 +87,8 @@
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/guideControlMiddle"
         app:layout_constraintBottom_toTopOf="@+id/guideControlBottom"
-        tools:layout="@layout/fragment_sensor_control" />
+        tools:layout="@layout/fragment_sensor_control"
+        tools:visibility="invisible"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/settingsContainer"
@@ -207,18 +211,18 @@
         app:layout_constraintGuide_percent="0.08" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.92" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideControlMiddle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.60" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.92" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideControlBottom"

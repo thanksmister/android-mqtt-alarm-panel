@@ -20,7 +20,6 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ON
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SPEAK
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PANEL_COMMAND_TOPIC
@@ -225,6 +224,13 @@ constructor(private val sharedPreferences: SharedPreferences) {
             this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
             setOptionsUpdated(true)
         }
+
+    fun hasNoSensors(): Boolean {
+        return sensorOneActive.not()
+                && sensorTwoActive.not()
+                && sensorThreeActive.not()
+                && sensorFourActive.not()
+    }
 
     var remoteArmingHomeTime: Int
         get() = sharedPreferences.getInt(PREF_ARMING_HOME_TIME, 0)

@@ -17,12 +17,11 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
@@ -158,20 +157,80 @@ class MainFragment : BaseFragment() {
             view?.findViewById<View>(R.id.fourSensorContainer)?.visibility = View.VISIBLE
         }
 
-        // TODO we have to move the guides based on screen orientation and dimensions
-        if (mqttOptions.sensorOneActive.not()
-                && mqttOptions.sensorTwoActive.not()
-                && mqttOptions.sensorThreeActive.not()
-                && mqttOptions.sensorFourActive.not()) {
-            guideControlBottom?.setGuidelinePercent(0.60f)
-        }
+        // TODO handle 600 dp vs others?
+        val metrics = resources.displayMetrics
+        val scaleFactor = metrics.density
+        val widthDp = metrics.widthPixels / scaleFactor
+        val heightDp = metrics.heightPixels / scaleFactor
+        val orientation = resources.configuration.orientation
+        val smallestWidth = widthDp.coerceAtMost(heightDp)
+        if (mqttOptions.hasNoSensors()) {
+            if (orientation == ORIENTATION_LANDSCAPE) {
+                when {
+                    smallestWidth > 720 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.80f)
+                        guidelineStart?.setGuidelinePercent(0.2f)
+                    }
+                    smallestWidth > 500 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.82f)
+                        guidelineStart?.setGuidelinePercent(0.18f)
+                    }
+                    else -> {
+                        guideControlMiddle?.setGuidelinePercent(0.78f)
+                        guidelineStart?.setGuidelinePercent(0.22f)
+                    }
+                }
+            } else {
+                when {
+                    smallestWidth > 720 -> {
+                        guideControlTop?.setGuidelinePercent(0.32f)
+                        guideControlBottom?.setGuidelinePercent(0.64f)
+                    }
+                    smallestWidth > 500 -> {
+                        guideControlTop?.setGuidelinePercent(0.32f)
+                        guideControlBottom?.setGuidelinePercent(0.64f)
+                    }
+                    else -> {
+                        guideControlTop?.setGuidelinePercent(0.34f)
+                        guideControlBottom?.setGuidelinePercent(0.62f)
+                    }
+                }
+            }
+        } else {
+            if (orientation == ORIENTATION_LANDSCAPE) {
+                when {
+                    smallestWidth > 720 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.62f)
+                        guidelineStart?.setGuidelinePercent(0.08f)
+                    }
+                    smallestWidth > 500 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.62f)
+                        guidelineStart?.setGuidelinePercent(0.08f)
+                    }
+                    else -> {
+                        guideControlMiddle?.setGuidelinePercent(0.60f)
+                        guidelineStart?.setGuidelinePercent(0.08f)
+                    }
+                }
 
-        // TODO we have to move the guides based on screen orientation and dimensions
-        if (mqttOptions.sensorOneActive.not()
-                && mqttOptions.sensorTwoActive.not()
-                && mqttOptions.sensorThreeActive.not()
-                && mqttOptions.sensorFourActive.not()) {
-            guideControlMiddle?.setGuidelinePercent(0.60f)
+            } else {
+
+                when {
+                    smallestWidth > 720 -> {
+                        guideControlTop?.setGuidelinePercent(0.26f)
+                        guideControlBottom?.setGuidelinePercent(0.58f)
+                    }
+                    smallestWidth > 500 -> {
+                        guideControlTop?.setGuidelinePercent(0.26f)
+                        guideControlBottom?.setGuidelinePercent(0.58f)
+                    }
+                    else -> {
+                        guideControlTop?.setGuidelinePercent(0.2f)
+                        guideControlBottom?.setGuidelinePercent(0.5f)
+                    }
+                }
+
+            }
         }
 
         childFragmentManager.findFragmentById(R.id.oneSensorContainer)?.apply {

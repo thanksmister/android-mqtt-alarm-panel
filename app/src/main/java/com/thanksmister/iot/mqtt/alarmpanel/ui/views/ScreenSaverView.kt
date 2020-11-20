@@ -135,7 +135,7 @@ class ScreenSaverView : RelativeLayout {
              imageOptions: ImageOptions,
              webUrl: String = "",
              weatherDao: WeatherDao) {
-        Timber.d("ScreenSaverView $hasWebScreenSaver")
+
         this.weatherSource = weatherDao
         this.rotationInterval = imageOptions.imageRotation.toLong()
         this.hasWeather = hasWeather
@@ -174,7 +174,6 @@ class ScreenSaverView : RelativeLayout {
     }
 
     private fun setScreenSaverView() {
-
         val initialRegular = screenSaverClock.textSize
         val initialSmall = screenSaverClockSmall.textSize
 
@@ -183,7 +182,6 @@ class ScreenSaverView : RelativeLayout {
             screenSaverClockSmall.setTextSize(TypedValue.COMPLEX_UNIT_PX, initialSmall + 60)
         }
 
-        // setup the views
         if (useUnsplashScreenSaver) {
             screenSaverImageLayout.visibility = View.VISIBLE
             screenSaverWebViewLayout.visibility = View.GONE
@@ -227,51 +225,34 @@ class ScreenSaverView : RelativeLayout {
 
     @SuppressLint("CheckResult")
     private fun setWeatherDataOnView() {
-        disposable.add(weatherSource!!.getItems()
-                .filter { items -> items.isNotEmpty() }
-                .map { items -> items[0] }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ item ->
-                    setDisplayData(item)
-                }, { error -> Timber.e("Error Notifications: ${error.message}") }))
+        weatherSource?.let {
+            disposable.add(it.getItems()
+                    .filter { items -> items.isNotEmpty() }
+                    .map { items -> items[0] }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError { Weather() }
+                    .subscribe { item ->
+                        setDisplayData(item)
+                    })
+        }
     }
 
-    private fun setDisplayData(item: Weather) {
+    private fun setDisplayData(weather: Weather) {
         val displayUnits = if (useImperial) saverContext!!.getString(R.string.text_f) else saverContext!!.getString(R.string.text_c)
+        val precipitation = weather.precipitation.orEmpty()
         if (useUnsplashScreenSaver) {
-            item.takeIf { saverContext != null }?.forecast?.let { it ->
-                temperatureTextSmall.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
-                if (it.size > 0) {
-                    val forecast = it[0]
-                    try {
-                        val precipitation = forecast.precipitation
-                        if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
-                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
-                        } else {
-                            conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
-                        }
-                    } catch (e: Exception) {
-                        Timber.e(e.message)
-                    }
-                }
+            temperatureTextSmall.text = saverContext?.getString(R.string.text_temperature, weather.temperature.toString(), displayUnits)
+            if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+            } else {
+                conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(weather.condition), (saverContext!! as BaseActivity).theme))
             }
         } else {
-            item.takeIf { saverContext != null }?.forecast?.let { it ->
-                temperatureText.text = saverContext!!.getString(R.string.text_temperature, item.temperature.toString(), displayUnits)
-                if (it.size > 0) {
-                    val forecast = it[0]
-                    try {
-                        val precipitation = forecast.precipitation
-                        if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
-                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
-                        } else {
-                            conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(forecast.condition), (saverContext!! as BaseActivity).theme))
-                        }
-                    } catch (e: Exception) {
-                        Timber.e(e.message)
-                    }
-                }
+            if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
+                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
+            } else {
+                conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(weather.condition), (saverContext!! as BaseActivity).theme))
             }
         }
     }
@@ -299,49 +280,6 @@ class ScreenSaverView : RelativeLayout {
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .into(screenSaverImage)
     }
-
-    /*private fun startImageRotation() {
-        if (picasso == null) {
-            picasso = Picasso.with(context)
-        }
-        if (itemList != null && !itemList!!.isEmpty()) {
-            val min = 0
-            val max = itemList!!.size - 1
-            val random = Random().nextInt(max - min + 1) + min
-            val item = itemList!![random]
-            if(item.images !=  null) {
-                val minImage = 0
-                val maxImage = item.images.size - 1
-                val randomImage = Random().nextInt(maxImage - minImage + 1) + minImage
-                val image = item.images[randomImage]
-                imageUrl = image.link
-                picasso?.let {
-                    if (options!!.imageFitScreen) {
-                        it.load(imageUrl)
-                                .placeholder(R.color.black)
-                                .resize(screenSaverImage.width, screenSaverImage.height)
-                                .centerCrop()
-                                .error(R.color.black)
-                                .into(screenSaverImage)
-                    } else {
-                        it.load(imageUrl)
-                                .placeholder(R.color.black)
-                                .resize(screenSaverImage.width, screenSaverImage.height)
-                                .centerInside()
-                                .error(R.color.black)
-                                .into(screenSaverImage)
-                    }
-                    if (rotationHandler == null) {
-                        rotationHandler = Handler()
-                    }
-                    rotationHandler?.postDelayed(delayRotationRunnable, rotationInterval)
-                }
-
-            } else {
-                startImageRotation()
-            }
-        }
-    }*/
 
     private fun loadWebPage(url: String) {
         Timber.d("loadWebPage url ${url}")

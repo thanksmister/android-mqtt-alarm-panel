@@ -39,13 +39,11 @@ constructor(application: Application, private val messageDataSource: MessageDao,
         }
     }
 
-    fun getSensorState(): Flowable<MessageMqtt> {
+    fun getSensorStates(): Flowable<List<MessageMqtt>> {
         return messageDataSource.getMessages(MqttUtils.TYPE_SENSOR)
-                .filter {messages -> messages.isNotEmpty()}
-                .map {messages -> messages[messages.size - 1]}
-                .map {message ->
-                    Timber.d("sensor state: " + message.payload)
-                    message
+                .distinct()
+                .filter {
+                    messages -> messages.isNotEmpty()
                 }
     }
 
