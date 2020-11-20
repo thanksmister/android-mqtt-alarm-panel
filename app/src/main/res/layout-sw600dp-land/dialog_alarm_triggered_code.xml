@@ -27,25 +27,25 @@
     android:padding="16dp">
 
     <include
-        android:id="@+id/codeLayout"
+        android:id="@+id/keypadLayout"
         layout="@layout/trigger_view_keypad"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textLayout"
+        app:layout_constraintEnd_toStartOf="@+id/headerLayout"
         />
 
     <RelativeLayout
-        android:id="@+id/textLayout"
+        android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingBottom="8dp"
-        app:layout_constraintStart_toEndOf="@id/codeLayout"
+        app:layout_constraintStart_toEndOf="@id/keypadLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

@@ -21,6 +21,7 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMED
 import java.lang.Exception
 import javax.inject.Inject
@@ -37,7 +38,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
 
     var alarmMode: String
-        get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISARMED).orEmpty()
+        get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISABLED).orEmpty()
         set(value) = this.sharedPreferences.edit().putString(PREF_ALARM_MODE, value).apply()
 
     var systemAlerts: Boolean

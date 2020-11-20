@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,11 +26,24 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/keypadLayout"
+        layout="@layout/trigger_view_keypad"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout" />
+
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:paddingBottom="32dp">
+        android:paddingBottom="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/codeTitle"
@@ -41,7 +54,7 @@
             android:text="@string/text_alarm"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="64sp"
+            android:textSize="84sp"
             android:textStyle="bold" />
 
         <TextView
@@ -54,325 +67,10 @@
             android:text="@string/dialog_alarm_triggered"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             tools:text="Enter code to dismiss" />
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/background_square_border_red"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:id="@+id/button1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_left_top_border_red"
-                    android:gravity="center"
-                    android:minWidth="56dp"
-                    android:text="1"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_top_border_red"
-                    android:gravity="center"
-                    android:minWidth="56dp"
-                    android:text="2"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_top_border_red"
-                    android:gravity="center"
-                    android:minWidth="56dp"
-                    android:text="3"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <View
-            style="@style/DividerHorizontal"
-            android:layout_weight="0" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:id="@+id/button4"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_left_right_border_red"
-                    android:gravity="center"
-                    android:text="4"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button5"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_border_red"
-                    android:gravity="center"
-                    android:text="5"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button6"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_border_red"
-                    android:gravity="center"
-                    android:text="6"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <View
-            style="@style/DividerHorizontal"
-            android:layout_weight="0" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:id="@+id/button7"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_left_right_border_red"
-                    android:gravity="center"
-                    android:text="7"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button8"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_border_red"
-                    android:gravity="center"
-                    android:text="8"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button9"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_border_red"
-                    android:gravity="center"
-                    android:text="9"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <View
-            style="@style/DividerHorizontal"
-            android:layout_width="match_parent"
-            android:layout_weight="0" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_left_bottom_border_red"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/button0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_bottom_border_red"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_login" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/buttonDel"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/background_right_bottom_border_red">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_backspace_black"
-                        android:tint="@color/white"
-                        tools:ignore="ContentDescription" />
-
-                </FrameLayout>
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView>
+</androidx.constraintlayout.widget.ConstraintLayout>

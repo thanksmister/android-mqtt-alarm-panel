@@ -28,8 +28,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SensorControlViewModel @Inject
-constructor(application: Application, private val messageDataSource: MessageDao,
-            private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application, private val messageDataSource: MessageDao) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
 

@@ -22,19 +22,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <fragment
         android:id="@+id/triggeredView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/red"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <include
-            android:id="@+id/alarmTriggeredView"
-            layout="@layout/dialog_alarm_triggered_code" />
-
-    </FrameLayout>
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
 
     <com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
         android:id="@+id/view_pager"

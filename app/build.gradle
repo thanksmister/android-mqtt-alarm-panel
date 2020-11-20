@@ -7,9 +7,9 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 
-def versionMajor = 0
-def versionMinor = 8
-def versionPatch = 9
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
 def versionBuild = 2 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
@@ -251,12 +251,12 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.9'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.5.1'
+    implementation 'com.google.firebase:firebase-core:18.0.0'
 
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 
     // Recommended: Add the Google Analytics SDK.
-    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
 
 }

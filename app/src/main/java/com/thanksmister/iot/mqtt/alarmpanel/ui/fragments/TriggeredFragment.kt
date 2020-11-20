@@ -17,7 +17,11 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,21 +33,45 @@ import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.BaseAlarmView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
+import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.TriggeredViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.dialog_alarm_code_set.view.*
+import kotlinx.android.synthetic.main.dialog_alarm_triggered_code.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.view_keypad.view.*
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class TriggeredFragment : BaseFragment() {
+
+    // TODO we need to get these values
+    var codeType: CodeTypes = CodeTypes.DISARM
+    var currentCode: String = ""
+
+    var codeComplete = false
+    var enteredCode = ""
+    val handler: Handler = Handler()
+
+    private val delayRunnable = object : Runnable {
+        override fun run() {
+            handler.removeCallbacks(this)
+            if(codeComplete) {
+                listener?.publishDisarm(enteredCode)
+            }
+            codeComplete = false
+            enteredCode = ""
+        }
+    }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MainViewModel
+
+    lateinit var viewModel: TriggeredViewModel
 
     @Inject
     lateinit var configuration: Configuration
@@ -57,9 +85,7 @@ class TriggeredFragment : BaseFragment() {
     private var listener: OnTriggeredFragmentListener? = null
 
     interface OnTriggeredFragmentListener {
-        fun publishAlertCall()
-        fun showCodeDialog(type: CodeTypes)
-        fun hideTriggeredView()
+        fun publishDisarm(code: String)
     }
 
     override fun onAttach(context: Context) {
@@ -75,20 +101,54 @@ class TriggeredFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Timber.d("onActivityCreated")
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(TriggeredViewModel::class.java)
         observeViewModel(viewModel)
+        if(mqttOptions.useRemoteConfig) {
+            if(mqttOptions.requireCodeForDisarming) {
+                codeType = CodeTypes.DISARM_REMOTE
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated")
 
-        buttonSettings?.setOnClickListener {
-            showSettingsCodeDialog()
+        keypadLayout.button0.setOnClickListener {
+            addPinCode("0")
         }
-
-        alertButton?.setOnClickListener {
-            listener?.publishAlertCall()
+        keypadLayout.button1.setOnClickListener {
+            addPinCode("1")
+        }
+        keypadLayout.button2.setOnClickListener {
+            addPinCode("2")
+        }
+        keypadLayout.button3.setOnClickListener {
+            addPinCode("3")
+        }
+        keypadLayout.button4.setOnClickListener {
+            addPinCode("4")
+        }
+        keypadLayout.button5.setOnClickListener {
+            addPinCode("5")
+        }
+        keypadLayout.button6.setOnClickListener {
+            addPinCode("6")
+        }
+        keypadLayout.button7.setOnClickListener {
+            addPinCode("7")
+        }
+        keypadLayout.button8.setOnClickListener {
+            addPinCode("8")
+        }
+        keypadLayout.button9.setOnClickListener {
+            addPinCode("9")
+        }
+        keypadLayout.buttonDel.setOnClickListener {
+            removePinCode()
+        }
+        keypadLayout.buttonDel.setOnClickListener {
+            removePinCode()
         }
     }
 
@@ -96,96 +156,8 @@ class TriggeredFragment : BaseFragment() {
         return inflater.inflate(R.layout.dialog_alarm_triggered_code, container, false)
     }
 
-    /**
-     * Here we setup the visibility of the bottom navigation bar buttons based on changes in the settings.
-     */
     override fun onResume() {
-
         super.onResume()
-
-        if (viewModel.hasPlatform()) {
-            buttonPlatformLayout?.visibility = View.VISIBLE;
-        } else {
-            buttonPlatformLayout?.visibility = View.INVISIBLE;
-        }
-        if (configuration.hasScreenSaver()) {
-            buttonSleepLayout?.visibility = View.VISIBLE
-        } else {
-            buttonSleepLayout?.visibility = View.GONE
-        }
-        if (configuration.panicButton.not()) {
-            alertButton?.visibility = View.GONE
-        } else {
-            alertButton?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorOneActive.not()) {
-            view?.findViewById<View>(R.id.oneSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.oneSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorTwoActive.not()) {
-            view?.findViewById<View>(R.id.twoSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.twoSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorThreeActive.not()) {
-            view?.findViewById<View>(R.id.threeSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.threeSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorFourActive.not()) {
-            view?.findViewById<View>(R.id.fourSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.fourSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        // TODO we have to move the guides based on screen orientation and dimensions
-        if (mqttOptions.sensorOneActive.not()
-                && mqttOptions.sensorTwoActive.not()
-                && mqttOptions.sensorThreeActive.not()
-                && mqttOptions.sensorFourActive.not()) {
-            guideControlBottom?.setGuidelinePercent(0.60f)
-        }
-
-        // TODO we have to move the guides based on screen orientation and dimensions
-        if (mqttOptions.sensorOneActive.not()
-                && mqttOptions.sensorTwoActive.not()
-                && mqttOptions.sensorThreeActive.not()
-                && mqttOptions.sensorFourActive.not()) {
-            guideControlMiddle?.setGuidelinePercent(0.60f)
-        }
-
-        childFragmentManager.findFragmentById(R.id.oneSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorOneName)
-            sensor.setSensorState(mqttOptions.sensorOneState)
-            sensor.setSensorTopic(mqttOptions.sensorOneTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.twoSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorTwoName)
-            sensor.setSensorState(mqttOptions.sensorTwoState)
-            sensor.setSensorTopic(mqttOptions.sensorTwoTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.threeSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorThreeName)
-            sensor.setSensorState(mqttOptions.sensorThreeState)
-            sensor.setSensorTopic(mqttOptions.sensorThreeTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.fourSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorFourName)
-            sensor.setSensorState(mqttOptions.sensorFourState)
-            sensor.setSensorTopic(mqttOptions.sensorFourTopic)
-        }
     }
 
     override fun onDetach() {
@@ -194,30 +166,41 @@ class TriggeredFragment : BaseFragment() {
             setOnTouchListener(null)
         }
         listener = null
+        handler.removeCallbacks(delayRunnable)
     }
 
-    private fun observeViewModel(viewModel: MainViewModel) {
-        disposable.add(viewModel.getAlarmState()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ state ->
-                    Timber.d("Alarm state: $state")
-                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}")
-                }, { error -> Timber.e("Unable to get message: $error") }))
+    private fun observeViewModel(viewModel: TriggeredViewModel) {
+        // nothing to observer
     }
 
-    private fun showSettingsCodeDialog() {
-        if (configuration.isFirstTime) {
-            activity?.let {
-                val intent = SettingsActivity.createStartIntent(it.applicationContext)
-                startActivity(intent)
+    private fun addPinCode(code: String) {
+        if (codeComplete) return
+        enteredCode += code
+        if(codeType == CodeTypes.DISARM_REMOTE) {
+            if(enteredCode.length == MAX_CODE_LENGTH) {
+                codeComplete = true
+                handler.postDelayed(delayRunnable, 500)
             }
-        } else {
-            listener?.showCodeDialog(CodeTypes.SETTINGS)
+        } else if (enteredCode.length == MAX_CODE_LENGTH && enteredCode == currentCode) {
+            codeComplete = true
+            handler.postDelayed(delayRunnable, 500)
+        } else if (enteredCode.length == MAX_CODE_LENGTH) {
+            codeComplete = true
+            handler.postDelayed(delayRunnable, 500)
+        }
+    }
+
+    private fun removePinCode() {
+        if (codeComplete) {
+            return
+        }
+        if (enteredCode.isNotEmpty()) {
+            enteredCode = enteredCode.substring(0, enteredCode.length - 1)
         }
     }
 
     companion object {
+        val MAX_CODE_LENGTH = 4
         @JvmStatic
         fun newInstance(): TriggeredFragment {
             return TriggeredFragment()

@@ -19,6 +19,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_SENSOR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import io.reactivex.Completable
@@ -28,46 +29,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TriggeredViewModel @Inject
-constructor(application: Application, private val messageDataSource: MessageDao,
-            private val sunSource: SunDao, private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
-
-    fun getMessages():Flowable<List<MessageMqtt>> {
-        return messageDataSource.getMessages()
-                .filter {messages -> messages.isNotEmpty()}
-    }
-
-    fun getAlarmState():Flowable<String> {
-        return messageDataSource.getMessages(TYPE_ALARM)
-                .filter {messages -> messages.isNotEmpty()}
-                .map {messages -> messages[messages.size - 1]}
-                .map {message ->
-                    Timber.d("state: " + message.payload)
-                    setAlarmModeFromState(message.payload)
-                    message.payload
-                }
-    }
-
-    fun clearMessages():Completable {
-        return Completable.fromAction {
-            messageDataSource.deleteAllMessages()
-        }
-    }
-
-    private fun setAlarmModeFromState(state: String?) {
-        state?.let {
-            setAlarmMode(state)
-        }
-    }
-
-    fun setAlarmMode(value: String) {
-        configuration.alarmMode = value;
-    }
-
-    fun getAlarmMode(): String {
-        return configuration.alarmMode
-    }
 
     public override fun onCleared() {
         if (!disposable.isDisposed) {

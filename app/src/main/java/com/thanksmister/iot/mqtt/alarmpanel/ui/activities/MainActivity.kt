@@ -64,6 +64,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         PanicBottomSheetFragment.OnBottomSheetFragmentListener,
         MainFragment.OnMainFragmentListener,
         InformationFragment.InformationFragmentListener,
+        TriggeredFragment.OnTriggeredFragmentListener,
         PlatformFragment.OnPlatformFragmentListener {
 
     @Inject
@@ -463,32 +464,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
     override fun showAlarmTriggered() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
-        var codeType = CodeTypes.DISARM
-        if(mqttOptions.useRemoteConfig) {
-            if(mqttOptions.requireCodeForDisarming) {
-                codeType = CodeTypes.DISARM_REMOTE
-            }
-        }
         triggeredView.visibility = View.VISIBLE
         pagerView.visibility = View.INVISIBLE
-        val disarmView = findViewById<AlarmTriggeredView>(R.id.alarmTriggeredView)
-        disarmView.setCode(configuration.alarmCode.toString())
-        disarmView.setAlarmCodeType(codeType)
-        disarmView.setUseSound(configuration.systemSounds)
-        disarmView.listener = object : AlarmTriggeredView.ViewListener {
-            override fun onComplete(code: String) {
-                publishDisarm(code)
-            }
-            override fun onError() {
-                Toast.makeText(applicationContext, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun hideTriggeredView() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
         pagerView.visibility = View.VISIBLE
         triggeredView.visibility = View.INVISIBLE
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
     }
 
     override fun showArmOptionsDialog() {
