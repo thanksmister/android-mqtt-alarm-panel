@@ -48,7 +48,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.adapter_forcast_card.view.*
 import kotlinx.android.synthetic.main.dialog_screen_saver.view.*
+import kotlinx.android.synthetic.main.dialog_screen_saver.view.temperatureText
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -243,12 +245,14 @@ class ScreenSaverView : RelativeLayout {
         val precipitation = weather.precipitation.orEmpty()
         if (useUnsplashScreenSaver) {
             temperatureTextSmall.text = saverContext?.getString(R.string.text_temperature, weather.temperature.toString(), displayUnits)
+            temperatureTextSmall.text = saverContext?.getString(R.string.text_temperature, weather.temperature.toString(), displayUnits)
             if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
                 conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
             } else {
                 conditionImageSmall.setImageDrawable(ResourcesCompat.getDrawable(resources, WeatherUtils.getIconForWeatherCondition(weather.condition), (saverContext!! as BaseActivity).theme))
             }
         } else {
+            temperatureText.text = saverContext?.getString(R.string.text_temperature, weather.temperature.toString(), displayUnits)
             if (StringUtils.isDouble(precipitation) && shouldTakeUmbrellaToday(StringUtils.stringToDouble(precipitation))) {
                 conditionImage.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_rain_umbrella, (saverContext!! as BaseActivity).theme))
             } else {

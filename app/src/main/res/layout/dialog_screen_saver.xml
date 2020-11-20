@@ -57,7 +57,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:tint="@color/blue_alpha"
+                app:tint="@color/blue_alpha"
                 tools:src="@drawable/ic_thunderstorm" />
 
         </LinearLayout>
