@@ -50,7 +50,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmTriggeredView
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -90,6 +89,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     private var forecastBottomSheet: ForecastBottomSheetFragment? = null
     private var optionsBottomSheet: OptionsBottomSheetFragment? = null
     private var codeBottomSheet: CodeBottomSheetFragment? = null
+    private var previousAlarmMode: String? = null
+    private var previousSunState: String? = null
 
     private val inactivityCallback = Runnable {
         dismissBottomSheets()
@@ -107,9 +108,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
         super.onCreate(savedInstanceState)
 
-        if(configuration.useDarkTheme) {
+        if (configuration.useDarkTheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else  {
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         setContentView(R.layout.activity_main)
@@ -173,6 +174,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                     .show()
         }
 
+        previousAlarmMode = configuration.alarmMode
+
         // We must be sure we have the instantiated the view model before we observe.
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
@@ -217,47 +220,52 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ state ->
-                    this@MainActivity.runOnUiThread {
-                        when (state) {
-                            MqttUtils.STATE_DISARMED -> {
-                                awakenDeviceForAction()
-                                resetInactivityTimer()
-                            }
-                            MqttUtils.STATE_ARMED_NIGHT,
-                            MqttUtils.STATE_ARMED_AWAY,
-                            MqttUtils.STATE_ARMED_HOME -> {
-                                awakenDeviceForAction()
-                                resetInactivityTimer()
-                            }
-                            MqttUtils.STATE_TRIGGERED -> {
-                                awakenDeviceForAction() // 3 hours
-                                stopDisconnectTimer() // stop screen saver mode
-                                clearInactivityTimer() // Remove inactivity timer
-                            }
-                            MqttUtils.STATE_ARMING_NIGHT,
-                            MqttUtils.STATE_ARMING_AWAY,
-                            MqttUtils.STATE_ARMING_HOME,
-                            MqttUtils.STATE_ARMING,
-                            MqttUtils.STATE_DISARMING,
-                            MqttUtils.STATE_PENDING -> {
-                                awakenDeviceForAction()
-                                resetInactivityTimer()
+                    if (previousAlarmMode != configuration.alarmMode) {
+                        this@MainActivity.runOnUiThread {
+                            when (state) {
+                                MqttUtils.STATE_DISARMED -> {
+                                    awakenDeviceForAction()
+                                    resetInactivityTimer()
+                                }
+                                MqttUtils.STATE_ARMED_NIGHT,
+                                MqttUtils.STATE_ARMED_AWAY,
+                                MqttUtils.STATE_ARMED_HOME -> {
+                                    awakenDeviceForAction()
+                                    resetInactivityTimer()
+                                }
+                                MqttUtils.STATE_TRIGGERED -> {
+                                    awakenDeviceForAction() // 3 hours
+                                    stopDisconnectTimer() // stop screen saver mode
+                                    clearInactivityTimer() // Remove inactivity timer
+                                }
+                                MqttUtils.STATE_ARMING_NIGHT,
+                                MqttUtils.STATE_ARMING_AWAY,
+                                MqttUtils.STATE_ARMING_HOME,
+                                MqttUtils.STATE_ARMING,
+                                MqttUtils.STATE_DISARMING,
+                                MqttUtils.STATE_PENDING -> {
+                                    awakenDeviceForAction()
+                                    resetInactivityTimer()
+                                }
                             }
                         }
+                        previousAlarmMode = state
                     }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
 
         disposable.add(viewModel.getSun()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ sunValue ->
-                    this@MainActivity.runOnUiThread {
-                        if (configuration.useNightDayMode && configuration.useDarkTheme.not()) {
-                            dayNightModeCheck(sunValue.sun)
+                .subscribe { sunValue ->
+                    if (previousSunState != sunValue.sun) {
+                        previousSunState = sunValue.sun
+                        this@MainActivity.runOnUiThread {
+                            if (configuration.useNightDayMode && configuration.useDarkTheme.not()) {
+                                dayNightModeCheck(sunValue.sun)
+                            }
                         }
                     }
-                }, { error -> Timber.e("Sun Data error: " + error) }))
-
+                })
 
         viewModel.getAlertMessage().observe(this, Observer<String> { message ->
             Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
@@ -376,6 +384,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedHome() {
+        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_HOME)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -384,6 +393,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedAway() {
+        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_AWAY)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -392,6 +402,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedNight() {
+        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_NIGHT)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
@@ -400,6 +411,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishDisarm(code: String) {
+        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_DISARM)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -417,8 +429,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
      */
     override fun showCodeDialog(type: CodeTypes) {
         var codeType = type
-        if(mqttOptions.useRemoteConfig) {
-            if(mqttOptions.requireCodeForDisarming && type == CodeTypes.DISARM) {
+        if (mqttOptions.useRemoteConfig) {
+            if (mqttOptions.requireCodeForDisarming && type == CodeTypes.DISARM) {
                 codeType = CodeTypes.DISARM_REMOTE
             } else if (mqttOptions.requireCodeForArming && type == CodeTypes.ARM) {
                 codeType = CodeTypes.ARM_REMOTE
@@ -426,39 +438,39 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         }
         codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), codeType,
                 object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
-            override fun onComplete(code: String) {
-                when (type) {
-                    CodeTypes.DISARM -> {
-                        publishDisarm(code)
+                    override fun onComplete(code: String) {
+                        when (type) {
+                            CodeTypes.DISARM -> {
+                                publishDisarm(code)
+                            }
+                            CodeTypes.SETTINGS -> {
+                                val intent = SettingsActivity.createStartIntent(this@MainActivity)
+                                startActivity(intent)
+                            }
+                            CodeTypes.ARM_HOME -> {
+                                publishArmedHome()
+                            }
+                            CodeTypes.ARM_AWAY -> {
+                                publishArmedAway()
+                            }
+                            CodeTypes.ARM_NIGHT -> {
+                                publishArmedNight()
+                            }
+                            else -> {
+                                // na-da
+                            }
+                        }
+                        codeBottomSheet?.dismiss()
                     }
-                    CodeTypes.SETTINGS -> {
-                        val intent = SettingsActivity.createStartIntent(this@MainActivity)
-                        startActivity(intent)
-                    }
-                    CodeTypes.ARM_HOME -> {
-                        publishArmedHome()
-                    }
-                    CodeTypes.ARM_AWAY -> {
-                        publishArmedAway()
-                    }
-                    CodeTypes.ARM_NIGHT -> {
-                        publishArmedNight()
-                    }
-                    else -> {
-                        // na-da
-                    }
-                }
-                codeBottomSheet?.dismiss()
-            }
 
-            override fun onCodeError() {
-                Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-            }
+                    override fun onCodeError() {
+                        Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
+                    }
 
-            override fun onCancel() {
-                codeBottomSheet?.dismiss()
-            }
-        })
+                    override fun onCancel() {
+                        codeBottomSheet?.dismiss()
+                    }
+                })
         codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
     }
 
@@ -475,23 +487,25 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun showArmOptionsDialog() {
-        optionsBottomSheet = OptionsBottomSheetFragment(object: OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
+        optionsBottomSheet = OptionsBottomSheetFragment(object : OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
             override fun onArmHome() {
-                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_HOME)
                 } else {
                     publishArmedHome()
                 }
             }
+
             override fun onArmAway() {
-                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_AWAY)
                 } else {
                     publishArmedAway()
                 }
             }
+
             override fun onArmNight() {
-                if(mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_NIGHT)
                 } else {
                     publishArmedNight()
@@ -537,8 +551,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun manuallyLaunchScreenSaver() {
+        val alarmMode = configuration.alarmMode
+        if (configuration.isAlarmTriggered().not() && configuration.isAlarmArming().not() && configuration.isDisarming().not()) {
+            showScreenSaver()
+        }
         clearInactivityTimer()
-        showScreenSaver()
     }
 
     private inner class MainSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {

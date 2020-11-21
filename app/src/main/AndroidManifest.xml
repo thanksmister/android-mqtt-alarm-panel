@@ -56,7 +56,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME"/>
+                <!--<category android:name="android.intent.category.HOME"/>-->
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
 
@@ -68,13 +68,6 @@
         <activity android:name=".ui.activities.LogActivity"/>
         <activity android:name=".ui.activities.LiveCameraActivity"/>
 
-        <!-- Preference Provider -->
-        <provider
-                android:name="dpreference.PreferenceProvider"
-                android:authorities="com.thanksmister.iot.mqtt.alarmpanel.dpreference.PreferenceProvider"
-                android:enabled="true"
-                android:exported="false"/>
-        
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
 

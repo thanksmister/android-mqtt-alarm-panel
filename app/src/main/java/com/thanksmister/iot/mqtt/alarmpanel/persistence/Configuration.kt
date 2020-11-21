@@ -93,6 +93,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
                 || alarmMode == MqttUtils.STATE_PENDING)
     }
 
+    fun isDisarming(): Boolean {
+        return (alarmMode == MqttUtils.STATE_DISARMING)
+    }
+
     fun isAlarmDisarmedMode(): Boolean {
         return alarmMode == MqttUtils.STATE_DISARMED
     }

@@ -20,6 +20,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_SENSOR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import io.reactivex.Completable
@@ -37,6 +38,7 @@ constructor(application: Application, private val messageDataSource: MessageDao,
     private val alertText = AlertMessage()
     private val snackbarText = SnackbarMessage()
     private var initialized = false;
+    private var previousAlarmMode: String = ""
 
     fun getToastMessage(): ToastMessage {
         return toastText
@@ -69,17 +71,12 @@ constructor(application: Application, private val messageDataSource: MessageDao,
 
     fun getAlarmState():Flowable<String> {
         return messageDataSource.getMessages(TYPE_ALARM)
-                .distinct()
                 .filter {messages -> messages.isNotEmpty()}
                 .map {messages -> messages[messages.size - 1]}
-                .filter {
-                    initialized.not() ||
-                    it.payload != getAlarmMode()
-                }
                 .map {message ->
-                    initialized = true
-                    setAlarmModeFromState(message.payload)
-                    message.payload
+                    val payload = message.payload
+                    //setAlarmModeFromState(payload)
+                    payload
                 }
     }
 
