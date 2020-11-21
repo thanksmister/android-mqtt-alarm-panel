@@ -172,7 +172,7 @@
     <string name="text_disarmed">DISARMED</string>
     <string name="dialog_alarm_triggered">ENTER CODE</string>
     <string name="dialog_first_time">Since this is your first time, please setup your device, MQTT server, and alarm information (the default alarm code is 1234).</string>
-    <string name="text_alarm_pending">ALARM PENDING</string>
+    <string name="text_alarm_pending">PENDING</string>
 
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>

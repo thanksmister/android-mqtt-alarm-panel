@@ -27,13 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
-        android:visibility="invisible"
-        tools:visibility="visible"/>
+        android:visibility="invisible" />
 
     <com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
+        android:background="@color/white"
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:visibility="invisible"/>
+        android:layout_height="match_parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

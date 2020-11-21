@@ -8,7 +8,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 def versionMajor = 1
 def versionMinor = 0
 def versionPatch = 0
-def versionBuild = 4 // bump for dog food builds, public betas, etc.
+def versionBuild = 5 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -38,12 +38,6 @@ def MAIL_GUN_URL() {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
     return properties.getProperty("mailGunUr");
-}
-
-def IMGUR_CLIENT_ID() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("clientId");
 }
 
 def LATITUDE() {
@@ -82,12 +76,6 @@ def BROKER() {
     return properties.getProperty("broker");
 }
 
-def IMGUR_TAG() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("tag");
-}
-
 android {
     kapt {
         generateStubs = true
@@ -123,14 +111,12 @@ android {
             buildConfigField 'Integer', 'ALARM_CODE', ALARM_CODE()
             buildConfigField 'String', 'MAIL_GUN_KEY', "\"" + MAIL_GUN_KEY() +"\""
             buildConfigField 'String', 'MAIL_GUN_URL', "\"" + MAIL_GUN_URL() +"\""
-            buildConfigField 'String', 'IMGUR_CLIENT_ID', "\"" + IMGUR_CLIENT_ID() +"\""
             buildConfigField 'String', 'LATITUDE', "\"" + LATITUDE() +"\""
             buildConfigField 'String', 'LONGITUDE', "\"" + LONGITUDE() +"\""
             buildConfigField 'String', 'MAIL_FROM', "\"" + MAIL_FROM() +"\""
             buildConfigField 'String', 'MAIL_TO', "\"" + MAIL_TO() +"\""
             buildConfigField 'String', 'HASS_URL', "\"" + HASS_URL() +"\""
             buildConfigField 'String', 'BROKER', "\"" + BROKER() +"\""
-            buildConfigField 'String', 'IMGUR_TAG', "\"" + IMGUR_TAG() +"\""
             buildConfigField 'String', 'TELEGRAM_TOKEN', "\"" + TELEGRAM_TOKEN() +"\""
             buildConfigField 'String', 'TELEGRAM_CHAT_ID', "\"" + TELEGRAM_CHAT_ID() +"\""
         }
@@ -148,14 +134,12 @@ android {
             buildConfigField 'Integer', 'ALARM_CODE', '1234'
             buildConfigField 'String', 'MAIL_GUN_KEY', '""'
             buildConfigField 'String', 'MAIL_GUN_URL','""'
-            buildConfigField 'String', 'IMGUR_CLIENT_ID', '""'
             buildConfigField 'String', 'LATITUDE', '""'
             buildConfigField 'String', 'LONGITUDE', '""'
             buildConfigField 'String', 'MAIL_FROM', '""'
             buildConfigField 'String', 'MAIL_TO', '""'
             buildConfigField 'String', 'HASS_URL', '""'
             buildConfigField 'String', 'BROKER', '""'
-            buildConfigField 'String', 'IMGUR_TAG', '""'
             buildConfigField 'String', 'TELEGRAM_TOKEN', '""'
             buildConfigField 'String', 'TELEGRAM_CHAT_ID', '""'
         }

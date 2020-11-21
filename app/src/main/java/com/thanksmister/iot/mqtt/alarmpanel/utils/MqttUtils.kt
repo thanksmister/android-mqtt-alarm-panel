@@ -92,11 +92,17 @@ class MqttUtils {
         const val STATE_ARMED_HOME = "armed_home"
         const val STATE_ARMED_NIGHT = "armed_night"
         const val STATE_PENDING = "pending"
+        const val STATE_PENDING_ALARM = "pending_alarm"
         const val STATE_ARMING = "arming"
         const val STATE_DISARMING = "disarming"
+
+
         const val STATE_ARMING_AWAY = "arming_away"
+        const val STATE_ARM_AWAY = "arm_away"
         const val STATE_ARMING_HOME = "arming_home"
+        const val STATE_ARM_HOME = "arm_home"
         const val STATE_ARMING_NIGHT = "arming_night"
+        const val STATE_ARM_NIGHT = "arm_night"
 
         const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
         const val DEFAULT_SENSOR_TOPIC = "home/sensor/"

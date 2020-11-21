@@ -87,6 +87,9 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
     fun isAlarmArming(): Boolean {
         return (alarmMode == MqttUtils.STATE_ARMING
+                || alarmMode == MqttUtils.STATE_ARMING_AWAY
+                || alarmMode == MqttUtils.STATE_ARMING_NIGHT
+                || alarmMode == MqttUtils.STATE_ARMING_HOME
                 || alarmMode == MqttUtils.COMMAND_ARM_HOME
                 || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
                 || alarmMode == MqttUtils.COMMAND_ARM_AWAY
@@ -103,6 +106,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
     fun isAlarmTriggered(): Boolean {
         return (alarmMode == MqttUtils.STATE_TRIGGERED)
+    }
+
+    fun isPendingMode(): Boolean {
+        return (alarmMode == MqttUtils.STATE_PENDING || alarmMode == MqttUtils.STATE_PENDING_ALARM)
     }
 
     var webUrl: String?

@@ -170,7 +170,7 @@
     <string name="text_disarmed">INACTIVA</string>
     <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO</string>
     <string name="dialog_first_time">Puesto que esta es la primera vez, por favor ajusta el dispositivo, el servidor MQTT, y la información sobre tu alarma (el código por defecto es 1234).</string>
-    <string name="text_alarm_pending">ALARMA ACTIVÁNDOSE</string>
+    <string name="text_alarm_pending">ACTIVÁNDOSE</string>
 
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>

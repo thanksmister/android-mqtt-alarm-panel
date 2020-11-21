@@ -172,7 +172,7 @@
     <string name="text_disarmed">DESACTIVEE</string>
     <string name="dialog_alarm_triggered">SAISIR CODE</string>
     <string name="dialog_first_time">Comme il s\'agit de votre première utilisation, veuillez configurer votre appareil, votre serveur MQTT ainsi que les informations relatives à l\'alarme (le code par défaut est 1234).</string>
-    <string name="text_alarm_pending">EN COURS D\'ACTIVATION</string>
+    <string name="text_alarm_pending">ATTENTE</string>
 
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>

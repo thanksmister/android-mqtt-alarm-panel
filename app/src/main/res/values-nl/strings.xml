@@ -170,7 +170,7 @@
     <string name="text_disarmed">GEDEACTIVEERD</string>
     <string name="dialog_alarm_triggered">VOER CODE</string>
     <string name="dialog_first_time">Gezien dit je eerste keer is, stel je apparaat in, je MQTT server, en alarm informatie (de standaard alarm code is 1234).</string>
-    <string name="text_alarm_pending">ALARM WACHTEND</string>
+    <string name="text_alarm_pending">WACHTEND</string>
 
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>

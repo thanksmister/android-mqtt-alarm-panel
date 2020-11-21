@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -100,8 +101,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
-        clearInactivityTimer()
-        showScreenSaver()
+        manuallyLaunchScreenSaver()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,9 +130,14 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         pagerView.addOnPageChangeListener(this)
         pagerView.setPagingEnabled(false)
 
+        triggeredView.visibility = View.GONE
+        pagerView.visibility = View.VISIBLE
+
         if (BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
             mqttOptions.setBroker(BuildConfig.BROKER)
+            mqttOptions.setPassword("3355")
+            mqttOptions.setUsername("mister")
             configuration.webUrl = BuildConfig.HASS_URL
             configuration.setMailFrom(BuildConfig.MAIL_FROM)
             configuration.setMailGunApiKey(BuildConfig.MAIL_GUN_KEY)
@@ -140,8 +145,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             configuration.setMailGunUrl(BuildConfig.MAIL_GUN_URL)
             configuration.telegramChatId = BuildConfig.TELEGRAM_CHAT_ID
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
-            imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
-            imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
             configuration.isFirstTime = false
             configuration.setClockScreenSaverModule(true)
             configuration.setHasCameraCapture(true)
@@ -477,13 +480,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun showAlarmTriggered() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
         triggeredView.visibility = View.VISIBLE
-        pagerView.visibility = View.INVISIBLE
+        pagerView.visibility = View.GONE
     }
 
     override fun hideTriggeredView() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
         pagerView.visibility = View.VISIBLE
-        triggeredView.visibility = View.INVISIBLE
+        triggeredView.visibility = View.GONE
     }
 
     override fun showArmOptionsDialog() {
@@ -552,7 +555,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
     override fun manuallyLaunchScreenSaver() {
         val alarmMode = configuration.alarmMode
-        if (configuration.isAlarmTriggered().not() && configuration.isAlarmArming().not() && configuration.isDisarming().not()) {
+        if (configuration.isAlarmTriggered().not()
+                && configuration.isPendingMode().not()
+                && configuration.isAlarmArming().not()
+                && configuration.isDisarming().not()) {
             showScreenSaver()
         }
         clearInactivityTimer()
