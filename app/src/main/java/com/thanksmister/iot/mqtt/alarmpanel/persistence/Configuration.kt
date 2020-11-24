@@ -37,6 +37,11 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
 
+    var useDarkThemeToggle: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
+
+
     var alarmMode: String
         get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISABLED).orEmpty()
         set(value) = this.sharedPreferences.edit().putString(PREF_ALARM_MODE, value).apply()
@@ -123,6 +128,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     var dayNightMode: String
         get() = this.sharedPreferences.getString(DISPLAY_MODE_DAY_NIGHT, DISPLAY_MODE_DAY).orEmpty()
         set(value) = this.sharedPreferences.edit().putString(DISPLAY_MODE_DAY_NIGHT, value).apply()
+
+    var dayNightModeSet: Boolean
+        get() = this.sharedPreferences.getBoolean(DISPLAY_MODE_DAY_NIGHT_SET, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(DISPLAY_MODE_DAY_NIGHT_SET, value).apply()
 
     var nightModeChanged: Boolean
         get() = this.sharedPreferences.getBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, false)
@@ -460,6 +469,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         private const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
         private const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
         private const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
+        private const val DISPLAY_MODE_DAY_NIGHT_SET = "mode_day_night_set"
         private const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
         private const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
         private const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
@@ -472,7 +482,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
         private const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
         private const val PREF_PANIC_ALERT = "pref_panic_alert"
-        private const val PREF_DARK_THEME = "pref_dark_theme"
+        private const val PREF_DARK_THEME = "pref_dark_theme_toggle"
         private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
         private const val PREF_MAX_STREAMS  = "pref_max_streams"
         private const val PREF_HTTP_PORT  = "pref_http_port"

@@ -89,6 +89,7 @@ class ControlsFragment : BaseFragment() {
     var filter = IntentFilter(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
 
     private var delayTimerHandler: Handler? = null
+
     private var mediaPlayer: MediaPlayer? = null
 
     private val delayTimerRunnable = object : Runnable {

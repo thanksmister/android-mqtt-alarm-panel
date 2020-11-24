@@ -107,11 +107,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
-        if (configuration.useDarkTheme) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        val dayNightModeSet = configuration.dayNightModeSet
+        if (configuration.useDarkTheme && dayNightModeSet.not()) {
+            setDarkTheme()
+        } else if (configuration.useNightDayMode && dayNightModeSet.not()) {
+            setDayNightMode()
+        } else if (dayNightModeSet.not()) {
+            setLightTheme()
         }
         setContentView(R.layout.activity_main)
 
@@ -151,6 +153,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             configuration.setWebModule(true)
             configuration.setShowWeatherModule(true)
             configuration.setTssModule(true)
+            configuration.useNightDayMode = true
 
             // Sensors
             mqttOptions.sensorOneActive = true
@@ -201,8 +204,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         super.onStart()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(alarmPanelService)
+            serviceStarted = true
         } else {
             startService(alarmPanelService)
+            serviceStarted = true
         }
     }
 
@@ -260,12 +265,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { sunValue ->
-                    if (previousSunState != sunValue.sun) {
-                        previousSunState = sunValue.sun
-                        this@MainActivity.runOnUiThread {
-                            if (configuration.useNightDayMode && configuration.useDarkTheme.not()) {
-                                dayNightModeCheck(sunValue.sun)
-                            }
+                    this@MainActivity.runOnUiThread {
+                        val useNightMode = configuration.useNightDayMode
+                        val useDarkTheme = configuration.useDarkTheme
+                        if (useNightMode && useDarkTheme.not()) {
+                            dayNightModeCheck(sunValue.sun)
                         }
                     }
                 })

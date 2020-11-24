@@ -44,12 +44,18 @@ import javax.inject.Inject
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var mqttOptions: MQTTOptions
-    @Inject lateinit var imageOptions: ImageOptions
-    @Inject lateinit var dialogUtils: DialogUtils
-    @Inject lateinit var weatherDao: WeatherDao
-    @Inject lateinit var screenUtils: ScreenUtils
+    @Inject
+    lateinit var configuration: Configuration
+    @Inject
+    lateinit var mqttOptions: MQTTOptions
+    @Inject
+    lateinit var imageOptions: ImageOptions
+    @Inject
+    lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var weatherDao: WeatherDao
+    @Inject
+    lateinit var screenUtils: ScreenUtils
 
     var serviceStarted: Boolean = false
     val disposable = CompositeDisposable()
@@ -58,16 +64,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     private var hasNetwork = AtomicBoolean(true)
-
-    override fun onStart(){
-        super.onStart()
-        if(configuration.useDarkTheme) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else  {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-        screenUtils.setScreenBrightness()
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
         when (requestCode) {
@@ -94,18 +90,14 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     public override fun onResume() {
         super.onResume()
         checkPermissions()
-        if(configuration.nightModeChanged) {
+        if (configuration.nightModeChanged && configuration.useDarkTheme) {
+            configuration.dayNightModeSet = false
+            configuration.nightModeChanged = false //
+            setDarkTheme()
+        } else if (configuration.nightModeChanged) {
+            configuration.dayNightModeSet = false
             configuration.nightModeChanged = false // reset
-            Timber.d("dayNightModeChanged")
-            if (!configuration.useNightDayMode && !screenUtils.tisTheDay() && serviceStarted) {
-                stopService(alarmPanelService)
-                hideScreenSaver()
-                screenUtils.setScreenBrightness()
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                recreate()
-            }
-        } else {
-            screenUtils.setScreenBrightness()
+            setDayNightMode()
         }
     }
 
@@ -117,29 +109,48 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         return item.itemId == android.R.id.home
     }
 
-    fun dayNightModeCheck(sunValue:String?) {
+    // This is called from the MQTT command, we need to recreate the activity to take effect
+    fun dayNightModeCheck(sunValue: String?) {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
-        if (sunValue == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
-            configuration.dayNightMode = sunValue
-            stopService(alarmPanelService)
-            serviceStarted = false
-            screenUtils.setScreenBrightness()
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            this.recreate()
-        } else if (sunValue == Configuration.SUN_ABOVE_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
-            configuration.dayNightMode = sunValue
-            stopService(alarmPanelService)
-            serviceStarted = false
-            screenUtils.setScreenBrightness()
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            this.recreate()
+        sunValue?.let {
+            if (it == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+                configuration.dayNightMode = it
+                configuration.dayNightModeSet = false
+                configuration.useDarkTheme = true
+                setDayNightMode()
+            } else if (it == Configuration.SUN_ABOVE_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+                configuration.dayNightMode = it
+                configuration.dayNightModeSet = false
+                configuration.useDarkTheme = false
+                setLightTheme()
+            }
         }
     }
 
-    fun setNightMode() {
-        if(configuration.useDarkTheme) {
+    // When activity is recreated we can switch the day night mode
+    fun setDayNightMode() {
+        val dayNightMode = configuration.dayNightMode
+        if (dayNightMode == Configuration.SUN_BELOW_HORIZON) {
+            setDarkTheme()
+        } else if (dayNightMode == Configuration.SUN_ABOVE_HORIZON) {
+            setLightTheme()
+        }
+    }
+
+    fun setDarkTheme() {
+        val nightMode = AppCompatDelegate.getDefaultNightMode()
+        if(nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            configuration.dayNightModeSet = true
+            screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
+        }
+    }
+
+    fun setLightTheme() {
+        val nightMode = AppCompatDelegate.getDefaultNightMode()
+        if(nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            configuration.dayNightModeSet = true
+            screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
@@ -203,7 +214,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     fun hasNetworkConnectivity(): Boolean {
-        if(hasNetwork.get()) {
+        if (hasNetwork.get()) {
             handleNetworkConnect()
         }
         return hasNetwork.get()
@@ -215,14 +226,14 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this@BaseActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                 try {
-                     ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                             Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+                try {
+                    ActivityCompat.requestPermissions(this@BaseActivity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
 
-                 } catch (e: RuntimeException) {
-                     Timber.e("Permissions error: ${e.message}")
-                 }
-                 return
+                } catch (e: RuntimeException) {
+                    Timber.e("Permissions error: ${e.message}")
+                }
+                return
             }
         }
     }

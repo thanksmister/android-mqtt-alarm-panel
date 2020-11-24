@@ -176,39 +176,15 @@ class SettingsFragment : BaseSettingsFragment() {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             "pref_dark_theme" -> {
+                configuration.nightModeChanged = true
                 configuration.useDarkTheme = themePreference.isChecked
                 this.requireActivity().recreate()
             }
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked
             }
-            /*Configuration.PREF_FINGERPRINT -> {
-                val checked = fingerprintPreference.isChecked
-                if (isFingerprintSupported()) {
-                    configuration.fingerPrint = checked
-                } else {
-                    Toast.makeText(activity, getString(R.string.pref_fingerprint_error), Toast.LENGTH_LONG).show()
-                    fingerprintPreference.isChecked = false
-                    configuration.fingerPrint = false
-                }
-            }*/
         }
     }
-
-    /* @SuppressLint("InlinedApi")
-     private fun isFingerprintSupported(): Boolean {
-         try {
-             val fingerPrintIdentity = FingerprintIdentify(context)
-             Timber.w("Fingerprint isFingerprintEnable: " + fingerPrintIdentity.isFingerprintEnable)
-             Timber.w("Fingerprint isHardwareEnable: " + fingerPrintIdentity.isHardwareEnable)
-             if(fingerPrintIdentity.isFingerprintEnable && fingerPrintIdentity.isHardwareEnable) {
-                 return true
-             }
-         } catch (e: ClassNotFoundException) {
-             Timber.w("Fingerprint: " + e.message)
-         }
-         return false
-     }*/
 
     private fun showAlarmCodeDialog() {
         defaultCode = configuration.alarmCode

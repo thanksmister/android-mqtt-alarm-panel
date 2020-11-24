@@ -224,18 +224,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && powerManager.isInteractive || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH && powerManager.isScreenOn
         }
 
-    private val screenBrightness: Int
-        get() {
-            Timber.d("getScreenBrightness")
-            var brightness = 0
-            try {
-                brightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return brightness
-        }
-
     private val state: JSONObject
         get() {
             Timber.d("getState")
@@ -586,7 +574,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun processCommand(id: String, topic: String, commandJson: JSONObject) {
         // Timber.d("processCommand ${commandJson}")
-       var payload: String = ""
+        var payload: String = ""
         try {
             if (commandJson.has(COMMAND_WAKE)) {
                 payload = commandJson.getString(COMMAND_WAKE)

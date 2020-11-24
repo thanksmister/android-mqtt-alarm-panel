@@ -30,7 +30,7 @@
         android:visibility="invisible" />
 
     <com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
-        android:background="@color/white"
+        android:background="@color/colorPrimaryDark"
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

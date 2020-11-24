@@ -296,9 +296,9 @@ class MainFragment : BaseFragment() {
                             }
                             MqttUtils.STATE_PENDING -> {
                                 dialogUtils.clearDialogs()
-                                if (configuration.isAlarmArmedMode()) {
-                                    //showAlarmDisableDialog()
-                                }
+                                /*if (configuration.isAlarmArmedMode()) {
+                                    showAlarmDisableDialog()
+                                }*/
                             }
                             MqttUtils.STATE_TRIGGERED -> {
                                 dialogUtils.clearDialogs()
