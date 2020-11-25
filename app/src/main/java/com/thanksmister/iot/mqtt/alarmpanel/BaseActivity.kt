@@ -116,12 +116,12 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             if (it == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
                 configuration.dayNightMode = it
                 configuration.dayNightModeSet = false
-                configuration.useDarkTheme = true
+                configuration.darkThemeRemote = true
                 setDayNightMode()
             } else if (it == Configuration.SUN_ABOVE_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
                 configuration.dayNightMode = it
                 configuration.dayNightModeSet = false
-                configuration.useDarkTheme = false
+                configuration.darkThemeRemote = false
                 setLightTheme()
             }
         }
@@ -160,7 +160,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
      * with the alarm disabled because the disable time will be longer than this.
      */
     fun showScreenSaver() {
-        if (!configuration.isAlarmTriggered() && configuration.hasScreenSaver()) {
+        if (configuration.canShowScreenSaver()) {
             val hasWeather = configuration.showWeatherModule()
             val isImperial = configuration.weatherUnitsImperial
             try {

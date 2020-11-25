@@ -154,7 +154,7 @@ class ControlsFragment : BaseFragment() {
                 } else if (configuration.isAlarmArmedMode()
                         || configuration.isAlarmArming()
                         || configuration.isAlarmTriggered()
-                        || configuration.isPendingMode()) {
+                        || configuration.isAlarmPending()) {
                     listener?.showCodeDialog(CodeTypes.DISARM)
                 }
             } else {

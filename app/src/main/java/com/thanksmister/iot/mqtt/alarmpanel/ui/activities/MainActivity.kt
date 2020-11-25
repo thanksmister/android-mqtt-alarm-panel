@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -29,7 +28,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -108,7 +106,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
         super.onCreate(savedInstanceState)
         val dayNightModeSet = configuration.dayNightModeSet
-        if (configuration.useDarkTheme && dayNightModeSet.not()) {
+        if ((configuration.useDarkTheme || configuration.darkThemeRemote) && dayNightModeSet.not()) {
             setDarkTheme()
         } else if (configuration.useNightDayMode && dayNightModeSet.not()) {
             setDayNightMode()
@@ -558,13 +556,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun manuallyLaunchScreenSaver() {
-        val alarmMode = configuration.alarmMode
-        if (configuration.isAlarmTriggered().not()
-                && configuration.isPendingMode().not()
-                && configuration.isAlarmArming().not()
-                && configuration.isDisarming().not()) {
-            showScreenSaver()
-        }
+        showScreenSaver()
         clearInactivityTimer()
     }
 

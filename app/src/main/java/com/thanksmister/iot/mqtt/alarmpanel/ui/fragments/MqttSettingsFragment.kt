@@ -145,6 +145,9 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
 
         remoteConfigTopicPreference.summary = mqttOptions.remoteConfigTopic
         remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
+
+        manualConfigSwitchPreference.isChecked = mqttOptions.useManualConfig
+        remoteConfigSwitchPreference.isChecked = mqttOptions.useRemoteConfig
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

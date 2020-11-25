@@ -22,7 +22,6 @@ import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARMED
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -37,10 +36,9 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
 
-    var useDarkThemeToggle: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
-
+    var darkThemeRemote: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME_REMOTE, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME_REMOTE, value).apply()
 
     var alarmMode: String
         get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISABLED).orEmpty()
@@ -98,6 +96,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
                 || alarmMode == MqttUtils.COMMAND_ARM_HOME
                 || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
                 || alarmMode == MqttUtils.COMMAND_ARM_AWAY
+                || alarmMode == MqttUtils.STATE_PENDING_ALARM
                 || alarmMode == MqttUtils.STATE_PENDING)
     }
 
@@ -113,7 +112,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         return (alarmMode == MqttUtils.STATE_TRIGGERED)
     }
 
-    fun isPendingMode(): Boolean {
+    fun isAlarmPending(): Boolean {
         return (alarmMode == MqttUtils.STATE_PENDING || alarmMode == MqttUtils.STATE_PENDING_ALARM)
     }
 
@@ -168,10 +167,6 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     var userHardwareAcceleration: Boolean
         get() = sharedPreferences.getBoolean(PREF_HARDWARE_ACCELERATION, false)
         set(value) = sharedPreferences.edit().putBoolean(PREF_HARDWARE_ACCELERATION, value).apply()
-
-    var fingerPrint: Boolean
-        get() = sharedPreferences.getBoolean(PREF_FINGERPRINT, false)
-        set(value) = sharedPreferences.edit().putBoolean(PREF_FINGERPRINT, value).apply()
 
     var platformBar: Boolean
         get() = this.sharedPreferences.getBoolean(PREF_PLATFORM_BAR, true)
@@ -419,6 +414,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         return (showUnsplashScreenSaver() || showClockScreenSaver() || showWebScreenSaver())
     }
 
+    fun canShowScreenSaver(): Boolean {
+        return hasScreenSaver() && isAlarmArming().not() && isDisarming().not() && isAlarmTriggered().not()
+    }
+
     /**
      * Reset the `SharedPreferences` and database
      */
@@ -482,7 +481,8 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
         private const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
         private const val PREF_PANIC_ALERT = "pref_panic_alert"
-        private const val PREF_DARK_THEME = "pref_dark_theme_toggle"
+        private const val PREF_DARK_THEME = "pref_dark_theme"
+        private const val PREF_DARK_THEME_REMOTE = "pref_dark_theme_re,pte"
         private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
         private const val PREF_MAX_STREAMS  = "pref_max_streams"
         private const val PREF_HTTP_PORT  = "pref_http_port"
