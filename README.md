@@ -24,7 +24,6 @@ MQTT allows for communication between the alarm panel and the manual alarm panel
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
 - Day/Night mode themes based on MQTT sun values.
-- Fingerprint unlock support to disable the alarm. (on supported devices).
 - Optional screensaver mode using a digital clock, Imgur images or webpage. 
 - Three day Weather forecast using MQTT.
 - Home Automation Platform webpage support for viewing home automation dashboards.
@@ -116,23 +115,29 @@ You can also interact and control the application and device remotely using eith
 
 ![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, enable the [weather platform](https://www.home-assistant.io/components/weather/). Here is a sample automation that uses Dark Sky: 
+***Update***
+We have deprecated support for Darksky, now you can use any weather integration.
+
+You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, you can use most any weather integration as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application:
 
 ```
 
 - id: '1538595661244'
   alias: MQTT Weather
   trigger:
-  - minutes: /30
+  - minutes: /15
     platform: time_pattern
   condition: []
   action:
   - data:
-      payload_template: "{'weather':{{states.weather.dark_sky.attributes}}}"
+      payload_template: '{''weather'':{''condition'':''{{states.weather.home.state}}'',''humidity'':{{states.weather.home.attributes.humidity}},''temperature'':{{states.weather.home.attributes.temperature}},''forecast'':{{states.weather.home.attributes.forecast}}}}'
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
+  mode: single
 ```
+
+
 
 The resulting payload will look like this:
 
