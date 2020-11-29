@@ -136,7 +136,7 @@ You can also use MQTT to publish the weather to the Alarm Panel application, whi
   mode: single
 ```
 
-If you want to continue to get the condition, you can use this for the payload_template:
+If you want to get the condition, you can use this for the payload_template:
 
 ```
 payload_template: >-
@@ -163,11 +163,13 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 ```
 
 Note that many weather sources work.  For example, the Accuweather integration has been affirmatively tested.  Also note that the template engine has an issue if you have an entity where a section starts with a digit.  This means that if you have an entity like `weather.1234_main_st` you will have to use a different template method to access the entity data:
+
 ```
       states.weather['1234_main_st'].attributes
 ```
 
 If you plug this into the above automation, this will produce a payload that looks like:
+
 ```
 {'weather':{'condition': 'partlycloudy', 'temperature': 82, 'humidity': 88, 'pressure': 30.06, 'wind_bearing': 180, 'wind_speed': 1.7, 'visibility': 10.0, 'attribution': 'Data provided by AccuWeather', 'forecast': [{'datetime': '2020-08-27T11:00:00+00:00', 'temperature': 90, 'templow': 73, 'precipitation': 0.0, 'precipitation_probability': 25, 'wind_speed': 4.6, 'wind_bearing': 151, 'condition': 'partlycloudy'}, {'datetime': '2020-08-28T11:00:00+00:00', 'temperature': 87, 'templow': 73, 'precipitation': 0.2, 'precipitation_probability': 47, 'wind_speed': 5.8, 'wind_bearing': 215, 'condition': 'lightning'}, {'datetime': '2020-08-29T11:00:00+00:00', 'temperature': 86, 'templow': 72, 'precipitation': 0.2, 'precipitation_probability': 41, 'wind_speed': 9.2, 'wind_bearing': 265, 'condition': 'partlycloudy'}, {'datetime': '2020-08-30T11:00:00+00:00', 'temperature': 86, 'templow': 67, 'precipitation': 0.1, 'precipitation_probability': 40, 'wind_speed': 4.6, 'wind_bearing': 279, 'condition': 'partlycloudy'}, {'datetime': '2020-08-31T11:00:00+00:00', 'temperature': 86, 'templow': 73, 'precipitation': 0.5, 'precipitation_probability': 40, 'wind_speed': 5.8, 'wind_bearing': 166, 'condition': 'cloudy'}], 'friendly_name': '1234 Main St'}}
 ```
