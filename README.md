@@ -116,6 +116,7 @@ You can also interact and control the application and device remotely using eith
 ![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
 ***Update***
+
 We have deprecated support for Darksky, now you can use any weather integration.
 
 You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, you can use most any weather integration as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application:
@@ -136,20 +137,26 @@ You can also use MQTT to publish the weather to the Alarm Panel application, whi
   mode: single
 ```
 
-If you want to get the condition, you can use this for the payload_template:
+For alternate way of getting the payload with the current condition, you can this for the payload_template:
 
 ```
 payload_template: >-
-        {% set attrs = states.weather.dark_sky.attributes %}
-        {% set result = dict(attrs, condition = states('weather.dark_sky')) %}
+        {% set attrs = states.weather.home.attributes %}
+        {% set result = dict(attrs, condition = states('weather.home')) %}
         {'weather':{{result}}}
 ```
 
 
-The resulting payload will look like this:
+In the developer tools template, you can test out the payload by pasting this: 
 
 ```
-{"topic": "alarmpanel/command","payload":"{''weather'':{''condition'':''{{states.weather.home.state}}'',''humidity'':{{states.weather.home.attributes.humidity}},''temperature'':{{states.weather.home.attributes.temperature}},''forecast'':{{states.weather.home.attributes.forecast}}}}}
+{''weather'':{''condition'':''{{states.weather.home.state}}'',''humidity'':{{states.weather.home.attributes.humidity}},''temperature'':{{states.weather.home.attributes.temperature}},''forecast'':{{states.weather.home.attributes.forecast}}}}
+```
+
+The output will be this:
+
+```
+{''weather'':{''condition'':''sunny'',''humidity'':61,''temperature'':27.2,''forecast'':[{'condition': 'sunny', 'temperature': 19.8, 'templow': 13.5, 'datetime': '2020-11-30T15:00:00+00:00', 'wind_bearing': 101.4, 'wind_speed': 30.6}, {'condition': 'cloudy', 'precipitation': 1.2, 'temperature': 23.0, 'templow': 16.8, 'datetime': '2020-12-01T15:00:00+00:00', 'wind_bearing': 17.1, 'wind_speed': 24.5}, {'condition': 'partlycloudy', 'temperature': 26.0, 'templow': 20.5, 'datetime': '2020-12-02T15:00:00+00:00', 'wind_bearing': 48.8, 'wind_speed': 14.0}, {'condition': 'partlycloudy', 'precipitation': 0.3, 'temperature': 25.2, 'templow': 19.7, 'datetime': '2020-12-03T15:00:00+00:00', 'wind_bearing': 71.5, 'wind_speed': 22.7}, {'condition': 'partlycloudy', 'temperature': 22.7, 'templow': 18.0, 'datetime': '2020-12-04T15:00:00+00:00', 'wind_bearing': 105.5, 'wind_speed': 33.5}]}}
 ```
 
 You can also test this using the "mqtt.publish" service under the Home Assistant Developer Tools:
@@ -166,12 +173,6 @@ Note that many weather sources work.  For example, the Accuweather integration h
 
 ```
       states.weather['1234_main_st'].attributes
-```
-
-If you plug this into the above automation, this will produce a payload that looks like:
-
-```
-{'weather':{'condition': 'partlycloudy', 'temperature': 82, 'humidity': 88, 'pressure': 30.06, 'wind_bearing': 180, 'wind_speed': 1.7, 'visibility': 10.0, 'attribution': 'Data provided by AccuWeather', 'forecast': [{'datetime': '2020-08-27T11:00:00+00:00', 'temperature': 90, 'templow': 73, 'precipitation': 0.0, 'precipitation_probability': 25, 'wind_speed': 4.6, 'wind_bearing': 151, 'condition': 'partlycloudy'}, {'datetime': '2020-08-28T11:00:00+00:00', 'temperature': 87, 'templow': 73, 'precipitation': 0.2, 'precipitation_probability': 47, 'wind_speed': 5.8, 'wind_bearing': 215, 'condition': 'lightning'}, {'datetime': '2020-08-29T11:00:00+00:00', 'temperature': 86, 'templow': 72, 'precipitation': 0.2, 'precipitation_probability': 41, 'wind_speed': 9.2, 'wind_bearing': 265, 'condition': 'partlycloudy'}, {'datetime': '2020-08-30T11:00:00+00:00', 'temperature': 86, 'templow': 67, 'precipitation': 0.1, 'precipitation_probability': 40, 'wind_speed': 4.6, 'wind_bearing': 279, 'condition': 'partlycloudy'}, {'datetime': '2020-08-31T11:00:00+00:00', 'temperature': 86, 'templow': 73, 'precipitation': 0.5, 'precipitation_probability': 40, 'wind_speed': 5.8, 'wind_bearing': 166, 'condition': 'cloudy'}], 'friendly_name': '1234 Main St'}}
 ```
 
 
