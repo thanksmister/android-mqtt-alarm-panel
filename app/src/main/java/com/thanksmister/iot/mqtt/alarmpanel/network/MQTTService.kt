@@ -225,7 +225,13 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                             disconnectedBufferOptions.bufferSize = 100
                             disconnectedBufferOptions.isPersistBuffer = false
                             disconnectedBufferOptions.isDeleteOldestMessages = false
-                            mqttClient?.setBufferOpts(disconnectedBufferOptions)
+                            mqttClient?.let {
+                                try {
+                                    it.setBufferOpts(disconnectedBufferOptions)
+                                } catch (e: NullPointerException) {
+                                    Timber.e(e.message)
+                                }
+                            }
                             mReady.set(true)
                             listener?.handleMqttConnected()
                         }
