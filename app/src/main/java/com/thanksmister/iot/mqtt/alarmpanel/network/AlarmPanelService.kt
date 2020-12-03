@@ -146,9 +146,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         AndroidInjection.inject(this)
 
-        // this must start immediately or there is a crash due to Androids new requirements for this type of service
-        val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
-        startForeground(ONGOING_NOTIFICATION_ID, notification)
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
+            startForeground(ONGOING_NOTIFICATION_ID, notification)
+        }
 
         // prepare the lock types we may use
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -194,6 +195,17 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
         localBroadCastManager?.registerReceiver(mBroadcastReceiver, filter)
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+
+        // this must start immediately or there is a crash due to Androids new requirements for this type of service
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
+            startForeground(ONGOING_NOTIFICATION_ID, notification)
+        }
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {

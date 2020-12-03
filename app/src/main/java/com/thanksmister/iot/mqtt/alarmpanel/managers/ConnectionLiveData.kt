@@ -16,15 +16,13 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.managers
 
-import androidx.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-
+import androidx.lifecycle.MutableLiveData
 import timber.log.Timber
-import java.lang.Exception
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ConnectionLiveData(private val context: Context) : MutableLiveData<Boolean>() {
