@@ -34,6 +34,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
@@ -113,10 +114,11 @@ class ControlsFragment : BaseFragment() {
     }
 
     interface OnControlsFragmentListener {
-        fun publishArmedHome()
-        fun publishArmedAway()
-        fun publishArmedNight()
+        fun publishArmedHome(code: String)
+        fun publishArmedAway(code: String)
+        fun publishArmedNight(code: String)
         fun publishDisarm(code: String)
+        fun publishArmedBypass(code: String)
         fun showCodeDialog(type: CodeTypes)
         fun showArmOptionsDialog()
     }
@@ -155,12 +157,18 @@ class ControlsFragment : BaseFragment() {
                         || configuration.isAlarmArming()
                         || configuration.isAlarmTriggered()
                         || configuration.isAlarmPending()) {
-                    listener?.showCodeDialog(CodeTypes.DISARM)
+
+                    if(mqttOptions.requireCodeForDisarming) {
+                        listener?.showCodeDialog(CodeTypes.DISARM)
+                    } else {
+                        listener?.publishDisarm("") // publish without code
+                    }
                 }
             } else {
                 dialogUtils.showAlertDialog(requireActivity() as BaseActivity, getString(R.string.text_error_no_alarm_setup))
             }
         }
+
     }
 
     override fun onStop() {
@@ -324,7 +332,7 @@ class ControlsFragment : BaseFragment() {
             STATE_ARM_HOME,
             STATE_ARMING_HOME -> {
                 pendingAnimation.setColor(Color.YELLOW)
-                if(mqttOptions.useRemoteConfig) {
+                if(mqttOptions.useRemoteDisarm) {
                     delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingHomeTime*10000+ 3000).toLong())
                 }
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow_alpha))
@@ -334,7 +342,7 @@ class ControlsFragment : BaseFragment() {
             STATE_ARM_AWAY,
             STATE_ARMING_AWAY -> {
                 pendingAnimation.setColor(Color.RED)
-                if(mqttOptions.useRemoteConfig) {
+                if(mqttOptions.useRemoteDisarm) {
                     delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingAwayTime*10000 + 3000).toLong())
                 }
                 playContinuousBeep()
@@ -345,7 +353,7 @@ class ControlsFragment : BaseFragment() {
             STATE_ARM_NIGHT,
             STATE_ARMING_NIGHT -> {
                 pendingAnimation.setColor(Color.BLACK)
-                if(mqttOptions.useRemoteConfig) {
+                if(mqttOptions.useRemoteDisarm) {
                     delayTimerHandler?.postDelayed(delayTimerRunnable, (mqttOptions.remoteArmingNightTime*10000).toLong()+ 3000)
                 }
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black_alpha))

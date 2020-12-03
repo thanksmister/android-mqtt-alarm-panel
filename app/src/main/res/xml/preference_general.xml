@@ -27,6 +27,18 @@
             android:summary="@string/preference_summary_security_code"
             android:title="@string/preference_title_security_code" />
 
+        <SwitchPreference
+            android:key="key_require_code_disarm"
+            android:icon="@drawable/ic_baseline_dialpad"
+            android:summary="Require the the code to disarm the alarm."
+            android:title="Require Disarming Code" />
+
+        <SwitchPreference
+            android:key="key_require_code_arm"
+            android:icon="@drawable/ic_baseline_dialpad"
+            android:summary="Require the the code to arm the alarm."
+            android:title="Require Arming Code" />
+
         <Preference
             android:key="button_alarm_sensors"
             android:negativeButtonText="@android:string/cancel"

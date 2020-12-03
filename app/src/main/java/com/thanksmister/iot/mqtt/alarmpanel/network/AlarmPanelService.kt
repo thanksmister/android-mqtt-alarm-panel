@@ -415,7 +415,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             insertMessage(id, topic, payload, TYPE_ALARM)
         } else if (mqttOptions.getAlarmConfigTopic() == topic && mqttOptions.useRemoteConfig) {
             processConfig(payload)
-        } else if (mqttOptions.getAlarmStatusTopic() == topic && payload == DEFAULT_INVALID && mqttOptions.useRemoteConfig) {
+        } else if (mqttOptions.getAlarmStatusTopic() == topic && payload == DEFAULT_INVALID && mqttOptions.useRemoteDisarm) {
             sendSnackMessage(getString(R.string.toast_code_invalid))
         } else if (mqttOptions.sensorOneTopic == topic ||
                 mqttOptions.sensorTwoTopic == topic ||

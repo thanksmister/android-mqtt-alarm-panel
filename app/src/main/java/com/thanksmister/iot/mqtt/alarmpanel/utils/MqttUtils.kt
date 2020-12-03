@@ -81,6 +81,7 @@ class MqttUtils {
         // commands
         const val COMMAND_ARM_HOME = "ARM_HOME"
         const val COMMAND_ARM_NIGHT = "ARM_NIGHT"
+        const val COMMAND_ARM_CUSTOM_BYPASS = "ARM_CUSTOM_BYPASS"
         const val COMMAND_ARM_AWAY = "ARM_AWAY"
         const val COMMAND_DISARM = "DISARM"
         const val COMMAND_ON = "ON"

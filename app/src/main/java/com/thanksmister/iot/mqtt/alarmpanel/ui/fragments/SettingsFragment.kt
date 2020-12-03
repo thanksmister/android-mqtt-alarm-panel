@@ -27,11 +27,16 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
 class SettingsFragment : BaseSettingsFragment() {
+
+    @Inject
+    lateinit var mqttOptions: MQTTOptions
 
     private var defaultCode: Int = 0
     private var tempCode: Int = 0
@@ -85,6 +90,13 @@ class SettingsFragment : BaseSettingsFragment() {
 
     private val sensorsPreference: Preference by lazy {
         findPreference("button_sensors") as Preference
+    }
+
+    private val requireCodeToDisarmPreference: SwitchPreference by lazy {
+        findPreference("key_require_code_disarm") as SwitchPreference
+    }
+    private val requireCodeToArmPreference: SwitchPreference by lazy {
+        findPreference("key_require_code_arm") as SwitchPreference
     }
 
     override fun onAttach(context: Context) {
@@ -159,18 +171,13 @@ class SettingsFragment : BaseSettingsFragment() {
         themePreference.isChecked = configuration.useDarkTheme
         panicPreference.isChecked == configuration.panicButton
 
-        /*if (isFingerprintSupported()) {
-            fingerprintPreference.isVisible = true
-            fingerprintPreference.isChecked = configuration.fingerPrint
-        } else {
-            fingerprintPreference.isVisible = false
-        }*/
-
         val code = configuration.alarmCode.toString()
         if (code.isNotEmpty()) {
             codePreference.summary = toStars(code)
         }
 
+        requireCodeToDisarmPreference.isChecked = mqttOptions.requireCodeForDisarming
+        requireCodeToArmPreference.isChecked = mqttOptions.requireCodeForArming
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -182,6 +189,14 @@ class SettingsFragment : BaseSettingsFragment() {
             }
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked
+            }
+            "key_require_code_arm" -> {
+                val checked = requireCodeToArmPreference.isChecked
+                mqttOptions.requireCodeForArming = checked
+            }
+            "key_require_code_disarm" -> {
+                val checked = requireCodeToDisarmPreference.isChecked
+                mqttOptions.requireCodeForDisarming = checked
             }
         }
     }

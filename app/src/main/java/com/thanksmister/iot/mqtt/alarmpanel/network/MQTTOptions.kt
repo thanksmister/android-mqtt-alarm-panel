@@ -183,6 +183,13 @@ constructor(private val sharedPreferences: SharedPreferences) {
         setOptionsUpdated(true)
     }
 
+    var useRemoteDisarm: Boolean
+        get() = sharedPreferences.getBoolean(PREF_REMOTE_DISARM, false)
+        set(value) {
+            this.sharedPreferences.edit().putBoolean(PREF_REMOTE_DISARM, value).apply()
+            setOptionsUpdated(true)
+        }
+
     var useRemoteConfig: Boolean
         get() = sharedPreferences.getBoolean(PREF_REMOTE_CONFIG, false)
         set(value) {
@@ -208,7 +215,7 @@ constructor(private val sharedPreferences: SharedPreferences) {
      * Used for remote config to requires a code entered to disarm the alarm.
      */
     var requireCodeForDisarming: Boolean
-        get() = sharedPreferences.getBoolean(PREF_REQUIRE_CODE_TO_DISARM, false)
+        get() = sharedPreferences.getBoolean(PREF_REQUIRE_CODE_TO_DISARM, true)
         set(value) = sharedPreferences.edit().putBoolean(PREF_REQUIRE_CODE_TO_DISARM, value).apply()
 
     var remoteConfigTopic: String
@@ -338,6 +345,7 @@ constructor(private val sharedPreferences: SharedPreferences) {
         const val PREF_BROKER = "pref_broker"
         const val PREF_RETAIN = "pref_retain"
         const val PREF_REMOTE_CONFIG = "pref_remote_config"
+        const val PREF_REMOTE_DISARM = "pref_remote_disarm"
         const val PREF_MANUAL_CONFIG = "pref_manual_config"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
         const val PREF_CONFIG_TOPIC = "pref_config_topic"

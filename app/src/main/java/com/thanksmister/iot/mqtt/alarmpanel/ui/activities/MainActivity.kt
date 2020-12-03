@@ -388,29 +388,38 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         }
     }
 
-    override fun publishArmedHome() {
+    override fun publishArmedHome(code: String) {
         val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_HOME)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
-    override fun publishArmedAway() {
+    override fun publishArmedAway(code: String) {
         val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_AWAY)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
 
-    override fun publishArmedNight() {
+    override fun publishArmedNight(code: String) {
         val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_NIGHT)
-        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, "")
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    override fun publishArmedBypass(code: String) {
+        val alarmMode = configuration.alarmMode
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_CUSTOM_BYPASS)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
@@ -434,10 +443,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
      */
     override fun showCodeDialog(type: CodeTypes) {
         var codeType = type
-        if (mqttOptions.useRemoteConfig) {
-            if (mqttOptions.requireCodeForDisarming && type == CodeTypes.DISARM) {
+        if (mqttOptions.useRemoteDisarm) {
+            if (type == CodeTypes.DISARM) {
                 codeType = CodeTypes.DISARM_REMOTE
-            } else if (mqttOptions.requireCodeForArming && type == CodeTypes.ARM) {
+            } else if (type == CodeTypes.ARM) {
                 codeType = CodeTypes.ARM_REMOTE
             }
         }
@@ -453,13 +462,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                                 startActivity(intent)
                             }
                             CodeTypes.ARM_HOME -> {
-                                publishArmedHome()
+                                publishArmedHome(code)
                             }
                             CodeTypes.ARM_AWAY -> {
-                                publishArmedAway()
+                                publishArmedAway(code)
                             }
                             CodeTypes.ARM_NIGHT -> {
-                                publishArmedNight()
+                                publishArmedNight(code)
+                            }
+                            CodeTypes.ARM_BYPASS -> {
+                                publishArmedNight(code)
                             }
                             else -> {
                                 // na-da
@@ -494,26 +506,26 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun showArmOptionsDialog() {
         optionsBottomSheet = OptionsBottomSheetFragment(object : OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
             override fun onArmHome() {
-                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_HOME)
                 } else {
-                    publishArmedHome()
+                    publishArmedHome("")
                 }
             }
 
             override fun onArmAway() {
-                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_AWAY)
                 } else {
-                    publishArmedAway()
+                    publishArmedAway("")
                 }
             }
 
             override fun onArmNight() {
-                if (mqttOptions.useRemoteConfig && mqttOptions.requireCodeForArming) {
+                if (mqttOptions.requireCodeForArming) {
                     showCodeDialog(CodeTypes.ARM_NIGHT)
                 } else {
-                    publishArmedNight()
+                    publishArmedNight("")
                 }
             }
         })

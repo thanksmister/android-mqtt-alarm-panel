@@ -112,7 +112,7 @@ class MQTTService(private var context: Context,
                 mqttOptions?.let {
                     val mqttMessage = MqttMessage()
                     var payloadString = action
-                    if(it.useRemoteConfig) {
+                    if(it.useRemoteDisarm && code != 0) {
                         val payloadJson = JSONObject()
                         payloadJson.put(MqttUtils.ACTION, action)
                         if (code > 0) {

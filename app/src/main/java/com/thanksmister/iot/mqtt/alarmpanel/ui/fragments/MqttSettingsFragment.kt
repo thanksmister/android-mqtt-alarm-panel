@@ -55,7 +55,12 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
-    private val manualConfigSwitchPreference: SwitchPreference by lazy {
+    private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
+        findPreference("key_alarm_remote_disarm") as SwitchPreference
+    }
+
+
+   /* private val manualConfigSwitchPreference: SwitchPreference by lazy {
         findPreference("pref_alarm_manual_configuration") as SwitchPreference
     }
 
@@ -65,7 +70,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
 
     private val remoteConfigTopicPreference: EditTextPreference by lazy {
         findPreference("pref_mqtt_remote_config_topic") as EditTextPreference
-    }
+    }*/
 
     private val remoteStatusPreference: EditTextPreference by lazy {
         findPreference("pref_mqtt_remote_status_topic") as EditTextPreference
@@ -140,14 +145,16 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         baseTopicPreference!!.text = mqttOptions.getBaseCommand()
         baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
 
-        remoteConfigTopicPreference.text = mqttOptions.remoteConfigTopic
+        //remoteConfigTopicPreference.text = mqttOptions.remoteConfigTopic
         remoteStatusPreference.text = mqttOptions.remoteStatusTopic
 
-        remoteConfigTopicPreference.summary = mqttOptions.remoteConfigTopic
+        //remoteConfigTopicPreference.summary = mqttOptions.remoteConfigTopic
         remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
 
-        manualConfigSwitchPreference.isChecked = mqttOptions.useManualConfig
-        remoteConfigSwitchPreference.isChecked = mqttOptions.useRemoteConfig
+        remoteDisarmSwitchPreference.isChecked = mqttOptions.useRemoteDisarm
+
+        //manualConfigSwitchPreference.isChecked = mqttOptions.useManualConfig
+        //remoteConfigSwitchPreference.isChecked = mqttOptions.useRemoteConfig
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -231,7 +238,13 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 val checked = sslPreference!!.isChecked
                 mqttOptions.setRetain(checked)
             }
-            "pref_alarm_manual_configuration" -> {
+            "key_alarm_remote_disarm" -> {
+                val checked = remoteDisarmSwitchPreference.isChecked
+                mqttOptions.useRemoteDisarm = checked
+
+            }
+
+            /*"pref_alarm_manual_configuration" -> {
                 mqttOptions.useManualConfig = manualConfigSwitchPreference.isChecked
                 if(mqttOptions.useManualConfig) {
                     mqttOptions.useRemoteConfig = false
@@ -248,7 +261,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
             "pref_mqtt_remote_config_topic" -> {
                 mqttOptions.remoteStatusTopic = remoteConfigTopicPreference.text?:DEFAULT_CONFIG_TOPIC
                 remoteConfigTopicPreference.summary = mqttOptions.remoteStatusTopic
-            }
+            }*/
             "pref_mqtt_remote_status_topic" -> {
                 mqttOptions.remoteStatusTopic = remoteStatusPreference.text?:DEFAULT_STATUS_TOPIC
                 remoteStatusPreference.summary = mqttOptions.remoteStatusTopic

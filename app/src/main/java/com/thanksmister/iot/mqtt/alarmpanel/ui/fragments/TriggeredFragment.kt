@@ -103,7 +103,7 @@ class TriggeredFragment : BaseFragment() {
         Timber.d("onActivityCreated")
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(TriggeredViewModel::class.java)
         observeViewModel(viewModel)
-        if(mqttOptions.useRemoteConfig) {
+        if(mqttOptions.useRemoteDisarm) {
             if(mqttOptions.requireCodeForDisarming) {
                 codeType = CodeTypes.DISARM_REMOTE
             }
