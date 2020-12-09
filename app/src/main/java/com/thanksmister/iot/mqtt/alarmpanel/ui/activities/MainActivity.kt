@@ -108,9 +108,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
         super.onCreate(savedInstanceState)
 
-        ContextCompat.startForegroundService(this, alarmPanelService)
-        serviceStarted = true
-
         if(configuration.useDarkTheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else  {
@@ -206,6 +203,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             decorView?.keepScreenOn = false
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, alarmPanelService)
+        } else {
+            startService(alarmPanelService)
         }
     }
 
