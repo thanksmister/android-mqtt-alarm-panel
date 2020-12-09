@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -102,8 +103,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener, ControlsFra
             configuration.setMailGunUrl(BuildConfig.MAIL_GUN_URL)
             configuration.telegramChatId = BuildConfig.TELEGRAM_CHAT_ID
             configuration.telegramToken = BuildConfig.TELEGRAM_TOKEN
-            imageOptions.imageClientId = BuildConfig.IMGUR_CLIENT_ID
-            imageOptions.imageSource = BuildConfig.IMGUR_TAG // Imgur tags
             configuration.isFirstTime = false
             configuration.setPhotoScreenSaver(false)
             configuration.setHasCameraCapture(true)

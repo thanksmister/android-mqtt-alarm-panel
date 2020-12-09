@@ -132,6 +132,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         mqttModule?.restart()
     }
 
+    val alarmPanelService: Intent by lazy {
+        Intent(this, AlarmPanelService::class.java)
+    }
+
     inner class AlarmPanelServiceBinder : Binder() {
         val service: AlarmPanelService
             get() = this@AlarmPanelService
@@ -142,9 +146,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
         AndroidInjection.inject(this)
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
-            startForeground(ONGOING_NOTIFICATION_ID, notification)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val notification = notifications.createOngoingNotification(getString(R.string.app_name), getString(R.string.service_notification_message))
+                startForeground(ONGOING_NOTIFICATION_ID, notification)
+            } catch (ignored: RuntimeException) {
+                ContextCompat.startForegroundService(this, alarmPanelService)
+            }
         }
 
         // prepare the lock types we may use
@@ -193,7 +201,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         localBroadCastManager?.registerReceiver(mBroadcastReceiver, filter)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    /*override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         // this must start immediately or there is a crash due to Androids new requirements for this type of service
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
@@ -202,7 +210,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
 
         return super.onStartCommand(intent, flags, startId)
-    }
+    }*/
 
     override fun onDestroy() {
         super.onDestroy()
