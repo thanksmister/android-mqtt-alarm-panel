@@ -30,6 +30,8 @@
 
     <color name="text">#CCC6C6C5</color>
 
+    <color name="cardStroke">#CDFFFFFF</color>
+
     <color name="weather_card_background">#393C44</color>
     <color name="weather_card_icon">#C9EFEDED</color>
     <color name="weather_card_border">#292929</color>

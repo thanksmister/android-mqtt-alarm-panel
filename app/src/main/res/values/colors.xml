@@ -32,6 +32,7 @@
     <color name="dark_gray">#818181</color>
     <color name="blue">#B01976D2</color>
 
+    <color name="cardStroke">#E0DFDF</color>
 
     <color name="black">#ff000000</color>
     <color name="white">#FFFFFF</color>

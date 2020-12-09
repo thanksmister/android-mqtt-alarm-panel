@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.SwitchPreference
+import com.google.android.material.card.MaterialCardView
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
@@ -274,7 +275,7 @@ class ControlsFragment : BaseFragment() {
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -288,7 +289,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setText(R.string.text_armed_away)
         alarmText.setTextColor(resources.getColor(R.color.red))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -302,7 +303,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setText(R.string.text_armed_home)
         alarmText.setTextColor(resources.getColor(R.color.yellow))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -316,7 +317,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_armed_night)
         alarmText.setTextColor(resources.getColor(R.color.black))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -366,7 +367,7 @@ class ControlsFragment : BaseFragment() {
         }
 
         alarmText.setTextColor(resources.getColor(R.color.gray))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 
@@ -378,7 +379,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = getString(R.string.text_disarming)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         val previousState = configuration.alarmMode
         when(previousState) {
             COMMAND_ARM_HOME,
@@ -442,7 +443,7 @@ class ControlsFragment : BaseFragment() {
                 alarmText.text = resources.getText(R.string.text_alarm_pending)
             }
         }
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         viewModel.setAlarmMode(state)
         showStateView()
     }
@@ -454,7 +455,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.text = "ALARM ENTRY"
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         val previousState = configuration.alarmMode
         when(previousState) {
             COMMAND_ARM_HOME,
@@ -490,7 +491,7 @@ class ControlsFragment : BaseFragment() {
         alarmText.setTextColor(resources.getColor(R.color.white_alpha))
         systemText.setTextColor(resources.getColor(R.color.white_alpha))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_white))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.red))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.red))
         showTriggeredView()
     }
 
@@ -503,7 +504,7 @@ class ControlsFragment : BaseFragment() {
         alarmImageUnlocked.visibility = View.VISIBLE
         pendingAnimation.visibility = View.GONE
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_green))
-        (this.view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
+        (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))
         showStateView()
     }
 

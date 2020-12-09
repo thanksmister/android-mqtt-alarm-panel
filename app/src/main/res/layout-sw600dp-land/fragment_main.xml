@@ -90,24 +90,19 @@
         tools:layout="@layout/fragment_sensor_control"
         tools:visibility="invisible"/>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/settingsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardBackgroundColor="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
+    <LinearLayout
+            android:id="@+id/settingsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:orientation="horizontal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="2dp">
+            android:paddingBottom="2dp"
+        android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageButton
                 android:id="@+id/alertButton"
@@ -182,8 +177,6 @@
                 tools:ignore="ContentDescription" />
 
         </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
 
     <FrameLayout
         android:id="@+id/triggeredView"

@@ -28,6 +28,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -105,14 +107,23 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        val dayNightModeSet = configuration.dayNightModeSet
-        if ((configuration.useDarkTheme || configuration.darkThemeRemote) && dayNightModeSet.not()) {
-            setDarkTheme()
-        } else if (configuration.useNightDayMode && dayNightModeSet.not()) {
-            setDayNightMode()
-        } else if (dayNightModeSet.not()) {
-            setLightTheme()
+
+        ContextCompat.startForegroundService(this, alarmPanelService)
+        serviceStarted = true
+
+        if(configuration.useDarkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else  {
+            val dayNightModeSet = configuration.dayNightModeSet
+            if ((configuration.useDarkTheme || configuration.darkThemeRemote) && dayNightModeSet.not()) {
+                setDarkTheme()
+            } else if (configuration.useNightDayMode && dayNightModeSet.not()) {
+                setDayNightMode()
+            } else if (dayNightModeSet.not()) {
+                setLightTheme()
+            }
         }
+
         setContentView(R.layout.activity_main)
 
         this.window.setFlags(
@@ -195,17 +206,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             decorView?.keepScreenOn = false
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(alarmPanelService)
-            serviceStarted = true
-        } else {
-            startService(alarmPanelService)
-            serviceStarted = true
         }
     }
 

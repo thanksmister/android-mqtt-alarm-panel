@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -36,9 +35,9 @@
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="h,11:7"
-
         app:layout_constraintBottom_toTopOf="@+id/guideControlBottom"
+
+        app:layout_constraintDimensionRatio="h,11:7"
         app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         tools:layout="@layout/fragment_controls" />
@@ -52,8 +51,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
         app:layout_constraintStart_toEndOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/guideControlBottom"
-        tools:layout="@layout/fragment_sensor_control"
-        />
+        tools:layout="@layout/fragment_sensor_control" />
 
     <fragment
         android:id="@+id/twoSensorContainer"
@@ -85,45 +83,40 @@
         app:layout_constraintTop_toBottomOf="@+id/guideSensorFour"
         tools:layout="@layout/fragment_sensor_control" />
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardBackgroundColor="@color/colorPrimary"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="2dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/alertButton"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/account_voice"
+            android:tint="@color/red"
+            tools:ignore="ContentDescription" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="24dp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonPlatformLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="2dp">
-
-            <ImageButton
-                android:id="@+id/alertButton"
-                style="@style/BorderlessButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/account_voice"
-                android:tint="@color/red"
-                tools:ignore="ContentDescription" />
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="24dp" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/buttonPlatformLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/platformButton"
@@ -140,45 +133,43 @@
                 android:layout_width="16dp"
                 android:layout_height="24dp" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/buttonSleepLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/buttonSleep"
-                    style="@style/BorderlessButtonStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_sleep"
-                    android:tint="@color/dark_gray"
-                    tools:ignore="ContentDescription" />
-
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="24dp" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonSleepLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/buttonSettings"
+                android:id="@+id/buttonSleep"
                 style="@style/BorderlessButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_settings_black"
+                android:src="@drawable/ic_sleep"
                 android:tint="@color/dark_gray"
                 tools:ignore="ContentDescription" />
 
-        </LinearLayout>
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="24dp" />
 
-    </androidx.cardview.widget.CardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ImageButton
+            android:id="@+id/buttonSettings"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings_black"
+            android:tint="@color/dark_gray"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideControlBottom"

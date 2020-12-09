@@ -90,100 +90,93 @@
         tools:layout="@layout/fragment_sensor_control"
         tools:visibility="invisible"/>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardBackgroundColor="@color/colorPrimary"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="2dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/alertButton"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/account_voice"
+            android:tint="@color/red"
+            tools:ignore="ContentDescription" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="24dp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonPlatformLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="2dp">
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/alertButton"
+                android:id="@+id/platformButton"
                 style="@style/BorderlessButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/account_voice"
-                android:tint="@color/red"
+                android:src="@drawable/ic_home"
+                android:tint="@color/dark_gray"
                 tools:ignore="ContentDescription" />
 
             <Space
                 android:layout_width="16dp"
                 android:layout_height="24dp" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/buttonPlatformLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <ImageButton
-                    android:id="@+id/platformButton"
-                    style="@style/BorderlessButtonStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_home"
-                    android:tint="@color/dark_gray"
-                    tools:ignore="ContentDescription" />
-
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="24dp" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/buttonSleepLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/buttonSleep"
-                    style="@style/BorderlessButtonStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_sleep"
-                    android:tint="@color/dark_gray"
-                    tools:ignore="ContentDescription" />
-
-                <Space
-                    android:layout_width="16dp"
-                    android:layout_height="24dp" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonSleepLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/buttonSettings"
+                android:id="@+id/buttonSleep"
                 style="@style/BorderlessButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_settings_black"
+                android:src="@drawable/ic_sleep"
                 android:tint="@color/dark_gray"
                 tools:ignore="ContentDescription" />
 
-        </LinearLayout>
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="24dp" />
 
-    </androidx.cardview.widget.CardView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ImageButton
+            android:id="@+id/buttonSettings"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings_black"
+            android:tint="@color/dark_gray"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/triggeredView"
