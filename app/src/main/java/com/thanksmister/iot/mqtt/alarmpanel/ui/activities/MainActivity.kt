@@ -91,7 +91,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     private var optionsBottomSheet: OptionsBottomSheetFragment? = null
     private var codeBottomSheet: CodeBottomSheetFragment? = null
     private var previousAlarmMode: String? = null
-    private var previousSunState: String? = null
 
     private val inactivityCallback = Runnable {
         dismissBottomSheets()
@@ -111,12 +110,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         if(configuration.useDarkTheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else  {
-            val dayNightModeSet = configuration.dayNightModeSet
-            if ((configuration.useDarkTheme || configuration.darkThemeRemote) && dayNightModeSet.not()) {
-                setDarkTheme()
-            } else if (configuration.useNightDayMode && dayNightModeSet.not()) {
+            if (configuration.useNightDayMode ) {
                 setDayNightMode()
-            } else if (dayNightModeSet.not()) {
+            } else {
                 setLightTheme()
             }
         }

@@ -22,6 +22,10 @@
     <color name="colorAccent">#C91976D2</color>
     <color name="dialogBackgroundColor">#121212</color>
 
+    <color name="dialogBackgroundText">#CCFFFFFF</color>
+
+
+
     <color name="body_text_1">#f4f4f4</color>
     <color name="body_text_2">#E5F4F4F4</color>
     <color name="body_text_3">#CCF4F4F4</color>

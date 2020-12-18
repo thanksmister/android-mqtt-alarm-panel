@@ -83,7 +83,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.d("onDestroy")
         disposable.dispose()
     }
 
@@ -91,12 +90,10 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
         super.onResume()
         checkPermissions()
         if (configuration.nightModeChanged && configuration.useDarkTheme) {
-            configuration.dayNightModeSet = false
-            configuration.nightModeChanged = false //
+            configuration.nightModeChanged = false
             setDarkTheme()
         } else if (configuration.nightModeChanged) {
-            configuration.dayNightModeSet = false
-            configuration.nightModeChanged = false // reset
+            configuration.nightModeChanged = false
             setDayNightMode()
         }
     }
@@ -113,15 +110,11 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     fun dayNightModeCheck(sunValue: String?) {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
         sunValue?.let {
-            if (it == Configuration.SUN_BELOW_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+            if (it == Configuration.SUN_BELOW_HORIZON && (nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
                 configuration.dayNightMode = it
-                configuration.dayNightModeSet = false
-                configuration.darkThemeRemote = true
                 setDayNightMode()
-            } else if (it == Configuration.SUN_ABOVE_HORIZON && serviceStarted && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
+            } else if (it == Configuration.SUN_ABOVE_HORIZON && (nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)) {
                 configuration.dayNightMode = it
-                configuration.dayNightModeSet = false
-                configuration.darkThemeRemote = false
                 setLightTheme()
             }
         }
@@ -140,7 +133,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     fun setDarkTheme() {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
         if(nightMode == AppCompatDelegate.MODE_NIGHT_NO || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
-            configuration.dayNightModeSet = true
             screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
@@ -149,7 +141,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     fun setLightTheme() {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
         if(nightMode == AppCompatDelegate.MODE_NIGHT_YES || nightMode == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
-            configuration.dayNightModeSet = true
             screenUtils.setScreenBrightness()
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -187,7 +178,6 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     fun hideScreenSaver() {
         Timber.d("hideScreenSaver")
         dialogUtils.hideScreenSaverDialog()
-        //screenUtils.setScreenSaverBrightness(false)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 

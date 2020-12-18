@@ -18,8 +18,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.annotation.SuppressLint
 import android.app.KeyguardManager
-import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.Observer
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -27,8 +25,9 @@ import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.wifi.WifiManager
 import android.os.*
-import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.GsonBuilder
 import com.koushikdutta.async.AsyncServer
@@ -41,10 +40,12 @@ import com.thanksmister.iot.mqtt.alarmpanel.managers.ConnectionLiveData
 import com.thanksmister.iot.mqtt.alarmpanel.modules.*
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.*
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.*
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ALERT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_AUDIO
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_CAPTURE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_NOTIFICATION
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_FACE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_MOTION
@@ -55,15 +56,16 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ST
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SUN
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_WAKE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_WEATHER
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_INVALID
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PANIC_STATE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_BRIGHTNESS
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_CURRENT_URL
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_SCREEN_ON
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.VALUE
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_INVALID
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PANIC_STATE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_COMMAND
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.VALUE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.NotificationUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
 import dagger.android.AndroidInjection
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -76,7 +78,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
-import java.lang.RuntimeException
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -192,6 +193,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         configureAudioPlayer()
         configureTextToSpeech()
         startSensors()
+        clearDatabasePeriodically()
 
         val filter = IntentFilter()
         filter.addAction(BROADCAST_EVENT_URL_CHANGE)
@@ -831,6 +833,25 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
+    /**
+     * We want to clean the database periodically so it does not grow too large
+     */
+    private fun clearDatabasePeriodically() {
+        val handler = Handler()
+        val runnable: Runnable = object : Runnable {
+            override fun run() {
+                try {
+                    messageDataSource.deleteAllMessages()
+                } catch (e: Exception) {
+                    // TODO: handle exception
+                } finally {
+                    handler.postDelayed(this, 259200000L)
+                }
+            }
+        }
+        handler.post(runnable)
+    }
+
     private fun insertMessage(messageId: String, topic: String, payload: String, type: String) {
         Timber.d("insertMessage topic: $topic")
         Timber.d("insertMessage payload: $payload")
@@ -842,7 +863,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             message.payload = payload
             message.messageId = messageId
             message.createdAt = createdAt
-            messageDataSource.insertMessage(message)
+            messageDataSource.insertMessageTransaction(message)
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

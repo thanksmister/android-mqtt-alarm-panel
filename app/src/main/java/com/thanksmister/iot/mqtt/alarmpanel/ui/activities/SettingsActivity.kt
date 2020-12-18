@@ -44,12 +44,6 @@ class SettingsActivity : BaseActivity() {
 
         super.onCreate(savedInstanceState)
 
-        if(configuration.useDarkTheme) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else  {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-
         setContentView(R.layout.activity_settings)
 
         if (supportActionBar != null) {

@@ -20,6 +20,7 @@
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#C91976D2</color>
     <color name="dialogBackgroundColor">#ffffff</color>
+    <color name="dialogBackgroundText">#C91976D2</color>
 
     <color name="body_text_1">#616161</color>
     <color name="body_text_2">#424242</color>
