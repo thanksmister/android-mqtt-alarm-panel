@@ -7,8 +7,8 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 def versionMajor = 1
 def versionMinor = 0
-def versionPatch = 0
-def versionBuild = 9 // bump for dog food builds, public betas, etc.
+def versionPatch = 1
+def versionBuild = 0 // bump for dog food builds, public betas, etc.
 
 def ALARM_CODE() {
     Properties properties = new Properties()
@@ -193,7 +193,7 @@ dependencies {
     implementation 'androidx.room:room-rxjava2:2.2.5'
 
     // MQTT
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1', {
         exclude module: 'support-v4'
     }
