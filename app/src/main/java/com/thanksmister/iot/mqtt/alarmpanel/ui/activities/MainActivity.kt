@@ -166,10 +166,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             mqttOptions.sensorTwoState = "closed"
             mqttOptions.sensorThreeActive = true
             mqttOptions.sensorThreeName = "Outside Motion"
-            mqttOptions.sensorThreeState = "clear"
+            mqttOptions.sensorThreeState = "no"
             mqttOptions.sensorFourActive = true
             mqttOptions.sensorFourName = "Inside Motion"
-            mqttOptions.sensorFourState = "clear"
+            mqttOptions.sensorFourState = "no"
         }
 
         if (configuration.isFirstTime) {

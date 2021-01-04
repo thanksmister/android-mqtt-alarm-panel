@@ -99,9 +99,9 @@ class SensorControlFragment : BaseFragment() {
                         messages.forEach { message ->
                             when (message.topic?.toLowerCase(Locale.getDefault())) {
                                 mqttOptions.sensorOneTopic -> {
-                                    if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    if(topic.equals(message.topic, ignoreCase = true)) {
                                         stateText.text = message.payload?.toUpperCase(Locale.getDefault())
-                                        if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorOneState.toLowerCase(Locale.getDefault())) {
+                                        if(message.payload.equals(mqttOptions.sensorOneState, ignoreCase = true)) {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
                                         } else {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
@@ -109,9 +109,9 @@ class SensorControlFragment : BaseFragment() {
                                     }
                                 }
                                 mqttOptions.sensorTwoTopic -> {
-                                    if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    if(topic.equals(message.topic, ignoreCase = true)) {
                                         stateText.text = message.payload?.toUpperCase(Locale.getDefault())
-                                        if (message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorTwoState.toLowerCase(Locale.getDefault())) {
+                                        if (message.payload.equals(mqttOptions.sensorTwoState, ignoreCase = true)) {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
                                         } else {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
@@ -119,9 +119,9 @@ class SensorControlFragment : BaseFragment() {
                                     }
                                 }
                                 mqttOptions.sensorThreeTopic -> {
-                                    if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    if(topic.equals(message.topic, ignoreCase = true)) {
                                         stateText.text = message.payload?.toUpperCase(Locale.getDefault())
-                                        if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorThreeState.toLowerCase(Locale.getDefault())) {
+                                        if(message.payload.equals(mqttOptions.sensorThreeState, ignoreCase = true)) {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
                                         } else {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
@@ -129,9 +129,9 @@ class SensorControlFragment : BaseFragment() {
                                     }
                                 }
                                 mqttOptions.sensorFourTopic -> {
-                                    if(topic.toLowerCase(Locale.getDefault()) == message.topic?.toLowerCase(Locale.getDefault())) {
+                                    if(topic.equals(message.topic, ignoreCase = true)) {
                                         stateText.text = message.payload?.toUpperCase(Locale.getDefault())
-                                        if(message.payload?.toLowerCase(Locale.getDefault()) == mqttOptions.sensorFourState.toLowerCase(Locale.getDefault())) {
+                                        if(message.payload.equals(mqttOptions.sensorFourState, ignoreCase = true)) {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_green))
                                         } else {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))

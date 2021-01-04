@@ -58,8 +58,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
         findPreference("key_alarm_remote_disarm") as SwitchPreference
     }
-
-
+    
    /* private val manualConfigSwitchPreference: SwitchPreference by lazy {
         findPreference("pref_alarm_manual_configuration") as SwitchPreference
     }
@@ -235,7 +234,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 mqttOptions.setTlsConnection(checked)
             }
             "pref_mqtt_retain" -> {
-                val checked = sslPreference!!.isChecked
+                val checked = retainPreference!!.isChecked
                 mqttOptions.setRetain(checked)
             }
             "key_alarm_remote_disarm" -> {

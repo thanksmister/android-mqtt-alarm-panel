@@ -34,7 +34,7 @@ object WeatherUtils {
             "snow" -> return R.drawable.ic_snow
             "windy-variant", "windy" -> return R.drawable.ic_wind
             "pouring", "rainy" -> return R.drawable.ic_rain
-            else -> return 0
+            else -> return R.drawable.ic_baseline_help_outline
         }
     }
 
