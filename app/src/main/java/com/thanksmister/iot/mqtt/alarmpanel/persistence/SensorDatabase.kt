@@ -25,7 +25,7 @@ import android.content.Context
 /**
  * The Room database that contains the Sensors table
  */
-@Database(entities = arrayOf(Sensor::class, Weather::class, Sun::class), version = 9, exportSchema = false)
+@Database(entities = arrayOf(Sensor::class, Weather::class, Sun::class), version = 10, exportSchema = false)
 @TypeConverters(ForecastConverter::class)
 abstract class SensorDatabase : RoomDatabase() {
 

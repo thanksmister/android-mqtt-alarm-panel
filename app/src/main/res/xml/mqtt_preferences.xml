@@ -160,7 +160,7 @@
 
         <SwitchPreference
            android:key="key_alarm_remote_disarm"
-           android:summary="Send code to the server for to arm or disarm the alarm."
+           android:summary="@string/pref_summary_send_code"
            android:title="Remote Code" />
 
        <EditTextPreference

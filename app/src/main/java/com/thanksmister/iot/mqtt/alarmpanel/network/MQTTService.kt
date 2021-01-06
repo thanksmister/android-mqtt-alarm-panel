@@ -222,7 +222,7 @@ class MQTTService(private var context: Context,
                 val options = MqttConnectOptions()
                 options.isAutomaticReconnect = true
                 options.isCleanSession = false
-                if (!TextUtils.isEmpty(mqttOptions.getUsername()) && !TextUtils.isEmpty(mqttOptions.getPassword())) {
+                if (mqttOptions.getUsername().isNotEmpty() && mqttOptions.getPassword().isNotEmpty()) {
                     options.userName = mqttOptions.getUsername()
                     options.password = mqttOptions.getPassword().toCharArray()
                 }

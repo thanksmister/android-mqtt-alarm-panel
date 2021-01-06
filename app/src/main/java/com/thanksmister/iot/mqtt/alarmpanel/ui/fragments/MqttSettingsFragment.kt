@@ -58,7 +58,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
         findPreference("key_alarm_remote_disarm") as SwitchPreference
     }
-    
+
    /* private val manualConfigSwitchPreference: SwitchPreference by lazy {
         findPreference("pref_alarm_manual_configuration") as SwitchPreference
     }
