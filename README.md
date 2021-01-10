@@ -437,9 +437,9 @@ You may also use Telegram to recieve a notification with the image when the alar
 
 The camera only captures images when activated in the settings and MailGun is setup properly.  Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
 
-## Screensaver, Image, Clock, Webpage
+## Screensaver, Unsplash, Clock, Webpage
 
-To use a screen saver other than the digital clock, turn this feature on in the screen saver settings. You will need an Imgur key and a tag for which images you would like to use from [Imgur Client Id](https://apidocs.imgur.com/).  You will need a valid web page URL to use the a webpage as screensaver.  Note that the application offers limited webpage support and some web animations may slow down your device.
+Since the applicaiton was designed to run as a full-screen dedicated wall panel application, it is important that you have a screensaver enabled.  You can use Android's built-in DayDream which does a nice job dimming the screen.   However, on some devices like the Fire OS tablets, this is not an option.  Intead, activate the screensaver feature under the `Display Settings` section. The default screen saver will display the current time, and if you are sending weather data, the current weather conditions.  You can change this to display a webpage of your choosing, even with animation or you can display one from Unsplash.  Performance may vary depending on your device. 
 
 ## Platform Screen or Webpage View
 
