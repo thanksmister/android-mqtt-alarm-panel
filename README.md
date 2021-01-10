@@ -19,6 +19,7 @@ The alarm panel acts as an interface for Home Assistant's manual alarm control p
 
 MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
 
+- Alarm sensors, display up to for sensors and their states in the alarm screen.
 - Stream video, detect motion, detect faces, and read QR Codes.
 - Capture and emailing images when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
@@ -62,25 +63,14 @@ You can clone the repository and compile the APK using Android Studio, then side
 
 ## Home Assistant Setup
 
+Alarm Panel should work with any MQTT broker and does not require Home Assistant.  If you are using Home Assistant, then you will want to use the Manual MQTT component and the built in MQTT integration for your setup.
+
 - Setup [Home Assistant](https://home-assistant.io/getting-started/)
 - Configure the [MQTT service](https://home-assistant.io/components/mqtt/) note the broker address and username/password if applicable.
-- Add the [MQTT Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) to your configuration with the default settings for now.
+- Add the [MQTT Manual](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) Home Assistant component to your configuration with the default settings.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
 
-## Alarm Setup
-
-- Under the settings (gear icon) enter the MQTT information that you configured in Home Assistant for your MQTT service.
-
-- Be sure you adjust the time intervals to match those set (other than defaults) in the Home Assistant MQTT alarm control panel. Here is an example of the setup I use in Home Assistant's configuration.yaml file.  
-
-### Supported Command and Publish States
-
-- Command topic:  home/alarm/set
-- Command payloads: ARM_HOME, ARM_AWAY, DISARM
-- Publish topic: home/alarm
-- Publish payloads: disarmed, armed_away, armed_home, pending, triggered (armed_night not currently supported).
-
-### Example Home Assistant Setup
+### Example Home Assistant Manual MQTT component:
 
 ```
 alarm_control_panel:
@@ -100,10 +90,83 @@ alarm_control_panel:
 ```
 
 -- If I set the the alarm mode home, the alarm will immediately be on without any pending time.  If the alarm is triggered,      there will be no pending time before the siren sounds.   If the alarm mode is away, I have 60 seconds to leave before the      alarm is active and 30 seconds to disarm the alarm when entering.   
-
 -- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it    stops and it doesn't reset after its triggerd. 
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings.   By default the                pending_time and delay_time are used for all alarm modes unless otherwise changed.
+
+## MQTT Alarm Setup
+
+Under the settings (gear icon) enter the MQTT information that you configured in your MQTT service.  This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.   You enter the port and credentials in separate fields.   The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://102.168.1.1.  However, for most MQTT brokers, using TCP is fine.
+
+### Supported Alarm Commands and Publish States
+
+- Command topic:  home/alarm/set
+- Command payloads: ARM_HOME, ARM_AWAY, ARM_NIGHT, DISARM
+- Publish topic: home/alarm
+- Publish payloads: disarmed, armed_away, armed_home, armed_night, pending, triggered.
+
+### Alarm Security and Remote Code
+
+Under the settings, you can update the default security code, its 1234 on first instalation. The security code is used to access the alarm settings and disarm the alarm from the alarm control panel app. You can choose to use the security code to disarm or arm the system. The security code is not sent over MQTT, it is only used from the application to control the alarm.   
+
+There is an option called `Remote Code` that will send both the alarm state and the code entered when arming or optionally disarming the alarm to your MQTT broker.  This requires extra work on your part to parse the code and command paylaod from the MQTT message using your available platform tools.  Here is an example of an alarm command with the code:
+
+```
+{"command": "ARM_HOME", "code":1234}
+```
+
+When choose to use the feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system.   When entering a code to arm or disarm your system, the code will now be sent to the server along with the command.  
+
+The server must respond with either a status message or the new alarm state. You must write your own automations to validate the alarm and either update the alarm state or return a message that the code is invalid.  If the code is invalid, the alarm panel will display an alert to the user. 
+
+Here is what an invalid status message would look like: 
+
+- Publish topic: home/alarm/status
+- Publish payloads: INVALID, VALID
+
+### Alarm Sensors
+
+Under `Alarm Sensors` option in the settings, you can add up to for sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The active state shows as green in the interface and red for any other reported states. The topic should include the entity id or name of your sensor and the current.   Here is a sample automation for a Home Assistant platform automation.
+
+```
+alias: 'MQTT Sensors'
+description: ''
+trigger:
+  - entity_id: sensor.main_door
+    platform: state
+condition: []
+action:
+  -  data_template:
+      topic: '/home/sensor/{{ trigger.entity_id }}'
+      payload: '{{ trigger.to_state.state }}'
+      retain: true
+    service: mqtt.publish
+mode: single
+```
+
+In this setup you would add multiple "trigger" for each of the four components and the state and entity id or name of the component would be sent via MQTT to the alarm panel.  The resulting payload for a door sensor might look like this for a closed door sensor:
+
+Command topic: /home/sensor/main_door
+Command payloads: closed
+
+
+And this when the door sensor is open:
+
+Command topic: /home/sensor/main_door
+Command payloads: open
+
+This really depends entirely on your platform and setup.  You can configure the alarm sensors to have the topic and state in the settings to match your MQTT setup. 
+
+
+### Panic Button
+
+This feature will display a panic button on the main interface that when pressed, will send a command with a single payload, it's up to your MQTT and automation platform how to handle it.  This would be like an emergency call or way to silently trigger the alarm.
+
+The alarm panel will send the following command and payload:
+
+Command topic:  home/alarm/panic
+Command payload: ON
+
 
 ## MQTT Communication
 
@@ -122,19 +185,19 @@ We have deprecated support for Darksky, now you can use any weather integration.
 You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval.  Then in the application settings, you can use most any weather integration as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application:
 
 ```
-- id: '1538595661244'
-  alias: MQTT Weather
-  trigger:
+alias: MQTT Weather
+trigger:
   - minutes: /15
     platform: time_pattern
-  condition: []
-  action:
+condition: []
+action:
   - data:
-      payload_template: '{''weather'':{''condition'':''{{states.weather.home.state}}'',''humidity'':{{states.weather.home.attributes.humidity}},''temperature'':{{states.weather.home.attributes.temperature}},''forecast'':{{states.weather.home.attributes.forecast}}}}'
+      payload_template: >-
+        {'weather':{'condition':'{{states.weather.home.state}}','humidity':{{states.weather.home.attributes.humidity}},'temperature':{{states.weather.home.attributes.temperature}},'forecast':{{states.weather.home.attributes.forecast}}}}
       retain: true
       topic: alarmpanel/command
     service: mqtt.publish
-  mode: single
+mode: single
 ```
 
 For alternate way of getting the payload with the current condition, you can this for the payload_template:
@@ -172,27 +235,25 @@ You can also test this using the "mqtt.publish" service under the Home Assistant
 Note that many weather sources work.  For example, the Accuweather integration has been affirmatively tested.  Also note that the template engine has an issue if you have an entity where a section starts with a digit.  This means that if you have an entity like `weather.1234_main_st` you will have to use a different template method to access the entity data:
 
 ```
-      states.weather['1234_main_st'].attributes
+states.weather['1234_main_st'].attributes
 ```
-
 
 ### MQTT Day/Night Mode
 
 Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon).  To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish an MQTT message on an interval:
 
 ```
-- id: '1539017708085'
-  alias: MQTT Sun
-  trigger:
-  - minutes: /30
-    platform: time_pattern
-  condition: []
-  action:
-  - data:
-      payload_template: '{''sun'':''{{states(''sun.sun'')}}''}'
-      retain: true
-      topic: alarmpanel/command
-    service: mqtt.publish
+alias: MQTT Sun
+trigger:
+- minutes: /30
+  platform: time_pattern
+condition: []
+action:
+- data:
+    payload_template: '{''sun'':''{{states(''sun.sun'')}}''}'
+    retain: true
+    topic: alarmpanel/command
+  service: mqtt.publish
 ```
 
 The resulting payload will look like this:
