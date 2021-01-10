@@ -1,3 +1,8 @@
+*** 01/10/2021 Update ***
+
+The documentation has been updated for the new verson of the Alarm Panel currently in beta testing.  You may side-load this application from the release section, it is labeled `pre-release`.  This version is not yet available on the Google Store. 
+
+
 # MQTT Alarm Panel for Home Automation Platforms
 
 This project is an MQTT Alarm Control Panel was originally created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings.  There is also a [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version if you want to use a Raspberry Pi wall mounted panel. 
@@ -5,7 +10,7 @@ This project is an MQTT Alarm Control Panel was originally created for use with 
 
 ## Support
 
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community.  You can also join the [ThanksMister Community](https://community.thanksmister.com/) to ask questions or share any helpful information about this project. 
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues).  For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page which already has a lot information from the community.  You can also join the [ThanksMister Community](https://community.thanksmister.com/) or hope o the Discord channel to ask questions or get support https://discord.com/invite/euh9J2d. 
 
 ***If you are looking for support for older devices, those running less than Android 4.4, then install one of the APK's from the release section prior to release v0.8.7-beta.0***
 
