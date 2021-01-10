@@ -137,8 +137,8 @@ trigger:
 condition: []
 action:
   - data:
-      topic: /home/sensor/inside_motion
-      payload_template: '{{ trigger.to_state.state }}'
+      topic: home/sensor/inside_motion
+      payload_template: '{{states("sensor.inside_motion")}}'
       retain: true
     service: mqtt.publish
 mode: single
