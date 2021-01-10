@@ -129,31 +129,31 @@ Here is what an invalid status message would look like:
 Under `Alarm Sensors` option in the settings, you can add up to for sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The active state shows as green in the interface and red for any other reported states. The topic should include the entity id or name of your sensor and the current.   Here is a sample automation for a Home Assistant platform automation.
 
 ```
-alias: 'MQTT Sensors'
+alias: MQTT Inside Motion
 description: ''
 trigger:
-  - entity_id: sensor.main_door
+  - entity_id: sensor.inside_motion
     platform: state
 condition: []
 action:
-  -  data_template:
-      topic: '/home/sensor/{{ trigger.entity_id }}'
-      payload: '{{ trigger.to_state.state }}'
+  - data:
+      topic: /home/sensor/inside_motion
+      payload_template: '{{ trigger.to_state.state }}'
       retain: true
     service: mqtt.publish
 mode: single
 ```
 
-In this setup you would add multiple "trigger" for each of the four components and the state and entity id or name of the component would be sent via MQTT to the alarm panel.  The resulting payload for a door sensor might look like this for a closed door sensor:
+Create an automation like this for each of the four components sending the topic with the entity id and using a payload template to send the current state.  The resulting payload for a door sensor might look like this for a closed door sensor:
 
-Command topic: /home/sensor/main_door
-Command payloads: closed
+Command topic: /home/sensor/inside_motion
+Command payloads: no
 
 
 And this when the door sensor is open:
 
-Command topic: /home/sensor/main_door
-Command payloads: open
+Command topic: /home/sensor/inside_motion
+Command payloads: yes
 
 This really depends entirely on your platform and setup.  You can configure the alarm sensors to have the topic and state in the settings to match your MQTT setup. 
 
