@@ -26,7 +26,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PA
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_SENSOR_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.NOTIFICATION_STATE_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PORT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
 import java.util.*
@@ -111,11 +110,6 @@ constructor(private val sharedPreferences: SharedPreferences) {
         topics.add(sensorThreeTopic)
         topics.add(sensorFourTopic)
         return topics.toArray(arrayOf<String>())
-    }
-
-    @Deprecated("We will move to commands")
-    fun getNotificationTopic(): String {
-        return sharedPreferences.getString(PREF_NOTIFICATION_TOPIC, NOTIFICATION_STATE_TOPIC).orEmpty()
     }
 
     fun getUsername(): String {

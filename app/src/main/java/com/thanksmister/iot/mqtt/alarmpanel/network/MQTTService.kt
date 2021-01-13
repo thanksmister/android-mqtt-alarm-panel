@@ -85,7 +85,7 @@ class MQTTService(private var context: Context,
         mReady.set(false)
     }
 
-    override fun publishAlarm(action: String, code: Int) {
+    override fun publishAlarm(command: String, code: Int) {
         try {
             if (isReady) {
                 mqttClient?.let {
@@ -111,12 +111,12 @@ class MQTTService(private var context: Context,
                 }
                 mqttOptions?.let {
                     val mqttMessage = MqttMessage()
-                    var payloadString = action
+                    var payloadString = command
                     if(it.useRemoteDisarm && code != 0) {
                         val payloadJson = JSONObject()
-                        payloadJson.put(MqttUtils.ACTION, action)
+                        payloadJson.put(MqttUtils.COMMAND, command)
                         if (code > 0) {
-                            payloadJson.put(MqttUtils.CODE, code)
+                            payloadJson.put(MqttUtils.CODE, code.toString())
                         }
                         payloadString = payloadJson.toString()
                     }

@@ -45,11 +45,9 @@ class MqttUtils {
 
         const val VALUE = "value"
         const val ACTION = "action"
+        const val COMMAND = "command"
         const val CODE = "code"
 
-        const val NOTIFICATION_STATE_TOPIC = "home/notification"
-        const val NOTIFICATION_TYPE = "NOTIFICATION"
-        
         const val COMMAND_SENSOR_FACE = "sensor/face"
         const val COMMAND_SENSOR_QR_CODE = "sensor/qrcode"
         const val COMMAND_SENSOR_MOTION = "sensor/motion"
@@ -96,7 +94,6 @@ class MqttUtils {
         const val STATE_PENDING_ALARM = "pending_alarm"
         const val STATE_ARMING = "arming"
         const val STATE_DISARMING = "disarming"
-
 
         const val STATE_ARMING_AWAY = "arming_away"
         const val STATE_ARM_AWAY = "arm_away"

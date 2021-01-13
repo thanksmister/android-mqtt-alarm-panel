@@ -34,8 +34,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_T
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_STATUS_TOPIC
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -262,7 +260,7 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 remoteConfigTopicPreference.summary = mqttOptions.remoteStatusTopic
             }*/
             "pref_mqtt_remote_status_topic" -> {
-                mqttOptions.remoteStatusTopic = remoteStatusPreference.text?:DEFAULT_STATUS_TOPIC
+                mqttOptions.remoteStatusTopic = remoteStatusPreference.text?:MQTTOptions.PREF_STATUS_TOPIC
                 remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
             }
         }
