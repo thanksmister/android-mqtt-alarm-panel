@@ -101,9 +101,9 @@ alarm_control_panel:
 
 ## MQTT Alarm Setup
 
-Under the settings (gear icon) enter the MQTT information that you configured in your MQTT service.  This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.   You enter the port and credentials in separate fields.   The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://102.168.1.1.  However, for most MQTT brokers, using TCP is fine.
+Under the settings (gear icon) enter the MQTT information that you configured in your MQTT service.  This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.   You enter the port and credentials in separate fields.   The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1.  However, for most MQTT brokers, using TCP is fine.
 
-### Supported Alarm Commands and Publish States
+### Supported commands/payloads:
 
 - Command topic:  home/alarm/set
 - Command payloads: ARM_HOME, ARM_AWAY, ARM_NIGHT, DISARM
@@ -120,14 +120,15 @@ There is an option called `Remote Code` that will send both the alarm state and 
 {"command": "ARM_HOME", "code":1234}
 ```
 
-When choose to use the feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system.   When entering a code to arm or disarm your system, the code will now be sent to the server along with the command.  
+When choose to use the feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system.   When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
 
-The server must respond with either a status message or the new alarm state. You must write your own automations to validate the alarm and either update the alarm state or return a message that the code is invalid.  If the code is invalid, the alarm panel will display an alert to the user. 
+The server must respond with either a status message or the new alarm state. You must write your own automations to validate the alarm code and either update the alarm state or return a message that the code is invalid.  If the code is invalid, the alarm panel will display an alert to the user. 
 
 Here is what an invalid status message would look like: 
 
 - Publish topic: home/alarm/status
 - Publish payloads: INVALID, VALID
+
 
 ### Alarm Sensors
 
