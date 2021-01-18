@@ -23,14 +23,12 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.preference.SwitchPreference
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.preference.*
-import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
+import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
@@ -44,8 +42,10 @@ import javax.inject.Inject
 
 class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var configuration: Configuration
+    @Inject
+    lateinit var dialogUtils: DialogUtils
 
     private var cameraListPreference: ListPreference? = null
     private var cameraTestPreference: Preference? = null
@@ -62,7 +62,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if((activity as SettingsActivity).supportActionBar != null) {
+        if ((activity as SettingsActivity).supportActionBar != null) {
             (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
             (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_camera))
@@ -98,14 +98,14 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         rotatePreference!!.setDefaultValue(configuration.cameraRotate)
         rotatePreference!!.value = configuration.cameraRotate.toString()
-        if(configuration.cameraRotate == 0f) {
-            rotatePreference!!.setValueIndex(0)
+        if (configuration.cameraRotate == 0f) {
+            rotatePreference?.setValueIndex(0)
         } else if (configuration.cameraRotate == -90f) {
-            rotatePreference!!.setValueIndex(1)
+            rotatePreference?.setValueIndex(1)
         } else if (configuration.cameraRotate == 90f) {
-            rotatePreference!!.setValueIndex(2)
+            rotatePreference?.setValueIndex(2)
         } else if (configuration.cameraRotate == -180f) {
-            rotatePreference!!.setValueIndex(3)
+            rotatePreference?.setValueIndex(3)
         }
         cameraListPreference = findPreference(getString(R.string.key_setting_camera_cameraid)) as ListPreference
         cameraListPreference!!.setOnPreferenceChangeListener { preference, newValue ->
@@ -117,7 +117,7 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                         else
                             "")
 
-                if(index >= 0) {
+                if (index >= 0) {
                     //configuration.cameraId = index
                     val cameraListItem = cameraList[index]
                     configuration.cameraId = cameraListItem.cameraId
@@ -128,49 +128,48 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             }
             true;
         }
-        cameraListPreference!!.isEnabled = false
+        cameraListPreference?.isEnabled = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(requireActivity().applicationContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 createCameraList()
             }
         } else {
             createCameraList()
         }
 
-
         cameraTestPreference = findPreference("button_key_camera_test")
-        cameraTestPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        cameraTestPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             startCameraTest(preference.context)
             false
         }
 
         val motionPreference = findPreference("button_key_motion")
-        motionPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        motionPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             view.let { Navigation.findNavController(it).navigate(R.id.motion_action) }
             false
         }
 
         val facePreference = findPreference("button_key_face")
-        facePreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        facePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             view.let { Navigation.findNavController(it).navigate(R.id.face_action) }
             false
         }
 
         val qrPreference = findPreference("button_key_qr")
-        qrPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        qrPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             view.let { Navigation.findNavController(it).navigate(R.id.qrcode_action) }
             false
         }
 
         val mjpegPreference = findPreference("button_key_mjpeg")
-        mjpegPreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        mjpegPreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             view.let { Navigation.findNavController(it).navigate(R.id.mjpeg_action) }
             false
         }
 
         val capturePreference = findPreference("button_key_capture")
-        capturePreference!!.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
+        capturePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference ->
             view.let { Navigation.findNavController(it).navigate(R.id.capture_action) }
             false
         }
@@ -199,11 +198,9 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     }
 
     private fun requestCameraPermissions() {
-        Timber.d("requestCameraPermissions")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Timber.d("requestCameraPermissions asking")
             if (PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.CAMERA)) {
-                ActivityCompat.requestPermissions(activity!!,
+                ActivityCompat.requestPermissions(requireActivity(),
                         arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
                         SettingsActivity.PERMISSIONS_REQUEST_CAMERA)
             }
@@ -214,99 +211,63 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         when (key) {
             getString(R.string.key_setting_camera_enabled) -> {
-                configuration.cameraEnabled = cameraPreference!!.isChecked
+                configuration.cameraEnabled = cameraPreference?.isChecked?: false
             }
             getString(R.string.key_setting_camera_fps) -> {
                 try {
-                    val value = fpsPreference!!.text
-                    if(!TextUtils.isEmpty(value)) {
-                        configuration.cameraFPS = value.toFloat()
-                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
+                    val value = fpsPreference?.text?.toFloatOrNull()
+                    if (value != null) {
+                        configuration.cameraFPS = value
+                        fpsPreference?.summary = getString(R.string.pref_camera_fps_summary, value.toString())
                     } else if (isAdded) {
-                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
-                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
+                        Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                        fpsPreference?.setDefaultValue(configuration.cameraFPS.toString())
+                        fpsPreference?.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
                     }
-                } catch (e : Exception) {
-                    if(isAdded) {
-                        Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                        fpsPreference!!.setDefaultValue(configuration.cameraFPS.toString())
-                        fpsPreference!!.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
-                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    fpsPreference?.setDefaultValue(configuration.cameraFPS.toString())
+                    fpsPreference?.summary = getString(R.string.pref_camera_fps_summary, configuration.cameraFPS.toString())
                 }
             }
-            "pref_settings_camera_rotate"-> {
-                val valueFloat = rotatePreference!!.value
-                val valueName = rotatePreference!!.entry.toString()
-                rotatePreference!!.summary = getString(R.string.preference_camera_flip_summary, valueName)
-                configuration.cameraRotate = valueFloat.toFloat()
+            "pref_settings_camera_rotate" -> {
+                val valueFloat = rotatePreference?.value?.toFloatOrNull()
+                val valueName = rotatePreference?.entry.toString()
+                rotatePreference?.summary = getString(R.string.preference_camera_flip_summary, valueName)
+                if (valueFloat != null) {
+                    configuration.cameraRotate = valueFloat
+                }
             }
         }
     }
 
     private fun createCameraList() {
-        Timber.d("createCameraList")
         try {
-            cameraList = CameraUtils.getCameraList(activity!!)
-            val cameraListEntries:ArrayList<CharSequence> = ArrayList()
-            val cameraListValues:ArrayList<CharSequence> = ArrayList()
+            cameraList = CameraUtils.getCameraList(requireActivity())
+            val cameraListEntries: ArrayList<CharSequence> = ArrayList()
+            val cameraListValues: ArrayList<CharSequence> = ArrayList()
             for (item in cameraList) {
                 cameraListEntries.add(item.description)
                 cameraListValues.add(Integer.toString(item.cameraId))
             }
-            cameraListPreference!!.entries = cameraListEntries.toTypedArray<CharSequence>()
-            cameraListPreference!!.entryValues = cameraListValues.toTypedArray<CharSequence>()
-            val index = cameraListPreference!!.findIndexOfValue(configuration.cameraId.toString())
+            cameraListPreference?.entries = cameraListEntries.toTypedArray<CharSequence>()
+            cameraListPreference?.entryValues = cameraListValues.toTypedArray<CharSequence>()
+            val index = cameraListPreference?.findIndexOfValue(configuration.cameraId.toString())?:0
             cameraListPreference!!.summary = if (index >= 0)
                 cameraListPreference!!.entries[index]
             else
                 ""
-            cameraListPreference!!.isEnabled = true
+            cameraListPreference?.isEnabled = true
         } catch (e: Exception) {
             Timber.e(e.message)
-            cameraListPreference!!.isEnabled = false
-            if(activity != null) {
-                Toast.makeText(activity!!, getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
+            cameraListPreference?.isEnabled = false
+            if (activity != null) {
+                Toast.makeText(requireActivity(), getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
             }
-        }
-    }
-
-    private val bindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
-        val stringValue = value.toString()
-        if (preference is SwitchPreference) {
-            return@OnPreferenceChangeListener true
-        }else if (preference is ListPreference) {
-            val index = preference.findIndexOfValue(stringValue)
-            preference.setSummary(
-                    if (index >= 0)
-                        preference.entries[index]
-                    else null)
-        } else {
-            preference.summary = stringValue
-        }
-        true
-    }
-
-    fun bindPreferenceSummaryToValue(preference: Preference) {
-        preference.onPreferenceChangeListener = bindPreferenceSummaryToValueListener
-        if (preference is SwitchPreference) {
-            bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getBoolean(preference.getKey(), false))
-        } else {
-            bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, "")!!)
         }
     }
 
     private fun startCameraTest(c: Context) {
         startActivity(Intent(c, LiveCameraActivity::class.java))
-    }
-
-    companion object {
-        const val PERMISSIONS_REQUEST_CAMERA = 201
     }
 }

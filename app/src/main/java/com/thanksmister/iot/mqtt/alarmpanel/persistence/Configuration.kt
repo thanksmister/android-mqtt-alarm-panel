@@ -222,7 +222,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
 
     var cameraRotate: Float
         get() = this.sharedPreferences.getFloat(PREF_CAMERA_ROTATE, 0f)
-        set(value) = this.sharedPreferences.edit().putString(PREF_CAMERA_ROTATE, value.toString()).apply()
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_CAMERA_ROTATE, value).apply()
 
     var mqttSensorFrequency: Int
         get() = this.sharedPreferences.getInt(PREF_SENSOR_FREQUENCY, 30)
@@ -233,9 +233,8 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putInt(PREF_HTTP_PORT, value).apply()
 
     var cameraMotionLeniency: Int
-        get() = this.sharedPreferences.getInt(context.getString(R.string.key_setting_camera_motionleniency),
-                context.getString(R.string.default_setting_camera_motionleniency).toInt())
-        set(value) = this.sharedPreferences.edit().putInt(context.getString(R.string.key_setting_camera_motionleniency), value).apply()
+        get() = this.sharedPreferences.getInt(PREF_MOTION_LENENCEY,20)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_LENENCEY, value).apply()
 
     var httpMJPEGMaxStreams: Int
         get() = this.sharedPreferences.getInt(PREF_MAX_STREAMS, 1)
@@ -484,6 +483,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         private const val PREF_DARK_THEME = "pref_dark_theme"
         private const val PREF_DARK_THEME_REMOTE = "pref_dark_theme_re,pte"
         private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
+        private const val PREF_MOTION_LENENCEY  = "pref_motion_leniency"
         private const val PREF_MAX_STREAMS  = "pref_max_streams"
         private const val PREF_HTTP_PORT  = "pref_http_port"
 
