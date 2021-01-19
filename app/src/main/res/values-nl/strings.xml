@@ -427,6 +427,7 @@
     <string name="button_send_alert">SEND</string>
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
+    <string name="text_alarm_entry">ALARM ENTRY</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

@@ -66,10 +66,6 @@ class MQTTService(private var context: Context,
         fun handleMqttConnected()
     }
 
-    override val isReady: Boolean by lazy {
-        mReady.get()
-    }
-
     @Throws(MqttException::class)
     override fun close() {
         Timber.d("close")
@@ -87,7 +83,7 @@ class MQTTService(private var context: Context,
 
     override fun publishAlarm(command: String, code: Int) {
         try {
-            if (isReady) {
+            if (mReady.get()) {
                 mqttClient?.let {
                     if (!it.isConnected) {
                         // if for some reason the mqtt client has disconnected, we should try to connect
@@ -137,7 +133,7 @@ class MQTTService(private var context: Context,
      */
     override fun publishCommand(command: String, payload: String) {
         try {
-            if (isReady) {
+            if (mReady.get()) {
                 mqttClient?.let {
                     if (!it.isConnected) {
                         try {
@@ -287,7 +283,7 @@ class MQTTService(private var context: Context,
     private fun sendMessage(mqttTopic: String?, mqttMessage: MqttMessage) {
         Timber.d("sendMessage")
         mqttClient?.let {
-            if (isReady && it.isConnected) {
+            if (mReady.get() && it.isConnected) {
                 try {
                     it.publish(mqttTopic, mqttMessage)
                     Timber.d("Command Topic: $mqttTopic Payload: $message")
@@ -306,7 +302,7 @@ class MQTTService(private var context: Context,
         topicFilters?.let {
             Timber.d("Subscribe to Topics: " + StringUtils.convertArrayToString(topicFilters))
             mqttClient?.let {
-                if (isReady) {
+                if (mReady.get()) {
                     try {
                         it.subscribe(topicFilters, MqttUtils.getQos(topicFilters.size), MqttUtils.getMqttMessageListeners(topicFilters.size, listener))
                     } catch (e: NullPointerException) {

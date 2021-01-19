@@ -56,6 +56,7 @@ class MqttUtils {
 
         const val STATE_SCREEN_ON = "screenOn"
         const val STATE_BRIGHTNESS = "brightness"
+        const val STATE_PRESENCE = "presence"
         const val COMMAND_SENSOR_PREFIX = "sensor/"
 
         const val COMMAND_WAKE = "wake"

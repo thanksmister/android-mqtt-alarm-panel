@@ -452,7 +452,7 @@ class ControlsFragment : BaseFragment() {
         playContinuousAlarm()
         systemText.setTextColor(resources.getColor(R.color.body_text_2))
         pendingAnimation.visibility = View.VISIBLE
-        alarmText.text = "ALARM ENTRY"
+        alarmText.text = getString(R.string.text_alarm_entry)
         alarmText.setTextColor(resources.getColor(R.color.gray))
         alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray))
         (this.view as MaterialCardView).setCardBackgroundColor(resources.getColor(R.color.colorPrimary))

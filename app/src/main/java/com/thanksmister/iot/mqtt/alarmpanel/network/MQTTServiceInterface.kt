@@ -20,7 +20,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService.MqttManagerListe
 import org.eclipse.paho.client.mqttv3.MqttException
 
 interface MQTTServiceInterface {
-    val isReady: Boolean
     fun publishAlarm(command: String, code: Int)
     fun publishCommand(command: String, payload: String)
     fun reconfigure(context: Context, newOptions: MQTTOptions, listener: MqttManagerListener)

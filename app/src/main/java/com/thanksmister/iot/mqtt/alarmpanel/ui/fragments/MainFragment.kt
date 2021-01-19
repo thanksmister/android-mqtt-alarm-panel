@@ -296,9 +296,6 @@ class MainFragment : BaseFragment() {
                             }
                             MqttUtils.STATE_PENDING -> {
                                 dialogUtils.clearDialogs()
-                                /*if (configuration.isAlarmArmedMode()) {
-                                    showAlarmDisableDialog()
-                                }*/
                             }
                             MqttUtils.STATE_TRIGGERED -> {
                                 dialogUtils.clearDialogs()
@@ -309,29 +306,6 @@ class MainFragment : BaseFragment() {
                 }, { error -> Timber.e("Unable to get message: $error") }))
     }
 
-    /**
-     * We show the disarm dialog if we have delay time and a sensor was triggered in home or away mode.
-     * This will be the time before the alarm is triggered, otherwise the expected behavior is the
-     * alarm will trigger immediately.
-     */
-    /*private fun showAlarmDisableDialog(delayTime: Int) {
-        activity.takeIf { isAdded }?.let {
-            if(delayTime > 0) {
-                dialogUtils.showAlarmDisableDialog(it as BaseActivity, object : AlarmDisableView.ViewListener {
-                    override fun onComplete(code: Int) {
-                        listener?.publishDisarmed()
-                        dialogUtils.clearDialogs()
-                    }
-                    override fun onError() {
-                        Toast.makeText(it, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
-                    override fun onCancel() {
-                        dialogUtils.clearDialogs()
-                    }
-                }, configuration.alarmCode, delayTime, configuration.systemSounds, configuration.fingerPrint)
-            }
-        }
-    }*/
 
     private fun showSettingsCodeDialog() {
         if (configuration.isFirstTime) {

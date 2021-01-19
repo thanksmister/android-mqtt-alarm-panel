@@ -165,8 +165,6 @@ constructor(private val context: Context) {
     @SuppressLint("MissingPermission")
     @Throws(IOException::class)
     fun startCameraPreview(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
-        Timber.d("startCameraPreview")
-        Timber.d("FPS: " + configuration.cameraFPS)
         if (configuration.cameraEnabled && preview != null) {
             this.cameraCallback = callback
             this.cameraPreview = preview
@@ -175,7 +173,6 @@ constructor(private val context: Context) {
                 cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
                 cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
                     override fun onCameraError() {
-                        Timber.e("Camera Preview Error")
                         cameraSource = if(configuration.cameraId == CAMERA_FACING_FRONT) {
                             initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
                         } else {
@@ -185,7 +182,6 @@ constructor(private val context: Context) {
                             try {
                                 cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
                                     override fun onCameraError() {
-                                        Timber.e("Camera Preview Error")
                                         cameraCallback!!.onCameraError()
                                     }
                                 })
@@ -205,8 +201,6 @@ constructor(private val context: Context) {
     @SuppressLint("MissingPermission")
     @Throws(IOException::class)
     fun startCameraPreviewSolo(callback: CameraCallback, configuration: Configuration, preview: CameraSourcePreview?) {
-        Timber.d("startCameraPreviewSolo")
-        Timber.d("FPS: " + configuration.cameraFPS)
         if (configuration.cameraEnabled && preview != null) {
             this.cameraCallback = callback
             this.cameraPreview = preview
@@ -215,7 +209,6 @@ constructor(private val context: Context) {
                 cameraSource = initCamera(configuration.cameraId, configuration.cameraFPS)
                 cameraPreview!!.start(cameraSource, object : CameraSourcePreview.OnCameraPreviewListener {
                     override fun onCameraError() {
-                        Timber.e("Camera Preview Error")
                         cameraSource = if(configuration.cameraId == CAMERA_FACING_FRONT) {
                             initCamera(CAMERA_FACING_BACK, configuration.cameraFPS)
                         } else {
@@ -398,9 +391,6 @@ constructor(private val context: Context) {
     @SuppressLint("MissingPermission")
     @Throws(Exception::class)
     private fun initCamera(cameraId: Int, fsp: Float, widthPixels: Int = 640, heightPixels: Int = 480): CameraSource {
-        Timber.d("initCamera cameraId $cameraId")
-        Timber.d("initCamera widthPixels $widthPixels")
-        Timber.d("initCamera heightPixels $heightPixels")
         return CameraSource.Builder(context, multiDetector)
                 .setRequestedFps(fsp)
                 .setRequestedPreviewSize(widthPixels, heightPixels)

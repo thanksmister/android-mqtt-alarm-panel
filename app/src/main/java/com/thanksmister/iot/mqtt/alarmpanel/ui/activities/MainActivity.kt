@@ -396,7 +396,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedHome(code: String) {
-        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_HOME)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -405,7 +404,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedAway(code: String) {
-        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_AWAY)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -414,7 +412,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedNight(code: String) {
-        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_NIGHT)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -423,7 +420,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishArmedBypass(code: String) {
-        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_ARM_CUSTOM_BYPASS)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)
@@ -432,7 +428,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun publishDisarm(code: String) {
-        val alarmMode = configuration.alarmMode
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_MODE, MqttUtils.COMMAND_DISARM)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_ALARM_CODE, code)

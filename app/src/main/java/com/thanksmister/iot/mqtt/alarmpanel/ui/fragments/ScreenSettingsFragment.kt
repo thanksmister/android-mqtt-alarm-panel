@@ -247,19 +247,37 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 }
             }
             "pref_settings_image_rotation"-> {
-                rotationPreference?.text?.let {
-                    val rotation = Integer.valueOf(it)
-                    imageOptions.imageRotation = rotation
-                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotation.toString())
+                val rotationValue = rotationPreference?.text?.toIntOrNull()
+                if(rotationValue != null) {
+                    imageOptions.imageRotation = rotationValue
+                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotationValue.toString())
+                } else {
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    rotationPreference?.text = imageOptions.imageRotation .toString()
+                    rotationPreference?.setDefaultValue(imageOptions.imageRotation .toString())
+                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotationValue.toString())
                 }
             }
             "pref_settings_inactivity_time" -> {
-                val inactivity = inactivityPreference?.value!!.toLong()
-                configuration.inactivityTime = inactivity
-                if (inactivity < SECONDS_VALUE) {
-                    inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds, DateUtils.convertInactivityTime(inactivity))
+                val inactivity = inactivityPreference?.value?.toLongOrNull()
+                if(inactivity != null) {
+                    configuration.inactivityTime = inactivity
+                    if (inactivity < SECONDS_VALUE) {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds, DateUtils.convertInactivityTime(inactivity))
+                    } else {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
+                    }
                 } else {
-                    inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    inactivityPreference?.setDefaultValue(configuration.inactivityTime.toString())
+                    inactivityPreference?.value = configuration.inactivityTime.toString()
+                    if (configuration.inactivityTime < SECONDS_VALUE) {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds,
+                                DateUtils.convertInactivityTime(configuration.inactivityTime))
+                    } else {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes,
+                                DateUtils.convertInactivityTime(configuration.inactivityTime))
+                    }
                 }
             }
             "pref_settings_day_night" -> {
@@ -289,10 +307,17 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 setWebScreenSaver(checked)
             }
             "pref_settings_dim" -> {
-                val dim = dimPreference?.value!!.toInt()
-                configuration.nightModeDimValue = dim
-                screenUtils.setScreenBrightnessLevels()
-                dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, dim.toString())
+                val dim = dimPreference?.value?.toIntOrNull()
+                if(dim != null) {
+                    configuration.nightModeDimValue = dim
+                    screenUtils.setScreenBrightnessLevels()
+                    dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, dim.toString())
+                } else {
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    dimPreference?.setDefaultValue(configuration.nightModeDimValue)
+                    dimPreference?.value = configuration.nightModeDimValue.toString()
+                    dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, configuration.nightModeDimValue.toString())
+                }
             }
         }
     }

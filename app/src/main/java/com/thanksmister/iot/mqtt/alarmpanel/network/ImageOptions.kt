@@ -27,43 +27,17 @@ import javax.inject.Inject
 class ImageOptions @Inject
 constructor(private val sharedPreferences: SharedPreferences) {
 
-    val isValid: Boolean
-        get() = !TextUtils.isEmpty(imageSource) && !TextUtils.isEmpty(imageClientId)
-
-    var imageClientId: String?
-        get() = sharedPreferences.getString(PREF_IMAGE_CLIENT_ID, "").orEmpty()
-        set(value) = this.sharedPreferences.edit().putString(PREF_IMAGE_CLIENT_ID, value.orEmpty()).apply()
-
     var imageRotation: Int
-        get() = sharedPreferences.getInt(PREF_IMAGE_ROTATION, ROTATE_TIME_IN_MINUTES)
-        set(value) = this.sharedPreferences.edit().putInt(PREF_IMAGE_ROTATION, value).apply()
-
-    var imageFitScreen: Boolean
-        get() = sharedPreferences.getBoolean(PREF_IMAGE_FIT_SIZE, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_IMAGE_FIT_SIZE, value).apply()
-
-    var imageSource: String
-        get() = sharedPreferences.getString(PREF_IMAGE_SOURCE, "landscape").orEmpty()
-        set(value) = this.sharedPreferences.edit().putString(PREF_IMAGE_SOURCE, value).apply()
+        get() = sharedPreferences.getInt(IMAGE_ROTATION_SETTINGS, ROTATE_TIME_IN_MINUTES)
+        set(value) = this.sharedPreferences.edit().putInt(IMAGE_ROTATION_SETTINGS, value).apply()
 
     private fun setOptionsUpdated(value: Boolean) {
         this.sharedPreferences.edit().putBoolean(IMAGE_OPTIONS_UPDATED, value).apply()
     }
 
-    fun hasUpdates(): Boolean {
-        val updates = sharedPreferences.getBoolean(IMAGE_OPTIONS_UPDATED, false)
-        if (updates) {
-            setOptionsUpdated(false)
-        }
-        return updates
-    }
-
     companion object {
-        const val PREF_IMAGE_SOURCE = "pref_image_source"
-        const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
-        const val PREF_IMAGE_ROTATION = "pref_image_rotation"
-        const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
-        private val IMAGE_OPTIONS_UPDATED = "pref_image_options_updated"
-        private val ROTATE_TIME_IN_MINUTES = 30 // 30 minutes
+        private const val IMAGE_ROTATION_SETTINGS = "setting_image_rotation"
+        private const val IMAGE_OPTIONS_UPDATED = "pref_image_options_updated"
+        private const val ROTATE_TIME_IN_MINUTES = 30 // 30 minutes
     }
 }
