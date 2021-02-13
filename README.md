@@ -24,7 +24,7 @@ The alarm panel acts as an interface for Home Assistant's manual alarm control p
 
 MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
 
-- Alarm sensors, display up to for sensors and their states in the alarm screen.
+- Alarm sensors, display up to four sensors and their states in the alarm screen.
 - Stream video, detect motion, detect faces, and read QR Codes.
 - Capture and emailing images when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
@@ -132,7 +132,7 @@ Here is what an invalid status message would look like:
 
 ### Alarm Sensors
 
-Under `Alarm Sensors` option in the settings, you can add up to for sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The active state shows as green in the interface and red for any other reported states. The topic should include the entity id or name of your sensor and the current.   Here is a sample automation for a Home Assistant platform automation.
+Under `Alarm Sensors` option in the settings, you can add up to four sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The active state shows as green in the interface and red for any other reported states. The topic should include the entity id or name of your sensor and the current.   Here is a sample automation for a Home Assistant platform automation.
 
 ```
 alias: MQTT Inside Motion
