@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_close"
-        android:tint="@color/dark_gray"
+        app:tint="@color/dark_gray"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
@@ -71,7 +71,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
         <ImageView
@@ -80,7 +80,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -89,7 +89,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
         <ImageView
@@ -98,7 +98,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
     </LinearLayout>

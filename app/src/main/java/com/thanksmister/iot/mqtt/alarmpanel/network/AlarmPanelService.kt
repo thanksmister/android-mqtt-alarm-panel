@@ -147,7 +147,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         mqttModule?.restart()
     }
 
-    val alarmPanelService: Intent by lazy {
+    private val alarmPanelService: Intent by lazy {
         Intent(this, AlarmPanelService::class.java)
     }
 
@@ -209,6 +209,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         filter.addAction(BROADCAST_EVENT_SCREEN_TOUCH)
         filter.addAction(BROADCAST_EVENT_ALARM_MODE)
         filter.addAction(BROADCAST_EVENT_USER_INACTIVE)
+        filter.addAction(BROADCAST_EVENT_PUBLISH_PANIC)
         filter.addAction(Intent.ACTION_SCREEN_ON)
         filter.addAction(Intent.ACTION_SCREEN_OFF)
         filter.addAction(Intent.ACTION_USER_PRESENT)

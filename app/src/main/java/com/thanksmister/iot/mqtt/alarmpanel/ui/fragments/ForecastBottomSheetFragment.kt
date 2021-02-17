@@ -37,7 +37,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ForecastDisplay
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DateUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.WeatherUtils
-import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.*
 import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.closeDialogButton
 import kotlinx.android.synthetic.main.dialog_extended_forecast.*
 import kotlinx.android.synthetic.main.dialog_extended_forecast.view.*
@@ -57,12 +56,13 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val dialog = dialog as BottomSheetDialog
                 val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
-                val behavior = BottomSheetBehavior.from(bottomSheet!!)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                bottomSheet?.let {
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
             }
         })
     }
-
 
     @Nullable
     override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View? {
@@ -71,7 +71,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
 
     private fun setExtendedForecast(weather: Weather) {
         val forecastList = weather.forecast
-        if(forecastList.isNotEmpty()) {
+        if (forecastList.isNotEmpty()) {
             val groupedForecastList = ArrayList<ForecastDisplay>()
             var groupDay = DateUtils.dayOfWeek(forecastList[0].datetime)
             var group = ArrayList<Forecast>()
@@ -81,7 +81,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
                 if (day == groupDay) {
                     group.add(forecast)
                 } else {
-                    if(group.isNotEmpty()){
+                    if (group.isNotEmpty()) {
                         val today = (count == 0)
                         val forecastDisplay = groupForecastsByDay(today, group)
                         groupedForecastList.add(forecastDisplay)
@@ -92,7 +92,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
                     group.add(forecast)
                 }
             }
-            if(group.isNotEmpty()){
+            if (group.isNotEmpty()) {
                 val forecastDisplay = groupForecastsByDay(false, group)
                 Timber.d(" add forecastDisplay ${forecastDisplay.day}")
                 groupedForecastList.add(forecastDisplay)
@@ -113,7 +113,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
 
     private fun groupForecastsByDay(today: Boolean = false, group: ArrayList<Forecast>): ForecastDisplay {
         val forecastDisplay = ForecastDisplay()
-        if(group.isNotEmpty()) {
+        if (group.isNotEmpty()) {
             context?.let {
                 forecastDisplay.condition = calculateCurrentConditionString(today, group, it)
             }
@@ -128,10 +128,10 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
 
     private fun calculatePrecipitation(forecastList: ArrayList<Forecast>): Double {
         var precip = 0.0
-        for(forecast in forecastList) {
+        for (forecast in forecastList) {
             forecast.precipitation?.let {
                 val doubleValue = StringUtils.stringToDouble(it)
-                if(doubleValue > precip) {
+                if (doubleValue > precip) {
                     precip = doubleValue
                 }
             }
@@ -141,12 +141,16 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
 
     private fun calculateLowTemperature(forecastList: ArrayList<Forecast>): Double {
         var temp = 0.0
-        for(forecast in forecastList) {
-            forecast.temperature?.let {
-                if(temp == 0.0) {
+        for (forecast in forecastList) {
+            forecast.templow?.let {
+                if (temp == 0.0) {
                     temp = it
                 }
-                if(it < temp) {
+                if (it < temp) {
+                    temp = it
+                }
+            } ?: forecast.temperature?.let {
+                if (it > temp) {
                     temp = it
                 }
             }
@@ -156,9 +160,9 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
 
     private fun calculateHighTemperature(forecastList: ArrayList<Forecast>): Double {
         var temp = 0.0
-        for(forecast in forecastList) {
+        for (forecast in forecastList) {
             forecast.temperature?.let {
-                if(it > temp) {
+                if (it > temp) {
                     temp = it
                 }
             }
@@ -167,7 +171,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
     }
 
     private fun calculateCurrentConditionString(today: Boolean = false, forecastList: ArrayList<Forecast>, context: Context): String {
-        if(forecastList.isNotEmpty()) {
+        if (forecastList.isNotEmpty()) {
             val condition = getCondition(today, forecastList)
             return WeatherUtils.getOutlookForWeatherCondition(condition, context)
         }
@@ -175,7 +179,7 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
     }
 
     private fun calculateCurrentConditionImage(today: Boolean = false, forecastList: ArrayList<Forecast>): Int {
-        if(forecastList.isNotEmpty()) {
+        if (forecastList.isNotEmpty()) {
             val condition = getCondition(today, forecastList)
             return WeatherUtils.getIconForWeatherCondition(condition)
         }
@@ -187,12 +191,12 @@ class ForecastBottomSheetFragment(val weather: Weather) : BottomSheetDialogFragm
         val currentHourIn24Format = if (today) (rightNow.get(Calendar.HOUR_OF_DAY) + .5) else 14.5
         Timber.d("currentHourIn24Format $currentHourIn24Format")
         var condition = forecastList[forecastList.size - 1].condition
-        for(forecast in forecastList) {
+        for (forecast in forecastList) {
             val day = DateUtils.dayOfWeek(forecast.datetime)
             Timber.d("Current Day $day")
             val hour = DateUtils.hourOfDay(forecast.datetime).toDouble()
             Timber.d("Current Hour $hour")
-            if(currentHourIn24Format <= hour) {
+            if (currentHourIn24Format <= hour) {
                 Timber.d("Current Condition ${forecast.condition}")
                 condition = forecast.condition
                 break
