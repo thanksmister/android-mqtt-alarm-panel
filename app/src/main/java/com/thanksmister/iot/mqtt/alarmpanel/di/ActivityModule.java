@@ -36,7 +36,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dpreference.DPreference;
 
 @Module
 class ActivityModule {
@@ -55,11 +54,6 @@ class ActivityModule {
     static LayoutInflater providesInflater(Application application) {
         return (LayoutInflater) application.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    
-    @Provides
-    static DPreference providePreferences(Application application) {
-        return new DPreference(application.getApplicationContext(), "alarm_preferences");
-    }
 
     @Provides
     @Singleton
@@ -73,13 +67,13 @@ class ActivityModule {
     }
 
     @Provides
-    static Configuration provideConfiguration(Application application, DPreference preference) {
+    static Configuration provideConfiguration(Application application, SharedPreferences preference) {
         return new Configuration(application, preference);
     }
 
     @Provides
-    static MQTTOptions provideMQTTOptions(Application application, DPreference preference) {
-        return new MQTTOptions(application, preference);
+    static MQTTOptions provideMQTTOptions(SharedPreferences preference) {
+        return new MQTTOptions(preference);
     }
 
     @Provides
@@ -93,7 +87,7 @@ class ActivityModule {
     }
 
     @Provides
-    static ImageOptions provideImageOptions(DPreference preference) {
+    static ImageOptions provideImageOptions(SharedPreferences preference) {
         return new ImageOptions(preference);
     }
 }

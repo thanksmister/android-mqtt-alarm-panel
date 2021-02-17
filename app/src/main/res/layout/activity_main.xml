@@ -15,16 +15,24 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <fragment
+        android:id="@+id/triggeredView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
+        android:visibility="invisible" />
+
     <com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
+        android:background="@color/colorPrimaryDark"
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

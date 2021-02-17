@@ -27,10 +27,6 @@ import android.view.View
 import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_MODULE_WEB
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_BAR
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_PLATFORM_REFRESH
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration.Companion.PREF_WEB_URL
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -82,12 +78,12 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         super.onViewCreated(view, savedInstanceState)
 
-        webModulePreference = findPreference(PREF_MODULE_WEB) as CheckBoxPreference
-        platformBarPreference = findPreference(PREF_PLATFORM_BAR) as CheckBoxPreference
-        platformRefreshPreference = findPreference(PREF_PLATFORM_REFRESH) as CheckBoxPreference
+        webModulePreference = findPreference("pref_module_web") as CheckBoxPreference
+        platformBarPreference = findPreference("pref_platform_bar") as CheckBoxPreference
+        platformRefreshPreference = findPreference("pref_platform_pull_refresh") as CheckBoxPreference
         browserHeaderPreference = findPreference(getString(R.string.key_setting_browser_user_agent)) as EditTextPreference
         browserActivityPreference = findPreference(getString(R.string.key_setting_app_showactivity)) as SwitchPreference
-        webUrlPreference = findPreference(PREF_WEB_URL) as EditTextPreference
+        webUrlPreference = findPreference("pref_web_url") as EditTextPreference
 
         if (!TextUtils.isEmpty(configuration.webUrl)) {
             webUrlPreference?.text = configuration.webUrl
@@ -101,16 +97,16 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_MODULE_WEB -> {
+            "pref_module_web" -> {
                 val checked = webModulePreference!!.isChecked
                 configuration.setWebModule(checked)
                 configuration.setHasPlatformChange(true)
             }
-            PREF_PLATFORM_BAR -> {
+            "pref_platform_bar" -> {
                 val checked = platformBarPreference!!.isChecked
                 configuration.platformBar = checked
             }
-            PREF_PLATFORM_REFRESH -> {
+            "pref_platform_pull_refresh" -> {
                 val checked = platformRefreshPreference!!.isChecked
                 configuration.platformRefresh = checked
             }
@@ -126,7 +122,7 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
                 configuration.appShowActivity = checked
                 configuration.setHasPlatformChange(true)
             }
-            PREF_WEB_URL -> {
+            "pref_web_url" -> {
                 val value = webUrlPreference!!.text
                 configuration.webUrl = value
                 webUrlPreference?.text = value

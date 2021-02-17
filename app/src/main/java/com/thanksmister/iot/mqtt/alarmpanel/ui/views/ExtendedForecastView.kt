@@ -19,7 +19,9 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.views
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Forecast
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
@@ -32,15 +34,11 @@ import kotlinx.android.synthetic.main.dialog_extended_forecast.view.*
 import timber.log.Timber
 import java.util.*
 
-class ExtendedForecastView : FrameLayout {
+class ExtendedForecastView : RecyclerView {
 
     constructor(context: Context) : super(context) {}
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-    }
 
     fun setExtendedForecast(weather: Weather) {
         val forecastList = weather.forecast
@@ -69,7 +67,7 @@ class ExtendedForecastView : FrameLayout {
                     group.add(forecast)
                 }
             }
-            if(!group.isEmpty()){
+            if(group.isNotEmpty()){
                 val forecastDisplay = groupForecastsByDay(false, group)
                 Timber.d(" add forecastDisplay ${forecastDisplay.day}")
                 groupedForecastList.add(forecastDisplay)

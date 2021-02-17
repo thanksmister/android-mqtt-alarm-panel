@@ -28,9 +28,9 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import kotlinx.android.synthetic.main.dialog_sensor.view.*
 import android.widget.ArrayAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.COMMAND_DEVICE_SENSOR
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.SENSOR_GENERIC_TYPE
-import com.thanksmister.iot.mqtt.alarmpanel.utils.ComponentUtils.Companion.sensorTypes
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DEVICE_SENSOR
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_GENERIC_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.sensorTypes
 import timber.log.Timber
 
 class SensorDialogView : ScrollView {

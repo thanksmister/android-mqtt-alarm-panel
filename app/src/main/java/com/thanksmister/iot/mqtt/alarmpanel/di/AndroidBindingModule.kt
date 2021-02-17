@@ -47,8 +47,18 @@ internal abstract class AndroidBindingModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(TriggeredViewModel::class)
+    abstract fun bindsTriggerViewModule(mainViewModel: TriggeredViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(SensorViewModel::class)
     abstract fun bindsSensorViewModel(mainViewModel: SensorViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SensorControlViewModel::class)
+    abstract fun bindsSensorControlViewModel(mainViewModel: SensorControlViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -80,6 +90,9 @@ internal abstract class AndroidBindingModule {
     internal abstract fun mainFragment(): MainFragment
 
     @ContributesAndroidInjector
+    internal abstract fun sensorControlFragment(): SensorControlFragment
+
+    @ContributesAndroidInjector
     internal abstract fun platformFragment(): PlatformFragment
 
     @ContributesAndroidInjector
@@ -87,6 +100,9 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun controlsFragment(): ControlsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun triggeredFragment(): TriggeredFragment
 
     @ContributesAndroidInjector
     internal abstract fun aboutFragment(): AboutFragment

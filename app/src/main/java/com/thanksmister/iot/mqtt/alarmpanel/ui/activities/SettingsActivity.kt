@@ -16,28 +16,22 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
-import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SettingsFragment
 import timber.log.Timber
 
-class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListener {
+class SettingsActivity : BaseActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
@@ -115,10 +109,6 @@ class SettingsActivity : BaseActivity(), SettingsFragment.SettingsFragmentListen
         } catch (ex: android.content.ActivityNotFoundException) {
             Timber.e(ex.message)
         }
-    }
-
-    override fun navigatePageNumber(page: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {

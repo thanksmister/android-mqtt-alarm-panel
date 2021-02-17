@@ -38,7 +38,7 @@
         android:dependency="@string/key_setting_camera_enabled"/>
 
     <ListPreference
-        android:key="pref_camera_rotate"
+        android:key="pref_settings_camera_rotate"
         android:title="@string/preference_camera_flip_title"
         android:summary="@string/preference_camera_flip_summary"
         android:entries="@array/flip_directions"

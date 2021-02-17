@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +14,78 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/extendedForecastView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/titleText"
+            style="@style/TextAppearance.SubTitle"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Extended Forecast"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/guidelineLeft"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</com.thanksmister.iot.mqtt.alarmpanel.ui.views.ExtendedForecastView>
+        <ImageView
+            android:id="@+id/closeDialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_close"
+            android:tint="@color/dark_gray"
+            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelineTop" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="48dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="10dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

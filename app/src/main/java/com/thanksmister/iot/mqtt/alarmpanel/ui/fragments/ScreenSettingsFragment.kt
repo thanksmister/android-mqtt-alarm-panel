@@ -49,12 +49,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     @Inject lateinit var screenUtils: ScreenUtils
  
     private var clockSaverPreference: SwitchPreference? = null
-    private var photoSaverPreference: SwitchPreference? = null
+    private var unsplashScreenSaver: SwitchPreference? = null
     private var hardwareAcceleration: SwitchPreference? = null
     private var webSaverPreference: SwitchPreference? = null
-    private var urlPreference: EditTextPreference? = null
-    private var clientIdPreference: EditTextPreference? = null
-    private var imageFitPreference: SwitchPreference? = null
+
     private var fullScreenPreference: SwitchPreference? = null
     private var rotationPreference: EditTextPreference? = null
     private var webUrlPreference: EditTextPreference? = null
@@ -97,22 +95,23 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
         super.onViewCreated(view, savedInstanceState)
 
-        clockSaverPreference = findPreference(Configuration.PREF_MODULE_CLOCK_SAVER) as SwitchPreference
-        photoSaverPreference = findPreference(getString(R.string.key_saver_photo)) as SwitchPreference
-        hardwareAcceleration = findPreference(Configuration.PREF_HARDWARE_ACCELERATION) as SwitchPreference
+        clockSaverPreference = findPreference("pref_settings_clock_saver") as SwitchPreference
+        unsplashScreenSaver = findPreference("pref_screensaver_wallpaper") as SwitchPreference
+
+        hardwareAcceleration = findPreference("pref_settings_hardware_acceleration") as SwitchPreference
+
         webSaverPreference = findPreference(getString(R.string.key_setting_web_screensaver)) as SwitchPreference
-        clientIdPreference = findPreference(Configuration.PREF_IMAGE_CLIENT_ID) as EditTextPreference
-        urlPreference = findPreference(Configuration.PREF_IMAGE_SOURCE) as EditTextPreference
         webUrlPreference = findPreference(getString(R.string.key_setting_web_url)) as EditTextPreference
-        imageFitPreference = findPreference(Configuration.PREF_IMAGE_FIT_SIZE) as SwitchPreference
-        rotationPreference = findPreference(Configuration.PREF_IMAGE_ROTATION) as EditTextPreference
-        inactivityPreference = findPreference(Configuration.PREF_INACTIVITY_TIME) as ListPreference
-        fullScreenPreference = findPreference(Configuration.PREF_FULL_SCREEN) as SwitchPreference
+
+        rotationPreference = findPreference("pref_settings_image_rotation") as EditTextPreference
+
+        inactivityPreference = findPreference("pref_settings_inactivity_time") as ListPreference
+        fullScreenPreference = findPreference("pref_settings_fullscreen") as SwitchPreference
         preventSleepPreference = findPreference(getString(R.string.key_setting_app_preventsleep)) as SwitchPreference
-        screenBrightness = findPreference(Configuration.PREF_SCREEN_BRIGHTNESS) as SwitchPreference
-        dayNightPreference = findPreference(Configuration.PREF_DAY_NIGHT_MODE) as SwitchPreference
-        dimPreference = findPreference(Configuration.PREF_SCREENSAVER_DIM_VALUE) as ListPreference
-        brightnessPreference = findPreference(Configuration.PREF_BUTTON_BRIGHTNESS) as Preference
+        screenBrightness = findPreference("pref_settings_screen_brightness") as SwitchPreference
+        dayNightPreference = findPreference("pref_settings_day_night") as SwitchPreference
+        dimPreference = findPreference("pref_settings_dim") as ListPreference
+        brightnessPreference = findPreference("pref_settings_brightness") as Preference
 
         webUrlPreference?.text = configuration.webScreenSaverUrl
         dayNightPreference?.isChecked = configuration.useNightDayMode
@@ -121,12 +120,6 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         rotationPreference?.text = imageOptions.imageRotation.toString()
         rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, imageOptions.imageRotation.toString())
         rotationPreference?.setDefaultValue(imageOptions.imageRotation.toString())
-
-        urlPreference?.text = imageOptions.imageSource
-        urlPreference?.summary = getString(R.string.preference_summary_image_source)
-
-        clientIdPreference?.text = imageOptions.imageClientId
-        clientIdPreference?.summary = getString(R.string.preference_summary_image_client_id)
 
         inactivityPreference?.setDefaultValue(configuration.inactivityTime)
         inactivityPreference?.value = configuration.inactivityTime.toString()
@@ -149,12 +142,11 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             false
         }
 
-        imageFitPreference?.isChecked = imageOptions.imageFitScreen
         fullScreenPreference?.isChecked = configuration.fullScreen
 
-        setPhotoScreenSaver(configuration.showPhotoScreenSaver())
-        setClockScreenSaver(configuration.showClockScreenSaverModule())
-        setWebScreenSaver(configuration.webScreenSaver)
+        setUnsplashScreenSaver(configuration.showUnsplashScreenSaver())
+        setClockScreenSaver(configuration.showClockScreenSaver())
+        setWebScreenSaver(configuration.showWebScreenSaver())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -206,15 +198,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         startActivityForResult(intent, 200)
     }
 
-    private fun setPhotoScreenSaver (value : Boolean) {
-        photoSaverPreference?.isChecked = value
-        imageFitPreference?.isEnabled = value
-        rotationPreference?.isEnabled = value
-        urlPreference?.isEnabled = value
-        clientIdPreference?.isEnabled = value
-        configuration.setPhotoScreenSaver(value)
-        if(value) {
-            setClockScreenSaver(false)
+    private fun setUnsplashScreenSaver (value : Boolean) {
+        unsplashScreenSaver?.isChecked = value
+        configuration.setUnsplashScreenSaver(value)
+        if(value == true) {
             setWebScreenSaver(false)
         }
     }
@@ -222,61 +209,35 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private fun setClockScreenSaver(value: Boolean) {
         clockSaverPreference?.isChecked = value
         configuration.setClockScreenSaverModule(value)
-        if(value) {
-            setPhotoScreenSaver(false)
-            setWebScreenSaver(false)
-        }
     }
 
     private fun setWebScreenSaver(value: Boolean) {
         webSaverPreference?.isChecked = value
         configuration.webScreenSaver = value
-        if(value) {
-            setPhotoScreenSaver(false)
-            setClockScreenSaver(false)
+        if(value == true) {
+            setUnsplashScreenSaver(false)
         }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            Configuration.PREF_MODULE_CLOCK_SAVER -> {
+            "pref_settings_clock_saver" -> {
                 clockSaverPreference?.let {
                     val checked = it.isChecked
                     setClockScreenSaver(checked)
                 }
             }
-            getString(R.string.key_saver_photo) -> {
-                photoSaverPreference?.let {
+            "pref_screensaver_wallpaper" -> {
+                unsplashScreenSaver?.let {
                     val checked = it.isChecked
-                    setPhotoScreenSaver(checked)
+                    setUnsplashScreenSaver(checked)
                 }
             }
-            Configuration.PREF_IMAGE_SOURCE -> {
-                val value = urlPreference!!.text
-                if(TextUtils.isEmpty(value)) {
-                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    urlPreference?.text = imageOptions.imageSource
-                } else {
-                    imageOptions.imageSource = value
-                }
-            }
-            Configuration.PREF_IMAGE_CLIENT_ID -> {
-                val value = clientIdPreference!!.text
-                if (TextUtils.isEmpty(value)) {
-                    Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                } else {
-                    imageOptions.imageClientId = value
-                }
-            }
-            Configuration.PREF_IMAGE_FIT_SIZE -> {
-                val fitScreen = imageFitPreference!!.isChecked
-                imageOptions.imageFitScreen = fitScreen
-            }
-            Configuration.PREF_FULL_SCREEN -> {
+            "pref_settings_fullscreen" -> {
                 val fullscreen = fullScreenPreference!!.isChecked
                 configuration.fullScreen = fullscreen
             }
-            Configuration.PREF_SCREEN_BRIGHTNESS -> {
+            "pref_settings_screen_brightness" -> {
                 val useBright = screenBrightness!!.isChecked
                 configuration.useScreenBrightness = useBright
                 if(useBright) {
@@ -285,28 +246,46 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     screenUtils.restoreDeviceBrightnessControl()
                 }
             }
-            Configuration.PREF_IMAGE_ROTATION -> {
-                rotationPreference?.text?.let {
-                    val rotation = Integer.valueOf(it)
-                    imageOptions.imageRotation = rotation
-                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotation.toString())
-                }
-            }
-            Configuration.PREF_INACTIVITY_TIME -> {
-                val inactivity = inactivityPreference?.value!!.toLong()
-                configuration.inactivityTime = inactivity
-                if (inactivity < SECONDS_VALUE) {
-                    inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds, DateUtils.convertInactivityTime(inactivity))
+            "pref_settings_image_rotation"-> {
+                val rotationValue = rotationPreference?.text?.toIntOrNull()
+                if(rotationValue != null) {
+                    imageOptions.imageRotation = rotationValue
+                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotationValue.toString())
                 } else {
-                    inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    rotationPreference?.text = imageOptions.imageRotation .toString()
+                    rotationPreference?.setDefaultValue(imageOptions.imageRotation .toString())
+                    rotationPreference?.summary = getString(R.string.preference_summary_image_rotation, rotationValue.toString())
                 }
             }
-            Configuration.PREF_DAY_NIGHT_MODE -> {
+            "pref_settings_inactivity_time" -> {
+                val inactivity = inactivityPreference?.value?.toLongOrNull()
+                if(inactivity != null) {
+                    configuration.inactivityTime = inactivity
+                    if (inactivity < SECONDS_VALUE) {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds, DateUtils.convertInactivityTime(inactivity))
+                    } else {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes, DateUtils.convertInactivityTime(inactivity))
+                    }
+                } else {
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    inactivityPreference?.setDefaultValue(configuration.inactivityTime.toString())
+                    inactivityPreference?.value = configuration.inactivityTime.toString()
+                    if (configuration.inactivityTime < SECONDS_VALUE) {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_seconds,
+                                DateUtils.convertInactivityTime(configuration.inactivityTime))
+                    } else {
+                        inactivityPreference?.summary = getString(R.string.preference_summary_inactivity_minutes,
+                                DateUtils.convertInactivityTime(configuration.inactivityTime))
+                    }
+                }
+            }
+            "pref_settings_day_night" -> {
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
                 configuration.nightModeChanged = true
             }
-            Configuration.PREF_HARDWARE_ACCELERATION -> {
+            "pref_settings_hardware_acceleration" -> {
                 val checked = hardwareAcceleration!!.isChecked
                 configuration.userHardwareAcceleration = checked
             }
@@ -327,11 +306,18 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                 val checked = webSaverPreference!!.isChecked
                 setWebScreenSaver(checked)
             }
-            Configuration.PREF_SCREENSAVER_DIM_VALUE -> {
-                val dim = dimPreference?.value!!.toInt()
-                configuration.nightModeDimValue = dim
-                screenUtils.setScreenBrightnessLevels()
-                dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, dim.toString())
+            "pref_settings_dim" -> {
+                val dim = dimPreference?.value?.toIntOrNull()
+                if(dim != null) {
+                    configuration.nightModeDimValue = dim
+                    screenUtils.setScreenBrightnessLevels()
+                    dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, dim.toString())
+                } else {
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    dimPreference?.setDefaultValue(configuration.nightModeDimValue)
+                    dimPreference?.value = configuration.nightModeDimValue.toString()
+                    dimPreference?.summary = getString(R.string.preference_summary_dim_screensaver, configuration.nightModeDimValue.toString())
+                }
             }
         }
     }

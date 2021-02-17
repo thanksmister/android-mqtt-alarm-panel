@@ -30,6 +30,7 @@
     <string name="toast_code_changed">¡El código se cambió con éxito!</string>
     <string name="toast_code_not_match">El código no coincide, prueba de nuevo.</string>
     <string name="toast_code_invalid">El código no es válido, inténtalo de nuevo.</string>
+    <string name="toast_config_invalid">Error parsing remote configuration file, check your configuration.</string>
 
     <!-- Text Content -->
     <string name="text_enter_alarm_code_title">Introduce un nuevo código</string>
@@ -167,9 +168,9 @@
     <string name="text_armed_away">FUERA DE CASA</string>
     <string name="text_system">ALARMA</string>
     <string name="text_disarmed">INACTIVA</string>
-    <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO PARA ANULAR</string>
+    <string name="dialog_alarm_triggered">INTROCUCE EL CÓDIGO</string>
     <string name="dialog_first_time">Puesto que esta es la primera vez, por favor ajusta el dispositivo, el servidor MQTT, y la información sobre tu alarma (el código por defecto es 1234).</string>
-    <string name="text_alarm_pending">ALARMA ACTIVÁNDOSE</string>
+    <string name="text_alarm_pending">ACTIVÁNDOSE</string>
 
     <string name="text_temperature">%1$s %2$s</string>
     <string name="text_temperature_range">H%1$s°  L%2$s°</string>
@@ -415,6 +416,19 @@
     <string name="pref_button_brightness_summary">Click to update and save the current device brightness.</string>
     <string name="preference_title_screensaver_dim">Dim screen…</string>
     <string name="preference_summary_dim_screensaver" formatted="false">By %1$s percent when screensaver is active (requires screen brightness permission).</string>
+
+    <string name="text_triggered">TRIGGERED</string>
+    <string name="text_armed_night">ARMED NIGHT</string>
+    <string name="text_disarming">DISARMING</string>
+    <string name="text_arming">ARMING</string>
+    <string name="text_disabled">DISABLED</string>
+
+    <string name="text_broadcast_alert">BROADCAST ALERT</string>
+    <string name="text_send_alert_description">Send an alert message for help or other emergency.</string>
+    <string name="button_send_alert">SEND</string>
+    <string name="sensor_no_response">NO RESPONSE</string>
+    <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
+    <string name="text_alarm_entry">ALARM ENTRY</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

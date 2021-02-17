@@ -14,103 +14,217 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/informationContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_information" />
+
+    <fragment
+        android:id="@+id/controlContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideControlBottom"
+
+        app:layout_constraintDimensionRatio="h,11:7"
+        app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        tools:layout="@layout/fragment_controls" />
+
+    <fragment
+        android:id="@+id/oneSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/guideControlBottom"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/twoSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/threeSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorThree"
+        tools:layout="@layout/fragment_sensor_control" />
+
+    <fragment
+        android:id="@+id/fourSensorContainer"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/guideSensorFour"
+        tools:layout="@layout/fragment_sensor_control" />
 
     <LinearLayout
-            android:id="@+id/mainView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        android:id="@+id/settingsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="2dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <fragment
-                android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment"
-                android:id="@+id/informationContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_information"/>
+        <ImageButton
+            android:id="@+id/alertButton"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/account_voice"
+            android:tint="@color/red"
+            tools:ignore="ContentDescription" />
 
-        <fragment
-                android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:id="@+id/controlContainer"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                tools:layout="@layout/fragment_controls"/>
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="24dp" />
 
-        <LinearLayout
-                android:id="@+id/settingsContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:paddingBottom="2dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:orientation="horizontal">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonPlatformLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/platformButton"
                 style="@style/BorderlessButtonStyle"
-                android:padding="8dp"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/dark_gray"
+                android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_home"
-                tools:ignore="ContentDescription"/>
+                android:tint="@color/dark_gray"
+                tools:ignore="ContentDescription" />
 
             <Space
                 android:layout_width="16dp"
-                android:layout_height="24dp"/>
+                android:layout_height="24dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/buttonSleepLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageButton
-                    android:id="@+id/buttonSleep"
-                    style="@style/BorderlessButtonStyle"
-                    android:padding="8dp"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:tint="@color/dark_gray"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_sleep"
-                    tools:ignore="ContentDescription"/>
+                android:id="@+id/buttonSleep"
+                style="@style/BorderlessButtonStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sleep"
+                android:tint="@color/dark_gray"
+                tools:ignore="ContentDescription" />
 
             <Space
-                    android:layout_width="16dp"
-                    android:layout_height="24dp"/>
+                android:layout_width="16dp"
+                android:layout_height="24dp" />
 
-            <ImageButton
-                    android:id="@+id/buttonSettings"
-                    style="@style/BorderlessButtonStyle"
-                    android:padding="8dp"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:tint="@color/dark_gray"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_settings_black"
-                    tools:ignore="ContentDescription"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/buttonSettings"
+            style="@style/BorderlessButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings_black"
+            android:tint="@color/dark_gray"
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
 
-    <FrameLayout
-            android:id="@+id/triggeredView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/red"
-            tools:visibility="gone"
-            android:visibility="gone">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideControlBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
 
-        <include
-                android:id="@+id/alarmTriggeredView"
-                layout="@layout/dialog_alarm_triggered_code"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideControlTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
 
-    </FrameLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
 
-</FrameLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.68" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideSensorFour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.76" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineMiddle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.94" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

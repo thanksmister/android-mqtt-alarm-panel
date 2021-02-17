@@ -16,10 +16,7 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 import io.reactivex.Flowable
 
@@ -54,8 +51,14 @@ interface MessageDao {
      * Insert a message in the database. If the message already exists, replace it.
      * @param user the message to be inserted.
      */
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessage(message: MessageMqtt)
+
+    @Transaction
+    fun insertMessageTransaction(message: MessageMqtt) {
+        insertMessage(message)
+    }
 
     /**
      * Delete all messages.

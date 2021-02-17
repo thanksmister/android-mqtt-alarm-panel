@@ -23,7 +23,7 @@
 
             <corners android:radius="0dp" />
 
-            <solid android:color="@color/red_light_up" />
+            <solid android:color="@color/red" />
 
         </shape>
 
@@ -36,7 +36,7 @@
             <corners android:radius="0dp" />
 
 
-            <solid android:color="@color/red_light_up" />
+            <solid android:color="@color/red" />
 
         </shape>
 

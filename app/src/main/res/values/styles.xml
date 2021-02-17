@@ -16,7 +16,7 @@
 
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.Bridge">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
@@ -28,13 +28,21 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
     </style>
 
     <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="colorAccent">@color/dialogBackgroundText</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/dialogBackgroundText</item>
     </style>
 
     <style name="CustomAlertDialogFullscreen" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -55,6 +63,11 @@
 
     <style name="PreferenceButtonStyle" parent="android:Widget.Holo.Button.Borderless">
         <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:tint">@color/dark_gray_color</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="BorderlessButtonStyle" parent="android:Widget.Holo.Button.Borderless">
@@ -122,6 +135,29 @@
         <item name="android:textSize">@dimen/text_size_state</item>
     </style>
 
+    <style name="TextAppearance.TextAlarmState">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_state</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearance.TextSensorTitle">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_sensor_title</item>
+    </style>
+
+    <style name="TextAppearance.TextSensorState">
+        <item name="android:textColor">@color/body_text_3</item>
+        <item name="android:textSize">@dimen/text_size_sensor_state</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
+    <style name="TextAppearance.TextAlarmState.Large">
+        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textSize">@dimen/text_size_login</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
     <style name="TextAppearance" parent="@style/AppTextAppearance">
         <item name="android:ellipsize">end</item>
@@ -177,6 +213,11 @@
 
     <style name="TextAppearance.Headline.White">
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.TextState">
+        <item name="android:textColor">@color/body_text_3</item>
+        <item name="android:textSize">@dimen/text_size_state</item>
     </style>
 
     <style name="TextAppearance.SmallText">
@@ -436,7 +477,6 @@
     </style>
 
     <style name="ButtonStyle" parent="@android:style/Widget.Button">
-       
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAllCaps">true</item>
@@ -496,7 +536,23 @@
     <style name="ButtonRed" parent="ButtonStyle">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#fff</item>
-        <item name="android:background">@drawable/button_red_selector</item>
+        <item name="android:background">@drawable/background_rounded_away</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonBlack" parent="ButtonStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/background_rounded_night</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ButtonYellow" parent="ButtonStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">@drawable/background_rounded_home</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
     </style>

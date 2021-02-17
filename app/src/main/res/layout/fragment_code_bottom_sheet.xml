@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="480dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -32,36 +32,38 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_close"
-        android:tint="@color/dark_gray"
+        app:tint="@color/dark_gray"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/codeTitle"
         style="@style/TextAppearance.TextStateTitle"
-        android:layout_marginTop="48dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/dialog_alarm_triggered"
         android:textAllCaps="true"
+        android:textSize="32sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/codeDotsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/codeDotsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="32dp"
+        android:paddingTop="16dp"
         android:paddingBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/codeTitle"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/codeTitle">
 
         <ImageView
             android:id="@+id/pinCode1"
@@ -69,7 +71,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
         <ImageView
@@ -78,7 +80,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -87,7 +89,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
         <ImageView
@@ -96,7 +98,7 @@
             android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_radio_button_unchecked_black"
-            android:tint="@color/dark_gray"
+            app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"/>
 
     </LinearLayout>
@@ -104,8 +106,12 @@
     <include
         android:id="@+id/include"
         layout="@layout/view_keypad"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="340dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/codeDotsLayout"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

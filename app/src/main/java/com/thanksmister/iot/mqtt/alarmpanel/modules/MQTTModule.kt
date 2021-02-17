@@ -27,7 +27,10 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 import org.eclipse.paho.client.mqttv3.MqttException
 import timber.log.Timber
 
-class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQTTListener) : ContextWrapper(base),
+class MQTTModule (base: Context?,
+                  val mqttOptions: MQTTOptions,
+                  val listener: MQTTListener) :
+        ContextWrapper(base),
         LifecycleObserver,
         MQTTService.MqttManagerListener {
 
@@ -79,15 +82,21 @@ class MQTTModule (base: Context?, val mqttOptions: MQTTOptions, val listener: MQ
         stop()
     }
 
-    fun publishAlarm(command : String) {
-        Timber.d("command: $command")
-        mqttService?.publishAlarm(command)
+    fun publishAlarm(action : String, code: Int) {
+        Timber.d("action: $action")
+        Timber.d("code: $code")
+        mqttService?.publishAlarm(action, code)
     }
 
-    // TODO update service to have two different publishAlarm
+    fun publishCommand(command : String, message: String) {
+        Timber.d("state command: $command message $message")
+        mqttService?.publishCommand(command, message)
+    }
+
+    @Deprecated("use publish command")
     fun publishState(command : String, message: String) {
         Timber.d("state command: $command")
-        mqttService?.publishState(command, message)
+        mqttService?.publishCommand(command, message)
     }
 
     override fun subscriptionMessage(id: String, topic: String, payload: String) {

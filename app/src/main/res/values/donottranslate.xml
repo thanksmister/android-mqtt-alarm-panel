@@ -65,8 +65,8 @@
     <string name="key_setting_web_url" translatable="false">settings_screensaver_web_url</string>
     <string name="default_setting_app_preventsleep" translatable="false">false</string>
     <string name="key_setting_battery" translatable="false">setting_battery</string>
-    <string name="key_saver_photo" translatable="false">setting_saver_photo</string>
 
+    <string name="key_screensaver_wallpaper">settings_screensaver_wallpaper</string>
     <string name="license" translatable="false"><![CDATA[
         <br><b>Copyright 2017 ThanksMister LLC</b><br>
         <br>

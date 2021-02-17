@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/alarmCodeView"
@@ -31,25 +32,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:gravity="center"
+        android:paddingTop="24dp"
         android:textAllCaps="true"
         android:textSize="18sp"
         tools:text="Please enter the new alarm code." />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_weight="0"/>
-
-    <include
-        layout="@layout/view_keypad"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_weight="0"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,7 +44,7 @@
         android:layout_weight="0"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="48dp">
+        android:padding="24dp">
 
         <ImageView
             android:id="@+id/pinCode1"
@@ -95,5 +81,9 @@
 
     </LinearLayout>
 
+    <include
+        layout="@layout/view_keypad"
+        android:layout_width="match_parent"
+        android:layout_height="340dp" />
 
 </com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView>

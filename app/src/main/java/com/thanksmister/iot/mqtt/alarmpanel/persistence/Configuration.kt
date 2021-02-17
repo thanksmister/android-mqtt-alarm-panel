@@ -17,354 +17,371 @@
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.AlarmUtils.Companion.MODE_DISARM
-
-import dpreference.DPreference
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
+import java.lang.Exception
 import javax.inject.Inject
 
-/**
- * Store configurations
- */
 class Configuration @Inject
-constructor(private val context: Context, private val sharedPreferences: DPreference) {
-
-    var webUrl: String?
-        get() = this.sharedPreferences.getPrefString(PREF_WEB_URL, "")
-        set(value) = this.sharedPreferences.setPrefString(PREF_WEB_URL, value.orEmpty())
-
-    var appPreventSleep: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_app_preventsleep), value)
+constructor(private val context: Context, private val sharedPreferences: SharedPreferences) {
 
     var useNightDayMode: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_DAY_NIGHT_MODE, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_DAY_NIGHT_MODE, value)
+        get() = this.sharedPreferences.getBoolean(PREF_DAY_NIGHT_MODE, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DAY_NIGHT_MODE, value).apply()
 
-    var dayNightMode: String
-        get() = this.sharedPreferences.getPrefString(DISPLAY_MODE_DAY_NIGHT, DISPLAY_MODE_DAY)
-        set(value) = this.sharedPreferences.setPrefString(DISPLAY_MODE_DAY_NIGHT, value)
+    var useDarkTheme: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
 
-    var nightModeChanged: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, value)
-
-    var dayNightModeStartTime: String
-        get() = this.sharedPreferences.getPrefString(PREF_MODE_DAY_NIGHT_START, DAY_NIGHT_START_VALUE_DEFAULT)
-        set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_START, value)
-
-    var dayNightModeEndTime: String
-        get() = this.sharedPreferences.getPrefString(PREF_MODE_DAY_NIGHT_END, DAY_NIGHT_END_VALUE_DEFAULT)
-        set(value) = this.sharedPreferences.setPrefString(PREF_MODE_DAY_NIGHT_END, value)
-
-    var screenBrightness: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 255)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value)
-
-    var screenNightModeBrightness: Int
-        get() = sharedPreferences.getPrefInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, 0)
-        set(value) {
-            sharedPreferences.setPrefInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, value)
-        }
-
-    var nightModeDimValue: Int
-        get() = sharedPreferences.getPrefInt(PREF_SCREEN_DIM_VALUE, 25)
-        set(value) {
-            sharedPreferences.setPrefInt(PREF_SCREEN_DIM_VALUE, value)
-        }
-
-    var useScreenBrightness: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_SCREEN_BRIGHTNESS, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SCREEN_BRIGHTNESS, value)
+    var darkThemeRemote: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME_REMOTE, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME_REMOTE, value).apply()
 
     var alarmMode: String
-        get() = this.sharedPreferences.getPrefString(PREF_ALARM_MODE, MODE_DISARM)
-        set(value) = this.sharedPreferences.setPrefString(PREF_ALARM_MODE, value)
-
-    var fullScreen: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_FULL_SCREEN, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_FULL_SCREEN, value)
+        get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISABLED).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(PREF_ALARM_MODE, value).apply()
 
     var systemAlerts: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, value)
+        get() = this.sharedPreferences.getBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_SYSTEM_NOTIFICATIONS, value).apply()
 
     var inactivityTime: Long
-        get() = this.sharedPreferences.getPrefLong(PREF_INACTIVITY_TIME, 300000)
-        set(value) = this.sharedPreferences.setPrefLong(PREF_INACTIVITY_TIME, value)
+        get() {
+            return try {
+                this.sharedPreferences.getLong(PREF_INACTIVITY_TIME, 300000)
+            } catch (e: Exception) {
+                this.sharedPreferences.edit().putLong(PREF_INACTIVITY_TIME, 300000).apply()
+                300000
+            }
+        }
+        set(value) = this.sharedPreferences.edit().putLong(PREF_INACTIVITY_TIME, value).apply()
 
     var isFirstTime: Boolean
-        get() = sharedPreferences.getPrefBoolean(PREF_FIRST_TIME, true)
-        set(value) = sharedPreferences.setPrefBoolean(PREF_FIRST_TIME, value)
+        get() = sharedPreferences.getBoolean(PREF_FIRST_TIME, true)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_FIRST_TIME, value).apply()
 
-    var userHardwareAcceleration: Boolean
-        get() = sharedPreferences.getPrefBoolean(PREF_HARDWARE_ACCELERATION, false)
-        set(value) = sharedPreferences.setPrefBoolean(PREF_HARDWARE_ACCELERATION, value)
 
-    var fingerPrint: Boolean
-        get() = sharedPreferences.getPrefBoolean(PREF_FINGERPRINT, false)
-        set(value) = sharedPreferences.setPrefBoolean(PREF_FINGERPRINT, value)
 
-    var pendingTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_PENDING_TIME, AlarmUtils.PENDING_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_PENDING_TIME, value)
 
-    var delayTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DELAY_TIME, AlarmUtils.DELAY_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_DELAY_TIME, value)
-
-    var delayHomeTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_HOME_DELAY_TIME, AlarmUtils.DELAY_HOME_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_HOME_DELAY_TIME, value)
-
-    var delayAwayTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_AWAY_DELAY_TIME, AlarmUtils.DELAY_AWAY_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_AWAY_DELAY_TIME, value)
-
-    var pendingHomeTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_HOME_PENDING_TIME, AlarmUtils.PENDING_HOME_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_HOME_PENDING_TIME, value)
-
-    var pendingAwayTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_AWAY_PENDING_TIME, AlarmUtils.PENDING_AWAY_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_AWAY_PENDING_TIME, value)
-
-    var disableTime: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_DISABLE_DIALOG_TIME, AlarmUtils.DISABLE_TIME)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_DISABLE_DIALOG_TIME, value)
-
+    /**
+     * This is the default code for accessing the setting or disarming the alarm.
+     * This will be used only for accessing settings if the remote config is set.
+     */
     var alarmCode: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_ALARM_CODE, 1234)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_ALARM_CODE, value)
-
-    var platformBar: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_BAR, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_BAR, value)
-
-    var platformRefresh: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_PLATFORM_REFRESH, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_PLATFORM_REFRESH, value)
-
-    var systemSounds: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_SYSTEM_SOUNDS, true)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_SYSTEM_SOUNDS, value)
-
-    var telegramChatId: String
-        get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_CHAT_ID, "")
-        set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_CHAT_ID, value)
-
-    var telegramToken: String
-        get() = this.sharedPreferences.getPrefString(PREF_TELEGRAM_TOKEN, "")
-        set(value) = this.sharedPreferences.setPrefString(PREF_TELEGRAM_TOKEN, value)
-
-    var cameraMotionWake: Boolean
-        get() = sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
-        set(value) = sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
-
-    var cameraFaceWake: Boolean
-        get() = sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_facewake), false)
-        set(value) = sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_facewake), value)
-
-    var cameraFPS: Float
-        get() = this.sharedPreferences.getPrefString(context.getString(R.string.key_setting_camera_fps), "15f").toFloat()
-        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_camera_fps), value.toString())
-
-    var cameraId: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_cameraid), 0)
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_cameraid), value)
-
-    var cameraOrientation: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_ORIENTATION, 0)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_ORIENTATION, value)
-
-    var cameraWidth: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_WIDTH, 640)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_WIDTH, value)
-
-    var cameraHeight: Int
-        get() = this.sharedPreferences.getPrefInt(PREF_CAMERA_HEIGHT, 480)
-        set(value) = this.sharedPreferences.setPrefInt(PREF_CAMERA_HEIGHT, value)
-
-    var cameraMotionMinLuma: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionminluma),
-                context.getString(R.string.default_setting_camera_motionminluma).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_motionminluma), value)
-
-    var cameraRotate: Float
-        get() = this.sharedPreferences.getPrefString(PREF_CAMERA_ROTATE, "0f").toFloat()
-        set(value) = this.sharedPreferences.setPrefString(PREF_CAMERA_ROTATE, value.toString())
-
-    var mqttSensorFrequency: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
-                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value)
-
-    var httpPort: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_http_port),
-                context.getString(R.string.default_setting_http_port).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_http_port), value)
-
-    var cameraMotionLeniency: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_camera_motionleniency),
-                context.getString(R.string.default_setting_camera_motionleniency).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_camera_motionleniency), value)
-
-    var httpMJPEGMaxStreams: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_http_mjpegmaxstreams),
-                context.getString(R.string.default_setting_http_mjpegmaxstreams).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_http_mjpegmaxstreams), value)
-
-    var motionResetTime: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_motion_clear),
-                context.getString(R.string.default_motion_clear).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_motion_clear), value)
-
-    var cameraEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_enabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_enabled), value)
-
-    var cameraMotionEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionenabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionenabled), value)
-
-    var cameraMotionWakeEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_motionwake), value)
-
-    var weatherUnitsImperial: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(PREF_WEATHER_UNITS, false)
-        set(value) = this.sharedPreferences.setPrefBoolean(PREF_WEATHER_UNITS, value)
-
-    var cameraFaceEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_faceenabled), value)
-
-    var cameraQRCodeEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), value)
-
-    var httpMJPEGEnabled: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_http_mjpegenabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_http_mjpegenabled), value)
-
-    var deviceSensors: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_sensors_enabled), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_sensors_enabled), value)
-
-    var deviceSensorFrequency: Int
-        get() = this.sharedPreferences.getPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency),
-                context.getString(R.string.default_setting_mqtt_sensorfrequency).toInt())
-        set(value) = this.sharedPreferences.setPrefInt(context.getString(R.string.key_setting_mqtt_sensorfrequency), value)
-
-    var appShowActivity: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_app_showactivity), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_app_showactivity), value)
-
-    var testZoomLevel: Float
-        get() = this.sharedPreferences.getPrefString(context.getString(R.string.key_setting_test_zoomlevel),
-                context.getString(R.string.default_setting_test_zoomlevel)).toFloat()
-        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_test_zoomlevel), value.toString())
-
-    var browserUserAgent: String
-        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_browser_user_agent),
-                context.getString(R.string.default_browser_user_agent))
-        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_browser_user_agent), value)
-
-    var writeScreenPermissionsShown: Boolean
-        get() = sharedPreferences.getPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, false)
-        set(value) {
-            sharedPreferences.setPrefBoolean(PREF_WRITE_SCREEN_PERMISSIONS, value)
-        }
-
-    var webScreenSaver: Boolean
-        get() = this.sharedPreferences.getPrefBoolean(context.getString(R.string.key_setting_web_screensaver), false)
-        set(value) = this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_setting_web_screensaver), value)
-
-    var webScreenSaverUrl: String
-        get() = sharedPreferences.getPrefString(context.getString(R.string.key_setting_web_url), WEB_SCREEN_SAVER)
-        set(value) = this.sharedPreferences.setPrefString(context.getString(R.string.key_setting_web_url), value)
-
-
-    fun hasPlatformModule(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_WEB, false)
-    }
-
-    fun setWebModule(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_WEB, value)
-    }
-
-    fun hasPlatformChange(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_PLATFORM_CHANGED, false)
-    }
-
-    fun setHasPlatformChange(value: Boolean) {
-        sharedPreferences.setPrefBoolean(PREF_PLATFORM_CHANGED, value)
-    }
+        get() = this.sharedPreferences.getInt(PREF_ALARM_CODE, 1234)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_ALARM_CODE, value).apply()
 
     fun setTssModule(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_TSS, value)
+        this.sharedPreferences.edit().putBoolean(PREF_MODULE_TSS, value).apply()
     }
 
     fun hasSystemAlerts(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
+        return sharedPreferences.getBoolean(PREF_SYSTEM_NOTIFICATIONS, false)
     }
 
-    fun showClockScreenSaverModule(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_CLOCK_SAVER, false)
+    fun isAlarmArmedMode(): Boolean {
+        return (alarmMode == MqttUtils.STATE_ARMED_HOME
+                || alarmMode == MqttUtils.STATE_ARMED_AWAY
+                || alarmMode == MqttUtils.STATE_ARMED_NIGHT)
+    }
+
+    fun isAlarmArming(): Boolean {
+        return (alarmMode == MqttUtils.STATE_ARMING
+                || alarmMode == MqttUtils.STATE_ARMING_AWAY
+                || alarmMode == MqttUtils.STATE_ARMING_NIGHT
+                || alarmMode == MqttUtils.STATE_ARMING_HOME
+                || alarmMode == MqttUtils.COMMAND_ARM_HOME
+                || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
+                || alarmMode == MqttUtils.COMMAND_ARM_AWAY
+                || alarmMode == MqttUtils.STATE_PENDING_ALARM
+                || alarmMode == MqttUtils.STATE_PENDING)
+    }
+
+    fun isDisarming(): Boolean {
+        return (alarmMode == MqttUtils.STATE_DISARMING)
+    }
+
+    fun isAlarmDisarmedMode(): Boolean {
+        return alarmMode == MqttUtils.STATE_DISARMED
+    }
+
+    fun isAlarmTriggered(): Boolean {
+        return (alarmMode == MqttUtils.STATE_TRIGGERED)
+    }
+
+    fun isAlarmPending(): Boolean {
+        return (alarmMode == MqttUtils.STATE_PENDING || alarmMode == MqttUtils.STATE_PENDING_ALARM)
+    }
+
+    var webUrl: String?
+        get() = this.sharedPreferences.getString(PREF_WEB_URL, "")
+        set(value) = this.sharedPreferences.edit().putString(PREF_WEB_URL, value.orEmpty()).apply()
+
+    var appPreventSleep: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_app_preventsleep), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_app_preventsleep), value).apply()
+
+    var dayNightMode: String
+        get() = this.sharedPreferences.getString(DISPLAY_MODE_DAY_NIGHT, DISPLAY_MODE_DAY).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(DISPLAY_MODE_DAY_NIGHT, value).apply()
+
+    var dayNightModeSet: Boolean
+        get() = this.sharedPreferences.getBoolean(DISPLAY_MODE_DAY_NIGHT_SET, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(DISPLAY_MODE_DAY_NIGHT_SET, value).apply()
+
+    var nightModeChanged: Boolean
+        get() = this.sharedPreferences.getBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(DISPLAY_MODE_DAY_NIGHT_CHANGED, value).apply()
+
+    var dayNightModeStartTime: String
+        get() = this.sharedPreferences.getString(PREF_MODE_DAY_NIGHT_START, DAY_NIGHT_START_VALUE_DEFAULT).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(PREF_MODE_DAY_NIGHT_START, value).apply()
+
+    var dayNightModeEndTime: String
+        get() = this.sharedPreferences.getString(PREF_MODE_DAY_NIGHT_END, DAY_NIGHT_END_VALUE_DEFAULT).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(PREF_MODE_DAY_NIGHT_END, value).apply()
+
+    var screenBrightness: Int
+        get() = this.sharedPreferences.getInt(PREF_DEVICE_SCREEN_BRIGHTNESS, 255)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_DEVICE_SCREEN_BRIGHTNESS, value).apply()
+
+    var screenNightModeBrightness: Int
+        get() = sharedPreferences.getInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, 0)
+        set(value) = sharedPreferences.edit().putInt(PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS, value).apply()
+
+    var nightModeDimValue: Int
+        get() = sharedPreferences.getInt(PREF_SCREEN_DIM_VALUE, 25)
+        set(value) = sharedPreferences.edit().putInt(PREF_SCREEN_DIM_VALUE, value).apply()
+
+    var useScreenBrightness: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_SCREEN_BRIGHTNESS, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_SCREEN_BRIGHTNESS, value).apply()
+
+    var fullScreen: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_FULL_SCREEN, true)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_FULL_SCREEN, value).apply()
+
+    var userHardwareAcceleration: Boolean
+        get() = sharedPreferences.getBoolean(PREF_HARDWARE_ACCELERATION, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_HARDWARE_ACCELERATION, value).apply()
+
+    var platformBar: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_PLATFORM_BAR, true)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_PLATFORM_BAR, value).apply()
+
+    var platformRefresh: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_PLATFORM_REFRESH, true)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_PLATFORM_REFRESH, value).apply()
+
+    var systemSounds: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_SYSTEM_SOUNDS, true)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_SYSTEM_SOUNDS, value).apply()
+
+    var telegramChatId: String
+        get() = this.sharedPreferences.getString(PREF_TELEGRAM_CHAT_ID, "").orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(PREF_TELEGRAM_CHAT_ID, value).apply()
+
+    var telegramToken: String
+        get() = this.sharedPreferences.getString(PREF_TELEGRAM_TOKEN, "").orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(PREF_TELEGRAM_TOKEN, value).apply()
+
+    var cameraMotionWake: Boolean
+        get() = sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
+        set(value) = sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_motionwake), value).apply()
+
+    var cameraFaceWake: Boolean
+        get() = sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_facewake), false)
+        set(value) = sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_facewake), value).apply()
+
+    var cameraFPS: Float
+        get() = this.sharedPreferences.getFloat(PREF_CAMERA_FPS, 15f)
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_CAMERA_FPS, value).apply()
+
+    var cameraId: Int
+        get() = this.sharedPreferences.getInt(PREF_CAMERA_ID, 0)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_ID, value).apply()
+
+    var cameraOrientation: Int
+        get() = this.sharedPreferences.getInt(PREF_CAMERA_ORIENTATION, 0)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_ORIENTATION, value).apply()
+
+    var cameraWidth: Int
+        get() = this.sharedPreferences.getInt(PREF_CAMERA_WIDTH, 640)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_WIDTH, value).apply()
+
+    var cameraHeight: Int
+        get() = this.sharedPreferences.getInt(PREF_CAMERA_HEIGHT, 480)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_CAMERA_HEIGHT, value).apply()
+
+    var cameraMotionMinLuma: Int
+        get() = this.sharedPreferences.getInt(PREF_MOTION_LUMA, 1000)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_LUMA, value).apply()
+
+    var cameraRotate: Float
+        get() = this.sharedPreferences.getFloat(PREF_CAMERA_ROTATE, 0f)
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_CAMERA_ROTATE, value).apply()
+
+    var mqttSensorFrequency: Int
+        get() = this.sharedPreferences.getInt(PREF_SENSOR_FREQUENCY, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_SENSOR_FREQUENCY, value).apply()
+
+    var httpPort: Int
+        get() = this.sharedPreferences.getInt(PREF_HTTP_PORT, 2971)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_HTTP_PORT, value).apply()
+
+    var cameraMotionLeniency: Int
+        get() = this.sharedPreferences.getInt(PREF_MOTION_LENENCEY,20)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_LENENCEY, value).apply()
+
+    var httpMJPEGMaxStreams: Int
+        get() = this.sharedPreferences.getInt(PREF_MAX_STREAMS, 1)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MAX_STREAMS, value).apply()
+
+    var motionResetTime: Int
+        get() = this.sharedPreferences.getInt(PREF_MOTION_CLEAR, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_CLEAR, value).apply()
+
+    var cameraEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_enabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_enabled), value).apply()
+
+    var cameraMotionEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_motionenabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_motionenabled), value).apply()
+
+    var cameraMotionWakeEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_motionwake), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_motionwake), value).apply()
+
+    var weatherUnitsImperial: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_WEATHER_UNITS, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_WEATHER_UNITS, value).apply()
+
+    var cameraFaceEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_faceenabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_faceenabled), value).apply()
+
+    var cameraQRCodeEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_camera_qrcodeenabled), value).apply()
+
+    var httpMJPEGEnabled: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_http_mjpegenabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_http_mjpegenabled), value).apply()
+
+    var deviceSensors: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_sensors_enabled), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_sensors_enabled), value).apply()
+
+    var deviceSensorFrequency: Int
+        get() = this.sharedPreferences.getInt(PREF_SENSOR_FREQUENCY, 30)
+        set(value) = this.sharedPreferences.edit().putInt(PREF_SENSOR_FREQUENCY, value).apply()
+
+    var appShowActivity: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_app_showactivity), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_app_showactivity), value).apply()
+
+    var testZoomLevel: Float
+        get() = this.sharedPreferences.getFloat(PREF_ZOOM_LEVEL, 0F)
+        set(value) = this.sharedPreferences.edit().putFloat(PREF_ZOOM_LEVEL, value).apply()
+
+    var browserUserAgent: String
+        get() = sharedPreferences.getString(context.getString(R.string.key_setting_browser_user_agent), context.getString(R.string.default_browser_user_agent)).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_browser_user_agent), value).apply()
+
+    var writeScreenPermissionsShown: Boolean
+        get() = sharedPreferences.getBoolean(PREF_WRITE_SCREEN_PERMISSIONS, false)
+        set(value) = sharedPreferences.edit().putBoolean(PREF_WRITE_SCREEN_PERMISSIONS, value).apply()
+
+    var webScreenSaver: Boolean
+        get() = this.sharedPreferences.getBoolean(context.getString(R.string.key_setting_web_screensaver), false)
+        set(value) = this.sharedPreferences.edit().putBoolean(context.getString(R.string.key_setting_web_screensaver), value).apply()
+
+    var webScreenSaverUrl: String
+        get() = sharedPreferences.getString(context.getString(R.string.key_setting_web_url), WEB_SCREEN_SAVER).orEmpty()
+        set(value) = this.sharedPreferences.edit().putString(context.getString(R.string.key_setting_web_url), value).apply()
+
+    fun hasPlatformModule(): Boolean {
+        return sharedPreferences.getBoolean(PREF_MODULE_WEB, false)
+    }
+
+    var panicButton: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_PANIC_ALERT, false)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_PANIC_ALERT, value).apply()
+
+    fun setWebModule(value: Boolean) {
+        this.sharedPreferences.edit().putBoolean(PREF_MODULE_WEB, value).apply()
+    }
+
+    fun hasPlatformChange(): Boolean {
+        return sharedPreferences.getBoolean(PREF_PLATFORM_CHANGED, false)
+    }
+
+    fun setHasPlatformChange(value: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_PLATFORM_CHANGED, value).apply()
+    }
+
+    fun showWebScreenSaver(): Boolean {
+        return sharedPreferences.getBoolean(context.getString(R.string.key_setting_web_screensaver), false)
+    }
+
+    fun showClockScreenSaver(): Boolean {
+        return sharedPreferences.getBoolean(PREF_MODULE_CLOCK_SAVER, false)
     }
 
     fun setClockScreenSaverModule(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_MODULE_CLOCK_SAVER, value)
+        this.sharedPreferences.edit().putBoolean(PREF_MODULE_CLOCK_SAVER, value).apply()
     }
 
-    fun showPhotoScreenSaver(): Boolean {
-        return sharedPreferences.getPrefBoolean(context.getString(R.string.key_saver_photo), false)
+    fun showUnsplashScreenSaver(): Boolean {
+        return sharedPreferences.getBoolean(PREF_UNSPLASH_SCREENSAVER, false)
     }
 
-    fun setPhotoScreenSaver(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(context.getString(R.string.key_saver_photo), value)
+    fun setUnsplashScreenSaver(value: Boolean) {
+        this.sharedPreferences.edit().putBoolean(PREF_UNSPLASH_SCREENSAVER, value).apply()
     }
 
     fun setShowWeatherModule(show: Boolean) {
-        sharedPreferences.setPrefBoolean(PREF_MODULE_WEATHER, show)
+        sharedPreferences.edit().putBoolean(PREF_MODULE_WEATHER, show).apply()
     }
 
     fun showWeatherModule(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_MODULE_WEATHER, false)
+        return sharedPreferences.getBoolean(PREF_MODULE_WEATHER, false)
     }
 
     fun getMailTo(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_TO, "")
+        return sharedPreferences.getString(PREF_MAIL_TO, "")
     }
 
     fun setMailTo(value: String) {
-        sharedPreferences.setPrefString(PREF_MAIL_TO, value)
+        sharedPreferences.edit().putString(PREF_MAIL_TO, value).apply()
     }
 
     fun getMailFrom(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_FROM, "")
+        return sharedPreferences.getString(PREF_MAIL_FROM, "")
     }
 
     fun setMailFrom(value: String) {
-        sharedPreferences.setPrefString(PREF_MAIL_FROM, value)
+        sharedPreferences.edit().putString(PREF_MAIL_FROM, value).apply()
     }
 
     fun getMailGunApiKey(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_API_KEY, "")
+        return sharedPreferences.getString(PREF_MAIL_API_KEY, "")
     }
 
     fun setMailGunApiKey(value: String) {
-        sharedPreferences.setPrefString(PREF_MAIL_API_KEY, value)
+        sharedPreferences.edit().putString(PREF_MAIL_API_KEY, value).apply()
     }
 
     fun getMailGunUrl(): String? {
-        return sharedPreferences.getPrefString(PREF_MAIL_URL, "")
+        return sharedPreferences.getString(PREF_MAIL_URL, "")
     }
 
     fun setMailGunUrl(value: String) {
-        sharedPreferences.setPrefString(PREF_MAIL_URL, value)
+        sharedPreferences.edit().putString(PREF_MAIL_URL, value).apply()
     }
 
     fun hasMailGunCredentials(): Boolean {
@@ -377,172 +394,104 @@ constructor(private val context: Context, private val sharedPreferences: DPrefer
     }
 
     fun hasCameraCapture(): Boolean {
-        return sharedPreferences.getPrefBoolean(PREF_CAMERA_CAPTURE, false)
+        return sharedPreferences.getBoolean(PREF_CAMERA_CAPTURE, false)
     }
 
     fun setHasCameraCapture(value: Boolean) {
-        this.sharedPreferences.setPrefBoolean(PREF_CAMERA_CAPTURE, value)
+        this.sharedPreferences.edit().putBoolean(PREF_CAMERA_CAPTURE, value).apply()
     }
 
-    fun captureCameraImage() : Boolean {
+    fun captureCameraImage(): Boolean {
         return cameraEnabled && hasCameraCapture() && (hasTelegramCredentials() || hasMailGunCredentials())
     }
 
-    fun hasCameraDetections() : Boolean {
+    fun hasCameraDetections(): Boolean {
         return cameraEnabled && (cameraMotionEnabled || cameraQRCodeEnabled || cameraFaceEnabled || httpMJPEGEnabled)
     }
 
-    fun hasScreenSaver() : Boolean {
-        return (showPhotoScreenSaver() || showClockScreenSaverModule() || webScreenSaver)
+    fun hasScreenSaver(): Boolean {
+        return (showUnsplashScreenSaver() || showClockScreenSaver() || showWebScreenSaver())
     }
 
-    fun isAlarmTriggeredMode(): Boolean {
-        return alarmMode == AlarmUtils.MODE_TRIGGERED
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING
+    fun canShowScreenSaver(): Boolean {
+        return hasScreenSaver() && isAlarmArming().not() && isDisarming().not() && isAlarmTriggered().not()
     }
 
-    fun isAlarmPendingMode(): Boolean {
-        return (alarmMode == AlarmUtils.MODE_ARM_AWAY_PENDING
-                || alarmMode == AlarmUtils.MODE_ARM_HOME_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING)
-    }
-
-    fun isAlarmDisableMode(): Boolean {
-        return (alarmMode == AlarmUtils.MODE_ARM_HOME
-                || alarmMode == AlarmUtils.MODE_ARM_AWAY
-                || alarmMode == AlarmUtils.MODE_HOME_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_AWAY_TRIGGERED_PENDING
-                || alarmMode == AlarmUtils.MODE_TRIGGERED_PENDING)
-    }
-    
     /**
      * Reset the `SharedPreferences` and database
      */
     fun reset() {
-        sharedPreferences.removePreference(PREF_PENDING_TIME)
-        sharedPreferences.removePreference(PREF_MODULE_CLOCK_SAVER)
-        sharedPreferences.removePreference(context.getString(R.string.key_saver_photo))
-        sharedPreferences.removePreference(PREF_INACTIVITY_TIME)
-        sharedPreferences.removePreference(PREF_MODULE_WEATHER)
-        sharedPreferences.removePreference(PREF_MODULE_WEB)
-        sharedPreferences.removePreference(PREF_MODULE_NOTIFICATION)
-        sharedPreferences.removePreference(PREF_WEB_URL)
-        sharedPreferences.removePreference(PREF_FIRST_TIME)
-        sharedPreferences.removePreference(PREF_MAIL_TO)
-        sharedPreferences.removePreference(PREF_MAIL_FROM)
-        sharedPreferences.removePreference(PREF_CAMERA_CAPTURE)
-        sharedPreferences.removePreference(PREF_MAIL_API_KEY)
-        sharedPreferences.removePreference(PREF_MAIL_URL)
-        sharedPreferences.removePreference(PREF_CAMERA_ROTATE)
-        sharedPreferences.removePreference(PREF_MODULE_TSS)
-        sharedPreferences.removePreference(PREF_MODULE_ALERTS)
-        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_DENSITY)
-        sharedPreferences.removePreference(PREF_DEVICE_TIME_ZONE)
-        sharedPreferences.removePreference(PREF_DEVICE_TIME)
-        sharedPreferences.removePreference(PREF_DEVICE_TIME_FORMAT)
-        sharedPreferences.removePreference(PREF_DEVICE_TIME_SERVER)
-        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_BRIGHTNESS)
-        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_TIMEOUT)
-        sharedPreferences.removePreference(PREF_AWAY_DELAY_TIME)
-        sharedPreferences.removePreference(PREF_HOME_DELAY_TIME)
-        sharedPreferences.removePreference(PREF_DELAY_TIME)
-        sharedPreferences.removePreference(PREF_AWAY_PENDING_TIME)
-        sharedPreferences.removePreference(PREF_HOME_PENDING_TIME)
-        sharedPreferences.removePreference(PREF_SYSTEM_NOTIFICATIONS)
-        sharedPreferences.removePreference(PREF_PLATFORM_BAR)
-        sharedPreferences.removePreference(PREF_TELEGRAM_MODULE)
-        sharedPreferences.removePreference(PREF_TELEGRAM_CHAT_ID)
-        sharedPreferences.removePreference(PREF_TELEGRAM_TOKEN)
-        sharedPreferences.removePreference(PREF_FINGERPRINT)
-        sharedPreferences.removePreference(PREF_PLATFORM_BACK_BEHAVIOR)
-        sharedPreferences.removePreference(PREF_PLATFORM_ADMIN_MENU)
-        sharedPreferences.removePreference(PREF_FULL_SCREEN)
-        sharedPreferences.removePreference(PREF_SCREEN_BRIGHTNESS)
-        sharedPreferences.removePreference(PREF_WRITE_SCREEN_PERMISSIONS)
-        sharedPreferences.removePreference(PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS)
-        sharedPreferences.removePreference(SUN_ABOVE_HORIZON)
-        sharedPreferences.removePreference(SUN_BELOW_HORIZON)
-        sharedPreferences.removePreference(context.getString(R.string.key_setting_web_url))
-        sharedPreferences.removePreference(PREF_WEATHER_UNITS)
+        sharedPreferences.edit().clear().apply()
     }
 
     companion object {
-        const val PREF_PLATFORM_BACK_BEHAVIOR = "pref_platform_back_behavior"
-        const val PREF_PLATFORM_ADMIN_MENU = "pref_platform_admin_menu"
-        const val PREF_FINGERPRINT = "pref_fingerprint"
-        const val PREF_PENDING_TIME = "pref_pending_time"
-        const val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
-        const val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
-        const val PREF_DELAY_TIME = "pref_delay_time"
-        const val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
-        const val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
-        const val PREF_ALARM_MODE = "pref_alarm_mode"
-        const val PREF_ALARM_CODE = "pref_alarm_code"
-        const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
-        const val PREF_IMAGE_SOURCE = "pref_image_source"
-        const val PREF_IMAGE_FIT_SIZE = "pref_image_fit"
-        const val PREF_IMAGE_ROTATION = "pref_image_rotation"
-        const val PREF_IMAGE_CLIENT_ID = "pref_image_client_id"
-        const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
-        const val PREF_FULL_SCREEN = "pref_full_screen"
-        const val PREF_MODULE_NOTIFICATION = "pref_module_notification"
-        const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
-        const val PREF_MODULE_TSS = "pref_module_tss"
-        const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
-        const val PREF_MODULE_ALERTS = "pref_module_alerts"
-        const val PREF_MAIL_TO = "pref_mail_to"
-        const val PREF_MAIL_FROM = "pref_mail_from"
-        const val PREF_MAIL_API_KEY = "pref_mail_api_key"
-        const val PREF_MAIL_URL = "pref_mail_url"
-        const val PREF_DISABLE_DIALOG_TIME = "pref_disable_dialog_time" // this isn't configurable
-        const val PREF_CAMERA_CAPTURE = "pref_module_camera"
-        const val PREF_CAMERA_ROTATE = "pref_camera_rotate"
-        const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
-        const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
-        const val PREF_CAMERA_HEIGHT = "pref_camera_height"
-        const val PREF_MODULE_WEATHER = "pref_module_weather"
+        private const val PREF_FINGERPRINT = "pref_fingerprint"
+        private const val PREF_ALARM_MODE = "pref_alarm_mode"
+        private const val PREF_ALARM_CODE = "pref_alarm_code"
+        private const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
+        private const val PREF_INACTIVITY_TIME = "pref_inactivity_time"
+        private const val PREF_FULL_SCREEN = "pref_full_screen"
+        private const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
+        private const val PREF_MODULE_TSS = "pref_module_tss"
+        private const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
+        private const val PREF_SENSOR_ONE = "pref_sensor_one"
+        private const val PREF_SENSOR_TWO = "pref_sensor_two"
+        private const val PREF_SENSOR_ONE_NAME = "pref_sensor_one_name"
+        private const val PREF_SENSOR_TWO_NAME = "pref_sensor_two_name"
+        private const val PREF_MAIL_TO = "pref_mail_to"
+        private const val PREF_MAIL_FROM = "pref_mail_from"
+        private const val PREF_MAIL_API_KEY = "pref_mail_api_key"
+        private const val PREF_MAIL_URL = "pref_mail_url"
+        private const val PREF_CAMERA_CAPTURE = "pref_module_camera"
+        private const val PREF_MOTION_LUMA = "pref_motion_luma"
+        private const val PREF_CAMERA_ROTATE = "pref_device_camera_rotate"
+        private const val PREF_CAMERA_ID = "pref_camera_id"
+        private const val PREF_CAMERA_FPS = "pref_camera_fps"
+        private const val PREF_CAMERA_ORIENTATION = "pref_camera_orientation"
+        private const val PREF_CAMERA_WIDTH = "pref_camera_orientation"
+        private const val PREF_CAMERA_HEIGHT = "pref_camera_height"
+        private const val PREF_MODULE_WEATHER = "pref_module_weather"
+        private const val PREF_UNSPLASH_SCREENSAVER = "pref_use_unsplash_screensaver"
+        private const val PREF_MODULE_WEB = "pref_module_web"
+        private const val PREF_WEB_URL = "pref_web_url"
+        private const val PREF_FIRST_TIME = "pref_first_time"
+        private const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_device_screen_brightness"
+        private const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_device_screen_saver_brightness"
+        private const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
 
-        const val PREF_MODULE_WEB = "pref_module_web"
-        const val PREF_WEB_URL = "pref_web_url"
-        const val PREF_FIRST_TIME = "pref_first_time"
-        const val PREF_DEVICE_TIME_SERVER = "pref_device_time_server"
-        const val PREF_DEVICE_TIME_FORMAT = "pref_device_time_format"
-        const val PREF_DEVICE_TIME = "pref_device_time"
-        const val PREF_DEVICE_TIME_ZONE = "pref_device_time_zone"
-        const val PREF_DEVICE_SCREEN_DENSITY = "pref_device_screen_density"
-        const val PREF_DEVICE_SCREEN_BRIGHTNESS = "pref_screen_brightness"
-        const val PREF_DEVICE_SCREEN_SAVER_BRIGHTNESS = "pref_screen_saver_brightness"
-        const val PREF_SCREEN_DIM_VALUE = "pref_screen_dim_value"
-        const val PREF_DEVICE_SCREEN_NIGHT_BRIGHTNESS = "pref_screen_night_brightness"
-        const val PREF_DEVICE_SCREEN_TIMEOUT = "pref_device_timeout"
+        private const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
+        private const val PREF_PLATFORM_BAR = "pref_platform_bar"
+        private const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
+        private const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
+        private const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
+        private const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
+        private const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
+        private const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
+        private const val DISPLAY_MODE_DAY_NIGHT_SET = "mode_day_night_set"
+        private const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
+        private const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
+        private const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
+        private const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
+        private const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
+        private const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
+        private const val PREF_SENSOR_FREQUENCY = "pref_sensors_frequency"
+        private const val PREF_ZOOM_LEVEL = "pref_zoom_level"
+        private const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
 
-        const val PREF_WEATHER_UNITS = "pref_weather_units_imperial"
-        const val PREF_PLATFORM_BAR = "pref_platform_bar"
-        const val PREF_TELEGRAM_MODULE = "pref_telegram_module"
-        const val PREF_TELEGRAM_CHAT_ID = "pref_telegram_chat_id"
-        const val PREF_TELEGRAM_TOKEN = "pref_telegram_token"
-        const val PREF_DAY_NIGHT_MODE = "pref_day_night_mode"
-        const val PREF_MODE_DAY_NIGHT_END = "mode_day_night_end"
-        const val PREF_MODE_DAY_NIGHT_START = "mode_day_night_start"
-        const val DISPLAY_MODE_DAY_NIGHT = "mode_day_night"
-        const val DISPLAY_MODE_DAY_NIGHT_CHANGED = "mode_day_night_changed"
-        const val DISPLAY_MODE_DAY = "mode_day"
-        const val DISPLAY_MODE_NIGHT = "mode_night"
-        const val DAY_NIGHT_START_VALUE_DEFAULT = "19:00"
-        const val DAY_NIGHT_END_VALUE_DEFAULT = "6:00"
-        const val PREF_SENSOR_ENABLED = "pref_device_sensors_enabled"
-        const val PREF_PLATFORM_CHANGED = "pref_platform_changed"
-        const val PREF_PLATFORM_REFRESH = "pref_platform_pull_refresh"
-        const val PREF_WRITE_SCREEN_PERMISSIONS = "pref_write_screen_permissions"
-        const val PREF_SCREEN_BRIGHTNESS = "pref_use_screen_brightness"
+        private const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
+        private const val PREF_PANIC_ALERT = "pref_panic_alert"
+        private const val PREF_DARK_THEME = "pref_dark_theme"
+        private const val PREF_DARK_THEME_REMOTE = "pref_dark_theme_re,pte"
+        private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
+        private const val PREF_MOTION_LENENCEY  = "pref_motion_leniency"
+        private const val PREF_MAX_STREAMS  = "pref_max_streams"
+        private const val PREF_HTTP_PORT  = "pref_http_port"
+
+        // TODO move to constants
         const val SUN_ABOVE_HORIZON = "above_horizon"
         const val SUN_BELOW_HORIZON = "below_horizon"
-        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html" //"https://lab.hakim.se/origami/"
-        const val PREF_SCREENSAVER_DIM_VALUE = "pref_screensaver_dim_value"
-        const val PREF_HARDWARE_ACCELERATION = "pref_hardware_acceleration"
-        const val PREF_BUTTON_BRIGHTNESS = "pref_screen_saver_brightness"
+        const val DISPLAY_MODE_NIGHT = "mode_night"
+        const val DISPLAY_MODE_DAY = "mode_day"
+        const val WEB_SCREEN_SAVER = "https://thanksmister.com/mqtt_alarm_panel/gif_background.html"
     }
 }

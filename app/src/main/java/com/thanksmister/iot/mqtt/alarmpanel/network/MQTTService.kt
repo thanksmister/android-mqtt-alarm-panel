@@ -16,7 +16,6 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.network
 
-
 import android.R.id.message
 import android.content.Context
 import android.text.TextUtils
@@ -26,6 +25,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
 import java.security.GeneralSecurityException
@@ -33,8 +33,10 @@ import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MQTTService(private var context: Context, options: MQTTOptions,
-                  private var listener: MqttManagerListener?) : MQTTServiceInterface {
+class MQTTService(private var context: Context,
+                  options: MQTTOptions,
+                  private var listener: MqttManagerListener?) :
+        MQTTServiceInterface {
 
     private var mqttClient: MqttAndroidClient? = null
     private var mqttOptions: MQTTOptions? = null
@@ -64,10 +66,6 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         fun handleMqttConnected()
     }
 
-    override fun isReady(): Boolean {
-        return mReady.get()
-    }
-
     @Throws(MqttException::class)
     override fun close() {
         Timber.d("close")
@@ -83,9 +81,9 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         mReady.set(false)
     }
 
-    override fun publishAlarm(payload: String) {
+    override fun publishAlarm(command: String, code: Int) {
         try {
-            if (isReady) {
+            if (mReady.get()) {
                 mqttClient?.let {
                     if (!it.isConnected) {
                         // if for some reason the mqtt client has disconnected, we should try to connect
@@ -107,9 +105,18 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                         }
                     }
                 }
-                val mqttMessage = MqttMessage()
-                mqttMessage.payload = payload.toByteArray()
                 mqttOptions?.let {
+                    val mqttMessage = MqttMessage()
+                    var payloadString = command
+                    if(it.useRemoteDisarm && code != 0) {
+                        val payloadJson = JSONObject()
+                        payloadJson.put(MqttUtils.COMMAND, command)
+                        if (code > 0) {
+                            payloadJson.put(MqttUtils.CODE, code.toString())
+                        }
+                        payloadString = payloadJson.toString()
+                    }
+                    mqttMessage.payload = payloadString.toByteArray()
                     mqttMessage.isRetained = it.getRetain()
                     sendMessage(it.getAlarmCommandTopic(), mqttMessage)
                 }
@@ -119,13 +126,16 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         }
     }
 
-    override fun publishState(command: String, payload: String) {
+    /**
+     * This is used to publish messages and data from that are unrelated to the alarm commands.
+     * Use to publish sensor data, panic alarm, user presence or other data. Uses the same
+     * value for the base command name from user settings.
+     */
+    override fun publishCommand(command: String, payload: String) {
         try {
-            if (isReady) {
+            if (mReady.get()) {
                 mqttClient?.let {
-                    if ( !it.isConnected) {
-                        // if for some reason the mqtt client has disconnected, we should try to connect
-                        // it again.
+                    if (!it.isConnected) {
                         try {
                             initializeMqttClient()
                         } catch (e: MqttException) {
@@ -142,10 +152,10 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                 mqttMessage.payload = payload.toByteArray()
                 mqttOptions?.let {
                     Timber.d("Publishing: $payload")
-                    Timber.d("Base Topic: ${it.getBaseTopic()}")
+                    Timber.d("Base Topic: ${it.getBaseCommand()}")
                     Timber.d("Command Topic: $command")
                     mqttMessage.isRetained = it.getRetain()
-                    sendMessage( it.getBaseTopic() + "/" + command, mqttMessage)
+                    sendMessage(it.getBaseCommand() + "/" + command, mqttMessage)
                 }
             }
         } catch (e: MqttException) {
@@ -161,16 +171,18 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         Timber.d("initialize")
         try {
             mqttOptions = options
-            Timber.i("Service Configuration:")
-            Timber.i("Client ID: " + mqttOptions!!.getClientId())
-            Timber.i("Username: " + mqttOptions!!.getUsername())
-            Timber.i("Password: " + mqttOptions!!.getPassword())
-            Timber.i("TslConnect: " + mqttOptions!!.getTlsConnection())
-            Timber.i("MQTT Configuration:")
-            Timber.i("Broker: " + mqttOptions?.brokerUrl)
-            Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(mqttOptions!!.getStateTopics()))
-            Timber.i("Publishing to alarm topic: " + mqttOptions!!.getAlarmCommandTopic())
-            Timber.i("Publishing to command topic: " + mqttOptions!!.getBaseTopic())
+            mqttOptions?.let {
+                Timber.i("Service Configuration:")
+                Timber.i("Client ID: " + it.getClientId())
+                Timber.i("Username: " + it.getUsername())
+                Timber.i("Password: " + it.getPassword())
+                Timber.i("TslConnect: " + it.getTlsConnection())
+                Timber.i("MQTT Configuration:")
+                Timber.i("Broker: " + it.brokerUrl)
+                Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(it.getStateTopics()))
+                Timber.i("Publishing to alarm topic: " + it.getAlarmCommandTopic())
+                Timber.i("Publishing to command topic: " + it.getBaseCommand())
+            }
             mqttOptions?.let {
                 if (it.isValid) {
                     initializeMqttClient()
@@ -199,20 +211,20 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                         subscribeToTopics(mqttOptions.getStateTopics())
                     }
                     override fun connectionLost(cause: Throwable?) {}
-                    override fun messageArrived(topic: String?, message: MqttMessage?) { }
-                    override fun deliveryComplete(token: IMqttDeliveryToken?) { }
+                    override fun messageArrived(topic: String?, message: MqttMessage?) {}
+                    override fun deliveryComplete(token: IMqttDeliveryToken?) {}
                 })
 
                 val options = MqttConnectOptions()
                 options.isAutomaticReconnect = true
                 options.isCleanSession = false
-                if (!TextUtils.isEmpty(mqttOptions.getUsername()) && !TextUtils.isEmpty(mqttOptions.getPassword())) {
+                if (mqttOptions.getUsername().isNotEmpty() && mqttOptions.getPassword().isNotEmpty()) {
                     options.userName = mqttOptions.getUsername()
                     options.password = mqttOptions.getPassword().toCharArray()
                 }
 
-                val isConnected = mqttClient?.isConnected?:false
-                if(isConnected) {
+                val isConnected = mqttClient?.isConnected ?: false
+                if (isConnected) {
                     mReady.set(true)
                     return
                 }
@@ -235,9 +247,10 @@ class MQTTService(private var context: Context, options: MQTTOptions,
                             mReady.set(true)
                             listener?.handleMqttConnected()
                         }
+
                         override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
-                            if(exception is MqttException) {
-                                if(exception.reasonCode == 32100 || exception.reasonCode == 32110) {
+                            if (exception is MqttException) {
+                                if (exception.reasonCode == 32100 || exception.reasonCode == 32110) {
                                     listener?.handleMqttConnected()
                                     mReady.set(true)
                                     return // we have a connection established or is establishing
@@ -270,7 +283,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
     private fun sendMessage(mqttTopic: String?, mqttMessage: MqttMessage) {
         Timber.d("sendMessage")
         mqttClient?.let {
-            if (isReady && it.isConnected) {
+            if (mReady.get() && it.isConnected) {
                 try {
                     it.publish(mqttTopic, mqttMessage)
                     Timber.d("Command Topic: $mqttTopic Payload: $message")
@@ -289,7 +302,7 @@ class MQTTService(private var context: Context, options: MQTTOptions,
         topicFilters?.let {
             Timber.d("Subscribe to Topics: " + StringUtils.convertArrayToString(topicFilters))
             mqttClient?.let {
-                if (isReady) {
+                if (mReady.get()) {
                     try {
                         it.subscribe(topicFilters, MqttUtils.getQos(topicFilters.size), MqttUtils.getMqttMessageListeners(topicFilters.size, listener))
                     } catch (e: NullPointerException) {
@@ -306,6 +319,6 @@ class MQTTService(private var context: Context, options: MQTTOptions,
 
     companion object {
         // Use mqttQos=1 (at least once delivery), mqttQos=0 (at most once delivery) also supported.
-        private val MQTT_QOS = 0
+        // private val MQTT_QOS = 0
     }
 }

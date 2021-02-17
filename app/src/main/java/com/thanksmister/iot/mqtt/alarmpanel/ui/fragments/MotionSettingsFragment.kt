@@ -21,7 +21,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
-import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.preference.SwitchPreference
@@ -67,19 +66,18 @@ class MotionSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
 
 
         motionPreference = findPreference(getString(R.string.key_setting_camera_motionenabled)) as SwitchPreference
-        motionPreference!!.isChecked = configuration.cameraMotionEnabled
+        motionPreference?.isChecked = configuration.cameraMotionEnabled
         motionWakePreference = findPreference(getString(R.string.key_setting_camera_motionwake)) as SwitchPreference
-        motionWakePreference!!.isChecked = configuration.cameraMotionWakeEnabled
+        motionWakePreference?.isChecked = configuration.cameraMotionWakeEnabled
         motionLeniencyPreference = findPreference(getString(R.string.key_setting_camera_motionleniency)) as EditTextPreference
-        motionLeniencyPreference!!.setDefaultValue(configuration.cameraMotionLeniency.toString())
-        motionLeniencyPreference!!.summary = configuration.cameraMotionLeniency.toString()
+        motionLeniencyPreference?.setDefaultValue(configuration.cameraMotionLeniency.toString())
+        motionLeniencyPreference?.summary = configuration.cameraMotionLeniency.toString()
         motionLumaPreference = findPreference(getString(R.string.key_setting_camera_motionminluma)) as EditTextPreference
-        motionLumaPreference!!.setDefaultValue(configuration.cameraMotionMinLuma.toString())
-        motionLumaPreference!!.summary = configuration.cameraMotionMinLuma.toString()
+        motionLumaPreference?.setDefaultValue(configuration.cameraMotionMinLuma.toString())
+        motionLumaPreference?.summary = configuration.cameraMotionMinLuma.toString()
         motionClearPreference = findPreference(getString(R.string.key_setting_motion_clear)) as EditTextPreference
-        motionClearPreference!!.setDefaultValue(configuration.motionResetTime.toString())
-        motionClearPreference!!.summary = configuration.motionResetTime.toString()
-
+        motionClearPreference?.setDefaultValue(configuration.motionResetTime.toString())
+        motionClearPreference?.summary = configuration.motionResetTime.toString()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -87,67 +85,65 @@ class MotionSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
         when (key) {
 
             getString(R.string.key_setting_camera_motionenabled) -> {
-                configuration.cameraMotionEnabled = motionPreference!!.isChecked
+                motionPreference?.let {
+                    configuration.cameraMotionEnabled = it.isChecked
+                }
             }
             getString(R.string.key_setting_camera_motionwake) -> {
-                configuration.cameraMotionWake = motionWakePreference!!.isChecked
+                motionWakePreference?.let {
+                    configuration.cameraMotionWake = it.isChecked
+                }
             }
 
             getString(R.string.key_setting_camera_motionleniency) -> {
                 try {
-                    val value = motionLeniencyPreference!!.text
-                    if(!TextUtils.isEmpty(value)) {
-                        configuration.cameraMotionLeniency = value.toInt()
-                        motionLeniencyPreference!!.summary = value
-                    } else if (isAdded) {
-                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        motionLeniencyPreference!!.setDefaultValue(configuration.cameraMotionLeniency.toString())
-                        motionLeniencyPreference!!.summary = configuration.cameraMotionLeniency.toString()
+                    val value = motionLeniencyPreference?.text?.toIntOrNull()
+                    if(value != null) {
+                        configuration.cameraMotionLeniency = value
+                        motionLeniencyPreference?.summary = value.toString()
+                    } else {
+                        Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                        motionLeniencyPreference?.setDefaultValue(configuration.cameraMotionLeniency.toString())
+                        motionLeniencyPreference?.summary = configuration.cameraMotionLeniency.toString()
                     }
                 } catch (e : Exception) {
-                    if(isAdded) {
-                        Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                        motionLeniencyPreference!!.setDefaultValue(configuration.cameraMotionLeniency.toString())
-                        motionLeniencyPreference!!.summary = configuration.cameraMotionLeniency.toString()
-                    }
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    motionLeniencyPreference?.setDefaultValue(configuration.cameraMotionLeniency.toString())
+                    motionLeniencyPreference?.summary = configuration.cameraMotionLeniency.toString()
                 }
             }
             getString(R.string.key_setting_camera_motionminluma) -> {
                 try {
-                    val value = motionLumaPreference!!.text
-                    if(!TextUtils.isEmpty(value)) {
-                        configuration.cameraMotionMinLuma = value.toInt()
-                        motionLumaPreference!!.summary = value
-                    } else if (isAdded) {
-                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        motionLumaPreference!!.setDefaultValue(configuration.cameraMotionMinLuma.toString())
-                        motionLumaPreference!!.summary = configuration.cameraMotionMinLuma.toString()
+                    val value = motionLumaPreference?.text?.toIntOrNull()
+                    if(value != null) {
+                        configuration.cameraMotionMinLuma = value
+                        motionLumaPreference?.summary = value.toString()
+                    } else {
+                        Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                        motionLumaPreference?.setDefaultValue(configuration.cameraMotionMinLuma.toString())
+                        motionLumaPreference?.summary = configuration.cameraMotionMinLuma.toString()
                     }
                 } catch (e : Exception) {
-                    if(isAdded) {
-                        Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                        motionLumaPreference!!.setDefaultValue(configuration.cameraMotionMinLuma.toString())
-                        motionLumaPreference!!.summary = configuration.cameraMotionMinLuma.toString()
-                    }
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    motionLumaPreference?.setDefaultValue(configuration.cameraMotionMinLuma.toString())
+                    motionLumaPreference?.summary = configuration.cameraMotionMinLuma.toString()
                 }
             }
             getString(R.string.key_setting_motion_clear) -> {
                 try {
-                    val value = motionClearPreference!!.text
-                    if(!TextUtils.isEmpty(value)) {
-                        configuration.motionResetTime = value.toInt()
-                        motionClearPreference!!.summary = value
-                    } else if (isAdded) {
-                        Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                        motionClearPreference!!.setDefaultValue(configuration.motionResetTime.toString())
-                        motionClearPreference!!.summary = configuration.motionResetTime.toString()
+                    val value = motionClearPreference?.text?.toIntOrNull()
+                    if(value != null) {
+                        configuration.motionResetTime = value
+                        motionClearPreference?.summary = value.toString()
+                    } else {
+                        Toast.makeText(requireActivity(), R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
+                        motionClearPreference?.setDefaultValue(configuration.motionResetTime.toString())
+                        motionClearPreference?.summary = configuration.motionResetTime.toString()
                     }
                 } catch (e : Exception) {
-                    if(isAdded) {
-                        Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                        motionClearPreference!!.setDefaultValue(configuration.motionResetTime.toString())
-                        motionClearPreference!!.summary = configuration.motionResetTime.toString()
-                    }
+                    Toast.makeText(requireActivity(), R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
+                    motionClearPreference?.setDefaultValue(configuration.motionResetTime.toString())
+                    motionClearPreference?.summary = configuration.motionResetTime.toString()
                 }
             }
         }

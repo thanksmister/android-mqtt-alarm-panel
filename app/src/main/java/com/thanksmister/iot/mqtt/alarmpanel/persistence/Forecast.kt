@@ -29,6 +29,10 @@ class Forecast {
     @Expose
     var temperature: Double? = null
 
+    @SerializedName("templow")
+    @Expose
+    var templow: Double? = null
+
     @SerializedName("precipitation")
     @Expose
     var precipitation: String? = null
@@ -36,4 +40,12 @@ class Forecast {
     @SerializedName("condition")
     @Expose
     var condition: String? = null
+
+    @SerializedName("wind_bearing")
+    @Expose
+    var wind_bearing: String? = null
+
+    @SerializedName("wind_speed")
+    @Expose
+    var wind_speed: String? = null
 }

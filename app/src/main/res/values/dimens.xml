@@ -26,6 +26,8 @@
     <dimen name="text_size_headline">24sp</dimen>
     <dimen name="text_size_login">36sp</dimen>
     <dimen name="text_size_state">22sp</dimen>
+    <dimen name="text_size_sensor_state">12sp</dimen>
+    <dimen name="text_size_sensor_title">14sp</dimen>
     <dimen name="extra_small_text">11.0sp</dimen>
     <dimen name="action_small_text">12.0sp</dimen>
 
