@@ -10,13 +10,13 @@ This project is a MQTT Alarm Control Panel and has originally been created for u
 
 ## Support
 
-For issues, feature requests, comments or questions, use the [Github issues tracker] (https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion] (https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join the [ThanksMister Community] (https://community.thanksmister.com/) or the Discord channel to ask questions or get support (https://discord.com/invite/euh9J2d). 
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join the [ThanksMister Community](https://community.thanksmister.com/) or the [Discord](https://discord.com/invite/euh9J2d) channel to ask questions or get support. 
 
 ***If you are looking for support for older devices, those running less than Android 4.4, then install one of the APK's from the release section prior to release v0.8.7-beta.0***
 
-- [Alarm Panel Video] (https://youtu.be/xspCZoRIBNQ).
-- [Google Play Store] (https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
-- [Android Things and Raspbery Pi 3] (https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
+- [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ).
+- [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
+- [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
 
 ## Features
 
