@@ -120,14 +120,9 @@ There is an option called `Remote Code` that will send both the alarm state and 
 {"command": "ARM_HOME", "code":1234}
 ```
 
-When choose to use this feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system. When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
+When choosing to use this feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system. When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
 
-The server must respond with either a status message or the new alarm state. You must write your own automations to validate the alarm code and either update the alarm state or return a message that the code is invalid. If the code is invalid, the alarm panel will display an alert to the user. 
-
-Here is what an invalid status message would look like: 
-
-- Publish topic: home/alarm/status
-- Publish payloads: INVALID, VALID
+The server must respond with either a alert message or return the new alarm state. You must validate the alarm code on the server and either update the alarm state or return an alert message that the code is invalid. 
 
 
 ### Alarm Sensors
