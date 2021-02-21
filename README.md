@@ -153,7 +153,7 @@ Alarm Panel can subscribe to an event topic to receive events from the remote al
 | `NO_CODE_PROVIDED` | The command was rejected because no code was provided, while the operation requires a code. | |
 | `INVALID_CODE_PROVIDED` | The command was rejected because a wrong code was provided, or the provided code is not allowed for the operation. | |
 
-Example payload on the event topic with delay (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the application displays a countdown of how much time before alarm is active):*
+* Example payload on the event topic with delay (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the application displays a countdown of how much time before alarm is active):*
 ```
 {
   "event": "ARM_AWAY",
@@ -161,7 +161,7 @@ Example payload on the event topic with delay (*Consider the scenario where the 
 }
 ````
 
-Example payload on the event topic with sensors (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the front door is opened):*
+* Example payload on the event topic with sensors (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the front door is opened):*
 ```
 {
   "event": "FAILED_TO_ARM",
