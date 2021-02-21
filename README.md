@@ -165,7 +165,7 @@ Alarm Panel can subscribe to an event topic to receive events from the remote al
 ```
 {
   "event": "FAILED_TO_ARM",
-  "sensors": [ # list of sensor(s) that causes the triggering
+  "sensors": [ # list of sensor(s) that caused the failure
     {
       "entity_id": "binary_sensor.frontdoor",
       "name": "Front Door"
