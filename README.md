@@ -106,11 +106,7 @@ Under the settings (gear icon) enter the MQTT information, that you configured i
 
 #### Supported States and State Topic
 
-Default sate topic (this can be configured in the settings): 
-
-- home/alarm
-
-##### Supported states :
+Alarm panel subscribes to MQTT state changes published from the remote alarm system. The default state topic is `home/alarm` and can be changed in the settings. Here is a list of state values and their descriptions that the applicatoin can handle.
 
 
 | State                      | Description                                                                              |
@@ -127,13 +123,9 @@ Default sate topic (this can be configured in the settings):
 
 * Note not all states are supprted by the HA Manuam MQTT component. 
 
-#### Supported Dommands and Dommand Topic:
+#### Supported Commands and Command Topic:
 
-Default command topic (this can be configured in the settings):
-
-- home/alarm/set
-
-##### Supprted commands commands:
+Alarm Panel can send to the server commands for different alarm states.  The MQTT Broker listens to these commands to updat the state of alrm.  The default command topic is `home/alarm/set` which can be changed in the settings.   Here is a list of commands sent from the application to the remote alarm.
 
 | Command | Description | 
 | ------- | ----------- | 
@@ -144,6 +136,44 @@ Default command topic (this can be configured in the settings):
 | `DISARM` | Disarm the alarm. |
 
 * Note not all commands are supported by the HA Manuam MQTT component. 
+
+
+#### Supported Events and Event Topic
+
+Alarm Panel can subscribe to an event topic to receive events from the remote alarm system.  These events notify the application of changes in the current state of the alarm, such as going from disarm to arm away or if the user enters an invalid code to disarm or arm the system.   The default topic for events is `home/alarm/event` and can be changed in the settings.  Here is a list of events that Alarm Panel can handle and optional parameters.
+
+| Event               | Description                                            | Parameters                                                                                                             |
+| ------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `ARM_AWAY`          | The alarm has been armed in mode `armed_away`          | - `delay`: optional exit delay (in seconds), time during which the alarm is in state `arming`. |
+| `ARM_HOME`          | The alarm has been armed in mode `armed_home`          | - `delay`: optional exit delay (in seconds), time during which the alarm is in state `arming`. | 
+| `ARM_NIGHT`         | The alarm has been armed in mode `armed_night`         | - `delay`: optional exit delay (in seconds), time during which the alarm is in state `arming`. |
+| `ARM_CUSTOM_BYPASS` | The alarm has been armed in mode `armed_custom_bypass` | - `delay`: optional exit delay (in seconds), time during which the alarm is in state `arming`. |
+| `TRIGGER` | The alarm has been triggered | - `delay`: optional entry delay (in seconds), time during which the alarm is in state `pending` before going to `triggered`. |
+| `FAILED_TO_ARM` | The arming was prevented or cancelled due to one or more blocking sensors. | - `sensors`: optional list of sensors which prevented the arming operation. Each list item is a struct with the `entity_id` and `name` of the sensor entity). |
+| `NO_CODE_PROVIDED` | The command was rejected because no code was provided, while the operation requires a code. | |
+| `INVALID_CODE_PROVIDED` | The command was rejected because a wrong code was provided, or the provided code is not allowed for the operation. | |
+
+Example payload on the event topic with delay (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the application displays a countdown of how much time before alarm is active):*
+```
+{
+  "event": "ARM_AWAY",
+  "delay": 60 # exit delay
+}
+````
+
+Example payload on the event topic with sensors (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the front door is opened):*
+```
+{
+  "event": "FAILED_TO_ARM",
+  "sensors": [ # list of sensor(s) that causes the triggering
+    {
+      "entity_id": "binary_sensor.frontdoor",
+      "name": "Front Door"
+    }
+  ],
+  "delay": 60 # entry delay
+}
+```
 
 ### Alarm Security and Remote Code
 
