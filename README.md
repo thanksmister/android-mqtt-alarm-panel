@@ -1,6 +1,6 @@
 *** 01/10/2021 Update ***
 
-The documentation has been updated for the new verson of the Alarm Panel currently in beta testing. You may side-load this application from the release section, it is labeled `pre-release`. This version is not yet available on the Google Store. 
+The documentation has been updated for the new verson of the Alarm Panel currently in beta testing. You may side-load this application from the release section, it is labeled `pre-release`. 
 
 
 # MQTT Alarm Panel for Home Automation Platforms
@@ -103,18 +103,53 @@ alarm_control_panel:
 
 Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
 
+
+#### States
+
+Default sate topic: 
+
+- home/alarm
+
+Supported states :
+
+
+| State                      | Description                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `disarmed`                 | The alarm is disabled/off.                                                               |
+| `arming`                   | The alarm is arming.<br>The alarm will be armed after the delay.      |
+| `armed_away`               | The alarm is armed in away mode.                                                         |
+| `armed_home`               | The alarm is armed in home mode.                                                         |
+| `armed_night`              | The alarm is armed in night mode.                                                        |
+| `armed_custom_bypass`      | The alarm is armed in custom mode.                                                       |
+| `pending`                  | The alarm is pending.<br>The alarm will be triggered after the delay. |
+| `triggered`                | The alarm is triggered.                                                              |
+
+
+* Note not all states are supprted by the HA Manuam MQTT component. 
+
 ### Supported commands/payloads:
 
-- Command topic:  home/alarm/set
-- Command payloads: ARM_HOME, ARM_AWAY, ARM_NIGHT, DISARM
-- Publish topic: home/alarm
-- Publish payloads: disarmed, armed_away, armed_home, armed_night, pending, triggered.
+Default command topic:
+
+- home/alarm/set
+
+Supprted commands commands:
+
+| Command | Description | 
+| ------- | ----------- | 
+| `ARM_AWAY` | Arm the alarm in mode `armed_away`. |
+| `ARMED_HOME` | Arm the alarm in mode `armed_home`. |
+| `ARM_NIGHT` | Arm the alarm in mode `armed_night`. |
+| `ARM_CUSTOM_BYPASS` | Arm the alarm in mode `armed_custom_bypass`. |
+| `DISARM` | Disarm the alarm. |
+
+* Note not all commands are supported by the HA Manuam MQTT component. 
 
 ### Alarm Security and Remote Code
 
-Under the settings, you can update the default security code, it is 1234 on first instalation. The security code is used to access the alarm settings and disarm the alarm from the alarm control panel app. You can choose to use the security code to disarm or arm the system. The security code is not sent over MQTT, it is only used from the application to control the alarm.   
+Under the settings, you can update the default security code, it is 1234 on first instalation. The security code is used to access the alarm settings and disarm the alarm from the alarm control panel application. You can choose to use the security code to disarm or arm the system. The security code is not sent over MQTT, it is only used from the application to control the alarm.   
 
-There is an option called `Remote Code` that will send both the alarm state and the code entered, when arming or optionally disarming the alarm to your MQTT broker.  This requires extra work on your part to parse the code and command paylaod from the MQTT message, using your available platform tools. Here is an example of an alarm command with the code:
+There is an option called `Remote Code` that will send both the alarm state and the code entered when arming or optionally disarming the alarm to your MQTT broker.  The payload will be sent as JSON.  This requires extra work on your part to parse the code and command paylaod from the JSON paylaod using your available platform tools. Here is an example JSON payload of an alarm command with the code:
 
 ```
 {"command": "ARM_HOME", "code":1234}
@@ -174,6 +209,7 @@ Command payload: ON
 The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day/Night mode, and send various remote commands to the application.
 
 You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices. 
+
 
 ### MQTT Weather
 
