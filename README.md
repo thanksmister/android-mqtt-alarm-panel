@@ -182,7 +182,10 @@ Under the settings, you can update the default security code, it is 1234 on firs
 There is an option called `Remote Code` that will send both the alarm state and the code entered when arming or optionally disarming the alarm to your MQTT broker.  The payload will be sent as JSON.  This requires extra work on your part to parse the code and command paylaod from the JSON paylaod using your available platform tools. Here is an example JSON payload of an alarm command with the code:
 
 ```
-{"command": "ARM_HOME", "code":1234}
+{
+  "command": "<my command>",
+  "code": "<my pin>"
+}
 ```
 
 When choosing to use this feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system. When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
@@ -236,18 +239,16 @@ Command payload: ON
 
 ## MQTT Communication
 
-The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day/Night mode, and send various remote commands to the application.
+The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day or Night mode, and send various remote commands to the application.
 
-You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is "alarmpanel".  This distinguishes your device if you are running multiple devices. 
+You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is `alarmpanel`.  This distinguishes your device if you are running multiple devices. 
 
 
 ### MQTT Weather
 
 ![weather] (https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
-***Update***
-
-We have deprecated support for Darksky, now you can use any weather integration.
+***Update We have deprecated support for Darksky, now you can use any weather integration.***
 
 You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval. Then in the application settings, you can use almost any weather integration, as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application:
 
