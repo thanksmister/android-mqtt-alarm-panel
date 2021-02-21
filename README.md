@@ -104,13 +104,13 @@ alarm_control_panel:
 Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
 
 
-#### States
+#### Supported States and State Topic
 
-Default sate topic: 
+Default sate topic (this can be configured in the settings): 
 
 - home/alarm
 
-Supported states :
+##### Supported states :
 
 
 | State                      | Description                                                                              |
@@ -127,13 +127,13 @@ Supported states :
 
 * Note not all states are supprted by the HA Manuam MQTT component. 
 
-### Supported commands/payloads:
+#### Supported Dommands and Dommand Topic:
 
-Default command topic:
+Default command topic (this can be configured in the settings):
 
 - home/alarm/set
 
-Supprted commands commands:
+##### Supprted commands commands:
 
 | Command | Description | 
 | ------- | ----------- | 
