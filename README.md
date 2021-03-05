@@ -25,7 +25,7 @@ Here are some key features of the application:
 - Capture and email images, when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
-- Day/Night mode themes based on MQTT sun values.
+- Day/Night mode themes based on MQTT sun values or user settings.
 - Optional screensaver mode using a digital clock, Imgur images or webpage. 
 - Three day Weather forecast using MQTT.
 - Home Automation Platform webpage support for viewing home automation dashboards.
