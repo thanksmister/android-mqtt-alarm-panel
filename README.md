@@ -1,18 +1,12 @@
-*** 01/10/2021 Update ***
-
-The documentation has been updated for the new verson of the Alarm Panel currently in beta testing. You may side-load this application from the release section, it is labeled `pre-release`. 
-
-
 # MQTT Alarm Panel for Home Automation Platforms
 
-This project is a MQTT Alarm Control Panel and has originally been created for use with [Home Assistant's Manual Alarm Control Panel] (https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings. There is also a [Android Things and Raspbery Pi 3] (https://github.com/thanksmister/androidthings-mqtt-alarm-panel) version, if you want to use a Raspberry Pi wall mounted panel. 
-
+This project is a MQTT Alarm Control Panel and has originally been created for use with [Home Assistant's Manual Alarm Control Panel] (https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings. Alarm Panel is designed specifically for Android Tablet devices, usually mounted inside your home or business.
 
 ## Support
 
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join the [ThanksMister Community](https://community.thanksmister.com/) or the [Discord](https://discord.com/invite/euh9J2d) channel to ask questions or get support. 
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join my [Discord](https://discord.com/invite/euh9J2d) channel to ask questions or get support. 
 
-***MQTT Alarm Panel does not support less than Android 4.4***
+***MQTT Alarm Panel does not support Android versions piror to Android 4.4***
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ).
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
@@ -20,12 +14,14 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 
 ## Features
 
-The alarm panel acts as an interface for Home Assistant's manual alarm control panel component. You can set the alarm state to away or home, or disarm the alarm using a code. In addition it has some nice features such as weather forecast and screen saver mode.
+The alarm panel acts as an interface for Home Assistant's Manual MQTT component but adds additional features not directly supported. You can set the alarm state to away, home, night, or custom bypass and you disarm the alarm using a code. In addition it has some nice features such as weather forecast, displaying your alarm sensors, face detection, and screen saver mode.
 
-MQTT allows for communication between the alarm panel and the manual alarm panel. The alarm panel interface will reflect the current state of the manual alarm control panel component and vice versa. However, your home automation platform is responsible for triggering the alarm through automation and sensor states.
+MQTT allows for communication between the alarm panel application and your home automation platform. The alarm panel interface will reflect the current state of the remote alarm system.  This means that it is your home automation platform that is responsible for triggering the alarm when entry is detected and sounding the physical sirens or sending alerts.   The alarm panel's role is providing a wall-mounted interface or key pad for your alarm system.
+
+Here are some key features of the application:
 
 - Alarm sensors, display up to four sensors and their states in the alarm screen.
-- Stream video, detect motion, detect faces, and read QR Codes.
+- Stream video, detect motion, detect faces, or read QR Codes.
 - Capture and email images, when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
