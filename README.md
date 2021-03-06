@@ -109,33 +109,32 @@ Alarm panel subscribes to MQTT state changes published from the remote alarm sys
 | -------------------------- | ---------------------------------------------------------------------------------------- |
 | `disarmed`                 | The alarm is disabled/off.                                                               |
 | `arming`                   | The alarm is arming.<br>The alarm will be armed after the delay.                         |
-| `arming_away`              | The alarm is arming in away mode with delay.                                             |
-| `armed_away`               | The alarm is armed in away mode.                                                         |
+| `arming_away`              | The alarm is arming in away mode with delay  (optional).                                             |
+| `arm_away`                  | The alarm is armed in away mode.                                                         |
 | `armed_home`               | The alarm is armed in home mode.                                                         |
-| `arming_home`              | The alarm is arming in home mode with delay.                                             |
+| `arm_home`                 | The alarm is arming home. <br>The alarm will be armed after the delay.   (optional).                                         |
 | `armed_night`              | The alarm is armed in night mode.                                                        |
-| `arming_night`             | The alarm is arming in night mode with delay.                                            |
+| `arm_night`                | The alarm is arming night mode. <br>The alarm will be armed after the delay. (optional).                                       |
 | `armed_custom_bypass`      | The alarm is armed in custom mode.                                                       |
-| `arming_custom_bypass`     | The alarm is arming in custom bypass mode with delay.                                    |
+| `arm_custom_bypass`        | The alarm is arming custom bypass mode. <br>The alarm will be armed after the delay.(optional)                                    |
 | `pending`                  | The alarm is pending.<br>The alarm will be triggered after the delay.                    |
 | `triggered`                | The alarm is triggered.                                                                  |
 
 
-* Note not all states are supprted by the HA Manuam MQTT component and would need to be handled using your own automation or blueprint.
+* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled. We can do this by listening to incomming commands from the command topic and sending them back on the state topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `arm_away` so that all devices receive this state change.  Sendint additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  
 
-By default, the alarm panel handles a state event with a single payload value for states `disarmed, arming, armed_away, armed_home, armed_night, armged_custom_bypass, pending, triggered` but the alarm panel can handle states with a JSON payload for `arming_away, arming_home, arming_night, arming_custom_bypass`.  
+By default, the state topic contains a single payload value for each state `disarmed, arming, armed_away, armed_home, armed_night, armged_custom_bypass, pending, triggered`, but for states `arm_away, arm_home, arm_night, arm_custom_bypass, pending`, we can optionally send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
 
-* Example payload on the state topic with delay (*Consider the scenario where the user is trying to set the alarm to `arming_away` and the application displays a countdown of how much time before alarm is active):*
-
+* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed):*
 
 ```
 {
-  "state": "arming_away",
+  "state": "arm_away",
   "delay": 60 # exit delay
 }
 ```
 
-The payload contains extra information about the alarm state, the delay time is the time before the alarm is armed.  This state can also be 0 value to arm the alarm immediately without delay.  These delay times should be
+The payload contains extra information about the alarm state, in this example the delay time is the time before the alarm is set to `armed_away`.  This state can also be 0 value to arm the alarm immediately without any delay.  
 
 #### Supported Commands and Command Topic:
 
