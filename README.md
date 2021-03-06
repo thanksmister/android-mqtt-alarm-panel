@@ -149,15 +149,14 @@ Alarm Panel can send to the server commands for different alarm states.  The MQT
 | `DISARM` | Disarm the alarm. |
 | `PANIC` | Alarm panic button pressed. |
 
-* Note not all commands are supported by the Home Asssistant Manual MQTT component. You will need to make a custom automation or blueprint to handle `ARM_NIGHT, ARM_CUSTOM_BYPASS`. 
+* Note not all commands are supported by the Home Asssistant Manual MQTT component. You will need listen to the incoming command and handle the command manually using an automotion or blueprint to handle modes `ARM_NIGHT, ARM_CUSTOM_BYPASS, PANIC`. 
 
 By default, alarm commands send a single payload on the command topic:
 
 Command topic: `home/alarm/set`
 Command payloads: `ARM_AWAY`
 
-
-However, if you want to send the alarm code with the command, the alarm panel will send the payload as JSON, which you will need to handle to parse out the command and the code value:
+However, if you want to send the alarm code with a command, the alarm panel will send the payload as JSON, which you will need to listen for and manually handle to parse out the command and the code value:
 
 ```
 {
