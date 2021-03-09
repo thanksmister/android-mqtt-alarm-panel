@@ -109,23 +109,22 @@ Alarm panel subscribes to MQTT state changes published from the remote alarm sys
 | -------------------------- | ---------------------------------------------------------------------------------------- |
 | `disarmed`                 | The alarm is disabled/off.                                                               |
 | `arming`                   | The alarm is arming.<br>The alarm will be armed after the delay.                         |
-| `arming_away`              | The alarm is arming in away mode with delay  (optional).                                             |
-| `arm_away`                  | The alarm is armed in away mode.                                                         |
+| `arm_away`                 | (Optional) The alarm is armed in away mode.                                                         |
 | `armed_home`               | The alarm is armed in home mode.                                                         |
-| `arm_home`                 | The alarm is arming home. <br>The alarm will be armed after the delay.   (optional).                                         |
+| `arm_home`                 | (Optional) The alarm is arming home. <br>The alarm will be armed after the delay.                                         |
 | `armed_night`              | The alarm is armed in night mode.                                                        |
-| `arm_night`                | The alarm is arming night mode. <br>The alarm will be armed after the delay. (optional).                                       |
+| `arm_night`                | (Optional) The alarm is arming night mode. <br>The alarm will be armed after the delay.                                       |
 | `armed_custom_bypass`      | The alarm is armed in custom mode.                                                       |
-| `arm_custom_bypass`        | The alarm is arming custom bypass mode. <br>The alarm will be armed after the delay.(optional)                                    |
+| `arm_custom_bypass`        | (Optional) The alarm is arming custom bypass mode. <br>The alarm will be armed after the delay.                                    |
 | `pending`                  | The alarm is pending.<br>The alarm will be triggered after the delay.                    |
 | `triggered`                | The alarm is triggered.                                                                  |
 
 
-* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled. We can do this by listening to incomming commands from the command topic and sending them back on the state topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `arm_away` so that all devices receive this state change.  Sendint additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  
+* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled. We can do this by listening to incomming commands from the command topic and sending them back on the state topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `arm_away` so that all devices receive this state change.  Sending additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  These additional states allow for sychronization between multiple devices, each device knows the next state and can display the appropriate view when a state change occurs in another device or in the platform server. 
 
-By default, the state topic contains a single payload value for each state `disarmed, arming, armed_away, armed_home, armed_night, armged_custom_bypass, pending, triggered`, but for states `arm_away, arm_home, arm_night, arm_custom_bypass, pending`, we can optionally send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
+By default, the state topic contains a single payload value for each state `disarmed, arming, armed_away, armed_home, armed_night, armged_custom_bypass, pending, triggered`, but for states `arm_away, arm_home, arm_night, arm_custom_bypass, pending`, optionally you can send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
 
-* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed):*
+* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed so the user can exit the home):*
 
 ```
 {
@@ -134,7 +133,16 @@ By default, the state topic contains a single payload value for each state `disa
 }
 ```
 
-The payload contains extra information about the alarm state, in this example the delay time is the time before the alarm is set to `armed_away`.  This state can also be 0 value to arm the alarm immediately without any delay.  
+* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and an entry was detected, the application displays a countdown of the time before the alarm is triggered.):*
+* 
+```
+{
+  "state": "pending",
+  "delay": 60 # disarm time
+}
+```
+
+The payload contains extra information about the alarm state, in this example the delay time is the time before the alarm is set to `armed_away` or before the alarm state is `triggered`.  If the delay time is 0, send a standard payload and not JSON.  Default delay values are also set in the application, receiving the delay with the state will overwrite the stored delay values in the settings.  
 
 #### Supported Commands and Command Topic:
 
@@ -167,27 +175,14 @@ However, if you want to send the alarm code with a command, the alarm panel will
 
 #### Supported Status and Status Topic
 
-Alarm Panel can subscribe to an status topic to receive stat from the remote alarm system or MQTT broker.  These status will notify the application of alarm errors such as the user entering an invalid code to disarm or arm the system.  The default topic for status is `home/alarm/status` and can be changed in the settings.  Here is a list of status values that Alarm Panel can handle and optional parameters.
+Alarm Panel can subscribe to an status topic to receive additional information from the remote alarm system or MQTT broker. For example, he status topic will notify the application of alarm errors such as the user entering an invalid code to disarm or arm the system.  The default topic for status is `home/alarm/status` and can be changed in the settings.  Here is a list of status payloads that Alarm Panel can handle.
 
-| Status               | Description                                            | Parameters                                                                                                             |
-| ------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `error` | Error arming or disarming the alarm. | `error_code`: the code value of the error. `error_message`: the custom error message to display to in the alarm panel (optional) |
-
-* Example payload on the event topic with delay (*Consider the scenario where the user is trying to set the alarm to `armed_away` and the application displays a countdown of how much time before alarm is active):*
-
-```
-{
-  "status": "error",
-  "error_code": "1"
-  "error_message": "The code you entered is incorrect."
-}
-````
-
-| ERROR CODES               | Description                                      |                                                                                                           
+| STATUS               | Description                                      |                                                                                                           
 | ------------------- | ------------------------------------------------------ |
-| `1` | The disarm or arm code are incorrect or missing. | 
-| `2` | The alarm could not be armed due to open sensors. | 
-| `3` | The alarm could not be armed or disarmed due to unknown reasons. | 
+| `invalid_code` | The disarm or arm code are incorrect or missing. | 
+| `open_sensors` | The alarm could not be armed due to open sensors. | 
+| `system_disabled` | The alarm could not be armed or because the system is unresponsive or unavailable. | 
+| `unknown` | The alarm could not be armed or disarmed due to an unknown reason, requires system check. | 
 
 
 ### Alarm Security and Remote Code
