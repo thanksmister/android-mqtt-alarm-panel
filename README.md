@@ -175,9 +175,9 @@ However, if you want to send the alarm code with a command, the alarm panel will
 
 #### Supported Event and Event Topic
 
-Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, he event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of status payloads that Alarm Panel can handle.
+Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, he event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of event payloads that Alarm Panel can handle, not that the payload using JSON.
 
-| Event               | Description                                      |                                                                                                           
+| Event               | Description                                      |                                                                                         
 | ------------------- | ------------------------------------------------------ |
 | `invalid_code_provided` | The code to disarm or arm the alarm is incorrect. | 
 | `no_code_provided` | The code to disarm or arm the alarm is required but missing. | 
@@ -185,6 +185,12 @@ Alarm Panel can subscribe to an event topic to receive additional information fr
 | `system_disabled` | The alarm state could not be changed because the system was unresponsive or unavailable. | 
 | `unknown` | The alarm state could not be changed due to an unknown error, check your setup. | 
 
+
+```
+{
+  "event": "invalid_code_provided"
+}
+```
 
 ### Alarm Security and Remote Code
 
