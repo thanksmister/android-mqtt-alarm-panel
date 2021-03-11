@@ -173,16 +173,17 @@ However, if you want to send the alarm code with a command, the alarm panel will
 }
 ```
 
-#### Supported Status and Status Topic
+#### Supported Event and Event Topic
 
-Alarm Panel can subscribe to an status topic to receive additional information from the remote alarm system or MQTT broker. For example, he status topic will notify the application of alarm errors such as the user entering an invalid code to disarm or arm the system.  The default topic for status is `home/alarm/status` and can be changed in the settings.  Here is a list of status payloads that Alarm Panel can handle.
+Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, he event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of status payloads that Alarm Panel can handle.
 
-| STATUS               | Description                                      |                                                                                                           
+| Event               | Description                                      |                                                                                                           
 | ------------------- | ------------------------------------------------------ |
-| `invalid_code` | The disarm or arm code are incorrect or missing. | 
-| `open_sensors` | The alarm could not be armed due to open sensors. | 
-| `system_disabled` | The alarm could not be armed or because the system is unresponsive or unavailable. | 
-| `unknown` | The alarm could not be armed or disarmed due to an unknown reason, requires system check. | 
+| `invalid_code_provided` | The code to disarm or arm the alarm is incorrect. | 
+| `no_code_provided` | The code to disarm or arm the alarm is required but missing. | 
+| `failed_to_arm` | The alarm could not be armed due to open sensors. | 
+| `system_disabled` | The alarm state could not be changed because the system was unresponsive or unavailable. | 
+| `unknown` | The alarm state could not be changed due to an unknown error, check your setup. | 
 
 
 ### Alarm Security and Remote Code
