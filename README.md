@@ -60,15 +60,15 @@ You can also load your home automation platform website by entering the address 
 
 ## Installation
 
-You can clone the repository and compile the APK using Android Studio, then side load the APK file onto your device. You can also side load the built APK from the [release section] (https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
+You can clone the repository and compile the APK using Android Studio, then side load the APK file onto your device. You can also side load the built APK from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 
 ## Home Assistant Setup
 
 Alarm Panel should work with any MQTT broker and does not require Home Assistant. If you are using Home Assistant, then you will want to use the Manual MQTT component and the built in MQTT integration for your setup.
 
-- Setup [Home Assistant] (https://home-assistant.io/getting-started/)
-- Configure the [MQTT service] (https://home-assistant.io/components/mqtt/), note the broker address and username/password if applicable.
-- Add the [MQTT Manual] (https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) Home Assistant component to your configuration with the default settings.
+- Setup [Home Assistant](https://home-assistant.io/getting-started/)
+- Configure the [MQTT service](https://home-assistant.io/components/mqtt/), note the broker address and username/password if applicable.
+- Add the [MQTT Manual](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) Home Assistant component to your configuration with the default settings.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
 
 ### Example Home Assistant Manual MQTT component:
@@ -263,7 +263,7 @@ You can also interact and control the application and device remotely using eith
 
 ### MQTT Weather
 
-![weather] (https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
+![weather](https://user-images.githubusercontent.com/142340/47173511-a193e200-d2e4-11e8-8cbc-f2d57cdb6346.png)
 
 ***Update We have deprecated support for Darksky, now you can use any weather integration.***
 
@@ -325,7 +325,7 @@ states.weather['1234_main_st'].attributes
 
 ### MQTT Day/Night Mode
 
-Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon). To do this add the [sun component] (https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish a MQTT message with an interval:
+Similar to how weather works, you can control the Voice Panel to display the day or night mode by sending a formatted MQTT message with the sun's position (above or below the horizon). To do this add the [sun component](https://www.home-assistant.io/components/sun/) to Home Assistant, then setup an automation to publish a MQTT message with an interval:
 
 ```
 alias: MQTT Sun
@@ -518,7 +518,7 @@ screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
 
 If you would like to capture and email images, when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun account into the application settings screen, along with other information. 
 
-You may also use Telegram to recieve a notification with the image when the alarm is deactivated. To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant] (https://home-assistant.io/components/notify.telegram/) to setup Telegram. Enter the chat Id and token into the application settings screen.
+You may also use Telegram to recieve a notification with the image when the alarm is deactivated. To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram. Enter the chat Id and token into the application settings screen.
 
 The camera only captures images, when activated in the settings and MailGun is setup properly. Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
 
@@ -553,7 +553,7 @@ camera:
 
 ## Acknowledgements
 
-Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel] (https://github.com/colinodell/mqtt-control-panel) help to make this project possible. Thanks to [Juan Manuel Vioque] (https://github.com/tremebundo) for Spanish translations and [Gerben Bol] (https://gerbenbol.com/) for Dutch translations, [Jorge Assunção] (https://github.com/jorgeassuncao) for Portuguese, [electricJP] (https://github.com/electricJP) and [jncanches] (https://github.com/jncanches) for French translations.
+Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) help to make this project possible. Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations, [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese, [electricJP](https://github.com/electricJP) and [jncanches](https://github.com/jncanches) for French translations.
 
 ## Contributors
-[Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView] (https://github.com/sjvc/Home-Assistant-WebView) component.
+[Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView) component.
