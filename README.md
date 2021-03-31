@@ -109,20 +109,48 @@ Alarm panel subscribes to MQTT state changes published from the remote alarm sys
 | -------------------------- | ---------------------------------------------------------------------------------------- |
 | `disarmed`                 | The alarm is disabled/off.                                                               |
 | `arming`                   | The alarm is arming.<br>The alarm will be armed after the delay.                         |
-| `arm_away`                 | (Optional) The alarm is armed in away mode.                                                         |
 | `armed_home`               | The alarm is armed in home mode.                                                         |
-| `arm_home`                 | (Optional) The alarm is arming home. <br>The alarm will be armed after the delay.                                         |
 | `armed_night`              | The alarm is armed in night mode.                                                        |
-| `arm_night`                | (Optional) The alarm is arming night mode. <br>The alarm will be armed after the delay.                                       |
 | `armed_custom_bypass`      | The alarm is armed in custom mode.                                                       |
-| `arm_custom_bypass`        | (Optional) The alarm is arming custom bypass mode. <br>The alarm will be armed after the delay.                                    |
 | `pending`                  | The alarm is pending.<br>The alarm will be triggered after the delay.                    |
 | `triggered`                | The alarm is triggered.                                                                  |
 
 
-* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled. We can do this by listening to incomming commands from the command topic and sending them back on the state topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `arm_away` so that all devices receive this state change.  Sending additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  These additional states allow for sychronization between multiple devices, each device knows the next state and can display the appropriate view when a state change occurs in another device or in the platform server. 
+* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled.  Sending additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  
 
-By default, the state topic contains a single payload value for each state `disarmed, arming, armed_away, armed_home, armed_night, armged_custom_bypass, pending, triggered`, but for states `arm_away, arm_home, arm_night, arm_custom_bypass, pending`, optionally you can send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
+
+#### Supported Commands and Command Topic:
+
+Alarm Panel can send to the server commands for different alarm states.  The MQTT Broker listens to these commands to update the state of alarm.  The default command topic is `home/alarm/set` which can be changed in the settings.   Here is a list of commands sent from the application to the MQTT broker.
+
+| Command | Description | 
+| ------- | ----------- | 
+| `ARM_AWAY` | Arm the alarm in mode `armed_away`. |
+| `ARM_HOME` | Arm the alarm in mode `armed_home`. |
+| `ARM_NIGHT` | Arm the alarm in mode `armed_night`. |
+| `ARM_CUSTOM_BYPASS` | Arm the alarm in mode `armed_custom_bypass`. |
+| `DISARM` | Disarm the alarm. |
+| `PANIC` | Alarm panic button pressed. |
+
+* Note not all commands are supported by the Home Asssistant Manual MQTT component. You will need listen to the incoming command and handle the command manually using an automotion or blueprint to handle modes `ARM_NIGHT, ARM_CUSTOM_BYPASS, PANIC`.  If you are using your own MQTT broker, you can optionally handle these commands. 
+
+By default, alarm commands send a single payload on the command topic:
+
+Command topic: `home/alarm/set`
+Command payload: `ARM_AWAY`
+
+However, if you want to send the alarm code with a command, the alarm panel will send the payload as JSON, which you will need to listen for and manually handle to parse out the command and the code value:
+
+```
+{
+  "command": "<my command>",
+  "code": "<my pin>"
+}
+```
+
+There is a chance that the alarm command was sent by another alarm or by the remote server, so we should sync all our devices with the same command. We can do this by listening to incomming commands from the command topic and sending them back on the `event` topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `ARM_AWAY` so that all devices receive this state change. 
+
+Optionally you can send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
 
 * Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed so the user can exit the home):*
 
@@ -134,7 +162,7 @@ By default, the state topic contains a single payload value for each state `disa
 ```
 
 * Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and an entry was detected, the application displays a countdown of the time before the alarm is triggered.):*
-* 
+
 ```
 {
   "state": "pending",
@@ -142,40 +170,12 @@ By default, the state topic contains a single payload value for each state `disa
 }
 ```
 
-The payload contains extra information about the alarm state, in this example the delay time is the time before the alarm is set to `armed_away` or before the alarm state is `triggered`.  If the delay time is 0, send a standard payload and not JSON.  Default delay values are also set in the application, receiving the delay with the state will overwrite the stored delay values in the settings.  
+The payload contains extra information about the alarm command, in this example the delay time is the time before the alarm is set to `armed_away` or before the alarm state is `triggered`.  If the delay time is 0, you can send a standard payload isntead of JSON.  Default delay values are also set in the application, receiving the delay with the state will overwrite the stored delay values in the settings.  
 
-#### Supported Commands and Command Topic:
-
-Alarm Panel can send to the server commands for different alarm states.  The MQTT Broker listens to these commands to update the state of alarm.  The default command topic is `home/alarm/set` which can be changed in the settings.   Here is a list of commands sent from the application to the MQTT broker.
-
-| Command | Description | 
-| ------- | ----------- | 
-| `ARM_AWAY` | Arm the alarm in mode `armed_away`. |
-| `ARMED_HOME` | Arm the alarm in mode `armed_home`. |
-| `ARM_NIGHT` | Arm the alarm in mode `armed_night`. |
-| `ARM_CUSTOM_BYPASS` | Arm the alarm in mode `armed_custom_bypass`. |
-| `DISARM` | Disarm the alarm. |
-| `PANIC` | Alarm panic button pressed. |
-
-* Note not all commands are supported by the Home Asssistant Manual MQTT component. You will need listen to the incoming command and handle the command manually using an automotion or blueprint to handle modes `ARM_NIGHT, ARM_CUSTOM_BYPASS, PANIC`. 
-
-By default, alarm commands send a single payload on the command topic:
-
-Command topic: `home/alarm/set`
-Command payloads: `ARM_AWAY`
-
-However, if you want to send the alarm code with a command, the alarm panel will send the payload as JSON, which you will need to listen for and manually handle to parse out the command and the code value:
-
-```
-{
-  "command": "<my command>",
-  "code": "<my pin>"
-}
-```
 
 #### Supported Event and Event Topic
 
-Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, he event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of event payloads that Alarm Panel can handle, not that the payload using JSON.
+Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, the event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of event payloads that Alarm Panel can handle, not that the payload using JSON.
 
 | Event               | Description                                      |                                                                                         
 | ------------------- | ------------------------------------------------------ |
@@ -191,6 +191,22 @@ Alarm Panel can subscribe to an event topic to receive additional information fr
   "event": "invalid_code_provided"
 }
 ```
+
+Additionally the `event` topic can be used to sync the device or multiple devices with the current command state.  In the remote server, you subscribe to the command topic, and when you receive a command message, send out that message as a new event. This will sync all devices listenting to the event topic. For example, we may receive the command `ARM_AWAY` on the topic `home/alarm/set` we would would send out a new event message with the following payload:
+
+`ARM_AWAY`
+
+This will tell the alarm to go into `arming` mode which indicates on the device interface that the alarm is arming with a change in graphics and sound. Optionally, to include a delay time, the time before the command state is active in the server, we can send a formatted JSON payload like the following:
+
+```
+{
+  "state": "<the command>",
+  "delay": "<the delay time for command>"
+}
+```
+
+This would tell each device we are about to arm the alarm in the `away` mode within the delay time specified in the payload.  Each alarm device will then present a countdown timer indicating the mode `away` is about to be active after the countdown time. 
+  
 
 ### Alarm Security and Remote Code
 
