@@ -99,7 +99,6 @@ alarm_control_panel:
 
 Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
 
-
 #### Supported States and State Topic
 
 Alarm panel subscribes to MQTT state changes published from the remote alarm system. The default state topic is `home/alarm` and can be changed in the settings. Here is a list of state values and their descriptions that the applicatoin can handle.
@@ -148,30 +147,6 @@ However, if you want to send the alarm code with a command, the alarm panel will
 }
 ```
 
-There is a chance that the alarm command was sent by another alarm or by the remote server, so we should sync all our devices with the same command. We can do this by listening to incomming commands from the command topic and sending them back on the `event` topic. For example, receiving a command `ARM_AWAY` from one device should send out on the state topic `ARM_AWAY` so that all devices receive this state change. 
-
-Optionally you can send a JSON payload that contains additional information such as the `delay` time, the time before the alarm is armed or triggered. 
-
-* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed so the user can exit the home):*
-
-```
-{
-  "state": "arm_away",
-  "delay": 60 # exit delay
-}
-```
-
-* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and an entry was detected, the application displays a countdown of the time before the alarm is triggered.):*
-
-```
-{
-  "state": "pending",
-  "delay": 60 # disarm time
-}
-```
-
-The payload contains extra information about the alarm command, in this example the delay time is the time before the alarm is set to `armed_away` or before the alarm state is `triggered`.  If the delay time is 0, you can send a standard payload isntead of JSON.  Default delay values are also set in the application, receiving the delay with the state will overwrite the stored delay values in the settings.  
-
 
 #### Supported Event and Event Topic
 
@@ -184,7 +159,10 @@ Alarm Panel can subscribe to an event topic to receive additional information fr
 | `failed_to_arm` | The alarm could not be armed due to open sensors. | 
 | `system_disabled` | The alarm state could not be changed because the system was unresponsive or unavailable. | 
 | `unknown` | The alarm state could not be changed due to an unknown error, check your setup. | 
+| `ARM_AWAY, ARM_HOME, ARM_NIGHT, ARM_CUSTOM_BYPASS` | Used for syncing the alarm command across multiple devices or with the remote server. | 
 
+
+If you wanted to send the error that an invalid code was entered to disarm or arm the alarm, you would send the following JSON formatted payload on the `event` topic:
 
 ```
 {
@@ -192,21 +170,40 @@ Alarm Panel can subscribe to an event topic to receive additional information fr
 }
 ```
 
-Additionally the `event` topic can be used to sync the device or multiple devices with the current command state.  In the remote server, you subscribe to the command topic, and when you receive a command message, send out that message as a new event. This will sync all devices listenting to the event topic. For example, we may receive the command `ARM_AWAY` on the topic `home/alarm/set` we would would send out a new event message with the following payload:
+Each device will display or handle the error message accordingly, either by showing a message or udpating the interface. 
 
-`ARM_AWAY`
+In addition to sending error events, we can also use the `event` topic to sync the device or multiple devices with the same command value.  In the remote server, you can subscribe to the command topic, and when you receive a command message, send out that message as a on the event topic. This will sync all devices listenting to the event topic. For example, receiving a command `ARM_AWAY` from one device should send out the same `ARM_AWAY` payload so that all devices receive this same command. 
 
-This will tell the alarm to go into `arming` mode which indicates on the device interface that the alarm is arming with a change in graphics and sound. Optionally, to include a delay time, the time before the command state is active in the server, we can send a formatted JSON payload like the following:
+To do this, we send a JSON payload that contains the event and any additional information such as the `delay` time, the time before the alarm is armed or triggered.  The `delay` time is optional and can be omitted from the JSON payload.
+
+* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and the application displays a countdown of how much time before alarm is armed so the user can exit the home):*
 
 ```
 {
-  "state": "<the command>",
-  "delay": "<the delay time for command>"
+  "event": "arm_away",
+  "delay": 60 # exit delay
 }
 ```
 
-This would tell each device we are about to arm the alarm in the `away` mode within the delay time specified in the payload.  Each alarm device will then present a countdown timer indicating the mode `away` is about to be active after the countdown time. 
-  
+* Optionally without the `delay` value:
+
+```
+{
+  "event": "arm_away"
+}
+```
+
+* Example payload on the state topic with a `delay` (*Consider the scenario where the user sets the alarm to `arm_away` and an entry was detected, the application displays a countdown of the time before the alarm is triggered.):*
+
+```
+{
+  "state": "pending",
+  "delay": 60 # disarm time
+}
+```
+
+The payload contains extra information about the alarm command, in this example the delay time is the time before the alarm is set to `armed_away` or before the alarm state is `triggered`.  If the delay time is 0, you can omit this value from the JSON.  Default delay values are also set in the application, receiving the delay with the event topic will overwrite the stored delay values used in the device.  
+
 
 ### Alarm Security and Remote Code
 
