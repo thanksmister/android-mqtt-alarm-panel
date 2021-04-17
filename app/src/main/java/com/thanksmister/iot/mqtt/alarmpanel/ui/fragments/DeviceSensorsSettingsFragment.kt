@@ -79,7 +79,7 @@ class DeviceSensorsSettingsFragment : PreferenceFragmentCompat(), SharedPreferen
         sensorPublishFrequency!!.setDefaultValue(configuration.deviceSensorFrequency.toString())
         sensorPublishFrequency!!.summary = configuration.deviceSensorFrequency.toString()
 
-        val mSensorManager = activity!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val mSensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         setSensorPreferenceSummary(findPreference(getString(R.string.key_settings_sensors_temperature)), mSensorManager.getSensorList(Sensor.TYPE_AMBIENT_TEMPERATURE));
         setSensorPreferenceSummary(findPreference(getString(R.string.key_settings_sensors_light)), mSensorManager.getSensorList(Sensor.TYPE_LIGHT));
         setSensorPreferenceSummary(findPreference(getString(R.string.key_settings_sensors_magneticField)), mSensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD));

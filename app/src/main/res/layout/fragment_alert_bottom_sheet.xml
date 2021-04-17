@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_close"
-        android:tint="@color/dark_gray"
+        app:tint="@color/dark_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
@@ -82,7 +82,7 @@
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:src="@drawable/account_voice"
-            android:tint="@color/white"
+            app:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
             app:layout_constraintTop_toTopOf="parent" />

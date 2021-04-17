@@ -28,14 +28,16 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import kotlinx.android.synthetic.main.bottom_sheet_alarm_options.*
 
-class OptionsBottomSheetFragment(val listener: OptionsBottomSheetFragmentListener) : BottomSheetDialogFragment() {
+class OptionsBottomSheetFragment(val listener: OptionsBottomSheetFragmentListener, val mqttOptions: MQTTOptions) : BottomSheetDialogFragment() {
 
     interface OptionsBottomSheetFragmentListener {
         fun onArmHome()
         fun onArmAway()
         fun onArmNight()
+        fun onArmCustomBypass()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,6 +57,35 @@ class OptionsBottomSheetFragment(val listener: OptionsBottomSheetFragmentListene
             listener.onArmNight()
             this.dismiss()
         }
+        buttonArmCustomBypass.setOnClickListener {
+            listener.onArmCustomBypass()
+            this.dismiss()
+        }
+
+        if(mqttOptions.alarmModeHome) {
+            buttonArmHome.visibility = View.VISIBLE
+        } else {
+            buttonArmHome.visibility = View.GONE
+        }
+
+        if(mqttOptions.alarmModeAway) {
+            buttonArmAway.visibility = View.VISIBLE
+        } else {
+            buttonArmAway.visibility = View.GONE
+        }
+
+        if(mqttOptions.alarmModeNight) {
+            buttonArmNight.visibility = View.VISIBLE
+        } else {
+            buttonArmNight.visibility = View.GONE
+        }
+
+        if(mqttOptions.alarmModeCustomBypass) {
+            buttonArmCustomBypass.visibility = View.VISIBLE
+        } else {
+            buttonArmCustomBypass.visibility = View.GONE
+        }
+
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)

@@ -19,7 +19,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.preference.*
@@ -33,6 +32,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_P
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_TLS_CONNECTION
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions.Companion.PREF_USERNAME
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SensorsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -53,24 +53,17 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
-    private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
-        findPreference("key_alarm_remote_disarm") as SwitchPreference
+
+    private val sensorTopicEditPreference: EditTextPreference by lazy {
+        findPreference(PREF_SENSORS_TOPIC) as EditTextPreference
     }
 
-   /* private val manualConfigSwitchPreference: SwitchPreference by lazy {
-        findPreference("pref_alarm_manual_configuration") as SwitchPreference
+    private val manageSensorsPreference: Preference by lazy {
+        findPreference(BUTTON_MANAGE_SENSORS) as Preference
     }
 
-    private val remoteConfigSwitchPreference: SwitchPreference by lazy {
-        findPreference("pref_alarm_configuration") as SwitchPreference
-    }
-
-    private val remoteConfigTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_mqtt_remote_config_topic") as EditTextPreference
-    }*/
-
-    private val remoteStatusPreference: EditTextPreference by lazy {
-        findPreference("pref_mqtt_remote_status_topic") as EditTextPreference
+    private val remoteEventTopicPreference: EditTextPreference by lazy {
+        findPreference(PREF_REMOTE_EVENT_TOPIC) as EditTextPreference
     }
 
     override fun onAttach(context: Context) {
@@ -81,9 +74,9 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if((activity as SettingsActivity).supportActionBar != null) {
-            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_mqtt_server))
+            (activity as SettingsActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            (activity as SettingsActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+            (activity as SettingsActivity).supportActionBar?.title = (getString(R.string.preference_title_mqtt_server))
         }
     }
 
@@ -116,163 +109,158 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         retainPreference = findPreference("pref_mqtt_retain") as SwitchPreference
         baseTopicPreference = findPreference("pref_mqtt_base_topic") as EditTextPreference
 
-        brokerPreference!!.text = mqttOptions.getBroker()
-        clientPreference!!.text = mqttOptions.getClientId()
+        brokerPreference?.text = mqttOptions.getBroker()
+        clientPreference?.text = mqttOptions.getClientId()
 
-        portPreference!!.text = mqttOptions.getPort().toString()
-        portPreference!!.summary = mqttOptions.getPort().toString()
+        portPreference?.text = mqttOptions.getPort().toString()
+        portPreference?.summary = mqttOptions.getPort().toString()
 
-        commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
-        stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
-        userNamePreference!!.text = mqttOptions.getUsername()
-        passwordPreference!!.text = mqttOptions.getPassword()
+        commandTopicPreference?.text = mqttOptions.getAlarmCommandTopic()
+        stateTopicPreference?.text = mqttOptions.getAlarmStateTopic()
+        userNamePreference?.text = mqttOptions.getUsername()
+        passwordPreference?.text = mqttOptions.getPassword()
 
-        sslPreference!!.isChecked = mqttOptions.getTlsConnection()
-        retainPreference!!.isChecked = mqttOptions.getRetain()
+        sensorTopicEditPreference.text = mqttOptions.getAlarmSensorsTopic()
 
-        brokerPreference!!.summary = mqttOptions.getBroker()
-        clientPreference!!.summary = mqttOptions.getClientId()
+        sslPreference?.isChecked = mqttOptions.getTlsConnection()
+        retainPreference?.isChecked = mqttOptions.getRetain()
 
-        commandTopicPreference!!.summary = mqttOptions.getAlarmCommandTopic()
-        stateTopicPreference!!.summary = mqttOptions.getAlarmStateTopic()
+        brokerPreference?.summary = mqttOptions.getBroker()
+        clientPreference?.summary = mqttOptions.getClientId()
 
-        userNamePreference!!.summary = mqttOptions.getUsername()
-        passwordPreference!!.summary = toStars(mqttOptions.getPassword())
+        commandTopicPreference?.summary = mqttOptions.getAlarmCommandTopic()
+        stateTopicPreference?.summary = mqttOptions.getAlarmStateTopic()
 
-        baseTopicPreference!!.text = mqttOptions.getBaseCommand()
-        baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
+        userNamePreference?.summary = mqttOptions.getUsername()
+        passwordPreference?.summary = toStars(mqttOptions.getPassword())
 
-        //remoteConfigTopicPreference.text = mqttOptions.remoteConfigTopic
-        remoteStatusPreference.text = mqttOptions.remoteStatusTopic
+        baseTopicPreference?.text = mqttOptions.getBaseCommand()
+        baseTopicPreference?.summary = mqttOptions.getBaseCommand()
 
-        //remoteConfigTopicPreference.summary = mqttOptions.remoteConfigTopic
-        remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
+        remoteEventTopicPreference.text = mqttOptions.remoteEventTopic
+        remoteEventTopicPreference.summary = mqttOptions.remoteEventTopic
 
-        remoteDisarmSwitchPreference.isChecked = mqttOptions.useRemoteDisarm
+        manageSensorsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            startSensorsActivity(it.context)
+            false
+        }
+    }
 
-        //manualConfigSwitchPreference.isChecked = mqttOptions.useManualConfig
-        //remoteConfigSwitchPreference.isChecked = mqttOptions.useRemoteConfig
+    private fun startSensorsActivity(context: Context) {
+        startActivity(SensorsActivity.createStartIntent(context))
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val value: String
         when (key) {
             PREF_BROKER -> {
-                value = brokerPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
+                value = brokerPreference?.text.orEmpty()
+                if (value.isNotEmpty()) {
                     mqttOptions.setBroker(value)
-                    brokerPreference!!.summary = value
+                    brokerPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
                 }
             }
             PREF_CLIENT_ID -> {
-                value = clientPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
+                value = clientPreference?.text.orEmpty()
+                if (value.isNotEmpty()) {
                     mqttOptions.setClientId(value)
-                    clientPreference!!.summary = value
+                    clientPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    clientPreference!!.text = mqttOptions.getClientId()
+                    clientPreference?.text = mqttOptions.getClientId()
                 }
             }
             "pref_mqtt_port" -> {
-                value = portPreference!!.text
-                if (value.matches("[0-9]+".toRegex()) && !TextUtils.isEmpty(value)) {
+                value = portPreference?.text.orEmpty()
+                if (value.matches("[0-9]+".toRegex()) && value.isNotEmpty()) {
                     mqttOptions.setPort(value)
-                    portPreference!!.summary = value
+                    portPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_only_numbers, Toast.LENGTH_LONG).show()
-                    portPreference!!.text = mqttOptions.getPort().toString()
+                    portPreference?.text = mqttOptions.getPort().toString()
                 }
             }
             PREF_COMMAND_TOPIC -> {
-                value = commandTopicPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
+                value = commandTopicPreference?.text.orEmpty()
+                if (value.isNotEmpty()) {
                     mqttOptions.setCommandTopic(value)
-                    commandTopicPreference!!.summary = value
+                    commandTopicPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    commandTopicPreference!!.text = mqttOptions.getAlarmCommandTopic()
+                    commandTopicPreference?.text = mqttOptions.getAlarmCommandTopic()
                 }
             }
             "pref_mqtt_base_topic" -> {
-                value = baseTopicPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
+                value = baseTopicPreference?.text.orEmpty()
+                if (value.isNotEmpty()) {
                     mqttOptions.setBaseTopic(value)
-                    baseTopicPreference!!.summary = value
+                    baseTopicPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    baseTopicPreference!!.text = mqttOptions.getBaseCommand()
-                    baseTopicPreference!!.summary = mqttOptions.getBaseCommand()
+                    baseTopicPreference?.text = mqttOptions.getBaseCommand()
+                    baseTopicPreference?.summary = mqttOptions.getBaseCommand()
                 }
             }
             PREF_STATE_TOPIC -> {
-                value = stateTopicPreference!!.text
-                if (!TextUtils.isEmpty(value)) {
+                value = stateTopicPreference?.text.orEmpty()
+                if (value.isNotEmpty()) {
                     mqttOptions.setAlarmTopic(value)
-                    stateTopicPreference!!.summary = value
+                    stateTopicPreference?.summary = value
                 } else if (isAdded) {
                     Toast.makeText(activity, R.string.text_error_blank_entry, Toast.LENGTH_LONG).show()
-                    stateTopicPreference!!.text = mqttOptions.getAlarmStateTopic()
+                    stateTopicPreference?.text = mqttOptions.getAlarmStateTopic()
                 }
             }
             PREF_USERNAME -> {
-                value = userNamePreference!!.text
+                value = userNamePreference?.text.orEmpty()
                 mqttOptions.setUsername(value)
-                userNamePreference!!.summary = value
+                userNamePreference?.summary = value
+            }
+            PREF_SENSORS_TOPIC -> {
+                value = sensorTopicEditPreference.text.orEmpty()
+                mqttOptions.setSensorsTopic(value)
+                sensorTopicEditPreference.summary = value
             }
             PREF_PASSWORD -> {
-                value = passwordPreference!!.text
+                value = passwordPreference?.text.orEmpty()
                 mqttOptions.setPassword(value)
-                passwordPreference!!.summary = toStars(value)
+                passwordPreference?.summary = toStars(value)
             }
             PREF_TLS_CONNECTION -> {
-                val checked = sslPreference!!.isChecked
-                mqttOptions.setTlsConnection(checked)
+                val checked = sslPreference?.isChecked
+                checked?.let {
+                    mqttOptions.setTlsConnection(checked)
+                }
             }
             "pref_mqtt_retain" -> {
-                val checked = retainPreference!!.isChecked
-                mqttOptions.setRetain(checked)
-            }
-            "key_alarm_remote_disarm" -> {
-                val checked = remoteDisarmSwitchPreference.isChecked
-                mqttOptions.useRemoteDisarm = checked
-
-            }
-
-            /*"pref_alarm_manual_configuration" -> {
-                mqttOptions.useManualConfig = manualConfigSwitchPreference.isChecked
-                if(mqttOptions.useManualConfig) {
-                    mqttOptions.useRemoteConfig = false
-                    remoteConfigSwitchPreference.isChecked = false
+                val checked = retainPreference?.isChecked
+                checked?.let {
+                    mqttOptions.setRetain(checked)
                 }
             }
-            "pref_alarm_configuration" -> {
-                mqttOptions.useRemoteConfig = remoteConfigSwitchPreference.isChecked
-                if(mqttOptions.useRemoteConfig) {
-                    mqttOptions.useManualConfig = false
-                    manualConfigSwitchPreference.isChecked = false
-                }
+            PREF_REMOTE_EVENT_TOPIC -> {
+                mqttOptions.remoteEventTopic = remoteEventTopicPreference.text?:MQTTOptions.PREF_STATUS_TOPIC
+                remoteEventTopicPreference.summary = mqttOptions.remoteEventTopic
             }
-            "pref_mqtt_remote_config_topic" -> {
-                mqttOptions.remoteStatusTopic = remoteConfigTopicPreference.text?:DEFAULT_CONFIG_TOPIC
-                remoteConfigTopicPreference.summary = mqttOptions.remoteStatusTopic
-            }*/
-            "pref_mqtt_remote_status_topic" -> {
-                mqttOptions.remoteStatusTopic = remoteStatusPreference.text?:MQTTOptions.PREF_STATUS_TOPIC
-                remoteStatusPreference.summary = mqttOptions.remoteStatusTopic
-            }
+
         }
     }
 
     private fun toStars(textToStars: String?): String {
-        var text = textToStars
+        var text = textToStars.orEmpty()
         val sb = StringBuilder()
-        for (i in 0 until text!!.length) {
+        for (i in text.indices) {
             sb.append('*')
         }
         text = sb.toString()
         return text
+    }
+
+    companion object {
+        const val PREF_SENSORS_TOPIC = "pref_settings_sensors_topic"
+        const val PREF_REMOTE_EVENT_TOPIC = "pref_settings_remote_event_topic"
+        const val BUTTON_MANAGE_SENSORS = "button_alarm_sensors"
     }
 }

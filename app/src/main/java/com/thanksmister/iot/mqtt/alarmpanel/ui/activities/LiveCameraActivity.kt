@@ -39,7 +39,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class LiveCameraActivity : BaseActivity() {
+class LiveCameraActivity : BaseSettingsActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
@@ -49,7 +49,9 @@ class LiveCameraActivity : BaseActivity() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var detectionViewModel: DetectionViewModel
+
     private var updateHandler: Handler? = null
     private var removeTextCountdown: Int = 0
     private val interval = 1000/15L

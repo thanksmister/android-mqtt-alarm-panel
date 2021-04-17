@@ -49,7 +49,6 @@
             android:inputType="number"
             android:key="pref_mqtt_port"
             android:negativeButtonText="@android:string/cancel"
-            android:numeric="integer"
             android:positiveButtonText="@android:string/ok"
             android:summary="@string/preference_summary_port"
             android:title="@string/preference_title_port" />
@@ -78,105 +77,77 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Alarm Panel Commands">
-
-        <EditTextPreference
-            android:key="pref_mqtt_base_topic"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="alarmpanel"
-            android:title="@string/title_setting_mqtt_basetopic"/>
-
-        <EditTextPreference
-            android:paddingTop="0dp"
-            android:selectable="false"
-            android:summary="@string/summary_setting_mqtt_basetopic"
-            android:textColor="@color/light_gray"
-            android:textSize="12sp"
-            android:dependency="pref_broker"/>
-
-    <!--</PreferenceCategory>-->
-
-   <!--<PreferenceCategory android:title="Alarm Configuration">-->
-
-        <!--<SwitchPreference
-            android:key="pref_alarm_configuration"
-            android:summary="Use remote alarm configuration to configure alarm settings."
-            android:title="Remote Configuration" />-->
-
-        <!--<EditTextPreference
-            android:dependency="pref_alarm_configuration"
-            android:key="pref_mqtt_remote_config_topic"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="home/alarm/config"
-            android:title="Config Topic"/>-->
-
-        <!--<EditTextPreference
-            android:dependency="pref_alarm_configuration"
-            android:key="pref_mqtt_remote_status_topic"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="home/alarm/status"
-            android:title="Status Topic"/>-->
-
-        <!--<EditTextPreference
-            android:dependency="pref_alarm_configuration"
-            android:paddingTop="0dp"
-            android:selectable="false"
-            android:summary="Using the remote config will retrieve the alarm configuration, including any codes from the server. For more information, see the documentation."
-            android:textColor="@color/light_gray"
-            android:textSize="12sp"/>-->
-
-<!--    </PreferenceCategory>-->
-
-<!--    <PreferenceCategory android:title="Alarm Manual Configuration">-->
-
-        <!--<SwitchPreference
-            android:key="pref_alarm_manual_configuration"
-            android:summary="Manually set the alarm configuration to configure alarm settings."
-            android:title="Manual Configuration" />-->
+    <PreferenceCategory android:title="Alarm Panel Topics Commands">
 
         <EditTextPreference
             android:key="pref_command_topic"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
             android:summary="home/alarm/set"
             android:title="@string/preference_title_command_topic" />
 
         <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="Base topic to send alarm commands to the MQTT broker."
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <EditTextPreference
             android:key="pref_alarm_topic"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
             android:summary="home/alarm"
             android:title="@string/preference_title_state_topic" />
 
         <EditTextPreference
-            android:key="pref_mqtt_remote_status_topic"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="home/alarm/status"
-            android:title="Status Topic" />
-
-        <SwitchPreference
-           android:key="key_alarm_remote_disarm"
-           android:summary="@string/pref_summary_send_code"
-           android:title="Remote Code" />
-
-       <EditTextPreference
-           android:paddingTop="0dp"
-           android:selectable="false"
-           android:summary="When using remote code, the code is sent to the server to arm or disarm, a status message is returned if the code is invalid."
-           android:textColor="@color/light_gray"
-           android:textSize="12sp"/>
-
-        <!--<EditTextPreference
-            android:dependency="pref_alarm_manual_configuration"
             android:paddingTop="0dp"
             android:selectable="false"
-            android:summary="Using manual configuration overrides the remote configuration. Use manual configuration when you require a custom setup."
+            android:summary="Base topic to receive alarm states from the MQTT broker."
             android:textColor="@color/light_gray"
-            android:textSize="12sp"/>-->
+            android:textSize="12sp"/>
+
+        <EditTextPreference
+            android:key="pref_settings_remote_event_topic"
+            android:summary="home/alarm/status"
+            android:title="@string/preference_title_event_topic" />
+
+        <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="Base topic to receive event messages from the MQTT broker."
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <EditTextPreference
+            android:key="pref_mqtt_base_topic"
+            android:summary="alarmpanel"
+            android:title="Remote Command"/>
+
+        <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="@string/summary_mqtt_remote_commands"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_title_alarm_sensors">
+
+        <EditTextPreference
+            android:key="pref_settings_sensors_topic"
+            android:summary="home/alarm/sensor"
+            android:title="Sensors Topic" />
+
+        <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="Base topic to receive sensor messages from the MQTT broker."
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <Preference
+            android:key="button_alarm_sensors"
+            android:icon="@drawable/ic_sensor"
+            android:summary="Add, edit, and remove alarm sensors."
+            android:title="@string/pref_category_title_alarm_sensors" />
 
     </PreferenceCategory>
 

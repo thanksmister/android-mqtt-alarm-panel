@@ -16,12 +16,11 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import io.reactivex.Completable
 
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 
 /**
  * Data Access Object for the sensors table.
@@ -34,14 +33,25 @@ interface SensorDao {
      * @return list of all items
      */
     @Query("SELECT * FROM Sensors")
-    fun getItems(): Flowable<List<Sensor>>
+    fun getItems(): Maybe<List<Sensor>>
+
+    @Query("SELECT * FROM Sensors")
+    fun getSenors(): Flowable<List<Sensor>>
+
+    @Query("SELECT * FROM Sensors WHERE topic = :topic")
+    fun getSensorByTopic(topic: String): Maybe<Sensor>
 
     /**
      * Insert a items in the database. If the item already exists, replace it.
-     * @param user the item to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(item: Sensor)
+
+    /**
+     * Delete item.
+     */
+    @Delete
+    fun deleteItem(item: Sensor)
 
     /**
      * Delete all items.

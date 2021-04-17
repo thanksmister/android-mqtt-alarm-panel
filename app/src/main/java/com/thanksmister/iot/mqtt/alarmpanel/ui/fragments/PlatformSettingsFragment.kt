@@ -17,16 +17,17 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.CheckBoxPreference
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.view.View
-import androidx.preference.SwitchPreference
+import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.DashboardsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LiveCameraActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SensorsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -35,12 +36,14 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     @Inject lateinit var configuration: Configuration
 
-    private var webModulePreference: CheckBoxPreference? = null
     private var platformRefreshPreference: CheckBoxPreference? = null
     private var platformBarPreference: CheckBoxPreference? = null
-    private var webUrlPreference: EditTextPreference? = null
     private var browserActivityPreference: SwitchPreference? = null
     private var browserHeaderPreference: EditTextPreference? = null
+
+    private val manageDashboardsPreference: Preference by lazy {
+        findPreference("button_dashboards") as Preference
+    }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -78,30 +81,36 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
         super.onViewCreated(view, savedInstanceState)
 
-        webModulePreference = findPreference("pref_module_web") as CheckBoxPreference
         platformBarPreference = findPreference("pref_platform_bar") as CheckBoxPreference
         platformRefreshPreference = findPreference("pref_platform_pull_refresh") as CheckBoxPreference
         browserHeaderPreference = findPreference(getString(R.string.key_setting_browser_user_agent)) as EditTextPreference
         browserActivityPreference = findPreference(getString(R.string.key_setting_app_showactivity)) as SwitchPreference
-        webUrlPreference = findPreference("pref_web_url") as EditTextPreference
 
-        if (!TextUtils.isEmpty(configuration.webUrl)) {
+        /*if (!configuration.webUrl.isNullOrEmpty().not()) {
             webUrlPreference?.text = configuration.webUrl
             webUrlPreference?.summary = configuration.webUrl
-        }
+        }*/
 
-        webModulePreference!!.isChecked = configuration.hasPlatformModule()
         platformBarPreference!!.isChecked = configuration.platformBar
         platformRefreshPreference!!.isChecked = configuration.platformRefresh
+
+        manageDashboardsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            startDashboardsActivity(it.context)
+            false
+        }
+    }
+
+    private fun startDashboardsActivity(context: Context) {
+        startActivity(Intent(context, DashboardsActivity::class.java))
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            "pref_module_web" -> {
+            /*"pref_module_web" -> {
                 val checked = webModulePreference!!.isChecked
                 configuration.setWebModule(checked)
                 configuration.setHasPlatformChange(true)
-            }
+            }*/
             "pref_platform_bar" -> {
                 val checked = platformBarPreference!!.isChecked
                 configuration.platformBar = checked
@@ -122,13 +131,13 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
                 configuration.appShowActivity = checked
                 configuration.setHasPlatformChange(true)
             }
-            "pref_web_url" -> {
+            /*"pref_web_url" -> {
                 val value = webUrlPreference!!.text
                 configuration.webUrl = value
                 webUrlPreference?.text = value
                 webUrlPreference?.summary = value
                 configuration.setHasPlatformChange(true)
-            }
+            }*/
         }
     }
 }

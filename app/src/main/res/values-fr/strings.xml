@@ -60,8 +60,8 @@
     <string name="preference_summary_password">Mot de passe de l\'utilisateur MQTT (si nécessaire).</string>
     <string name="preference_title_alarm">Alarme</string>
     <string name="preference_summary_alarm">Paramétrage du code de l\'alarme</string>
-    <string name="preference_title_pending_time">Délai avant armement (Pending Time)</string>
-    <string name="preference_summary_pending_time">Délai, en secondes, avant que l\'alarme ne passe en mode absent (away) ou présent (home). Actuellement %1$s secondes.</string>
+    <string name="preference_title_night_pending_time">Délai avant armement (Pending Time)</string>
+    <string name="preference_summary_night_pending_time">Délai, en secondes, avant que l\'alarme ne passe en mode absent (away) ou présent (home). Actuellement %1$s secondes.</string>
     <string name="preference_title_trigger_time">Délai avant déclenchement (Trigger Time)</string>
     <string name="preference_summary_trigger_time">Délai, en secondes, avant que l\'alarme ne se déclenche. Actuellement %1$s secondes.</string>
 
@@ -244,8 +244,8 @@
     <string name="text_update_available">Une mise à jour est disponible, voulez-vous l\'installer maintenant ?</string>
     <string name="pref_home_pending_title">Délai avant armement mode présent</string>
     <string name="pref_home_pending_summary">Le délai en seconde avant que l\'alarme ne passe en mode présent. Actuellement %1$s secondes.</string>
-    <string name="pref_delay_title">Durée de la fenêtre de désactivation</string>
-    <string name="pref_delay_summary">La durée en secondes pendant laquelle la fenêtre de désactivation s\'affiche, avant que l\'alarme ne se déclenche (sauf si défini par délai de déclenchement des modes présent ou absent). Actuellement %1$s secondes.</string>
+    <string name="pref_night_delay_title">Durée de la fenêtre de désactivation</string>
+    <string name="pref_night_delay_summary">La durée en secondes pendant laquelle la fenêtre de désactivation s\'affiche, avant que l\'alarme ne se déclenche (sauf si défini par délai de déclenchement des modes présent ou absent). Actuellement %1$s secondes.</string>
     <string name="pref_away_pending_title">Délai avant armement mode absent</string>
     <string name="pref_away_pending_summary">Le délai en secondes avant que l\'alarme ne passe en mode absent. Actuellement %1$s secondes.</string>
     <string name="pref_pending_times_description">Ces délais doivent correspondre à ceux définis dans le paramétrage de votre centrale domotique. Si vous vous ne souhaitez pas utiliser les délais du mode présent et du mode absent, positionnez les aux mêmes valeurs que le délai d\'armement global. Pour Home Assistant, consultez la documentation de MQTT manual alarm control panel ici https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -311,7 +311,7 @@
     <string name="pref_sensor_list_summary">Ci-dessous une liste des capteurs disponibles sur cet appareil dont les états seront publiés sur le serveur MQTT.</string>
     <string name="pref_qr_code_summary">Autoriser le scan des QR code avec la camera de l\'appareil et le publier sur le serveur MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Fréquence de publication (en secondes)</string>
-    <string name="summary_setting_mqtt_basetopic">Identifiant pour la réception de commande MQTT pour cet appareil. Chaque appareil doit avoir un identifiant unique.</string>
+    <string name="summary_mqtt_remote_commands">Identifiant pour la réception de commande MQTT pour cet appareil. Chaque appareil doit avoir un identifiant unique.</string>
     <string name="title_setting_mqtt_basetopic">Racine du Topic</string>
     <string name="service_notification_message">Alarm Panel en cours…</string>
     <string name="toast_camera_source_error">Impossible de démarrer la caméra, réessayer plus tard.</string>
@@ -430,6 +430,22 @@
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
     <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
 
     <string-array name="inactivity_times">
         <item>15 secondes</item>

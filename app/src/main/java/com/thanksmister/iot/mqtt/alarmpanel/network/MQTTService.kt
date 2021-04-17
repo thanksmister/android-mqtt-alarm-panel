@@ -18,10 +18,13 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 
 import android.R.id.message
 import android.content.Context
-import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
@@ -34,13 +37,14 @@ import java.security.spec.InvalidKeySpecException
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MQTTService(private var context: Context,
-                  options: MQTTOptions,
+                  private var options: MQTTOptions,
                   private var listener: MqttManagerListener?) :
         MQTTServiceInterface {
 
     private var mqttClient: MqttAndroidClient? = null
     private var mqttOptions: MQTTOptions? = null
     private val mReady = AtomicBoolean(false)
+    private val disposable = CompositeDisposable()
 
     init {
         initialize(options)
@@ -79,6 +83,7 @@ class MQTTService(private var context: Context,
             mqttOptions = null
         }
         mReady.set(false)
+        disposable.dispose()
     }
 
     override fun publishAlarm(command: String, code: Int) {
@@ -172,18 +177,6 @@ class MQTTService(private var context: Context,
         try {
             mqttOptions = options
             mqttOptions?.let {
-                Timber.i("Service Configuration:")
-                Timber.i("Client ID: " + it.getClientId())
-                Timber.i("Username: " + it.getUsername())
-                Timber.i("Password: " + it.getPassword())
-                Timber.i("TslConnect: " + it.getTlsConnection())
-                Timber.i("MQTT Configuration:")
-                Timber.i("Broker: " + it.brokerUrl)
-                Timber.i("Subscribed to state topics: " + StringUtils.convertArrayToString(it.getStateTopics()))
-                Timber.i("Publishing to alarm topic: " + it.getAlarmCommandTopic())
-                Timber.i("Publishing to command topic: " + it.getBaseCommand())
-            }
-            mqttOptions?.let {
                 if (it.isValid) {
                     initializeMqttClient()
                 } else {
@@ -208,7 +201,7 @@ class MQTTService(private var context: Context,
                 mqttClient?.setCallback(object : MqttCallbackExtended {
                     override fun connectComplete(reconnect: Boolean, serverURI: String?) {
                         Timber.d("connect to broker completed, reconnected: $reconnect")
-                        subscribeToTopics(mqttOptions.getStateTopics())
+                        subscribeToTopics() // subscribe to our topics
                     }
                     override fun connectionLost(cause: Throwable?) {}
                     override fun messageArrived(topic: String?, message: MqttMessage?) {}
@@ -298,27 +291,34 @@ class MQTTService(private var context: Context,
         }
     }
 
-    private fun subscribeToTopics(topicFilters: Array<String>?) {
-        topicFilters?.let {
-            Timber.d("Subscribe to Topics: " + StringUtils.convertArrayToString(topicFilters))
-            mqttClient?.let {
-                if (mReady.get()) {
-                    try {
-                        it.subscribe(topicFilters, MqttUtils.getQos(topicFilters.size), MqttUtils.getMqttMessageListeners(topicFilters.size, listener))
-                    } catch (e: NullPointerException) {
-                        Timber.e(e.message)
-                    } catch (e: MqttException) {
-                        if (listener != null) {
-                            listener!!.handleMqttException("Exception while subscribing: " + e.message)
-                        }
-                    }
-                }
-            }
+    // TODO should we add a delay to retry if mReady not ready?
+    private fun subscribeToTopics() {
+        mqttOptions?.let { options ->
+            disposable.add(
+                    options.getStateTopicsFlowable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe { topicFilters ->
+                                topicFilters?.let {
+                                    Timber.d("Subscribe to Topics: " + StringUtils.convertArrayToString(it))
+                                    mqttClient?.let { client ->
+                                        if (mReady.get()) {
+                                            try {
+                                                client.subscribe(topicFilters, MqttUtils.getQos(topicFilters.size), MqttUtils.getMqttMessageListeners(it.size, listener))
+                                            } catch (e: NullPointerException) {
+                                                listener?.handleMqttException("Exception while subscribing: " + e.message)
+                                            } catch (e: MqttException) {
+                                                listener?.handleMqttException("Exception while subscribing: " + e.message)
+                                            }
+                                        }
+                                    }
+                                }
+                            })
         }
     }
 
     companion object {
-        // Use mqttQos=1 (at least once delivery), mqttQos=0 (at most once delivery) also supported.
-        // private val MQTT_QOS = 0
+         // Use mqttQos=1 (at least once delivery), mqttQos=0 (at most once delivery) also supported.
+         private val MQTT_QOS = 0
     }
 }

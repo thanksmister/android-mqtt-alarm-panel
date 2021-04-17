@@ -41,49 +41,15 @@
         app:layout_constraintBottom_toTopOf="@id/guideControlBottom"
         tools:layout="@layout/fragment_controls" />
 
-    <fragment
-        android:id="@+id/oneSensorContainer"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sensorsDisplayList"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineMiddle"
-        app:layout_constraintStart_toEndOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/guideSensorsOne"
-        tools:layout="@layout/fragment_sensor_control" />
-
-    <fragment
-        android:id="@+id/twoSensorContainer"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/guidelineMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/guideSensorsOne"
-        tools:layout="@layout/fragment_sensor_control" />
-
-    <fragment
-        android:id="@+id/threeSensorContainer"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineMiddle"
-        app:layout_constraintStart_toEndOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
-        tools:layout="@layout/fragment_sensor_control" />
-
-    <fragment
-        android:id="@+id/fourSensorContainer"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.SensorControlFragment"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintStart_toEndOf="@+id/guidelineMiddle"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
-        app:layout_constraintTop_toBottomOf="@+id/guideSensorTwo"
-        tools:layout="@layout/fragment_sensor_control" />
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/guideControlBottom" />
 
     <LinearLayout
         android:id="@+id/settingsContainer"
@@ -220,31 +186,10 @@
         app:layout_constraintGuide_percent="0.32" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideSensorsOne"
+        android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.62" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineMiddle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideSensorTwo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.70" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideSensorThree"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.78" />
+        app:layout_constraintGuide_percent="0.82" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

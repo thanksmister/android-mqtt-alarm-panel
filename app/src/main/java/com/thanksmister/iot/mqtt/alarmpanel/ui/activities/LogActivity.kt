@@ -30,7 +30,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class LogActivity : BaseActivity() {
+class LogActivity : BaseSettingsActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {

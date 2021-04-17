@@ -50,8 +50,8 @@
     <string name="preference_summary_tls_connection">Listen to broker on port 8883 with SSL/TLS.</string>
     <string name="preference_title_port">Service Port</string>
     <string name="preference_summary_port">Set the service port value, usually 8123 unless secure.</string>
-    <string name="preference_title_command_topic">Alarm Command</string>
-    <string name="preference_title_state_topic">Alarm Topic</string>
+    <string name="preference_title_command_topic">Alarm Command Topic</string>
+    <string name="preference_title_state_topic">Alarm State Topic</string>
     <string name="preference_summary_command_topic">Set the command topic value to send commands to the MQTT service.</string>
     <string name="preference_summary_state_topic">Set the state topic value to receive messages from the MQTT service.</string>
     <string name="preference_title_username">Username</string>
@@ -60,10 +60,6 @@
     <string name="preference_summary_password">Set the service password (if needed).</string>
     <string name="preference_title_alarm">Alarm</string>
     <string name="preference_summary_alarm">Alarm code settings</string>
-    <string name="preference_title_pending_time">Pending Time</string>
-    <string name="preference_summary_pending_time">The time in seconds of the pending time before the alarm is armed away or home). Currently %1$s seconds.</string>
-    <string name="preference_title_trigger_time">Trigger Time</string>
-    <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
 
     <string name="preference_title_weather_settings">Weather</string>
     <string name="preference_summary_weather_settings">Once activated, the weather settings will appear on the main screen.</string>
@@ -99,8 +95,8 @@
     <string name="preference_summary_image_rotation">Time in minutes between image refresh. Currently %1$s.</string>
 
     <string name="preference_title_web_settings">Browser</string>
-    <string name="preference_summary_web_settings">Allows you to load external home automation dashboard.</string>
-    <string name="preference_title_web">Home Automation Dashboard</string>
+    <string name="preference_summary_web_settings">You can load multiple dashboards that are displayed as you swipe right on the main screen. Each dashboard URL is rendered as a webpage.</string>
+    <string name="preference_title_web">Home Automation Dashboards</string>
     <string name="preference_summary_web">Displays your home automation dashboard by swiping main screen.</string>
     <string name="preference_title_web_url">Dashboard Address</string>
     <string name="preference_summary_web_url">Enter the IP address of your home automation dashboard with prefix and port if needed (example: http://ipaddress:port).</string>
@@ -164,8 +160,9 @@
     <string name="toast_alarm_deactivated">Alarm deactivated!</string>
     <string name="activity_logs_title">Data Logs</string>
 
-    <string name="text_arm_home">ARM HOME</string>
-    <string name="text_arm_away">ARM AWAY</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_home">HOME</string>
+    <string name="text_arm_away">AWAY</string>
     <string name="text_armed_home">ARMED HOME</string>
     <string name="text_armed_away">ARMED AWAY</string>
     <string name="text_system">SYSTEM</string>
@@ -239,20 +236,32 @@
     <string name="pref_device_timeout_minutes_summary">After %1$s minute(s) the screen turns off.</string>
     <string name="pref_device_timeout_seconds_summary">After %1$s second(s) the screen turns off.</string>
     <string name="pref_device_timeout_hours_summary">After %1$s hour(s) the screen turns off.</string>
-
     <string name="pref_device_timeout_title">Screen Timeout</string>
     <string name="text_update_available">There is a new update available, would you like to install it now?</string>
-    <string name="pref_home_pending_title">Arm Home Pending Time</string>
-    <string name="pref_home_pending_summary">The time in seconds before the alarm is set to home mode. Currently %1$s seconds.</string>
-    <string name="pref_delay_title">Disarm Delay Time</string>
-    <string name="pref_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered unless overridden by the home or away delay times. Currently %1$s seconds.</string>
-    <string name="pref_away_pending_title">Arm Away Pending Time</string>
-    <string name="pref_away_pending_summary">The time in seconds before the alarm is set to away mode. Currently %1$s seconds.</string>
-    <string name="pref_pending_times_description">These times should match those set in your home automation platform. If you do not want to use delay, pending home, pending away times, just set them all to be the same as your pending time. For Home Assistant, review the MQTT manual alarm control panel documentation at https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
-    <string name="pref_home_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered in alarm home mode. Currently %1$s seconds.</string>
-    <string name="pref_home_delay_title">Disarm Home Delay Time</string>
-    <string name="pref_away_delay_summary">The time in seconds to display the disarm dialog before the alarm is triggered in alarm away mode. Currently %1$s seconds.</string>
-    <string name="pref_away_delay_title">Disarm Away Delay Time</string>
+
+    <string name="preference_title_trigger_time">Trigger Time</string>
+    <string name="preference_summary_trigger_time">The time in seconds before triggering the alarm. Currently %1$s seconds.</string>
+
+    <string name="pref_away_pending_title">Away Pending Time</string>
+    <string name="pref_away_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+
+    <string name="preference_title_night_pending_time">Night Pending Time</string>
+    <string name="preference_summary_night_pending_time">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+
+    <string name="pref_home_pending_title">Home Pending Time</string>
+    <string name="pref_home_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+
+    <string name="pref_night_delay_title">Night Delay Time</string>
+    <string name="pref_night_delay_summary">The time in seconds before the alarm state is set to night mode. Currently %1$s seconds.</string>
+
+    <string name="pref_home_delay_title">Home Delay Time</string>
+    <string name="pref_home_delay_summary">The time in seconds before the alarm state is set to home mode. Currently %1$s seconds.</string>
+
+    <string name="pref_away_delay_title">Away Delay Time</string>
+    <string name="pref_away_delay_summary">The time in seconds before the alarm state is set to away mode. Currently %1$s seconds.</string>
+
+    <string name="pref_pending_times_description">These times should match the same behavior as your home automation platform. </string>
+
     <string name="dialog_no_camera_permissions">This feature requires the camera permissions. Go to the device settings, then turn on permissions for this application.</string>
     <string name="dialog_no_location_permissions">This feature requires the location permissions. Go to the device settings, then turn on permissions for this application.</string>
     <string name="toast_screen_timeout">Screen timed out…</string>
@@ -313,12 +322,12 @@
     <string name="pref_sensor_list_summary">Below is a list of sensor data available on this device to be published as MQTT data.</string>
     <string name="pref_qr_code_summary">Will scan QR codes using the device\'s camera and publish the scanned code over MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publish Frequency (in seconds)</string>
-    <string name="summary_setting_mqtt_basetopic">Identifier to receive commands for this panel. Each panel should have a unique identifier.</string>
+    <string name="summary_mqtt_remote_commands">Identifier to receive commands for this panel. Each panel should have a unique identifier.</string>
     <string name="title_setting_mqtt_basetopic">Alarm Command Topic</string>
     <string name="service_notification_message">Alarm Panel Running…</string>
     <string name="toast_camera_source_error">Could not start camera source, you may want to try again.</string>
     <string name="pref_user_agent_title">User Agent String (Optional)</string>
-    <string name="pref_user_agent_summary">Set the browser user agent stream if needed to load the dashboard (leave blank otherwise)</string>
+    <string name="pref_user_agent_summary">Set the user agent stream if needed to load the dashboard (leave blank otherwise)</string>
     <string name="pref_camera_fps_title">Camera FPS</string>
     <string name="pref_camera_fps_summary">Set the camera speed, use lower value for older devices, currently %1$s.</string>
     <string name="pref_motion_reset_title">Motion Reset Time</string>
@@ -353,15 +362,15 @@
     <string name="pref_face_detection_summary">Detects faces using the device\'s camera.</string>
     <string name="pref_face_wake_summary">Turns on the screen when face detected.</string>
     <string name="pref_button_camera_test">Test the camera settings.</string>
-    <string name="toast_qr_code_read">QR Code Read...</string>
+    <string name="toast_qr_code_read">QR Code Read…</string>
     <string name="toast_too_dark_motion">Too dark for motion detection</string>
     <string name="toast_motion_detected">Motion Detected!</string>
     <string name="toast_face_detected">Face Detected!</string>
     <string name="toast_qrcode_read">QR Code %1$s</string>
-    <string name="title_setting_app_showactivity">Show Browser Activity</string>
-    <string name="pref_show_browser_activity_summary">Display browser loading progress.</string>
-    <string name="pref_zoom_level_summary">Zooms the browser level (experimental).</string>
-    <string name="title_setting_test_zoomlevel">Browser Zoom Level</string>
+    <string name="title_setting_app_showactivity">Show Loading</string>
+    <string name="pref_show_browser_activity_summary">Display dashboard loading progress.</string>
+    <string name="pref_zoom_level_summary">Zooms the dashboard level.</string>
+    <string name="title_setting_test_zoomlevel">Zoom Level</string>
     <string name="progress_loading">Loading %1$s %%</string>
     <string name="pref_title_prevent_sleep">Prevent Screen Sleep</string>
     <string name="pref_summary_prevent_sleep">When active, keeps the screen on.</string>
@@ -374,8 +383,8 @@
     <string name="dialog_message_ssl_generic">SSL certificate error.</string>
     <string name="dialog_missing_webview_warning">This device does not have the WebView component installed, please install the component from the Google Play store.</string>
     <string name="error_missing_vision_lib">Missing appropriate libraries to process Face detection or Barcode reading. These features may not work on this device.</string>
-    <string name="pref_platform_title_refresh">Browser Refresh</string>
-    <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the browser.</string>
+    <string name="pref_platform_title_refresh">Dashboard Refresh</string>
+    <string name="pref_platform_refresh_summary">When enabled, allows pulling down from the top of the page to refresh the dashboard.</string>
     <string name="pref_title_sensor_list">Sensor List</string>
     <string name="pref_summary_battery">Battery Level, USB Plugged, AC Plugged, Charging</string>
     <string name="pref_title_battery">Battery</string>
@@ -432,6 +441,21 @@
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
     <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>

@@ -233,7 +233,7 @@
     </FrameLayout>
 
     <FrameLayout
-          android:id="@+id/buttonCancel"
+          android:id="@+id/buttonDel"
           android:layout_width="0dp"
           android:layout_height="0dp"
           android:layout_gravity="center"
@@ -248,12 +248,11 @@
               android:layout_height="match_parent">
 
               <ImageView
-                  android:layout_width="44dp"
-                  android:layout_height="44dp"
+                  android:layout_width="38dp"
+                  android:layout_height="38dp"
                   android:layout_gravity="center"
-                  android:visibility="invisible"
-                  app:tint="@color/dark_gray"
-                  tools:ignore="ContentDescription" />
+                  android:src="@drawable/ic_backspace_black"
+                  app:tint="@color/white" />
 
           </FrameLayout>
 
@@ -283,7 +282,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/buttonDel"
+        android:id="@+id/buttonKey"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
@@ -296,14 +295,16 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white_key_button_trigger">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_backspace_black"
-                app:tint="@color/white" />
+                android:src="@drawable/ic_shield_key"
+                app:tint="@color/white"
+                android:contentDescription="Disarm Button" />
 
         </FrameLayout>
 

@@ -16,32 +16,48 @@
 
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.Bridge">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="windowNoTitle">false</item>
+        <item name="windowActionBar">true</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheet</item>
+        <item name="buttonStyle">@style/AppTheme.Button</item>
     </style>
 
-    <style name="AppThemeFullScreen" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppThemeFullScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
         <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="alertDialogTheme">@style/CustomAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheet</item>
+        <item name="buttonStyle">@style/AppTheme.Button</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <style name="CustomBottomSheet" parent="@style/Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="CustomAlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="colorAccent">@color/dialogBackgroundText</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="android:background">@color/dialogBackgroundColor</item>
     </style>
 
     <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/dialogBackgroundText</item>
     </style>
 
@@ -68,6 +84,8 @@
     <style name="PreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
         <item name="android:tint">@color/dark_gray_color</item>
         <item name="android:background">@color/colorPrimary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
     </style>
 
     <style name="BorderlessButtonStyle" parent="android:Widget.Holo.Button.Borderless">
@@ -152,11 +170,16 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextAppearance.TextAlarmState.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_login_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 
     <style name="TextAppearance.TextAlarmState.Large">
-        <item name="android:textColor">@color/body_text_2</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_login</item>
-        <item name="android:textStyle">normal</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearance" parent="@style/AppTextAppearance">
@@ -476,6 +499,22 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="AppTheme.Button" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/BlueButtonThemeOverlay</item>
+    </style>
+
+    <style name="BlueButtonThemeOverlay">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+
+    <style name="RedButtonThemeOverlay">
+        <item name="colorPrimary">@color/red</item>
+    </style>
+
+    <style name="AppTheme.Button.Red" parent="AppTheme.Button">
+        <item name="materialThemeOverlay">@style/RedButtonThemeOverlay</item>
+    </style>
+
     <style name="ButtonStyle" parent="@android:style/Widget.Button">
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
@@ -526,10 +565,9 @@
     </style>
 
     <style name="ButtonBlue" parent="ButtonStyle">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">#fff</item>
         <item name="android:background">@drawable/button_blue_selector</item>
-        <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
     </style>
 

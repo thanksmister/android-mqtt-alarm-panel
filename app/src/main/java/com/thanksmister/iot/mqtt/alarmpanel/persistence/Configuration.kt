@@ -22,7 +22,6 @@ import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISABLED
-import java.lang.Exception
 import javax.inject.Inject
 
 class Configuration @Inject
@@ -35,10 +34,6 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     var useDarkTheme: Boolean
         get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME, false)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME, value).apply()
-
-    var darkThemeRemote: Boolean
-        get() = this.sharedPreferences.getBoolean(PREF_DARK_THEME_REMOTE, false)
-        set(value) = this.sharedPreferences.edit().putBoolean(PREF_DARK_THEME_REMOTE, value).apply()
 
     var alarmMode: String
         get() = this.sharedPreferences.getString(PREF_ALARM_MODE, STATE_DISABLED).orEmpty()
@@ -63,9 +58,6 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = sharedPreferences.getBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.edit().putBoolean(PREF_FIRST_TIME, value).apply()
 
-
-
-
     /**
      * This is the default code for accessing the setting or disarming the alarm.
      * This will be used only for accessing settings if the remote config is set.
@@ -85,23 +77,19 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     fun isAlarmArmedMode(): Boolean {
         return (alarmMode == MqttUtils.STATE_ARMED_HOME
                 || alarmMode == MqttUtils.STATE_ARMED_AWAY
+                || alarmMode == MqttUtils.STATE_ARMED_CUSTOM_BYPASS
                 || alarmMode == MqttUtils.STATE_ARMED_NIGHT)
     }
 
     fun isAlarmArming(): Boolean {
-        return (alarmMode == MqttUtils.STATE_ARMING
-                || alarmMode == MqttUtils.STATE_ARMING_AWAY
-                || alarmMode == MqttUtils.STATE_ARMING_NIGHT
-                || alarmMode == MqttUtils.STATE_ARMING_HOME
+        return (alarmMode == MqttUtils.STATE_ARM_HOME
+                || alarmMode == MqttUtils.STATE_ARM_CUSTOM_BYPASS
+                || alarmMode == MqttUtils.STATE_ARM_NIGHT
+                || alarmMode == MqttUtils.STATE_ARM_AWAY
                 || alarmMode == MqttUtils.COMMAND_ARM_HOME
+                || alarmMode == MqttUtils.COMMAND_ARM_CUSTOM_BYPASS
                 || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
-                || alarmMode == MqttUtils.COMMAND_ARM_AWAY
-                || alarmMode == MqttUtils.STATE_PENDING_ALARM
-                || alarmMode == MqttUtils.STATE_PENDING)
-    }
-
-    fun isDisarming(): Boolean {
-        return (alarmMode == MqttUtils.STATE_DISARMING)
+                || alarmMode == MqttUtils.COMMAND_ARM_AWAY)
     }
 
     fun isAlarmDisarmedMode(): Boolean {
@@ -113,7 +101,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     fun isAlarmPending(): Boolean {
-        return (alarmMode == MqttUtils.STATE_PENDING || alarmMode == MqttUtils.STATE_PENDING_ALARM)
+        return (alarmMode == MqttUtils.STATE_PENDING)
     }
 
     var webUrl: String?
@@ -233,7 +221,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         set(value) = this.sharedPreferences.edit().putInt(PREF_HTTP_PORT, value).apply()
 
     var cameraMotionLeniency: Int
-        get() = this.sharedPreferences.getInt(PREF_MOTION_LENENCEY,20)
+        get() = this.sharedPreferences.getInt(PREF_MOTION_LENENCEY, 20)
         set(value) = this.sharedPreferences.edit().putInt(PREF_MOTION_LENENCEY, value).apply()
 
     var httpMJPEGMaxStreams: Int
@@ -414,7 +402,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     fun canShowScreenSaver(): Boolean {
-        return hasScreenSaver() && isAlarmArming().not() && isDisarming().not() && isAlarmTriggered().not()
+        return hasScreenSaver() && isAlarmArming().not() && isAlarmTriggered().not()
     }
 
     /**
@@ -425,7 +413,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
     }
 
     companion object {
-        private const val PREF_FINGERPRINT = "pref_fingerprint"
+
         private const val PREF_ALARM_MODE = "pref_alarm_mode"
         private const val PREF_ALARM_CODE = "pref_alarm_code"
         private const val PREF_MODULE_CLOCK_SAVER = "pref_module_saver_clock"
@@ -482,10 +470,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         private const val PREF_PANIC_ALERT = "pref_panic_alert"
         private const val PREF_DARK_THEME = "pref_dark_theme"
         private const val PREF_DARK_THEME_REMOTE = "pref_dark_theme_re,pte"
-        private const val PREF_MOTION_CLEAR  = "pref_motion_clear"
-        private const val PREF_MOTION_LENENCEY  = "pref_motion_leniency"
-        private const val PREF_MAX_STREAMS  = "pref_max_streams"
-        private const val PREF_HTTP_PORT  = "pref_http_port"
+        private const val PREF_MOTION_CLEAR = "pref_motion_clear"
+        private const val PREF_MOTION_LENENCEY = "pref_motion_leniency"
+        private const val PREF_MAX_STREAMS = "pref_max_streams"
+        private const val PREF_HTTP_PORT = "pref_http_port"
 
         // TODO move to constants
         const val SUN_ABOVE_HORIZON = "above_horizon"

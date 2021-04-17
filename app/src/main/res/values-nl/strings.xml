@@ -59,8 +59,8 @@
     <string name="preference_summary_password">Stel het service wachtwoord in (als dat nodig is).</string>
     <string name="preference_title_alarm">Alarm</string>
     <string name="preference_summary_alarm">Alarmcode instellingen</string>
-    <string name="preference_title_pending_time">Wachttijd</string>
-    <string name="preference_summary_pending_time">De tijd in seconden voordat het alarm ingeschakeld is (Thuis of van huis). Momenteel %1$s seconden.</string>
+    <string name="preference_title_night_pending_time">Wachttijd</string>
+    <string name="preference_summary_night_pending_time">De tijd in seconden voordat het alarm ingeschakeld is (Thuis of van huis). Momenteel %1$s seconden.</string>
     <string name="preference_title_trigger_time">Activatietijd</string>
     <string name="preference_summary_trigger_time">De tijd in seconden voordat het alarm geactiveerd is. Momenteel %1$s seconden.</string>
 
@@ -242,8 +242,8 @@
     <string name="text_update_available">Er is een nieuwe update beschikbaar, wil je die nu installeren?</string>
     <string name="pref_home_pending_title">Activeer thuis wachttijd</string>
     <string name="pref_home_pending_summary">De tijd in seconden voor het alarm naar thuismodus gaat. Momenteel %1$s seconden.</string>
-    <string name="pref_delay_title">Deactivatie wachttijd</string>
-    <string name="pref_delay_summary">De tijd in seconden voor het dialoog om het alarm te deactiveren toont, tenzij overschreven door de wachttijd. Momenteel %1$s seconden.</string>
+    <string name="pref_night_delay_title">Deactivatie wachttijd</string>
+    <string name="pref_night_delay_summary">De tijd in seconden voor het dialoog om het alarm te deactiveren toont, tenzij overschreven door de wachttijd. Momenteel %1$s seconden.</string>
     <string name="pref_away_pending_title">Activeer weg wachttijd</string>
     <string name="pref_away_pending_summary">De tijd in seconden voor het alarm naar wegmodus gat. Momenteel %1$s seconden.</string>
     <string name="pref_pending_times_description">Deze tijden moeten overeen komen met die van je domotica platform. Als je geen vertraging wilt gebruiken, wachttijd huis, wachttijd weg, zet ze op dezelfde tijd als de wachttijd. Voor Home Assistant, bekijk de MQTT manual alarm control panel documentatie op https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -309,7 +309,7 @@
     <string name="pref_sensor_list_summary">Hieronder vindt u een lijst met sensorgegevens die beschikbaar zijn op dit apparaat en die als MQTT-gegevens moeten worden gepubliceerd.</string>
     <string name="pref_qr_code_summary">Scant QR-codes met behulp van de camera van het apparaat en publiceert de gescande code via MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publiceer frequentie (in seconden)</string>
-    <string name="summary_setting_mqtt_basetopic">Identifier om MQTT-opdrachten voor dit paneel te ontvangen. Elk panel moet een unieke ID hebben.</string>
+    <string name="summary_mqtt_remote_commands">Identifier om MQTT-opdrachten voor dit paneel te ontvangen. Elk panel moet een unieke ID hebben.</string>
     <string name="title_setting_mqtt_basetopic">Base-onderwerp</string>
     <string name="service_notification_message">Alarmpaneel loopt ...</string>
     <string name="toast_camera_source_error">Kon de camera niet starten, probeer het misschien opnieuw.</string>
@@ -428,6 +428,22 @@
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
     <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconden</item>

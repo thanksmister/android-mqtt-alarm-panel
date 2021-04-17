@@ -41,10 +41,9 @@ class BaseApplication : DaggerApplication() {
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
         } else {
-            //Fabric.with(this, Answers())
-            //Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())
         }
+        Timber.plant(CrashlyticsTree())
     }
 
     override fun attachBaseContext(base: Context) {

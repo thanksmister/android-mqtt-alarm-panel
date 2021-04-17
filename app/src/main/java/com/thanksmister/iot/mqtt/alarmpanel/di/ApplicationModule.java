@@ -20,6 +20,8 @@ import android.app.Application;
 import android.content.Context;
 
 import com.thanksmister.iot.mqtt.alarmpanel.BaseApplication;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.DashboardDao;
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.DashboardsDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDao;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.MessageDatabase;
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao;
@@ -53,14 +55,26 @@ abstract class ApplicationModule {
 
     @Singleton
     @Provides
-    static MessageDao provideMessageDao(MessageDatabase database) {
-        return database.messageDao();
+    static DashboardsDatabase provideDashboardsDatabase(Application app) {
+        return DashboardsDatabase.getInstance(app);
     }
 
     @Singleton
     @Provides
     static SensorDatabase provideSensorDatabase(Application app) {
         return SensorDatabase.getInstance(app);
+    }
+
+    @Singleton
+    @Provides
+    static MessageDao provideMessageDao(MessageDatabase database) {
+        return database.messageDao();
+    }
+
+    @Singleton
+    @Provides
+    static DashboardDao provideDashboardDao(DashboardsDatabase database) {
+        return database.dashboardDao();
     }
 
     @Singleton

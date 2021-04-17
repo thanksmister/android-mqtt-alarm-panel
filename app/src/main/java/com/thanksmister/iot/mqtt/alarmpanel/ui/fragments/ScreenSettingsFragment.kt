@@ -283,7 +283,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             "pref_settings_day_night" -> {
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
-                configuration.nightModeChanged = true
+                //configuration.nightModeChanged = true
             }
             "pref_settings_hardware_acceleration" -> {
                 val checked = hardwareAcceleration!!.isChecked

@@ -15,23 +15,23 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:id="@+id/preferenceView">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/preferenceView">
 
-    <PreferenceCategory android:title="@string/preference_title_web_settings">
-
-        <CheckBoxPreference
-                android:title="@string/preference_title_web"
-                android:summary="@string/preference_summary_web_settings"
-                android:key="pref_module_web"/>
+    <PreferenceCategory android:title="@string/preference_title_web">
 
         <EditTextPreference
-                android:key="pref_web_url"
-                android:inputType="textWebEmailAddress"
-                android:title="@string/preference_title_web_url"
-                android:summary="@string/preference_summary_web_url"
-                android:negativeButtonText="@android:string/cancel"
-                android:positiveButtonText="@android:string/ok"/>
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="@string/preference_summary_web_settings"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+        <Preference
+            android:icon="@drawable/ic_baseline_dashboard"
+            android:key="button_dashboards"
+            android:summary="Add, edit, and remove dashboards."
+            android:title="Manage Dashboards" />
 
         <SwitchPreference
             android:defaultValue="@string/default_setting_app_showactivity"
@@ -49,19 +49,19 @@
 
         <EditTextPreference
             android:defaultValue="@string/default_browser_user_agent"
-            android:summary="@string/pref_user_agent_summary"
             android:key="@string/key_setting_browser_user_agent"
-            android:title="@string/pref_user_agent_title"/>
+            android:summary="@string/pref_user_agent_summary"
+            android:title="@string/pref_user_agent_title" />
 
         <CheckBoxPreference
-            android:title="@string/pref_title_platform_bar"
+            android:key="pref_platform_bar"
             android:summary="@string/pref_description_show_platform_bar"
-            android:key="pref_platform_bar"/>
+            android:title="@string/pref_title_platform_bar" />
 
         <CheckBoxPreference
-            android:title="@string/pref_platform_title_refresh"
+            android:key="pref_platform_pull_refresh"
             android:summary="@string/pref_platform_refresh_summary"
-            android:key="pref_platform_pull_refresh"/>
+            android:title="@string/pref_platform_title_refresh" />
 
     </PreferenceCategory>
 

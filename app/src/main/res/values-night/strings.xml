@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sensor_no_response">NO RESPONSE</string>
-    <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
-    <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
 </resources>

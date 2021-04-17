@@ -22,6 +22,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Sensors")
 class Sensor {
+
     @PrimaryKey(autoGenerate = true)
     var uid: Int = 0
 
@@ -39,6 +40,9 @@ class Sensor {
 
     @ColumnInfo(name = "payloadInactive")
     var payloadInactive: String? = null
+
+    @ColumnInfo(name = "payload")
+    var payload: String? = null
 
     @ColumnInfo(name = "notify")
     var notify: Boolean = false

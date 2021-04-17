@@ -39,6 +39,7 @@
             android:name=".BaseApplication"
             android:label="@string/app_name"
             android:icon="@mipmap/ic_launcher"
+            android:forceDarkAllowed="true"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true"
@@ -50,12 +51,13 @@
         
         <activity
             android:name=".ui.activities.MainActivity"
-               android:theme="@style/AppThemeFullScreen">
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:theme="@style/AppThemeFullScreen">
 
             <!-- Launch activity as default from Android Studio -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
                 <!--<category android:name="android.intent.category.HOME"/>-->
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -63,10 +65,24 @@
         </activity>
 
         <activity android:name=".ui.activities.SettingsActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|uiMode"/>
 
-        <activity android:name=".ui.activities.LogActivity"/>
-        <activity android:name=".ui.activities.LiveCameraActivity"/>
+        <activity android:name=".ui.activities.LogActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|uiMode"/>
+
+        <activity android:name=".ui.activities.LiveCameraActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|uiMode"/>
+
+        <activity android:name=".ui.activities.DashboardsActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|uiMode"/>
+
+        <activity android:name=".ui.activities.SensorsActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize|uiMode"/>
 
         <!-- MQTT Services -->
         <service android:name="org.eclipse.paho.android.service.MqttService"/>

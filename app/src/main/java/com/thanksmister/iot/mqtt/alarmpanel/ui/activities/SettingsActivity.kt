@@ -16,6 +16,8 @@
 
 package com.thanksmister.iot.mqtt.alarmpanel.ui.activities
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
@@ -30,10 +32,12 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import timber.log.Timber
+import kotlin.system.exitProcess
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : BaseSettingsActivity() {
 
     private val inactivityHandler: Handler = Handler()
+
     private val inactivityCallback = Runnable {
         Toast.makeText(this@SettingsActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
         dialogUtils.clearDialogs()
@@ -46,12 +50,10 @@ class SettingsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_settings)
 
-        if (supportActionBar != null) {
-            supportActionBar!!.show()
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
-            supportActionBar!!.setTitle(R.string.activity_settings_title)
-        }
+        supportActionBar?.show()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setTitle(R.string.activity_settings_title)
 
         val alarmPanelService = Intent(this, AlarmPanelService::class.java)
         stopService(alarmPanelService)
@@ -68,6 +70,15 @@ class SettingsActivity : BaseActivity() {
             logs()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if(configuration.nightModeChanged) {
+            configuration.nightModeChanged = false
+            restartApp()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -109,6 +120,18 @@ class SettingsActivity : BaseActivity() {
         } catch (ex: android.content.ActivityNotFoundException) {
             Timber.e(ex.message)
         }
+    }
+
+    private fun restartApp() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                or Intent.FLAG_ACTIVITY_NEW_TASK)
+        val pendingIntent = PendingIntent.getActivity(this.applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+        val mgr = this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = pendingIntent
+        finish()
+        exitProcess(2)
     }
 
     companion object {

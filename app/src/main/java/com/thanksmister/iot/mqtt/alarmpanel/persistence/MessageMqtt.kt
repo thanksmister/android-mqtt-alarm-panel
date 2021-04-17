@@ -37,6 +37,9 @@ class MessageMqtt {
     @ColumnInfo(name = "payload")
     var payload: String? = null
 
+    @ColumnInfo(name = "delay")
+    var delay: Int? = -1
+
     @ColumnInfo(name = "createdAt")
     var createdAt: String? = null
 }

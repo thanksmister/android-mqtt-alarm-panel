@@ -130,7 +130,7 @@ class AlarmPendingView : LinearLayout {
                 val an = RotateAnimation(0.0f, 90.0f, 250f, 273f)
                 an.fillAfter = true
                 countDownProgressWheel.setText(countDownTimeRemaining.toString())
-                countDownProgressWheel.setProgress(countDownTimeRemaining * divideBy)
+                countDownProgressWheel.setWheelProgress(countDownTimeRemaining * divideBy)
             }
 
             override fun onFinish() {

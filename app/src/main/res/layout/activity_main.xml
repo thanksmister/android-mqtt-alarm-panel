@@ -22,15 +22,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/triggeredView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
         android:visibility="invisible" />
 
-    <com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
-        android:background="@color/colorPrimaryDark"
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

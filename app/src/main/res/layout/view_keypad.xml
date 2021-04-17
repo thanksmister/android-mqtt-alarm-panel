@@ -27,7 +27,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border_top_corner"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline0"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -51,7 +50,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline0"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -75,7 +73,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/guideline0"
@@ -99,7 +96,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border_left"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -122,7 +118,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -145,7 +140,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintTop_toBottomOf="@+id/guideline0"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
@@ -168,7 +162,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border_left"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -191,7 +184,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -214,7 +206,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -233,11 +224,10 @@
     </FrameLayout>
 
     <FrameLayout
-          android:id="@+id/buttonCancel"
+          android:id="@+id/buttonDel"
           android:layout_width="0dp"
           android:layout_height="0dp"
           android:layout_gravity="center"
-        android:background="@drawable/button_border_bottom_corner"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/guideline3"
           app:layout_constraintStart_toStartOf="parent"
@@ -248,12 +238,11 @@
               android:layout_height="match_parent">
 
               <ImageView
-                  android:layout_width="44dp"
-                  android:layout_height="44dp"
+                  android:layout_width="38dp"
+                  android:layout_height="38dp"
                   android:layout_gravity="center"
-                  android:visibility="invisible"
-                  app:tint="@color/dark_gray"
-                  tools:ignore="ContentDescription" />
+                  android:src="@drawable/ic_backspace_black"
+                  app:tint="@color/dark_gray" />
 
           </FrameLayout>
 
@@ -264,7 +253,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border_bottom"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -283,27 +271,31 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/buttonDel"
+        android:id="@+id/buttonKey"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:background="@drawable/button_border_bottom"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/guideline2">
+        app:layout_constraintTop_toBottomOf="@+id/guideline2"
+        android:visibility="invisible"
+        tools:visibility="visible">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/light_green"
+            tools:ignore="UselessParent">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_backspace_black"
-                app:tint="@color/dark_gray" />
+                android:src="@drawable/ic_shield_key"
+                app:tint="@color/white"
+                android:contentDescription="Disarm Button" />
 
         </FrameLayout>
 

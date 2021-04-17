@@ -173,23 +173,17 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             view.let { Navigation.findNavController(it).navigate(R.id.capture_action) }
             false
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(activity as BaseActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                configuration.cameraEnabled = false
-                requestCameraPermissions()
-                //dialogUtils.showAlertDialog(activity as BaseActivity, getString(R.string.dialog_no_camera_permissions))
-                return
-            }
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             SettingsActivity.PERMISSIONS_REQUEST_CAMERA -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    configuration.cameraEnabled = true
+                    cameraPreference!!.isChecked = true
                     createCameraList()
                 } else {
+                    Toast.makeText(context, getString(R.string.dialog_no_camera_permissions), Toast.LENGTH_SHORT).show()
                     configuration.cameraEnabled = false
                     cameraPreference!!.isChecked = false
                 }
@@ -208,10 +202,12 @@ class CameraSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-
         when (key) {
             getString(R.string.key_setting_camera_enabled) -> {
                 configuration.cameraEnabled = cameraPreference?.isChecked?: false
+                if(configuration.cameraEnabled) {
+                    requestCameraPermissions()
+                }
             }
             getString(R.string.key_setting_camera_fps) -> {
                 try {

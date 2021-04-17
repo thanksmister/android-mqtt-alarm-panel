@@ -22,6 +22,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
@@ -95,6 +96,7 @@ class SettingsFragment : BaseSettingsFragment() {
     private val requireCodeToDisarmPreference: SwitchPreference by lazy {
         findPreference("key_require_code_disarm") as SwitchPreference
     }
+
     private val requireCodeToArmPreference: SwitchPreference by lazy {
         findPreference("key_require_code_arm") as SwitchPreference
     }
@@ -116,11 +118,9 @@ class SettingsFragment : BaseSettingsFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if ((activity as SettingsActivity).supportActionBar != null) {
-            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.activity_settings_title))
-        }
+        (activity as SettingsActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as SettingsActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+        (activity as SettingsActivity).supportActionBar?.title = (getString(R.string.activity_settings_title))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -169,7 +169,7 @@ class SettingsFragment : BaseSettingsFragment() {
         }
 
         themePreference.isChecked = configuration.useDarkTheme
-        panicPreference.isChecked == configuration.panicButton
+        panicPreference.isChecked = configuration.panicButton
 
         val code = configuration.alarmCode.toString()
         if (code.isNotEmpty()) {
@@ -185,7 +185,15 @@ class SettingsFragment : BaseSettingsFragment() {
             "pref_dark_theme" -> {
                 configuration.nightModeChanged = true
                 configuration.useDarkTheme = themePreference.isChecked
-                this.requireActivity().recreate()
+                if (configuration.useDarkTheme) {
+                    configuration.nightModeChanged = true
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    requireActivity().recreate()
+                } else {
+                    configuration.nightModeChanged = true
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    requireActivity().recreate()
+                }
             }
             "pref_panic_button" -> {
                 configuration.panicButton = panicPreference.isChecked

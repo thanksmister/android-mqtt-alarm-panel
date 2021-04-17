@@ -17,8 +17,8 @@
 <resources>
 
     <color name="colorPrimary">#F4F4F4</color>
-    <color name="colorPrimaryDark">#ffffff</color>
-    <color name="colorAccent">#C91976D2</color>
+    <color name="colorPrimaryDark">#0EABEE</color>
+    <color name="colorAccent">#68c5ed</color>
     <color name="dialogBackgroundColor">#ffffff</color>
     <color name="dialogBackgroundText">#C91976D2</color>
 
@@ -28,29 +28,34 @@
 
     <color name="green">#219653</color>
     <color name="yellow">#F2C94C</color>
-    <color name="yellow_alpha">#7BF2C94C</color>
+    <color name="yellow_alpha">#7BAB8204</color>
     <color name="gray">#818181</color>
     <color name="dark_gray">#818181</color>
-    <color name="blue">#B01976D2</color>
+    <color name="blue">#C91976D2</color>
+    <color name="blue_alpha_background">#6F0F4881</color>
 
     <color name="cardStroke">#E0DFDF</color>
 
     <color name="black">#ff000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="white_alpha">#E6FFFFFF</color>
+    <color name="white_alpha">#7BFFFFFF</color>
+    <color name="white_alpha_ring">#1EFFFFFF</color>
     <color name="light_gray">#efefef</color>
     <color name="orange">#F2994A</color>
     <color name="red">#EB5757</color>
-    <color name="red_alpha">#7AEB5757</color>
+    <color name="red_alpha">#7A7D1C1C</color>
     <color name="red_light_pressed">#CA4B4B</color>
     <color name="gray_color">#eeeeee</color>
 
+    <color name="white_key_button_trigger">#4EFFFFFF</color>
+
     <color name="gray_pressed">#c2c2c2</color>
+
+    <color name="gray_alpha">#67707070</color>
 
     <color name="dark_gray_color">#ff707070</color>
     <color name="stroke_gray">#d8d8d8</color>
-    <color name="text">#7e7e7c</color>
-
+    <color name="text">#4D4D4B</color>
 
     <color name="body_text">#9E9E9E</color>
 
@@ -62,16 +67,16 @@
     <color name="light_red_alpha">#7DEB5757</color>
 
     <color name="light_green">#CD219653</color>
-    <color name="light_green_alpha">#7B219653</color>
+    <color name="light_green_alpha">#92219653</color>
+    <color name="green_alpha">#7B1B683C</color>
 
-    <color name="light_green_pressed">#ff67932c</color>
-    <color name="text_green">#ff67932c</color>
-    <color name="preference_green">#ff7dac2f</color>
+    <color name="light_green_pressed">#186A3B</color>
+    <color name="text_green">#219653</color>
+    <color name="preference_green">#219653</color>
     <color name="blue_pressed">#4170c4</color>
 
-
     <color name="screen_saver_black">#000000</color>
-    <color name="black_alpha">#7A000000</color>
+    <color name="black_alpha">#7A393737</color>
 
     <color name="blue_alpha">#BEC4DAFA</color>
 
@@ -84,5 +89,7 @@
     <color name="weather_card_background">#FFFFFF</color>
     <color name="weather_card_icon">#818181</color>
     <color name="weather_card_border">#eeeeee</color>
+
+    <color name="sensor_icon">#595858</color>
 
 </resources>
