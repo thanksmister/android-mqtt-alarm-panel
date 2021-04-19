@@ -36,10 +36,8 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     @Inject lateinit var configuration: Configuration
 
-    private var platformRefreshPreference: CheckBoxPreference? = null
-    private var platformBarPreference: CheckBoxPreference? = null
-    private var browserActivityPreference: SwitchPreference? = null
     private var browserHeaderPreference: EditTextPreference? = null
+    private var platformBarPreference: CheckBoxPreference? = null
 
     private val manageDashboardsPreference: Preference by lazy {
         findPreference("button_dashboards") as Preference
@@ -80,19 +78,9 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-
         platformBarPreference = findPreference("pref_platform_bar") as CheckBoxPreference
-        platformRefreshPreference = findPreference("pref_platform_pull_refresh") as CheckBoxPreference
         browserHeaderPreference = findPreference(getString(R.string.key_setting_browser_user_agent)) as EditTextPreference
-        browserActivityPreference = findPreference(getString(R.string.key_setting_app_showactivity)) as SwitchPreference
-
-        /*if (!configuration.webUrl.isNullOrEmpty().not()) {
-            webUrlPreference?.text = configuration.webUrl
-            webUrlPreference?.summary = configuration.webUrl
-        }*/
-
-        platformBarPreference!!.isChecked = configuration.platformBar
-        platformRefreshPreference!!.isChecked = configuration.platformRefresh
+        platformBarPreference?.isChecked = configuration.platformBar
 
         manageDashboardsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             startDashboardsActivity(it.context)
@@ -106,18 +94,9 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            /*"pref_module_web" -> {
-                val checked = webModulePreference!!.isChecked
-                configuration.setWebModule(checked)
-                configuration.setHasPlatformChange(true)
-            }*/
             "pref_platform_bar" -> {
                 val checked = platformBarPreference!!.isChecked
                 configuration.platformBar = checked
-            }
-            "pref_platform_pull_refresh" -> {
-                val checked = platformRefreshPreference!!.isChecked
-                configuration.platformRefresh = checked
             }
             getString(R.string.key_setting_browser_user_agent) -> {
                 val value = browserHeaderPreference!!.text
@@ -126,18 +105,6 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
                 browserHeaderPreference!!.summary = value
                 configuration.setHasPlatformChange(true)
             }
-            getString(R.string.key_setting_app_showactivity) -> {
-                val checked = browserActivityPreference!!.isChecked
-                configuration.appShowActivity = checked
-                configuration.setHasPlatformChange(true)
-            }
-            /*"pref_web_url" -> {
-                val value = webUrlPreference!!.text
-                configuration.webUrl = value
-                webUrlPreference?.text = value
-                webUrlPreference?.summary = value
-                configuration.setHasPlatformChange(true)
-            }*/
         }
     }
 }

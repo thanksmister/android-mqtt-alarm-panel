@@ -92,4 +92,6 @@
 
     <color name="sensor_icon">#595858</color>
 
+    <color name="dot_color">#7A393737</color>
+
 </resources>

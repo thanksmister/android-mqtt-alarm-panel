@@ -529,11 +529,11 @@ class ControlsFragment : BaseFragment() {
 
     private fun showAlarmIcons(armed: Boolean = false) {
         if (armed) {
-            alarmImage.visibility = View.VISIBLE
-            alarmImageUnlocked.visibility = View.INVISIBLE
+            alarmImage?.visibility = View.VISIBLE
+            alarmImageUnlocked?.visibility = View.INVISIBLE
         } else {
-            alarmImage.visibility = View.INVISIBLE
-            alarmImageUnlocked.visibility = View.VISIBLE
+            alarmImage?.visibility = View.INVISIBLE
+            alarmImageUnlocked?.visibility = View.VISIBLE
         }
     }
 
@@ -609,9 +609,7 @@ class ControlsFragment : BaseFragment() {
 
     private fun destroySoundUtils() {
         pendingSoundFlag = false
-        if (mediaPlayer != null) {
-            mediaPlayer?.stop()
-        }
+        mediaPlayer?.stop()
         mediaPlayer = null
     }
 
@@ -660,7 +658,7 @@ class ControlsFragment : BaseFragment() {
         }
         countDownTimeRemaining = 0
         destroySoundUtils()
-        countDownProgressWheel.visibility = View.GONE
+        countDownProgressWheel?.visibility = View.GONE
         showAlarmIcons()
     }
 

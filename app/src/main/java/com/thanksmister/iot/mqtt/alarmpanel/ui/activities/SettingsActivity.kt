@@ -73,12 +73,13 @@ class SettingsActivity : BaseSettingsActivity() {
     }
 
     override fun onBackPressed() {
-        if(configuration.nightModeChanged) {
+        super.onBackPressed()
+        /*if(configuration.nightModeChanged) {
             configuration.nightModeChanged = false
             restartApp()
         } else {
             super.onBackPressed()
-        }
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

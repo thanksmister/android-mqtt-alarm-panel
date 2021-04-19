@@ -20,13 +20,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -42,7 +47,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MainSlidePagerAdapter
-import com.thanksmister.iot.mqtt.alarmpanel.ui.controls.CustomViewPager
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -53,7 +57,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
+class MainActivity : BaseActivity(),
         ControlsFragment.OnControlsFragmentListener,
         PanicBottomSheetFragment.OnBottomSheetFragmentListener,
         MainFragment.OnMainFragmentListener,
@@ -85,6 +89,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     private var codeBottomSheet: CodeBottomSheetFragment? = null
     private var previousAlarmMode: String? = null
     private var snackbar: Snackbar? = null
+    private var dots = ArrayList<ImageView>()
+    private var pages: Int = 0
 
     private val pagerAdapter: MainSlidePagerAdapter by lazy {
         MainSlidePagerAdapter(this)
@@ -98,6 +104,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
+        navigateAlarmPanel()
         manuallyLaunchScreenSaver()
     }
 
@@ -105,7 +112,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
 
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        try {
+            setContentView(R.layout.activity_main)
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
 
         Thread.setDefaultUncaughtExceptionHandler(AppExceptionHandler(this))
 
@@ -120,8 +131,29 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         decorView = window.decorView
 
         pagerView.adapter = pagerAdapter
-        triggeredView.visibility = View.GONE
-        pagerView.visibility = View.VISIBLE
+
+        pagerView.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                selectDot(position)
+            }
+        })
+
+        buttonSettings?.setOnClickListener {
+            showSettingsCodeDialog()
+        }
+        platformButton.setOnClickListener {
+            navigatePlatformPanel()
+        }
+        buttonSleep.setOnClickListener {
+            manuallyLaunchScreenSaver()
+        }
+        alertButton.setOnClickListener {
+            publishAlertCall()
+        }
+        buttonRefresh.setOnClickListener {
+            // TODO refresh browser
+        }
 
         if (BuildConfig.DEBUG) {
             configuration.alarmCode = BuildConfig.ALARM_CODE
@@ -158,8 +190,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         // We must be sure we have the instantiated the view model before we observe.
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
-        // observeViewModel()
-
         if (configuration.cameraEnabled || (configuration.captureCameraImage() || configuration.hasCameraDetections())) {
             window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
         }
@@ -172,15 +202,16 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             decorView?.keepScreenOn = false
         }
 
-        if (configuration.useDarkTheme) {
+        if(configuration.useDarkTheme) {
             setDarkTheme()
-        } else {
-            if (configuration.useNightDayMode) {
+        } else  {
+            if (configuration.useNightDayMode ) {
                 setDayNightMode()
             } else {
                 setLightTheme()
             }
         }
+        observeViewModel()
     }
 
     override fun onStart() {
@@ -190,7 +221,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         } else {
             startService(alarmPanelService)
         }
-        observeViewModel()
+        val nightModeChanged = configuration.nightModeChanged
+        val useDarkTheme = configuration.useDarkTheme
+        if (useDarkTheme && nightModeChanged) {
+            configuration.nightModeChanged = false
+            setDarkTheme(true)
+        } else if (nightModeChanged) {
+            configuration.nightModeChanged = false
+            setDayNightMode(true)
+        }
     }
 
     override fun onUserInteraction() {
@@ -211,6 +250,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     pagerAdapter.addDashboards(it)
+                    addDots(it.size)
                 }
         )
 
@@ -288,7 +328,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun onResume() {
         super.onResume()
         resetInactivityTimer()
-        setViewPagerState()
         // Filter messages from service
         val filter = IntentFilter()
         filter.addAction(AlarmPanelService.BROADCAST_ALERT_MESSAGE)
@@ -326,6 +365,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             alertDialog = null
         }
         codeBottomSheet?.dismiss()
+        buttonSleep?.apply {
+            setOnTouchListener(null)
+        }
     }
 
     override fun onBackPressed() {
@@ -358,10 +400,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
             }
             decorView?.systemUiVisibility = visibility
         } else if (hasFocus) {
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            visibility = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_VISIBLE)
-                else -> visibility = (View.SYSTEM_UI_FLAG_VISIBLE)
+                else -> (View.SYSTEM_UI_FLAG_VISIBLE)
             }
             decorView?.systemUiVisibility = visibility
         }
@@ -376,15 +418,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     }
 
     override fun navigatePlatformPanel() {
-        pagerView.currentItem = 1
-    }
-
-    private fun setViewPagerState() {
-        /*if (viewModel.hasPlatform()) {
-            pagerView.setPagingEnabled(true)
-        } else {
-            pagerView.setPagingEnabled(false)
-        }*/
+        pagerView.currentItem = 0
     }
 
     override fun publishArmedHome(code: String) {
@@ -430,6 +464,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
     override fun publishAlertCall() {
         val bottomSheetFragment = PanicBottomSheetFragment()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+    }
+
+    private fun showSettingsCodeDialog() {
+        if (configuration.isFirstTime) {
+            val intent = SettingsActivity.createStartIntent(applicationContext)
+            startActivity(intent)
+        } else {
+            showCodeDialog(CodeTypes.SETTINGS, -1)
+        }
     }
 
     /**
@@ -589,15 +632,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
         optionsBottomSheet?.dismiss()
     }
 
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
-
-    override fun onPageSelected(position: Int) {
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
-    }
-
     override fun manuallyLaunchScreenSaver() {
         showScreenSaver()
         clearInactivityTimer()
@@ -660,6 +694,59 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener,
                 dialogUtils.clearDialogs()
             } else if (AlarmPanelService.BROADCAST_SERVICE_STARTED == intent.action && !isFinishing) {
                 serviceStarted = true
+            }
+        }
+    }
+
+    private fun addDots(size: Int) {
+        pages = size
+        dotsLayout.removeAllViews()
+        dots = ArrayList<ImageView>()
+        for (i in 1..pages) {
+            val dot = ImageView(dotsLayout.context)
+            dot.setImageDrawable(resources.getDrawable(R.drawable.tab_indicator_default))
+            val params = LinearLayoutCompat.LayoutParams(
+                    LinearLayoutCompat.LayoutParams.WRAP_CONTENT,
+                    LinearLayoutCompat.LayoutParams.WRAP_CONTENT
+            )
+            dot.setPadding(8, 0, 8, 0);
+            dotsLayout.addView(dot, params)
+            dots.add(dot)
+        }
+        selectDot(0)
+    }
+
+    private fun selectDot(idx: Int) {
+        for (i in 0 until pages) {
+            val drawableId: Int = if (i == idx) R.drawable.tab_indicator_selected else R.drawable.tab_indicator_default
+            val drawable: Drawable = resources.getDrawable(drawableId)
+            dots[i].setImageDrawable(drawable)
+        }
+        if(idx == 0) {
+            //settingsContainer.visibility = View.VISIBLE
+            buttonSettings.visibility = View.VISIBLE
+            if (configuration.hasScreenSaver()) {
+                buttonSleep.visibility = View.VISIBLE
+            } else {
+                buttonSleep.visibility = View.GONE
+            }
+            if (configuration.panicButton.not()) {
+                alertButton?.visibility = View.GONE
+            } else {
+                alertButton?.visibility = View.VISIBLE
+            }
+            buttonRefresh.visibility = View.GONE
+            platformButton.visibility = View.GONE
+        } else {
+            if(configuration.platformBar.not()) {
+               // settingsContainer.visibility = View.GONE
+            } else {
+                //settingsContainer.visibility = View.VISIBLE
+                buttonSleep.visibility = View.GONE
+                alertButton.visibility = View.GONE
+                buttonRefresh.visibility = View.VISIBLE
+                platformButton.visibility = View.VISIBLE
+                buttonSettings.visibility = View.GONE
             }
         }
     }

@@ -56,11 +56,11 @@ class PlatformFragment : BaseFragment() {
 
     private var listener: OnPlatformFragmentListener? = null
     private var currentUrl: String? = null
-    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
+    //private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
     private var zoomLevel = 0.0f
     private var hasWebView: Boolean = true
-    private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
+    //private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
     private var certPermissionsShown = false
     private var index = 0
 
@@ -91,30 +91,31 @@ class PlatformFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (configuration.platformBar) {
+        /*if (configuration.platformBar) {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        }*/
+        // TODO we no longer have this option
         if (configuration.hasPlatformChange()) {
             configuration.setHasPlatformChange(false)
             loadWebPage()
         }
 
-        if (swipeContainer != null && configuration.platformRefresh) {
+        /*if (swipeContainer != null && configuration.platformRefresh) {
             swipeContainer.viewTreeObserver.addOnScrollChangedListener(mOnScrollChangedListener)
             swipeContainer.setOnRefreshListener { loadWebPage() }
         } else if (swipeContainer != null) {
             swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
             swipeContainer?.isEnabled = false
-        }
+        }*/
     }
 
     override fun onPause() {
         super.onPause()
-        if (swipeContainer != null) {
+        /*if (swipeContainer != null) {
             swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
-        }
+        }*/
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,13 +135,13 @@ class PlatformFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (swipeContainer != null && configuration.platformRefresh) {
+        /*if (swipeContainer != null && configuration.platformRefresh) {
             swipeContainer.setOnRefreshListener { loadWebPage() }
         } else if (swipeContainer != null) {
             swipeContainer.isEnabled = false
-        }
+        }*/
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        /*bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         button_alarm.setOnClickListener {
             if (listener != null) {
                 listener!!.navigateAlarmPanel()
@@ -152,14 +153,14 @@ class PlatformFragment : BaseFragment() {
         }
         button_hide.setOnClickListener {
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        }*/
         loadWebPage()
     }
 
     private fun complete() {
-        if (swipeContainer != null && swipeContainer.isRefreshing) {
+        /*if (swipeContainer != null && swipeContainer.isRefreshing) {
             swipeContainer.isRefreshing = false
-        }
+        }*/
     }
 
     private fun loadWebPage() {

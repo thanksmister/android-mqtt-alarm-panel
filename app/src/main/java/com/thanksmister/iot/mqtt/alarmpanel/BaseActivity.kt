@@ -18,15 +18,14 @@ package com.thanksmister.iot.mqtt.alarmpanel
 
 import android.Manifest
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
-import android.media.MediaPlayer
 import android.os.Build
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.app.ActivityCompat
@@ -42,6 +41,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+
 
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
@@ -66,10 +66,20 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     private var hasNetwork = AtomicBoolean(true)
 
-
     override fun onDestroy() {
         super.onDestroy()
         disposable.dispose()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        /*if (configuration.useDarkTheme && configuration.nightModeChanged) {
+            configuration.nightModeChanged = false
+            setDarkTheme()
+        } else if (configuration.nightModeChanged) {
+            configuration.nightModeChanged = false
+            setDayNightMode()
+        }*/
     }
 
     public override fun onResume() {
@@ -100,29 +110,31 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     // When activity is recreated we can switch the day night mode
-    fun setDayNightMode() {
+    fun setDayNightMode(force: Boolean = false) {
         val dayNightMode = configuration.dayNightMode
         if (dayNightMode == Configuration.SUN_BELOW_HORIZON) {
-            setDarkTheme()
+            setDarkTheme(force)
         } else if (dayNightMode == Configuration.SUN_ABOVE_HORIZON) {
-            setLightTheme()
+            setLightTheme(force)
         }
     }
 
-    fun setDarkTheme() {
-        val nightMode = getDefaultNightMode()
-        if(nightMode == MODE_NIGHT_NO || nightMode == MODE_NIGHT_UNSPECIFIED) {
+    fun setDarkTheme(force: Boolean = false) {
+        val nightMode = AppCompatDelegate.getDefaultNightMode()
+        if(nightMode == MODE_NIGHT_NO || nightMode == MODE_NIGHT_UNSPECIFIED || force) {
             screenUtils.setScreenBrightness()
-            setDefaultNightMode(MODE_NIGHT_YES)
+            setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+             window.setWindowAnimations(R.style.WindowAnimationFadeInOut)
             recreate()
         }
     }
 
-    fun setLightTheme() {
-        val nightMode = getDefaultNightMode()
-        if(nightMode == MODE_NIGHT_YES || nightMode == MODE_NIGHT_UNSPECIFIED) {
+    fun setLightTheme(force: Boolean = false) {
+        val nightMode = AppCompatDelegate.getDefaultNightMode()
+        if(nightMode == MODE_NIGHT_YES || nightMode == MODE_NIGHT_UNSPECIFIED || force) {
             screenUtils.setScreenBrightness()
-            setDefaultNightMode(MODE_NIGHT_NO)
+            setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+             window.setWindowAnimations(R.style.WindowAnimationFadeInOut)
             recreate()
         }
     }

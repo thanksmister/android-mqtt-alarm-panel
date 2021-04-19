@@ -51,6 +51,7 @@
         
         <activity
             android:name=".ui.activities.MainActivity"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:theme="@style/AppThemeFullScreen">
 

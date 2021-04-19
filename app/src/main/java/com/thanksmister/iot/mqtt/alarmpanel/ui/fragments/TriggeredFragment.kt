@@ -154,9 +154,6 @@ class TriggeredFragment : BaseFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        buttonSleep?.apply {
-            setOnTouchListener(null)
-        }
         listener = null
         handler.removeCallbacks(delayRunnable)
     }

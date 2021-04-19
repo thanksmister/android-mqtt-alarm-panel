@@ -90,25 +90,8 @@ class MainFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         sensorsDisplayList.layoutManager = LinearLayoutManager(context)
         sensorsDisplayList.adapter = sensorAdapter
-
-        buttonSettings?.setOnClickListener {
-            showSettingsCodeDialog()
-        }
-
-        platformButton?.setOnClickListener {
-            listener?.navigatePlatformPanel()
-        }
-
-        buttonSleep?.setOnClickListener {
-            listener?.manuallyLaunchScreenSaver()
-        }
-
-        alertButton?.setOnClickListener {
-            listener?.publishAlertCall()
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -119,47 +102,8 @@ class MainFragment : BaseFragment() {
         SensorDisplayAdapter()
     }
 
-    /**
-     * Here we setup the visibility of the bottom navigation bar buttons based on changes in the settings.
-     */
-    override fun onResume() {
-
-        super.onResume()
-
-        if (viewModel.hasPlatform()) {
-            buttonPlatformLayout?.visibility = View.VISIBLE
-        } else {
-            buttonPlatformLayout?.visibility = View.INVISIBLE
-        }
-        if (configuration.hasScreenSaver()) {
-            buttonSleepLayout?.visibility = View.VISIBLE
-        } else {
-            buttonSleepLayout?.visibility = View.GONE
-        }
-        if (configuration.panicButton.not()) {
-            alertButton?.visibility = View.GONE
-        } else {
-            alertButton?.visibility = View.VISIBLE
-        }
-
-        /*val useDarkTheme = configuration.useDarkTheme
-        val nightModeChanged = configuration.nightModeChanged
-        if (useDarkTheme && nightModeChanged) {
-            configuration.nightModeChanged = false
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            requireActivity().recreate()
-        } else if (nightModeChanged) {
-            configuration.nightModeChanged = false
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            requireActivity().recreate()
-        }*/
-    }
-
     override fun onDetach() {
         super.onDetach()
-        buttonSleep?.apply {
-            setOnTouchListener(null)
-        }
         listener = null
     }
 
@@ -294,17 +238,6 @@ class MainFragment : BaseFragment() {
                 }
 
             }
-        }
-    }
-
-    private fun showSettingsCodeDialog() {
-        if (configuration.isFirstTime) {
-            activity?.let {
-                val intent = SettingsActivity.createStartIntent(it.applicationContext)
-                startActivity(intent)
-            }
-        } else {
-            listener?.showCodeDialog(CodeTypes.SETTINGS, -1)
         }
     }
 

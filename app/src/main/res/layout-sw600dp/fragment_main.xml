@@ -17,10 +17,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:theme="@style/Theme.MaterialComponents"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/informationContainer"
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.InformationFragment"
         android:layout_width="match_parent"
@@ -30,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_information" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/controlContainer"
         android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.ControlsFragment"
         android:layout_width="0dp"
@@ -50,112 +51,6 @@
         app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/guideControlBottom" />
-
-    <LinearLayout
-        android:id="@+id/settingsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="2dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/alertButton"
-            style="@style/BorderlessButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/account_voice"
-            android:tint="@color/red"
-            tools:ignore="ContentDescription" />
-
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="24dp" />
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/buttonPlatformLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/platformButton"
-                style="@style/BorderlessButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_home"
-                android:tint="@color/dark_gray"
-                tools:ignore="ContentDescription" />
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="24dp" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/buttonSleepLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/buttonSleep"
-                style="@style/BorderlessButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_sleep"
-                android:tint="@color/dark_gray"
-                tools:ignore="ContentDescription" />
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="24dp" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <ImageButton
-            android:id="@+id/buttonSettings"
-            style="@style/BorderlessButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_settings_black"
-            android:tint="@color/dark_gray"
-            tools:ignore="ContentDescription" />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/triggeredView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/red"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
-
-        <include
-            android:id="@+id/alarmTriggeredView"
-            layout="@layout/dialog_alarm_triggered_code" />
-
-    </FrameLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"

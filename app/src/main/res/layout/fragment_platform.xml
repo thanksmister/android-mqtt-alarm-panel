@@ -21,33 +21,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeContainer"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="none">
+        android:windowSoftInputMode="adjustResize">
 
-        <RelativeLayout
+        <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:windowSoftInputMode="adjustResize">
+            android:layout_height="match_parent"/>
 
-            <WebView
-                android:id="@+id/webView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+        <include
+            layout="@layout/dialog_progress"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
-            <include
-                layout="@layout/dialog_progress"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-        </RelativeLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <!-- include bottom sheet -->
-    <include layout="@layout/bottom_sheet"/>
+    </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout >

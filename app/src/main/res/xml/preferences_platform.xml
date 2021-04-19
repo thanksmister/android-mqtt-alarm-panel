@@ -33,11 +33,11 @@
             android:summary="Add, edit, and remove dashboards."
             android:title="Manage Dashboards" />
 
-        <SwitchPreference
-            android:defaultValue="@string/default_setting_app_showactivity"
-            android:key="@string/key_setting_app_showactivity"
-            android:summary="@string/pref_show_browser_activity_summary"
-            android:title="@string/title_setting_app_showactivity" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_platform_bar"
+            android:summary="@string/pref_description_show_platform_bar"
+            android:title="@string/pref_title_platform_bar" />
 
         <ListPreference
             android:defaultValue="@string/default_setting_test_zoomlevel"
@@ -53,15 +53,6 @@
             android:summary="@string/pref_user_agent_summary"
             android:title="@string/pref_user_agent_title" />
 
-        <CheckBoxPreference
-            android:key="pref_platform_bar"
-            android:summary="@string/pref_description_show_platform_bar"
-            android:title="@string/pref_title_platform_bar" />
-
-        <CheckBoxPreference
-            android:key="pref_platform_pull_refresh"
-            android:summary="@string/pref_platform_refresh_summary"
-            android:title="@string/pref_platform_title_refresh" />
 
     </PreferenceCategory>
 
