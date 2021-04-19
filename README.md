@@ -393,7 +393,7 @@ Note that the application, when sending a command, expects a MQTT response. If y
 ### MQTT Commands
 Key | Value | Example Payload | Description
 -|-|-|-
-dashboard | number | ```{"dashboard": 1}``` | Navigate to specific dashboard number, starting with 1 the default. 
+dashboard | number | ```{"dashboard": 0}``` | Navigate to specific dashboard number, sending 0 shows alarm screen.
 audio | URL | ```{"audio": "http://<url>"}``` | Play the audio specified by the URL immediately
 wake | true | ```{"wake": true}``` | Wakes the screen, if it is asleep
 speak | data | ```{"speak": "Hello!"}``` | Uses the devices TTS to speak the message
