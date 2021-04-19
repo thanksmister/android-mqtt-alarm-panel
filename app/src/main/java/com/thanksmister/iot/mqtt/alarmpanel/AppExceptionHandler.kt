@@ -31,9 +31,9 @@ class AppExceptionHandler(private val activity: Activity) : Thread.UncaughtExcep
                 or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 or Intent.FLAG_ACTIVITY_NEW_TASK)
         val pendingIntent = PendingIntent.getActivity(activity.applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        //val mgr = activity.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        //mgr[AlarmManager.RTC, System.currentTimeMillis() + 1000] = pendingIntent
-        //activity.finish()
-        //exitProcess(2)
+        val mgr = activity.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr[AlarmManager.RTC, System.currentTimeMillis() + 1000] = pendingIntent
+        activity.finish()
+        exitProcess(2)
     }
 }

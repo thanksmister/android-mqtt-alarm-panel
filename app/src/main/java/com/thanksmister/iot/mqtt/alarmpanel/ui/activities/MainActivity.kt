@@ -27,17 +27,14 @@ import android.os.Handler
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.thanksmister.iot.mqtt.alarmpanel.*
@@ -143,7 +140,7 @@ class MainActivity : BaseActivity(),
             showSettingsCodeDialog()
         }
         platformButton.setOnClickListener {
-            navigatePlatformPanel()
+            navigateAlarmPanel()
         }
         buttonSleep.setOnClickListener {
             manuallyLaunchScreenSaver()
@@ -335,6 +332,7 @@ class MainActivity : BaseActivity(),
         filter.addAction(AlarmPanelService.BROADCAST_TOAST_MESSAGE)
         filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
         filter.addAction(AlarmPanelService.BROADCAST_SERVICE_STARTED)
+        filter.addAction(AlarmPanelService.BROADCAST_DASHBOARD)
         filter.addAction(BROADCAST_SNACK_MESSAGE)
         filter.addAction(BROADCAST_EVENT_PUBLISH_PANIC)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
@@ -417,8 +415,14 @@ class MainActivity : BaseActivity(),
         //pagerView.setPagingEnabled(value)
     }
 
-    override fun navigatePlatformPanel() {
-        pagerView.currentItem = 0
+    override fun navigateDashBoard(dashboard: Int) {
+        val itemCount = pagerAdapter.itemCount
+        if(itemCount > 0) {
+            if (dashboard in 0 until itemCount - 1) {
+                hideScreenSaver()
+                pagerView.currentItem = dashboard
+            }
+        }
     }
 
     override fun publishArmedHome(code: String) {
@@ -694,6 +698,9 @@ class MainActivity : BaseActivity(),
                 dialogUtils.clearDialogs()
             } else if (AlarmPanelService.BROADCAST_SERVICE_STARTED == intent.action && !isFinishing) {
                 serviceStarted = true
+            } else if (AlarmPanelService.BROADCAST_DASHBOARD == intent.action && !isFinishing) {
+                val dashboard = intent.getIntExtra(AlarmPanelService.BROADCAST_DASHBOARD, 0)
+                navigateDashBoard(dashboard)
             }
         }
     }

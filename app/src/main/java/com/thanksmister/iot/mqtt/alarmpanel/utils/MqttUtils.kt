@@ -69,6 +69,7 @@ class MqttUtils {
         const val COMMAND_SENSOR_PREFIX = "sensor/"
 
         const val COMMAND_WAKE = "wake"
+        const val COMMAND_DASHBOARD = "dashboard"
         const val COMMAND_AUDIO = "audio"
         const val COMMAND_SPEAK = "speak"
         const val COMMAND_NOTIFICATION = "notification"

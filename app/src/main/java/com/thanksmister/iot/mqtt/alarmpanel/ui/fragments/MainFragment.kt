@@ -65,7 +65,7 @@ class MainFragment : BaseFragment() {
 
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
-        fun navigatePlatformPanel()
+        fun navigateDashBoard(dashboard: Int)
         fun publishDisarm(code: String)
         fun publishAlertCall()
         fun showCodeDialog(type: CodeTypes, delay: Int?)

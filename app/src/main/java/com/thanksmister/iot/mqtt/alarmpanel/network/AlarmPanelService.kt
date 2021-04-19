@@ -48,6 +48,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_AR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ARM_NIGHT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_AUDIO
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_CAPTURE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DASHBOARD
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_NOTIFICATION
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_FACE
@@ -261,7 +262,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
 
     private fun getState(userActive: Boolean): JSONObject {
-        Timber.d("getState")
         val state = JSONObject()
         state.put(STATE_CURRENT_URL, currentUrl)
         state.put(STATE_SCREEN_ON, isScreenOn)
@@ -271,7 +271,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startForegroundService() {
-        Timber.d("startForegroundService")
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData?.observe(this, Observer { connected ->
             if (connected!!) {
@@ -284,7 +283,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun handleNetworkConnect() {
-        Timber.d("handleNetworkConnect")
         mqttModule?.let {
             if (!hasNetwork.get()) {
                 it.restart()
@@ -294,7 +292,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun handleNetworkDisconnect() {
-        Timber.d("handleNetworkDisconnect")
         mqttModule?.let {
             if (hasNetwork.get()) {
                 mqttConnected = false
@@ -310,7 +307,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     @SuppressLint("WakelockTimeout")
     private fun configurePowerOptions() {
-        Timber.d("configurePowerOptions")
         partialWakeLock?.let {
             if (!it.isHeld) {
                 it.acquire(3000)
@@ -330,7 +326,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun stopPowerOptions() {
-        Timber.i("Releasing Screen/WiFi Locks")
         partialWakeLock?.let {
             if (it.isHeld) {
                 it.release()
@@ -462,7 +457,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun publishAlarm(action: String, code: Int) {
         mqttModule?.let {
-            Timber.d("publishAlarm $action")
             it.publishAlarm(action, code)
             if (action == COMMAND_DISARM) {
                 captureImageTask()
@@ -482,8 +476,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
      */
     private fun publishCommand(command: String, message: String) {
         mqttModule?.let {
-            Timber.d("publishState command $command")
-            Timber.d("publishState message $message")
             it.publishCommand(command, message)
         }
     }
@@ -493,7 +485,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
      * just set up the camera to take a capture a photo on alarm disarm
      */
     private fun configureCamera() {
-        Timber.d("configureCamera ${configuration.cameraEnabled}")
         if (configuration.hasCameraDetections() || configuration.captureCameraImage()) {
             cameraReader = CameraReader(this.applicationContext)
             cameraReader?.startCamera(cameraDetectorCallback, configuration)
@@ -502,7 +493,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun configureTextToSpeech() {
         if (textToSpeechModule == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Timber.d("configureTextToSpeech")
             textToSpeechModule = TextToSpeechModule(this)
             lifecycle.addObserver(textToSpeechModule!!)
         }
@@ -511,12 +501,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun configureAudioPlayer() {
         audioPlayer = MediaPlayer()
         audioPlayer?.setOnPreparedListener { audioPlayer ->
-            Timber.d("audioPlayer: File buffered, playing it now")
             audioPlayerBusy = false
             audioPlayer.start()
         }
         audioPlayer?.setOnCompletionListener { audioPlayer ->
-            Timber.d("audioPlayer: Cleanup")
             if (audioPlayer.isPlaying) {  // should never happen, just in case
                 audioPlayer.stop()
             }
@@ -524,7 +512,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             audioPlayerBusy = false
         }
         audioPlayer!!.setOnErrorListener { audioPlayer, i, i1 ->
-            Timber.d("audioPlayer: Error playing file")
             audioPlayerBusy = false
             false
         }
@@ -532,12 +519,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
 
     private fun startHttp() {
         if (httpServer == null && configuration.httpMJPEGEnabled) {
-            Timber.d("startHttp")
             httpServer = AsyncHttpServer()
             if (configuration.httpMJPEGEnabled) {
                 startMJPEG()
                 httpServer?.addAction("GET", "/camera/stream") { _, response ->
-                    Timber.i("GET Arrived (/camera/stream)")
                     startMJPEG(response)
                 }
                 //Timber.i("Enabled MJPEG Endpoint")
@@ -548,12 +533,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 response.send("")
             }
             httpServer?.listen(AsyncServer.getDefault(), configuration.httpPort)
-            Timber.i("Started HTTP server on " + configuration.httpPort)
         }
     }
 
     private fun stopHttp() {
-        Timber.d("stopHttp")
         httpServer?.let {
             stopMJPEG()
             it.stop()
@@ -562,7 +545,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun startMJPEG() {
-        Timber.d("startMJPEG")
         try {
             cameraReader?.let {
                 it.getJpeg().observe(this, Observer { jpeg ->
@@ -595,12 +577,10 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     }
 
     private fun stopMJPEG() {
-        Timber.d("stopMJPEG Called")
         mJpegSockets.clear()
     }
 
     private fun startMJPEG(response: AsyncHttpServerResponse) {
-        Timber.d("startMJPEG")
         if (mJpegSockets.size < configuration.httpMJPEGMaxStreams) {
             response.headers.add("Cache-Control", "no-cache")
             response.headers.add("Connection", "close")
@@ -610,11 +590,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             response.writeHead()
             mJpegSockets.add(response)
         } else {
-            Timber.i("MJPEG stream limit was reached, not starting")
             response.send("Max streams exceeded")
             response.end()
         }
-        Timber.i("MJPEG Session Count is " + mJpegSockets.size)
     }
 
     private fun processCommand(id: String, topic: String, commandJson: JSONObject) {
@@ -624,6 +602,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 payload = commandJson.getString(COMMAND_WAKE)
                 insertMessage(id, topic, payload, TYPE_COMMAND)
                 switchScreenOn(AWAKE_TIME)
+            }
+            if (commandJson.has(COMMAND_DASHBOARD)) {
+                payload = commandJson.getString(COMMAND_DASHBOARD)
+                insertMessage(id, topic, payload, TYPE_COMMAND)
+                val dashboard = payload.toIntOrNull()
+                dashboard?.let {
+                    browseDashboard(dashboard = it)
+                }
             }
             if (commandJson.has(COMMAND_AUDIO)) {
                 payload = commandJson.getString(COMMAND_AUDIO)
@@ -656,7 +642,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 insertWeather(payload)
             }
             if (commandJson.has(COMMAND_SUN)) {
-                //{"sun":"above_horizon"}
                 payload = commandJson.getString(COMMAND_SUN)
                 if (payload.isNotEmpty()) {
                     insertSun(payload)
@@ -666,6 +651,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             Timber.e("JSON Error: " + ex.message)
             Timber.e("Invalid JSON passed as a command: " + commandJson.toString())
         }
+    }
+
+    private fun browseDashboard(dashboard: Int) {
+        Timber.d("browseUrl")
+        val intent = Intent(BROADCAST_DASHBOARD)
+        intent.putExtra(BROADCAST_DASHBOARD, dashboard)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
     }
 
     // Process the status state
@@ -1245,5 +1238,6 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_SCREEN_WAKE = "BROADCAST_SCREEN_WAKE"
         const val BROADCAST_CLEAR_ALERT_MESSAGE = "BROADCAST_CLEAR_ALERT_MESSAGE"
         const val BROADCAST_SERVICE_STARTED = "BROADCAST_SERVICE_STARTED"
+        const val BROADCAST_DASHBOARD = "BROADCAST_ACTION_LOAD_URL"
     }
 }
