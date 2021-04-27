@@ -236,7 +236,7 @@ trigger:
 condition: []
 action:
   - data:
-      topic: home/sensor/inside_motion
+      topic: home/alarm/sensor/inside_motion
       payload_template: '{{states("sensor.inside_motion")}}'
       retain: true
     service: mqtt.publish
@@ -245,13 +245,13 @@ mode: single
 
 Create an automation like this for each of the four components, sending the topic with the entity id and using a payload template to send the current state. The resulting payload for a door sensor might look like this for a closed door sensor:
 
-Command topic: `/home/sensor/inside_motion`
+Command topic: `/home/alarm/sensor/inside_motion`
 Command payloads: `no`
 
 
 And this when the door sensor is open:
 
-Command topic: `/home/sensor/inside_motion`
+Command topic: `/home/alarm/sensor/inside_motion`
 Command payloads: `yes`
 
 This really depends entirely on your platform and setup. You can configure the alarm sensors to have the topic and state in the settings to match your MQTT setup. 
