@@ -6,6 +6,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Dashboard
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.DashboardDao
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +24,6 @@ constructor(application: Application, private val dataSource: DashboardDao) : An
      */
     fun getItems(): Flowable<List<Dashboard>> {
         return dataSource.getDashboards()
-                .filter { items -> items.isNotEmpty() }
     }
 
     /**

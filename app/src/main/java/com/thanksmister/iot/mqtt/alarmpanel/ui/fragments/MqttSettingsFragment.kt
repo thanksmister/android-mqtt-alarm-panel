@@ -53,7 +53,6 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
     private var passwordPreference: EditTextPreference? = null
     private var baseTopicPreference: EditTextPreference? = null
 
-
     private val sensorTopicEditPreference: EditTextPreference by lazy {
         findPreference(PREF_SENSORS_TOPIC) as EditTextPreference
     }
@@ -137,8 +136,8 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         baseTopicPreference?.text = mqttOptions.getBaseCommand()
         baseTopicPreference?.summary = mqttOptions.getBaseCommand()
 
-        remoteEventTopicPreference.text = mqttOptions.remoteEventTopic
-        remoteEventTopicPreference.summary = mqttOptions.remoteEventTopic
+        remoteEventTopicPreference.text = mqttOptions.setAlarmEventTopic
+        remoteEventTopicPreference.summary = mqttOptions.setAlarmEventTopic
 
         manageSensorsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             startSensorsActivity(it.context)
@@ -241,8 +240,8 @@ class MqttSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
                 }
             }
             PREF_REMOTE_EVENT_TOPIC -> {
-                mqttOptions.remoteEventTopic = remoteEventTopicPreference.text?:MQTTOptions.PREF_STATUS_TOPIC
-                remoteEventTopicPreference.summary = mqttOptions.remoteEventTopic
+                mqttOptions.setAlarmEventTopic = remoteEventTopicPreference.text?:MQTTOptions.PREF_STATUS_TOPIC
+                remoteEventTopicPreference.summary = mqttOptions.setAlarmEventTopic
             }
 
         }

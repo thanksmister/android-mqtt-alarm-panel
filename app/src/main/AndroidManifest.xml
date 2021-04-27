@@ -47,12 +47,11 @@
             android:fullBackupContent="true"
             android:largeHeap="true"
             tools:ignore="GoogleAppIndexingWarning"
-            tools:targetApi="m">
+            tools:targetApi="q">
         
         <activity
             android:name=".ui.activities.MainActivity"
             android:launchMode="singleInstance"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:theme="@style/AppThemeFullScreen">
 
             <!-- Launch activity as default from Android Studio -->

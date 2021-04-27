@@ -600,12 +600,12 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         try {
             if (commandJson.has(COMMAND_WAKE)) {
                 payload = commandJson.getString(COMMAND_WAKE)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 switchScreenOn(AWAKE_TIME)
             }
             if (commandJson.has(COMMAND_DASHBOARD)) {
                 payload = commandJson.getString(COMMAND_DASHBOARD)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 val dashboard = payload.toIntOrNull()
                 dashboard?.let {
                     browseDashboard(dashboard = it)
@@ -613,28 +613,28 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             }
             if (commandJson.has(COMMAND_AUDIO)) {
                 payload = commandJson.getString(COMMAND_AUDIO)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 playAudio(payload)
             }
             if (commandJson.has(COMMAND_SPEAK)) {
                 payload = commandJson.getString(COMMAND_SPEAK)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 speakMessage(payload)
             }
             if (commandJson.has(COMMAND_NOTIFICATION)) {
                 payload = commandJson.getString(COMMAND_NOTIFICATION)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 val title = getString(R.string.notification_title)
                 notifications.createAlarmNotification(title, payload)
             }
             if (commandJson.has(COMMAND_ALERT)) {
                 payload = commandJson.getString(COMMAND_ALERT)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 sendAlertMessage(payload)
             }
             if (commandJson.has(COMMAND_CAPTURE)) {
                 payload = commandJson.getString(COMMAND_CAPTURE)
-                insertMessage(id, topic, payload, TYPE_COMMAND)
+                insertMessage(id, topic, commandJson.toString(), TYPE_COMMAND)
                 captureImageTask()
             }
             if (commandJson.has(COMMAND_WEATHER) && configuration.showWeatherModule()) {
@@ -749,7 +749,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 mqttOptions.setCommandTopic(configJson.getString("command_topic"))
             }
             if (configJson.has("status_topic")) {
-                mqttOptions.remoteEventTopic = configJson.getString("status_topic")
+                mqttOptions.setAlarmEventTopic = configJson.getString("status_topic")
             }
             if (configJson.has("code_arm_required")) {
                 mqttOptions.requireCodeForArming = configJson.getBoolean("code_arm_required")

@@ -63,6 +63,8 @@ class MainFragment : BaseFragment() {
 
     private var listener: OnMainFragmentListener? = null
 
+    private var hasSensors: Boolean = false
+
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
         fun navigateDashBoard(dashboard: Int)
@@ -107,6 +109,11 @@ class MainFragment : BaseFragment() {
         listener = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        handleDisplayAlignment(hasSensors)
+    }
+
     private fun observeViewModel(viewModel: MainViewModel) {
         disposable.add(viewModel.getAlarmState()
                 .subscribeOn(Schedulers.io())
@@ -145,9 +152,11 @@ class MainFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ items ->
                     if (items.isNullOrEmpty()) {
+                        this.hasSensors = false
                         handleDisplayAlignment(false)
                         sensorsDisplayList.visibility = View.GONE
                     } else {
+                        this.hasSensors = true
                         handleDisplayAlignment(true)
                         sensorsDisplayList.visibility = View.VISIBLE
                         sensorAdapter.setItems(items)
@@ -164,6 +173,7 @@ class MainFragment : BaseFragment() {
         val heightDp = metrics.heightPixels / scaleFactor
         val orientation = resources.configuration.orientation
         val smallestWidth = widthDp.coerceAtMost(heightDp)
+        val smallestHeight = heightDp.coerceAtMost(widthDp)
         if (hasSensors.not()) {
             if (orientation == ORIENTATION_LANDSCAPE) {
                 when {
@@ -178,6 +188,7 @@ class MainFragment : BaseFragment() {
                     smallestWidth >= 500 -> {
                         guideControlMiddle?.setGuidelinePercent(0.78f)
                         guidelineStart?.setGuidelinePercent(0.22f)
+
                     }
                     else -> {
                         guideControlMiddle?.setGuidelinePercent(0.78f)

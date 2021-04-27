@@ -134,8 +134,8 @@
             android:digits="0123456789"
             android:defaultValue="60"
             android:icon="@drawable/ic_baseline_timelapse"
-            android:title="Custom Bypass Pending Time"
-            android:summary="The time in seconds to disarm the alarm before the alarm is triggered."/>
+            android:title="@string/pref_bypass_pending_title"
+            android:summary="@string/pref_bypass_pending_summary"/>
 
         <EditTextPreference
             android:key="settings_pref_bypass_delay_time"
@@ -143,8 +143,8 @@
             android:digits="0123456789"
             android:defaultValue="60"
             android:icon="@drawable/ic_baseline_timelapse"
-            android:summary="The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds."
-            android:title="Custom Bypass Delay Time"/>
+            android:summary="@string/pref_bypass_delay_summary"
+            android:title="@string/pref_bypass_delay_title"/>
 
     </PreferenceCategory>
 

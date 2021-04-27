@@ -256,10 +256,10 @@ constructor(private val sharedPreferences: SharedPreferences, private  val senso
             setOptionsUpdated(true)
         }
 
-    var remoteEventTopic: String
-        get() = sharedPreferences.getString(PREF_STATUS_TOPIC, DEFAULT_EVENT_TOPIC).orEmpty()
+    var setAlarmEventTopic: String
+        get() = sharedPreferences.getString(PREF_ALARM_EVENT, DEFAULT_EVENT_TOPIC).orEmpty()
         set(value) {
-            this.sharedPreferences.edit().putString(PREF_STATUS_TOPIC, value).apply()
+            this.sharedPreferences.edit().putString(PREF_ALARM_EVENT, value).apply()
             setOptionsUpdated(true)
         }
 

@@ -131,14 +131,22 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         customBypassModePreference.isChecked = mqttOptions.alarmModeCustomBypass
 
         pendingAwayPreference.text = mqttOptions.pendingTimeAway.toString()
+        pendingAwayPreference.summary = getString(R.string.pref_away_pending_summary, mqttOptions.pendingTimeAway.toString())
         pendingHomePreference.text = mqttOptions.pendingTimeHome.toString()
+        pendingHomePreference.summary = getString(R.string.pref_home_pending_summary, mqttOptions.pendingTimeHome.toString())
         pendingNightPreference.text = mqttOptions.pendingTimeNight.toString()
+        pendingNightPreference.summary = getString(R.string.preference_summary_night_pending_time, mqttOptions.pendingTimeNight.toString())
         pendingBypassPreference.text = mqttOptions.pendingTimeBypass.toString()
+        pendingBypassPreference.summary = getString(R.string.pref_bypass_pending_summary, mqttOptions.pendingTimeBypass.toString())
 
         delayAwayPreference.text = mqttOptions.delayTimeAway.toString()
+        delayAwayPreference.summary = getString(R.string.pref_away_delay_summary, mqttOptions.delayTimeAway.toString())
         delayHomePreference.text = mqttOptions.delayTimeHome.toString()
+        delayHomePreference.summary = getString(R.string.pref_home_delay_summary, mqttOptions.delayTimeHome.toString())
         delayNightPreference.text = mqttOptions.delayTimeNight.toString()
+        delayNightPreference.summary = getString(R.string.pref_night_delay_summary, mqttOptions.delayTimeNight.toString())
         delayBypassPreference.text = mqttOptions.delayTimeBypass.toString()
+        delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
 
         remoteDisarmSwitchPreference.isChecked = mqttOptions.useRemoteDisarm
     }
@@ -166,27 +174,35 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
             }
             PREF_AWAY_PENDING_TIME -> {
                 mqttOptions.pendingTimeAway = pendingAwayPreference.text.toIntOrNull()?:60
+                pendingAwayPreference.summary = getString(R.string.pref_away_pending_summary, mqttOptions.pendingTimeAway.toString())
             }
             PREF_HOME_PENDING_TIME -> {
                 mqttOptions.pendingTimeHome = pendingHomePreference.text.toIntOrNull()?:60
+                pendingHomePreference.summary = getString(R.string.pref_home_pending_summary, mqttOptions.pendingTimeHome.toString())
             }
             PREF_NIGHT_PENDING_TIME -> {
                 mqttOptions.pendingTimeNight = pendingNightPreference.text.toIntOrNull()?:60
+                pendingNightPreference.summary = getString(R.string.preference_summary_night_pending_time, mqttOptions.pendingTimeNight.toString())
             }
             PREF_BYPASS_PENDING_TIME -> {
                 mqttOptions.pendingTimeBypass = pendingBypassPreference.text.toIntOrNull()?:60
+                pendingBypassPreference.summary = getString(R.string.pref_bypass_pending_summary, mqttOptions.pendingTimeBypass.toString())
             }
             PREF_AWAY_DELAY_TIME -> {
                 mqttOptions.delayTimeAway = delayAwayPreference.text.toIntOrNull()?:60
+                delayAwayPreference.summary = getString(R.string.pref_away_delay_summary, mqttOptions.delayTimeAway.toString())
             }
             PREF_HOME_DELAY_TIME -> {
                 mqttOptions.delayTimeHome = delayHomePreference.text.toIntOrNull()?:60
+                delayHomePreference.summary = getString(R.string.pref_home_delay_summary, mqttOptions.delayTimeHome.toString())
             }
             PREF_NIGHT_DELAY_TIME -> {
                 mqttOptions.delayTimeNight = delayHomePreference.text.toIntOrNull()?:60
+                delayNightPreference.summary = getString(R.string.pref_night_delay_summary, mqttOptions.delayTimeNight.toString())
             }
             PREF_BYPASS_DELAY_TIME -> {
                 mqttOptions.delayTimeBypass = delayHomePreference.text.toIntOrNull()?:60
+                delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
             }
             PREF_ALARM_REMOTE_DISARM -> {
                 val checked = remoteDisarmSwitchPreference.isChecked

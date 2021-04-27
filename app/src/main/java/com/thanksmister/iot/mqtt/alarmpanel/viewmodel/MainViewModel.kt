@@ -98,8 +98,8 @@ constructor(application: Application,
                 }
     }
 
-    fun getDashboards():Maybe<List<Dashboard>> {
-        return dashboardSource.getItems()
+    fun getDashboards():Flowable<List<Dashboard>> {
+        return dashboardSource.getDashboards()
     }
 
     fun clearMessages():Completable {

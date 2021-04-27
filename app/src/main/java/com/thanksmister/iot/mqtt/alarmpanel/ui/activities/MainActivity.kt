@@ -246,8 +246,12 @@ class MainActivity : BaseActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    pagerAdapter.addDashboards(it)
-                    addDots(it.size)
+                    if(it.isEmpty().not()) {
+                        pagerAdapter.addDashboards(it)
+                        addDots(it.size + 1)
+                    } else {
+                        addDots(0)
+                    }
                 }
         )
 
@@ -322,6 +326,14 @@ class MainActivity : BaseActivity(),
         })
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+    }
+
     override fun onResume() {
         super.onResume()
         resetInactivityTimer()
@@ -337,6 +349,7 @@ class MainActivity : BaseActivity(),
         filter.addAction(BROADCAST_EVENT_PUBLISH_PANIC)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
         localBroadCastManager!!.registerReceiver(mBroadcastReceiver, filter)
+        addDots(pages)
     }
 
     override fun onPause() {
@@ -417,11 +430,9 @@ class MainActivity : BaseActivity(),
 
     override fun navigateDashBoard(dashboard: Int) {
         val itemCount = pagerAdapter.itemCount
-        if(itemCount > 0) {
-            if (dashboard in 0 until itemCount - 1) {
-                hideScreenSaver()
-                pagerView.currentItem = dashboard
-            }
+        if(itemCount >= 0 && dashboard < itemCount) {
+            hideScreenSaver()
+            pagerView.currentItem = dashboard
         }
     }
 

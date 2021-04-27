@@ -393,6 +393,10 @@
     <string name="error_unknown">An unknown error has occurred, please check the server.</string>
     <string name="error_arm_failed">Unable to arm system, please check settings.</string>
     <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
+    <string name="pref_bypass_delay_summary">The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds.</string>
+    <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
+    <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
+    <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
 
     <string-array name="inactivity_times">
         <item>15 seconds</item>
