@@ -79,7 +79,6 @@ class TriggeredFragment : BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Timber.d("onAttach")
         if (context is OnTriggeredFragmentListener) {
             listener = context
         } else {
@@ -89,19 +88,17 @@ class TriggeredFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Timber.d("onActivityCreated")
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(TriggeredViewModel::class.java)
         observeViewModel(viewModel)
-        if (mqttOptions.useRemoteDisarm) {
-            if (mqttOptions.requireCodeForDisarming) {
-                codeType = CodeTypes.DISARM_REMOTE
-            }
+        val useRemoteDisarm = mqttOptions.useRemoteDisarm
+        val requireCodeForDisarming = mqttOptions.requireCodeForDisarming
+        if (useRemoteDisarm && requireCodeForDisarming) {
+            codeType = CodeTypes.DISARM_REMOTE
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("onViewCreated")
 
         keypadLayout.button0.setOnClickListener {
             addPinCode("0")
@@ -139,7 +136,7 @@ class TriggeredFragment : BaseFragment() {
         keypadLayout.buttonDel.setOnClickListener {
             removePinCode()
         }
-        if (codeType == CodeTypes.ARM_REMOTE || codeType == CodeTypes.DISARM_REMOTE) {
+        if (codeType == CodeTypes.DISARM || codeType == CodeTypes.DISARM_REMOTE) {
             buttonKey.visibility = View.VISIBLE
             buttonKey.setOnClickListener {
                 codeComplete = true
@@ -184,12 +181,24 @@ class TriggeredFragment : BaseFragment() {
         if (enteredCode.isNotEmpty()) {
             enteredCode = enteredCode.substring(0, enteredCode.length - 1)
             showFilledPins(enteredCode.length)
+        } else {
+            showFilledPins(0)
         }
     }
 
     private fun showFilledPins(pinsShown: Int) {
         if (pinCode1 != null && pinCode2 != null && pinCode3 != null && pinCode4 != null) {
             when (pinsShown) {
+                0 -> {
+                    pinCode1.visibility = View.INVISIBLE
+                    pinCode2.visibility = View.INVISIBLE
+                    pinCode3.visibility = View.INVISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
+                }
                 1 -> {
                     pinCode1.visibility = View.VISIBLE
                     pinCode2.visibility = View.INVISIBLE

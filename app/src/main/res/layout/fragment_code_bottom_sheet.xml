@@ -81,7 +81,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="invisible"/>
@@ -91,7 +91,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="invisible"/>
@@ -101,7 +101,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="invisible"/>
@@ -111,7 +111,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="gone"/>
@@ -121,7 +121,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="gone"/>
@@ -131,7 +131,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="gone"/>
@@ -141,7 +141,7 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_radio_button_unchecked_black"
+            android:src="@drawable/ic_radio_button_checked_black"
             app:tint="@color/dark_gray"
             tools:ignore="ContentDescription"
             android:visibility="gone"/>

@@ -289,7 +289,6 @@ class MainActivity : BaseActivity(),
                                 MqttUtils.STATE_ARMING -> {
                                     awakenDeviceForAction()
                                     resetInactivityTimer()
-
                                 }
                             }
                         }
@@ -312,7 +311,7 @@ class MainActivity : BaseActivity(),
 
         viewModel.getAlertMessage().observe(this, Observer<String> { message ->
             snackbar?.dismiss()
-            snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_INDEFINITE)
+            snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, View.OnClickListener() {
                         val intent = SettingsActivity.createStartIntent(this@MainActivity)
                         startActivity(intent)
@@ -575,12 +574,12 @@ class MainActivity : BaseActivity(),
     override fun showAlarmTriggered() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
         triggeredView.visibility = View.VISIBLE
-        pagerView.visibility = View.GONE
+        //pagerView.visibility = View.GONE
     }
 
     override fun hideTriggeredView() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
-        pagerView.visibility = View.VISIBLE
+        //pagerView.visibility = View.VISIBLE
         triggeredView.visibility = View.GONE
     }
 
@@ -692,7 +691,7 @@ class MainActivity : BaseActivity(),
                 val message = intent.getStringExtra(AlarmPanelService.BROADCAST_SNACK_MESSAGE)
                 message?.let {
                     snackbar?.dismiss()
-                    snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_INDEFINITE)
+                    snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
                             .setAction(android.R.string.ok) {
                                 snackbar?.dismiss()
                             }

@@ -164,7 +164,7 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean,
+    fun showCodeDialog(activity: Context, confirmCode: Boolean,
                        listener: AlarmCodeView.ViewListener,
                        onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
         clearDialogs()

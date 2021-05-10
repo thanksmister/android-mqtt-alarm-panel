@@ -29,6 +29,7 @@ import androidx.preference.SwitchPreference
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.BaseSettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
 import dagger.android.support.AndroidSupportInjection
@@ -212,7 +213,7 @@ class SettingsFragment : BaseSettingsFragment() {
     private fun showAlarmCodeDialog() {
         defaultCode = configuration.alarmCode
         if (activity != null && isAdded) {
-            dialogUtils.showCodeDialog(activity as BaseActivity, confirmCode, object : AlarmCodeView.ViewListener {
+            dialogUtils.showCodeDialog(requireContext(), confirmCode, object : AlarmCodeView.ViewListener {
                 override fun onComplete(code: Int) {
                     if (code == defaultCode) {
                         confirmCode = false

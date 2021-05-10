@@ -23,13 +23,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/triggeredView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
-        android:visibility="invisible" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -75,7 +68,7 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/account_voice"
-                android:tint="@color/red"
+                app:tint="@color/red"
                 tools:ignore="ContentDescription"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +82,7 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_sleep"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 tools:ignore="ContentDescription"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -103,7 +96,7 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_home"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 tools:ignore="ContentDescription"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -122,7 +115,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/buttonSettings"
                 tools:ignore="ContentDescription"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 android:visibility="visible"/>
 
             <ImageButton
@@ -133,7 +126,7 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_settings_black"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 tools:ignore="ContentDescription"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -143,5 +136,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/triggeredView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.TriggeredFragment"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

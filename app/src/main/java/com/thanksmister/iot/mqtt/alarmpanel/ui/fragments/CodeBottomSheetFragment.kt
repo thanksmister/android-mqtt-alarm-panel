@@ -97,7 +97,6 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
             removePinCode()
         }
 
-
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -173,12 +172,24 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         if (enteredCode.isNotEmpty()) {
             enteredCode = enteredCode.substring(0, enteredCode.length - 1)
             showFilledPins(enteredCode.length)
+        } else {
+            showFilledPins(0)
         }
     }
 
     private fun showFilledPins(pinsShown: Int) {
         if (pinCode1 != null && pinCode2 != null && pinCode3 != null && pinCode4 != null) {
             when (pinsShown) {
+                0 -> {
+                    pinCode1.visibility = View.INVISIBLE
+                    pinCode2.visibility = View.INVISIBLE
+                    pinCode3.visibility = View.INVISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
+                }
                 1 -> {
                     pinCode1.visibility = View.VISIBLE
                     pinCode2.visibility = View.INVISIBLE
