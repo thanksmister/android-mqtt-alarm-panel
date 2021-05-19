@@ -101,7 +101,9 @@ class MainActivity : BaseActivity(),
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_USER_INACTIVE, true)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
-        navigateAlarmPanel()
+        if(configuration.useInactivityTimer) {
+            navigateAlarmPanel()
+        }
         manuallyLaunchScreenSaver()
     }
 
@@ -172,16 +174,6 @@ class MainActivity : BaseActivity(),
             configuration.useNightDayMode = true
         }
 
-        if (configuration.isFirstTime) {
-            alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
-                    .setMessage(getString(R.string.dialog_first_time))
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        val intent = SettingsActivity.createStartIntent(this@MainActivity)
-                        startActivity(intent)
-                    }
-                    .show()
-        }
-
         previousAlarmMode = configuration.alarmMode
 
         // We must be sure we have the instantiated the view model before we observe.
@@ -208,24 +200,37 @@ class MainActivity : BaseActivity(),
                 setLightTheme()
             }
         }
+
         observeViewModel()
     }
 
     override fun onStart() {
         super.onStart()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && serviceStarted.not()) {
             ContextCompat.startForegroundService(this, alarmPanelService)
-        } else {
+        } else if (serviceStarted.not()) {
             startService(alarmPanelService)
         }
-        val nightModeChanged = configuration.nightModeChanged
-        val useDarkTheme = configuration.useDarkTheme
-        if (useDarkTheme && nightModeChanged) {
-            configuration.nightModeChanged = false
-            setDarkTheme(true)
-        } else if (nightModeChanged) {
-            configuration.nightModeChanged = false
-            setDayNightMode(true)
+
+        val firstTime = configuration.isFirstTime
+        if (firstTime) {
+            alertDialog = AlertDialog.Builder(this@MainActivity, R.style.CustomAlertDialog)
+                    .setMessage(getString(R.string.dialog_first_time))
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        openSettings()
+                    }
+                    .show()
+        } else {
+            val nightModeChanged = configuration.nightModeChanged
+            val useDarkTheme = configuration.useDarkTheme
+            if (useDarkTheme && nightModeChanged) {
+                configuration.nightModeChanged = false
+                setDarkTheme(true)
+            } else if (nightModeChanged) {
+                configuration.nightModeChanged = false
+                setDayNightMode(true)
+            }
         }
     }
 
@@ -313,8 +318,7 @@ class MainActivity : BaseActivity(),
             snackbar?.dismiss()
             snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_LONG)
                     .setAction(android.R.string.ok, View.OnClickListener() {
-                        val intent = SettingsActivity.createStartIntent(this@MainActivity)
-                        startActivity(intent)
+                        openSettings()
                     })
             snackbar?.show()
 
@@ -482,11 +486,18 @@ class MainActivity : BaseActivity(),
 
     private fun showSettingsCodeDialog() {
         if (configuration.isFirstTime) {
-            val intent = SettingsActivity.createStartIntent(applicationContext)
-            startActivity(intent)
+            openSettings()
         } else {
             showCodeDialog(CodeTypes.SETTINGS, -1)
         }
+    }
+
+    private fun openSettings() {
+        val alarmPanelService = Intent(this, AlarmPanelService::class.java)
+        stopService(alarmPanelService)
+        serviceStarted = false
+        val intent = SettingsActivity.createStartIntent(applicationContext)
+        startActivity(intent)
     }
 
     /**
@@ -538,8 +549,7 @@ class MainActivity : BaseActivity(),
                                 publishDisarm(code)
                             }
                             CodeTypes.SETTINGS -> {
-                                val intent = SettingsActivity.createStartIntent(this@MainActivity)
-                                startActivity(intent)
+                                openSettings()
                             }
                             CodeTypes.ARM_HOME -> {
                                 publishArmedHome(code)

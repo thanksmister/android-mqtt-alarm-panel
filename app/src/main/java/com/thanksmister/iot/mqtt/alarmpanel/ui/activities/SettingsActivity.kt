@@ -31,17 +31,37 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
+import com.thanksmister.iot.mqtt.alarmpanel.utils.ScreenUtils
+import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class SettingsActivity : BaseSettingsActivity() {
+class SettingsActivity : DaggerAppCompatActivity(){
+
+    @Inject
+    lateinit var configuration: Configuration
+    @Inject
+    lateinit var mqttOptions: MQTTOptions
+    @Inject
+    lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var screenUtils: ScreenUtils
+
+    val disposable = CompositeDisposable()
 
     private val inactivityHandler: Handler = Handler()
 
     private val inactivityCallback = Runnable {
-        Toast.makeText(this@SettingsActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
-        dialogUtils.clearDialogs()
-        finish()
+        if(configuration.useInactivityTimer) {
+            Toast.makeText(this@SettingsActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
+            dialogUtils.clearDialogs()
+            finish()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,9 +75,12 @@ class SettingsActivity : BaseSettingsActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setTitle(R.string.activity_settings_title)
 
-        val alarmPanelService = Intent(this, AlarmPanelService::class.java)
-        stopService(alarmPanelService)
+        //val alarmPanelService = Intent(this, AlarmPanelService::class.java)
+        //stopService(alarmPanelService)
+
+        lifecycle.addObserver(dialogUtils)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
@@ -102,6 +125,7 @@ class SettingsActivity : BaseSettingsActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        disposable.dispose()
         inactivityHandler.removeCallbacks(inactivityCallback)
     }
 

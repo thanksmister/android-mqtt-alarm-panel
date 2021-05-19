@@ -51,6 +51,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_CA
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DASHBOARD
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_NOTIFICATION
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_PANIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_FACE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_MOTION
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_PREFIX
@@ -1058,11 +1059,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
             } else if (BROADCAST_EVENT_USER_INACTIVE == intent.action) {
                 userPresence.set(false)
                 this@AlarmPanelService.publishCommand(COMMAND_STATE, getState(userPresence.get()).toString())
-            } else if (BROADCAST_EVENT_ALARM_MODE == intent.action || BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
+            } else if (BROADCAST_EVENT_ALARM_MODE == intent.action) {
                 val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE).orEmpty()
                 var alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE).orEmpty().toIntOrNull()
                 if (alarmCode == null) alarmCode = 0
                 publishAlarm(alarmMode, alarmCode)
+            } else if (BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
+                val mode = intent.getStringExtra(BROADCAST_EVENT_PUBLISH_PANIC).orEmpty()
+                publishAlarm(mode, 0)
             }
         }
     }

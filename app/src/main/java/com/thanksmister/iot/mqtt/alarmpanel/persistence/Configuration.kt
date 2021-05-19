@@ -54,6 +54,10 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         }
         set(value) = this.sharedPreferences.edit().putLong(PREF_INACTIVITY_TIME, value).apply()
 
+    var useInactivityTimer: Boolean
+        get() = this.sharedPreferences.getBoolean(PREF_INACTIVITY_TIMER, true)
+        set(value) = this.sharedPreferences.edit().putBoolean(PREF_INACTIVITY_TIMER, value).apply()
+
     var isFirstTime: Boolean
         get() = sharedPreferences.getBoolean(PREF_FIRST_TIME, true)
         set(value) = sharedPreferences.edit().putBoolean(PREF_FIRST_TIME, value).apply()
@@ -422,6 +426,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         private const val PREF_SYSTEM_SOUNDS = "pref_system_sounds"
         private const val PREF_MODULE_TSS = "pref_module_tss"
         private const val PREF_SYSTEM_NOTIFICATIONS = "pref_system_notifications"
+        private const val PREF_INACTIVITY_TIMER = "pref_inactivity_timer"
         private const val PREF_SENSOR_ONE = "pref_sensor_one"
         private const val PREF_SENSOR_TWO = "pref_sensor_two"
         private const val PREF_SENSOR_ONE_NAME = "pref_sensor_one_name"

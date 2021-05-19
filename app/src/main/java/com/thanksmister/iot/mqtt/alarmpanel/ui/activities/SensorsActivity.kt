@@ -31,9 +31,11 @@ class SensorsActivity : BaseSettingsActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
-        //Toast.makeText(this@SensorsActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
-        //dialogUtils.clearDialogs()
-        //finish()
+        if(configuration.useInactivityTimer) {
+            Toast.makeText(this@SensorsActivity, getString(R.string.toast_screen_timeout), Toast.LENGTH_LONG).show()
+            dialogUtils.clearDialogs()
+            finish()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
