@@ -288,7 +288,8 @@ You can also interact and control the application and device remotely using eith
 
 ***Update We have deprecated support for Darksky, now you can use any weather integration.***
 
-You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval. Then in the application settings, you can use almost any weather integration, as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application:
+You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval. Then in the application settings, you can use almost any weather integration, as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application.
+
 
 ```
 alias: MQTT Weather
