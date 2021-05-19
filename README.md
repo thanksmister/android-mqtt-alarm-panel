@@ -42,21 +42,24 @@ Here are some key features of the application:
 
 ## Screen Shots:
 
-![alarm_home](https://user-images.githubusercontent.com/142340/29889460-9f615642-8d9a-11e7-99a6-1a49529dd580.png)
+![main](https://user-images.githubusercontent.com/142340/118820787-f927cf00-b88c-11eb-8e16-b49e873dab78.png)
 
-![alarm_weather](https://user-images.githubusercontent.com/142340/29889463-9f64e550-8d9a-11e7-8d06-cbb046588875.png)
 
-![alarm_arm](https://user-images.githubusercontent.com/142340/29889458-9f33509e-8d9a-11e7-8bdf-aaad28d94328.png)
+![options](https://user-images.githubusercontent.com/142340/118820820-ffb64680-b88c-11eb-82d0-374f38eda13b.png)
 
-![alarm_pending](https://user-images.githubusercontent.com/142340/29889461-9f62d238-8d9a-11e7-9a0f-77baf385d812.png)
 
-![alarm_disarm](https://user-images.githubusercontent.com/142340/29889459-9f557980-8d9a-11e7-996e-dcbfd54d44cc.png)
+![code](https://user-images.githubusercontent.com/142340/118820838-02b13700-b88d-11eb-8a95-fb6c29fb898c.png)
 
-![alarm_triggered](https://user-images.githubusercontent.com/142340/29889462-9f6422dc-8d9a-11e7-923a-06cfcd6acff7.png)
 
-You can also load your home automation platform website by entering the address with port into the settings. It slides from the right on the main screen. 
+![home](https://user-images.githubusercontent.com/142340/118820855-06dd5480-b88d-11eb-833e-5bec7b2e8abe.png)
 
-![platform_panel](https://user-images.githubusercontent.com/142340/34175188-53419a14-e4da-11e7-970a-77d2ff753d31.png)
+
+![settings](https://user-images.githubusercontent.com/142340/118820868-0b097200-b88d-11eb-8ab5-a3bce076b3c0.png)
+
+
+You can also load multiple home automation platform webpages. Each page will slide from the right on the main screen to expose additional home automation controls. 
+
+![platform](https://user-images.githubusercontent.com/142340/118820765-f4631b00-b88c-11eb-9961-2cb5c06555a1.png)
 
 ## Installation
 
