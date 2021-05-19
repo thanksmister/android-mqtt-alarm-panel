@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.thanksmister.iot.mqtt.alarmpanel.utils;
+package com.thanksmister.iot.mqtt.alarmpanel.persistence
 
-import org.junit.Test;
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-import static junit.framework.Assert.assertEquals;
+@Entity(tableName = "Dashboards")
+class Dashboard {
+    @PrimaryKey(autoGenerate = true)
+    var uid: Int = 0
 
-/**
- * Unit tests for the Date utils.
- */
-public class DateUtilsTest {
-    
-    @Test
-    public void dayOfWeek() throws Exception {
-        long time = 1502766000; // this is short from DarkSky API
-        String day = DateUtils.INSTANCE.dayOfWeek(time);
-        assertEquals("Tuesday", day);
-    }
+    @ColumnInfo(name = "url")
+    var url: String? = null
 }

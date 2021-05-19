@@ -39,14 +39,6 @@
             android:summary="Require the the code to arm the alarm."
             android:title="Require Arming Code" />
 
-        <Preference
-            android:key="button_alarm_sensors"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:icon="@drawable/ic_sensor"
-            android:summary="Add and display your door, window, or motion sensors on the alarm panel."
-            android:title="Alarm Sensors" />
-
         <SwitchPreference
             android:key="pref_panic_button"
             android:summary="Displays a panic button on the main screen that when pressed sends a panic alert message."
@@ -58,6 +50,14 @@
             android:icon="@drawable/ic_theme_light_dark"
             android:summary="Use Dark theme (overrides Sun settings)"
             android:title="Theme" />
+
+        <Preference
+            android:key="button_alarm_sensors"
+            android:negativeButtonText="@android:string/cancel"
+            android:positiveButtonText="@android:string/ok"
+            android:icon="@drawable/ic_sensor"
+            android:summary="Additional alarm settings."
+            android:title="@string/pref_title_alarm_modes_sensors" />
 
     </PreferenceCategory>
 

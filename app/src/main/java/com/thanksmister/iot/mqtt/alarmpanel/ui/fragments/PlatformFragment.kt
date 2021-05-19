@@ -38,6 +38,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Dashboard
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.dialog_progress.*
@@ -47,16 +48,21 @@ import javax.inject.Inject
 
 class PlatformFragment : BaseFragment() {
 
-    @Inject lateinit var configuration: Configuration
-    @Inject lateinit var dialogUtils: DialogUtils
+    @Inject
+    lateinit var configuration: Configuration
+
+    @Inject
+    lateinit var dialogUtils: DialogUtils
+
     private var listener: OnPlatformFragmentListener? = null
-    private var currentUrl:String? = null
-    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
+    private var currentUrl: String? = null
+    //private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
     private var displayProgress = true
     private var zoomLevel = 0.0f
-    private var hasWebView:Boolean = true
-    private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
+    private var hasWebView: Boolean = true
+    //private val mOnScrollChangedListener = ViewTreeObserver.OnScrollChangedListener { swipeContainer?.isEnabled = webView.scrollY == 0 }
     private var certPermissionsShown = false
+    private var index = 0
 
     interface OnPlatformFragmentListener {
         fun navigateAlarmPanel()
@@ -64,12 +70,12 @@ class PlatformFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        try {
-            return inflater.inflate(R.layout.fragment_platform, container, false)
+        return try {
+            inflater.inflate(R.layout.fragment_platform, container, false)
         } catch (e: Exception) {
             Timber.e(e.message)
-            hasWebView = true;
-            return inflater.inflate(R.layout.fragment_platform_no_webview, container, false)
+            hasWebView = true
+            inflater.inflate(R.layout.fragment_platform_no_webview, container, false)
         }
     }
 
@@ -84,59 +90,60 @@ class PlatformFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        Timber.d("onResume")
-        if (configuration.platformBar) {
-            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED;
+
+        /*if (configuration.platformBar) {
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
-            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN;
-        }
-        if(configuration.hasPlatformChange()) {
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+        }*/
+        // TODO we no longer have this option
+        if (configuration.hasPlatformChange()) {
             configuration.setHasPlatformChange(false)
             loadWebPage()
         }
-        Timber.d("configuration.platformRefresh: ${configuration.platformRefresh}")
-        if(swipeContainer != null && configuration.platformRefresh) {
+
+        /*if (swipeContainer != null && configuration.platformRefresh) {
             swipeContainer.viewTreeObserver.addOnScrollChangedListener(mOnScrollChangedListener)
             swipeContainer.setOnRefreshListener { loadWebPage() }
         } else if (swipeContainer != null) {
             swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
             swipeContainer?.isEnabled = false
-        }
+        }*/
     }
 
     override fun onPause() {
         super.onPause()
-        Timber.d("onPause")
-        if(swipeContainer != null) {
+        /*if (swipeContainer != null) {
             swipeContainer.viewTreeObserver.removeOnScrollChangedListener(mOnScrollChangedListener)
-        }
+        }*/
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var url = WEBSITE
+        val bundle = this.arguments
+        bundle?.let {
+            url = bundle.getString(BUNDLE_KEY_URL, WEBSITE)
+            index = bundle.getInt(BUNDLE_KEY_INDEX, 0)
+        }
         lifecycle.addObserver(dialogUtils)
-        currentUrl = configuration.webUrl
+        currentUrl = url
         displayProgress = configuration.appShowActivity
         zoomLevel = configuration.testZoomLevel
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Timber.d("onActivityCreated")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(swipeContainer != null && configuration.platformRefresh) {
+        /*if (swipeContainer != null && configuration.platformRefresh) {
             swipeContainer.setOnRefreshListener { loadWebPage() }
         } else if (swipeContainer != null) {
             swipeContainer.isEnabled = false
-        }
+        }*/
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        /*bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         button_alarm.setOnClickListener {
-            if(listener != null) {
+            if (listener != null) {
                 listener!!.navigateAlarmPanel()
             }
         }
@@ -144,46 +151,46 @@ class PlatformFragment : BaseFragment() {
             clearCache()
             loadWebPage()
         }
-        button_hide.setOnClickListener { v ->
-            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN;
-        }
+        button_hide.setOnClickListener {
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+        }*/
         loadWebPage()
     }
 
     private fun complete() {
-        if(swipeContainer != null && swipeContainer.isRefreshing) {
+        /*if (swipeContainer != null && swipeContainer.isRefreshing) {
             swipeContainer.isRefreshing = false
-        }
+        }*/
     }
 
     private fun loadWebPage() {
-        if (configuration.hasPlatformModule() && !TextUtils.isEmpty(configuration.webUrl)
-                && webView != null && hasWebView) {
+        if (hasWebView) {
             configureWebSettings(configuration.browserUserAgent)
             webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView, newProgress: Int) {
                     if (newProgress == 100) {
-                        if(progressDialog != null) {
+                        if (progressDialog != null) {
                             progressDialog.visibility = View.GONE
                         }
-                        if(view.url != null) {
+                        if (view.url != null) {
                             pageLoadComplete(view.url)
                         }
                         return
                     }
-                    if(displayProgress) {
-                        if(progressDialog != null && progressDialogMessage != null) {
+                    if (displayProgress) {
+                        if (progressDialog != null && progressDialogMessage != null) {
                             progressDialog.visibility = View.VISIBLE
                             progressDialogMessage.text = getString(R.string.progress_loading, newProgress.toString())
                         }
                     } else {
-                        if(progressDialog != null) {
+                        if (progressDialog != null) {
                             progressDialog.visibility = View.GONE
                         }
                     }
                 }
+
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                    if(isAdded && activity != null && view.context != null) {
+                    if (isAdded && activity != null && view.context != null) {
                         dialogUtils.showAlertDialog(view.context, message)
                     }
                     return true
@@ -195,14 +202,16 @@ class PlatformFragment : BaseFragment() {
                     view.loadUrl(url)
                     return true
                 }
+
                 override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-                    if(activity != null) {
+                    if (activity != null) {
                         Toast.makeText(activity, description, Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 // TODO we need to load SSL certificates
                 override fun onReceivedSslError(view: WebView, handler: SslErrorHandler?, error: SslError?) {
-                    if(!certPermissionsShown) {
+                    if (!certPermissionsShown) {
                         var message = getString(R.string.dialog_message_ssl_generic)
                         when (error?.primaryError) {
                             SslError.SSL_UNTRUSTED -> message = getString(R.string.dialog_message_ssl_untrusted)
@@ -230,15 +239,15 @@ class PlatformFragment : BaseFragment() {
             }
             if (configuration.userHardwareAcceleration && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 // chromium, enable hardware acceleration
-                webView?.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            } else  {
+                webView?.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            } else {
                 // older android version, disable hardware acceleration
-                webView?.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                webView?.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             }
             if (zoomLevel != 0.0f) {
                 webView!!.setInitialScale((zoomLevel * 100).toInt())
             }
-            webView.loadUrl(configuration.webUrl)
+            webView.loadUrl(currentUrl)
         }
     }
 
@@ -253,8 +262,8 @@ class PlatformFragment : BaseFragment() {
         Timber.d("pageLoadComplete currentUrl $url")
         val intent = Intent(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE)
         intent.putExtra(AlarmPanelService.BROADCAST_EVENT_URL_CHANGE, url)
-        if(activity != null && isAdded) {
-            val bm = LocalBroadcastManager.getInstance(activity!!)
+        if (activity != null && isAdded) {
+            val bm = LocalBroadcastManager.getInstance(requireActivity())
             bm.sendBroadcast(intent)
             complete()
         }
@@ -278,8 +287,15 @@ class PlatformFragment : BaseFragment() {
     }
 
     companion object {
-        fun newInstance(): PlatformFragment {
-            return PlatformFragment()
+        private var bundle = Bundle()
+        private const val BUNDLE_KEY_URL = "web_url"
+        private const val BUNDLE_KEY_INDEX = "index_num"
+        fun newInstance(dashboard: Dashboard, index: Int): PlatformFragment {
+            val fragment = PlatformFragment()
+            bundle.putString(BUNDLE_KEY_URL, dashboard.url)
+            bundle.putInt(BUNDLE_KEY_INDEX, index)
+            fragment.arguments = bundle
+            return fragment
         }
         const val WEBSITE: String = "http://thanksmister.com/android-mqtt-alarm-panel/"
     }

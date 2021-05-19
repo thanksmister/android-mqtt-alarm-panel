@@ -48,8 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:gravity="center_horizontal|top"
-            android:layout_above="@+id/disable_fingerprint_layout"
-            android:padding="8dp">
+            android:layout_above="@+id/imageLayout"
+            android:layout_marginBottom="16dp"
+            android:padding="32dp">
 
             <com.todddavies.components.progressbar.ProgressWheel
                 android:id="@+id/countDownProgressWheel"
@@ -61,29 +62,18 @@
                 ProgressWheel:rimColor="@color/gray_color"
                 ProgressWheel:rimWidth="12dp"
                 ProgressWheel:textColor="@color/text"
-                ProgressWheel:textSize="32sp" />
+                ProgressWheel:textSize="48sp"
+                tools:text="60"/>
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/disable_fingerprint_layout"
-            android:textColor="@color/body_text_1"
-            tools:visibility="visible"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/imageLayout"
-            android:layout_centerHorizontal="true"
-            android:drawableLeft="@drawable/ic_fingerprint"
-            android:drawableStart="@drawable/ic_fingerprint"
-            android:paddingBottom="8dp"
-            android:text="@string/text_touch_sensor"/>
+    
         <LinearLayout
                 android:id="@+id/imageLayout"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_marginBottom="16dp"
                 android:padding="6dp"
                 android:gravity="center">
 
@@ -91,7 +81,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
+                    app:tint="@color/dark_gray"
                     android:id="@+id/pinCode1"
                     android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -103,7 +93,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
+                    app:tint="@color/dark_gray"
                     android:id="@+id/pinCode2"
                     android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -115,7 +105,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
+                    app:tint="@color/dark_gray"
                     android:id="@+id/pinCode3"
                     android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -127,7 +117,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
+                    app:tint="@color/dark_gray"
                     android:id="@+id/pinCode4"
                     android:src="@drawable/ic_radio_button_unchecked_black"/>
 

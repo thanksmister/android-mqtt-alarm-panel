@@ -53,19 +53,6 @@
         android:padding="32dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/settings_fingerprint_layout"
-            tools:visibility="visible"
-            android:textColor="@color/body_text_1"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_fingerprint"
-            android:drawableStart="@drawable/ic_fingerprint"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="8dp"
-            android:text="@string/text_touch_sensor"/>
-
         <LinearLayout
             android:id="@+id/imageLayout"
             android:orientation="horizontal"
@@ -77,7 +64,7 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_gravity="center"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 android:id="@+id/pinCode1"
                 android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -85,7 +72,7 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_gravity="center"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 android:id="@+id/pinCode2"
                 android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -93,7 +80,7 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_gravity="center"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 android:id="@+id/pinCode3"
                 android:src="@drawable/ic_radio_button_unchecked_black"/>
 
@@ -101,7 +88,7 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_gravity="center"
-                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
                 android:id="@+id/pinCode4"
                 android:src="@drawable/ic_radio_button_unchecked_black"/>
 

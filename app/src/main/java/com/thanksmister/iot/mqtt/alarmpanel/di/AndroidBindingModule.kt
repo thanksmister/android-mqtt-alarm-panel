@@ -21,10 +21,7 @@ import androidx.lifecycle.ViewModel
 import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LiveCameraActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LogActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.MainActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.*
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.*
 import dagger.Binds
@@ -52,8 +49,13 @@ internal abstract class AndroidBindingModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SensorViewModel::class)
-    abstract fun bindsSensorViewModel(mainViewModel: SensorViewModel): ViewModel
+    @ViewModelKey(SensorsViewModel::class)
+    abstract fun bindsSensorViewModel(mainViewModel: SensorsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DashboardsViewModel::class)
+    abstract fun bindsDashboardsViewModel(mainViewModel: DashboardsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -79,6 +81,12 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun settingsActivity(): SettingsActivity
+
+    @ContributesAndroidInjector
+    internal abstract fun dashboardsActivity(): DashboardsActivity
+
+    @ContributesAndroidInjector
+    internal abstract fun sensorsActivity(): SensorsActivity
 
     @ContributesAndroidInjector
     internal abstract fun cameraActivity(): LiveCameraActivity
@@ -112,6 +120,12 @@ internal abstract class AndroidBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun settingsFragment(): SettingsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun dashboardsFragment(): DashboardsFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun sensorsFragment(): SensorsFragment
 
     @ContributesAndroidInjector
     internal abstract fun alarmSettingsFragment(): AlarmSettingsFragment

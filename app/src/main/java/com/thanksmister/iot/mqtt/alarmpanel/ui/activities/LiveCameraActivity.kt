@@ -33,13 +33,14 @@ import com.thanksmister.iot.mqtt.alarmpanel.BaseActivity
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.modules.CameraCallback
 import com.thanksmister.iot.mqtt.alarmpanel.ui.views.CameraSourcePreview
+import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.DetectionViewModel
 
 import timber.log.Timber
 import javax.inject.Inject
 
 
-class LiveCameraActivity : BaseActivity() {
+class LiveCameraActivity : BaseSettingsActivity() {
 
     private val inactivityHandler: Handler = Handler()
     private val inactivityCallback = Runnable {
@@ -49,7 +50,9 @@ class LiveCameraActivity : BaseActivity() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var detectionViewModel: DetectionViewModel
+
     private var updateHandler: Handler? = null
     private var removeTextCountdown: Int = 0
     private val interval = 1000/15L
@@ -182,10 +185,10 @@ class LiveCameraActivity : BaseActivity() {
 
     private val cameraCallback = object : CameraCallback {
         override fun onDetectorError() {
-            Toast.makeText(this@LiveCameraActivity, getString(R.string.error_missing_vision_lib), Toast.LENGTH_LONG).show()
+            dialogUtils.showAlertDialog(this@LiveCameraActivity, getString(R.string.error_missing_vision_lib))
         }
         override fun onCameraError() {
-            Toast.makeText(this@LiveCameraActivity, getString(R.string.toast_camera_source_error), Toast.LENGTH_LONG).show()
+            dialogUtils.showAlertDialog(this@LiveCameraActivity, getString(R.string.toast_camera_source_error))
         }
         override fun onMotionDetected() {
             runOnUiThread {

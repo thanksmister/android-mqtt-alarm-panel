@@ -39,7 +39,6 @@
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -69,6 +68,102 @@
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Enter code to dismiss" />
+
+        <LinearLayout
+            android:id="@+id/codeDotsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp"
+            android:layout_below="@id/codeDescription">
+
+            <ImageView
+                android:id="@+id/pinCode1"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/pinCode2"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/pinCode3"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/pinCode4"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/pinCode5"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/pinCode6"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/pinCode7"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/pinCode8"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_radio_button_checked_black"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

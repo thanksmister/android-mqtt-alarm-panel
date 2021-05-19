@@ -96,9 +96,6 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         buttonDel.setOnClickListener {
             removePinCode()
         }
-        buttonDel.setOnClickListener {
-            removePinCode()
-        }
 
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -109,6 +106,19 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         })
+
+        if(codeType == CodeTypes.ARM_REMOTE || codeType == CodeTypes.DISARM_REMOTE) {
+            buttonKey.visibility = View.VISIBLE
+            buttonKey.setOnClickListener {
+                codeComplete = true
+                handler.postDelayed(delayRunnable, 500)
+            }
+        }
+
+        if(delayTime > 0) {
+            countDownProgressWheel.visibility = View.VISIBLE
+            countDownProgressWheel.setWheelProgress(delayTime)
+        }
     }
 
     @Nullable
@@ -145,7 +155,7 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         enteredCode += code
         showFilledPins(enteredCode.length)
         if(codeType == CodeTypes.ARM_REMOTE || codeType == CodeTypes.DISARM_REMOTE) {
-            if(enteredCode.length == MAX_CODE_LENGTH) {
+            if(enteredCode.length == MAX_REMOTE_CODE_LENGTH) {
                 codeComplete = true
                 handler.postDelayed(delayRunnable, 500)
             }
@@ -162,41 +172,103 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         if (enteredCode.isNotEmpty()) {
             enteredCode = enteredCode.substring(0, enteredCode.length - 1)
             showFilledPins(enteredCode.length)
+        } else {
+            showFilledPins(0)
         }
     }
 
     private fun showFilledPins(pinsShown: Int) {
         if (pinCode1 != null && pinCode2 != null && pinCode3 != null && pinCode4 != null) {
             when (pinsShown) {
+                0 -> {
+                    pinCode1.visibility = View.INVISIBLE
+                    pinCode2.visibility = View.INVISIBLE
+                    pinCode3.visibility = View.INVISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
+                }
                 1 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.INVISIBLE
+                    pinCode3.visibility = View.INVISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
                 }
                 2 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.INVISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
                 }
                 3 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.INVISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
                 }
                 4 -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_checked_black)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_checked_black)
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.VISIBLE
+                    pinCode5.visibility = View.GONE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
                 }
-                else -> {
-                    pinCode1.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode2.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode3.setImageResource(R.drawable.ic_radio_button_unchecked_black)
-                    pinCode4.setImageResource(R.drawable.ic_radio_button_unchecked_black)
+                5 -> {
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.VISIBLE
+                    pinCode5.visibility = View.VISIBLE
+                    pinCode6.visibility = View.GONE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
+                }
+                6 -> {
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.VISIBLE
+                    pinCode5.visibility = View.VISIBLE
+                    pinCode6.visibility = View.VISIBLE
+                    pinCode7.visibility = View.GONE
+                    pinCode8.visibility = View.GONE
+                }
+                7 -> {
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.VISIBLE
+                    pinCode5.visibility = View.VISIBLE
+                    pinCode6.visibility = View.VISIBLE
+                    pinCode7.visibility = View.VISIBLE
+                    pinCode8.visibility = View.GONE
+                }
+                8 -> {
+                    pinCode1.visibility = View.VISIBLE
+                    pinCode2.visibility = View.VISIBLE
+                    pinCode3.visibility = View.VISIBLE
+                    pinCode4.visibility = View.VISIBLE
+                    pinCode5.visibility = View.VISIBLE
+                    pinCode6.visibility = View.VISIBLE
+                    pinCode7.visibility = View.VISIBLE
+                    pinCode8.visibility = View.VISIBLE
                 }
             }
         }
@@ -204,12 +276,15 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
 
     companion object {
         private  val MAX_CODE_LENGTH = 4
+        private  val MAX_REMOTE_CODE_LENGTH = 8
         private var currentCode: String = ""
         private var codeType: CodeTypes = CodeTypes.SETTINGS
+        private var delayTime = 0
 
-        fun newInstance(code: String, type: CodeTypes, listener : OnAlarmCodeFragmentListener): CodeBottomSheetFragment {
+        fun newInstance(code: String, delay: Int?, type: CodeTypes, listener : OnAlarmCodeFragmentListener): CodeBottomSheetFragment {
             codeType = type
             currentCode = code
+            delayTime = delay?:0
             return CodeBottomSheetFragment(listener)
         }
     }

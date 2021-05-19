@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 ThanksMister LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,40 +14,40 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/alarmDisableView"
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmDisableView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alarmDisableView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_horizontal"
+    android:padding="16dp"
+    android:orientation="horizontal">
+
+    <include
+        layout="@layout/view_keypad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:padding="16dp"
-        android:orientation="horizontal">
-
-    <include layout="@layout/view_keypad"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <Space
-            android:layout_width="16dp"
-            android:layout_height="match_parent"
-        android:layout_weight="0"/>
+        android:layout_width="16dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0" />
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:gravity="center_horizontal|top"
-            android:layout_above="@+id/disable_fingerprint_layout"
+            android:layout_above="@+id/imageLayout"
+            android:layout_marginBottom="16dp"
             android:padding="24dp">
 
             <com.todddavies.components.progressbar.ProgressWheel
@@ -61,75 +60,65 @@
                 ProgressWheel:rimColor="@color/gray_color"
                 ProgressWheel:rimWidth="12dp"
                 ProgressWheel:textColor="@color/text"
-                ProgressWheel:textSize="32sp" />
+                ProgressWheel:textSize="48sp"
+                tools:text="60"/>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/disable_fingerprint_layout"
-            android:textColor="@color/body_text_1"
-            tools:visibility="visible"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/imageLayout"
-            android:layout_centerHorizontal="true"
-            android:drawableLeft="@drawable/ic_fingerprint"
-            android:drawableStart="@drawable/ic_fingerprint"
-            android:paddingBottom="8dp"
-            android:text="@string/text_touch_sensor"/>
+
         <LinearLayout
-                android:id="@+id/imageLayout"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:padding="6dp"
-                android:gravity="center">
+            android:id="@+id/imageLayout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:padding="6dp"
+            android:gravity="center">
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode1"
-                    android:src="@drawable/ic_radio_button_unchecked_black"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode1"
+                android:src="@drawable/ic_radio_button_unchecked_black" />
 
             <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+                android:layout_width="6dp"
+                android:layout_height="match_parent" />
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode2"
-                    android:src="@drawable/ic_radio_button_unchecked_black"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode2"
+                android:src="@drawable/ic_radio_button_unchecked_black" />
 
             <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+                android:layout_width="6dp"
+                android:layout_height="match_parent" />
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode3"
-                    android:src="@drawable/ic_radio_button_unchecked_black"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode3"
+                android:src="@drawable/ic_radio_button_unchecked_black" />
 
             <View
-                    android:layout_width="6dp"
-                    android:layout_height="match_parent"/>
+                android:layout_width="6dp"
+                android:layout_height="match_parent" />
 
             <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/dark_gray"
-                    android:id="@+id/pinCode4"
-                    android:src="@drawable/ic_radio_button_unchecked_black"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/dark_gray"
+                android:id="@+id/pinCode4"
+                android:src="@drawable/ic_radio_button_unchecked_black" />
 
         </LinearLayout>
 

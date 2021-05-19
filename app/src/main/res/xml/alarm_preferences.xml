@@ -17,156 +17,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/preferenceView">
 
-    <PreferenceCategory android:title="Alarm Sensors">
+    <PreferenceCategory android:title="Alarm Remote Code">
+
+        <SwitchPreference
+            android:key="settings_alarm_remote_disarm"
+            android:icon="@drawable/ic_baseline_settings_remote"
+            android:summary="@string/pref_summary_send_code"
+            android:title="Remote Code" />
+
+        <EditTextPreference
+            android:paddingTop="0dp"
+            android:selectable="false"
+            android:summary="When using remote code, the code is sent to the server to arm or disarm, a status message should be returned if the code is invalid."
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Alarm Modes">
 
         <Preference
-            android:key="pref_alarm_code"
-            android:summary="Add up to four alarm sensors to display sensor state on the alarm panel screen. Set the name, active state, and MQTT topic. The active state toggles the color of the sensor icon, green for active state, red for other state."
-            android:title="" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="">
-
-       <SwitchPreference
-           android:key="pref_sensor_one"
-           android:summary="When active, displays sensor state."
-           android:title="Sensor One" />
-
-       <EditTextPreference
-           android:defaultValue="Sensor one"
-           android:key="pref_sensor_one_name"
-           android:dependency="pref_sensor_one"
-           android:negativeButtonText="@android:string/cancel"
-           android:positiveButtonText="@android:string/ok"
-           android:summary="Enter sensor name."
-           android:title="Sensor name" />
-
-        <EditTextPreference
-            android:defaultValue="home/sensor/one/"
-            android:key="pref_sensor_one_topic"
-            android:dependency="pref_sensor_one"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="home/sensor/one/"
-            android:title="Sensor topic" />
-
-        <EditTextPreference
-            android:defaultValue="ON"
-            android:key="pref_sensor_one_state"
-            android:dependency="pref_sensor_one"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="ON"
-            android:title="Active state" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="">
-
-       <SwitchPreference
-           android:key="pref_sensor_two"
-           android:summary="When active, displays sensor state."
-           android:title="Sensor Two" />
-
-       <EditTextPreference
-           android:defaultValue="Sensor two"
-           android:key="pref_sensor_two_name"
-           android:dependency="pref_sensor_two"
-           android:negativeButtonText="@android:string/cancel"
-           android:positiveButtonText="@android:string/ok"
-           android:summary="Enter sensor name."
-           android:title="Sensor name" />
-
-        <EditTextPreference
-            android:defaultValue="home/sensor/two/"
-            android:key="pref_sensor_two_topic"
-            android:dependency="pref_sensor_two"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="home/sensor/two/"
-            android:title="Sensor topic" />
-
-        <EditTextPreference
-            android:defaultValue="ON"
-            android:key="pref_sensor_two_state"
-            android:dependency="pref_sensor_two"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="ON"
-            android:title="Active state" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="">
+            android:summary="Enable or disable the alarm modes, the default modes are away and home."
+            android:title=""/>
 
         <SwitchPreference
-            android:key="pref_sensor_three"
-            android:summary="When active, displays sensor state."
-            android:title="Sensor Three" />
+            android:icon="@drawable/ic_baseline_shield"
+            android:defaultValue="true"
+            android:key="pref_mode_home"
+            android:title="Home Mode" />
 
-        <EditTextPreference
-            android:defaultValue="Sensor three"
-            android:key="pref_sensor_three_name"
-            android:dependency="pref_sensor_three"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="Enter sensor name."
-            android:title="Sensor name" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_shield"
+            android:defaultValue="true"
+            android:key="pref_mode_away"
+            android:title="Away Mode" />
 
-        <EditTextPreference
-            android:defaultValue="home/sensor/three/"
-            android:key="pref_sensor_three_topic"
-            android:dependency="pref_sensor_three"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="home/sensor/three/"
-            android:title="Sensor topic" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_shield"
+            android:defaultValue="false"
+            android:key="pref_mode_night"
+            android:title="Night Mode" />
 
-        <EditTextPreference
-            android:defaultValue="ON"
-            android:key="pref_sensor_three_state"
-            android:dependency="pref_sensor_three"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="ON"
-            android:title="Active state" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_shield"
+            android:defaultValue="false"
+            android:key="pref_mode_custom_bypass"
+            android:title="Custom Bypass" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="">
+    <PreferenceCategory android:title="Alarm Mode Times">
 
-        <SwitchPreference
-            android:key="pref_sensor_four"
-            android:summary="When active, displays sensor state."
-            android:title="Sensor Four" />
-
-        <EditTextPreference
-            android:defaultValue="Sensor four"
-            android:key="pref_sensor_four_name"
-            android:dependency="pref_sensor_four"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="Enter sensor name."
-            android:title="Sensor name" />
+        <Preference
+            android:selectable="false"
+            android:summary="@string/pref_pending_times_description" />
 
         <EditTextPreference
-            android:defaultValue="home/sensor/four/"
-            android:key="pref_sensor_four_topic"
-            android:dependency="pref_sensor_four"
-            android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="home/sensor/four/"
-            android:title="Sensor topic" />
+            android:key="settings_pref_away_pending_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_away_pending_summary"
+            android:title="@string/pref_away_pending_title"/>
 
         <EditTextPreference
-            android:defaultValue="ON"
-            android:key="pref_sensor_four_state"
-            android:dependency="pref_sensor_four"
+            android:key="settings_pref_away_delay_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_away_delay_summary"
+            android:title="@string/pref_away_delay_title"/>
+
+        <EditTextPreference
+            android:key="settings_pref_home_pending_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_home_pending_summary"
+            android:title="@string/pref_home_pending_title"/>
+
+        <EditTextPreference
+            android:key="settings_pref_home_delay_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_home_delay_summary"
+            android:title="@string/pref_home_delay_title"/>
+
+        <EditTextPreference
+            android:key="settings_pref_night_pending_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:title="@string/preference_title_night_pending_time"
+            android:summary="@string/preference_summary_night_pending_time"
             android:negativeButtonText="@android:string/cancel"
-            android:positiveButtonText="@android:string/ok"
-            android:summary="ON"
-            android:title="Active state" />
+            android:positiveButtonText="@android:string/ok"/>
+
+        <EditTextPreference
+            android:key="settings_pref_night_delay_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_night_delay_summary"
+            android:title="@string/pref_night_delay_title"/>
+
+        <EditTextPreference
+            android:key="settings_pref_bypass_pending_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:title="@string/pref_bypass_pending_title"
+            android:summary="@string/pref_bypass_pending_summary"/>
+
+        <EditTextPreference
+            android:key="settings_pref_bypass_delay_time"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:defaultValue="60"
+            android:icon="@drawable/ic_baseline_timelapse"
+            android:summary="@string/pref_bypass_delay_summary"
+            android:title="@string/pref_bypass_delay_title"/>
 
     </PreferenceCategory>
 

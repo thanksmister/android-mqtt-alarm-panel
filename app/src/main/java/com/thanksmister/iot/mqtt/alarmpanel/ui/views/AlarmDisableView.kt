@@ -71,7 +71,7 @@ class AlarmDisableView : BaseAlarmView {
                     val an = RotateAnimation(0.0f, 90.0f, 250f, 273f)
                     an.fillAfter = true
                     countDownProgressWheel.setText(displaySeconds.toString())
-                    countDownProgressWheel.setProgress(displaySeconds * divideBy)
+                    countDownProgressWheel.setWheelProgress(displaySeconds * divideBy)
                 }
 
                 override fun onFinish() {

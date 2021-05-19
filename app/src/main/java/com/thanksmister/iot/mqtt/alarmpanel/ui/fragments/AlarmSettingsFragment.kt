@@ -32,7 +32,6 @@ import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
-
 class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject
@@ -41,78 +40,64 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     @Inject
     lateinit var mqttOptions: MQTTOptions
 
-    private val sensorOnePreference: SwitchPreference by lazy {
-        findPreference("pref_sensor_one") as SwitchPreference
+    private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
+        findPreference(PREF_ALARM_REMOTE_DISARM) as SwitchPreference
     }
 
-    private val sensorOneNamePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_one_name") as EditTextPreference
+    private val awayModePreference: SwitchPreference by lazy {
+        findPreference("pref_mode_away") as SwitchPreference
     }
 
-    private val sensorOneTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_one_topic") as EditTextPreference
+    private val homeModePreference: SwitchPreference by lazy {
+        findPreference("pref_mode_home") as SwitchPreference
     }
 
-    private val sensorOneStatePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_one_state") as EditTextPreference
+    private val nightModePreference: SwitchPreference by lazy {
+        findPreference("pref_mode_night") as SwitchPreference
     }
 
-    private val sensorTwoPreference: SwitchPreference by lazy {
-        findPreference("pref_sensor_two") as SwitchPreference
+    private val customBypassModePreference: SwitchPreference by lazy {
+        findPreference("pref_mode_custom_bypass") as SwitchPreference
     }
 
-    private val sensorTwoNamePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_two_name") as EditTextPreference
+    private val pendingAwayPreference: EditTextPreference by lazy {
+        findPreference(PREF_AWAY_PENDING_TIME) as EditTextPreference
     }
 
-    private val sensorTwoTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_two_topic") as EditTextPreference
+    private val pendingHomePreference: EditTextPreference by lazy {
+        findPreference(PREF_HOME_PENDING_TIME) as EditTextPreference
     }
 
-    private val sensorTwoStatePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_two_state") as EditTextPreference
+    private val pendingNightPreference: EditTextPreference by lazy {
+        findPreference(PREF_NIGHT_PENDING_TIME) as EditTextPreference
     }
 
-    private val sensorThreePreference: SwitchPreference by lazy {
-        findPreference("pref_sensor_three") as SwitchPreference
+    private val pendingBypassPreference: EditTextPreference by lazy {
+        findPreference(PREF_BYPASS_PENDING_TIME) as EditTextPreference
     }
 
-    private val sensorThreeNamePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_three_name") as EditTextPreference
+    private val delayAwayPreference: EditTextPreference by lazy {
+        findPreference(PREF_AWAY_DELAY_TIME) as EditTextPreference
     }
 
-    private val sensorThreeTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_three_topic") as EditTextPreference
+    private val delayHomePreference: EditTextPreference by lazy {
+        findPreference(PREF_HOME_DELAY_TIME) as EditTextPreference
     }
 
-    private val sensorThreeStatePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_three_state") as EditTextPreference
+    private val delayNightPreference: EditTextPreference by lazy {
+        findPreference(PREF_NIGHT_DELAY_TIME) as EditTextPreference
     }
 
-    private val sensorFourPreference: SwitchPreference by lazy {
-        findPreference("pref_sensor_four") as SwitchPreference
-    }
-
-    private val sensorFourNamePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_four_name") as EditTextPreference
-    }
-
-    private val sensorFourTopicPreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_four_topic") as EditTextPreference
-    }
-
-    private val sensorFourStatePreference: EditTextPreference by lazy {
-        findPreference("pref_sensor_four_state") as EditTextPreference
+    private val delayBypassPreference: EditTextPreference by lazy {
+        findPreference(PREF_BYPASS_DELAY_TIME) as EditTextPreference
     }
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
-        if ((activity as SettingsActivity).supportActionBar != null) {
-            (activity as SettingsActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
-            (activity as SettingsActivity).supportActionBar!!.title = (getString(R.string.preference_title_alarm))
-        }
+        (activity as SettingsActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as SettingsActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+        (activity as SettingsActivity).supportActionBar?.title = (getString(R.string.preference_title_alarm))
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -139,37 +124,31 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sensorOnePreference.isChecked = mqttOptions.sensorOneActive
-        sensorOneNamePreference.text = mqttOptions.sensorOneName
-        sensorOneNamePreference.summary = mqttOptions.sensorOneName
-        sensorOneTopicPreference.text = mqttOptions.sensorOneTopic
-        sensorOneTopicPreference.summary = mqttOptions.sensorOneTopic
-        sensorOneStatePreference.text = mqttOptions.sensorOneState
-        sensorOneStatePreference.summary = mqttOptions.sensorOneState
 
-        sensorTwoPreference.isChecked = mqttOptions.sensorTwoActive
-        sensorTwoNamePreference.text = mqttOptions.sensorTwoName
-        sensorTwoNamePreference.summary = mqttOptions.sensorTwoName
-        sensorTwoTopicPreference.text = mqttOptions.sensorTwoTopic
-        sensorTwoTopicPreference.summary = mqttOptions.sensorTwoTopic
-        sensorTwoStatePreference.text = mqttOptions.sensorTwoState
-        sensorTwoStatePreference.summary = mqttOptions.sensorTwoState
+        awayModePreference.isChecked = mqttOptions.alarmModeAway
+        homeModePreference.isChecked = mqttOptions.alarmModeHome
+        nightModePreference.isChecked = mqttOptions.alarmModeNight
+        customBypassModePreference.isChecked = mqttOptions.alarmModeCustomBypass
 
-        sensorThreePreference.isChecked = mqttOptions.sensorThreeActive
-        sensorThreeNamePreference.text = mqttOptions.sensorThreeName
-        sensorThreeNamePreference.summary = mqttOptions.sensorThreeName
-        sensorThreeTopicPreference.text = mqttOptions.sensorThreeTopic
-        sensorThreeTopicPreference.summary = mqttOptions.sensorThreeTopic
-        sensorThreeStatePreference.text = mqttOptions.sensorThreeState
-        sensorThreeStatePreference.summary = mqttOptions.sensorThreeState
+        pendingAwayPreference.text = mqttOptions.pendingTimeAway.toString()
+        pendingAwayPreference.summary = getString(R.string.pref_away_pending_summary, mqttOptions.pendingTimeAway.toString())
+        pendingHomePreference.text = mqttOptions.pendingTimeHome.toString()
+        pendingHomePreference.summary = getString(R.string.pref_home_pending_summary, mqttOptions.pendingTimeHome.toString())
+        pendingNightPreference.text = mqttOptions.pendingTimeNight.toString()
+        pendingNightPreference.summary = getString(R.string.preference_summary_night_pending_time, mqttOptions.pendingTimeNight.toString())
+        pendingBypassPreference.text = mqttOptions.pendingTimeBypass.toString()
+        pendingBypassPreference.summary = getString(R.string.pref_bypass_pending_summary, mqttOptions.pendingTimeBypass.toString())
 
-        sensorFourPreference.isChecked = mqttOptions.sensorFourActive
-        sensorFourNamePreference.text = mqttOptions.sensorFourName
-        sensorFourNamePreference.summary = mqttOptions.sensorFourName
-        sensorFourTopicPreference.text = mqttOptions.sensorFourTopic
-        sensorFourTopicPreference.summary = mqttOptions.sensorFourTopic
-        sensorFourStatePreference.text = mqttOptions.sensorFourState
-        sensorFourStatePreference.summary = mqttOptions.sensorFourState
+        delayAwayPreference.text = mqttOptions.delayTimeAway.toString()
+        delayAwayPreference.summary = getString(R.string.pref_away_delay_summary, mqttOptions.delayTimeAway.toString())
+        delayHomePreference.text = mqttOptions.delayTimeHome.toString()
+        delayHomePreference.summary = getString(R.string.pref_home_delay_summary, mqttOptions.delayTimeHome.toString())
+        delayNightPreference.text = mqttOptions.delayTimeNight.toString()
+        delayNightPreference.summary = getString(R.string.pref_night_delay_summary, mqttOptions.delayTimeNight.toString())
+        delayBypassPreference.text = mqttOptions.delayTimeBypass.toString()
+        delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
+
+        remoteDisarmSwitchPreference.isChecked = mqttOptions.useRemoteDisarm
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -180,81 +159,69 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val value: String
         when (key) {
-            "pref_sensor_one" -> {
-                mqttOptions.sensorOneActive = sensorOnePreference.isChecked
-            }
-            "pref_sensor_one_name" -> {
-                mqttOptions.sensorOneName = sensorOneNamePreference.text
-                sensorOneNamePreference.text = mqttOptions.sensorOneName
-                sensorOneNamePreference.summary = mqttOptions.sensorOneName
-            }
-            "pref_sensor_one_topic" -> {
-                mqttOptions.sensorOneTopic = sensorOneTopicPreference.text
-                sensorOneTopicPreference.text = mqttOptions.sensorOneTopic
-                sensorOneTopicPreference.summary = mqttOptions.sensorOneTopic
-            }
-            "pref_sensor_one_state" -> {
-                mqttOptions.sensorOneState = sensorOneStatePreference.text.toUpperCase(Locale.getDefault())
-                sensorOneStatePreference.text = mqttOptions.sensorOneState
-                sensorOneStatePreference.summary = mqttOptions.sensorOneState
-            }
 
-            "pref_sensor_two" -> {
-                mqttOptions.sensorTwoActive = sensorTwoPreference.isChecked
+            "pref_mode_home" -> {
+                mqttOptions.alarmModeHome = homeModePreference.isChecked
             }
-            "pref_sensor_two_name" -> {
-                mqttOptions.sensorTwoName = sensorTwoNamePreference.text
-                sensorTwoNamePreference.text = mqttOptions.sensorTwoName
-                sensorTwoNamePreference.summary = mqttOptions.sensorTwoName
+            "pref_mode_away" -> {
+                mqttOptions.alarmModeAway = awayModePreference.isChecked
             }
-            "pref_sensor_two_topic" -> {
-                mqttOptions.sensorTwoTopic = sensorTwoTopicPreference.text
-                sensorTwoTopicPreference.text = mqttOptions.sensorTwoTopic
-                sensorTwoTopicPreference.summary = mqttOptions.sensorTwoTopic
+            "pref_mode_night" -> {
+                mqttOptions.alarmModeNight = nightModePreference.isChecked
             }
-            "pref_sensor_two_state" -> {
-                mqttOptions.sensorTwoState = sensorTwoStatePreference.text.toUpperCase(Locale.getDefault())
-                sensorTwoStatePreference.text = mqttOptions.sensorTwoState
-                sensorTwoStatePreference.summary = mqttOptions.sensorTwoState
+            "pref_mode_custom_bypass" -> {
+                mqttOptions.alarmModeCustomBypass = customBypassModePreference.isChecked
             }
-
-            "pref_sensor_three" -> {
-                mqttOptions.sensorThreeActive = sensorThreePreference.isChecked
+            PREF_AWAY_PENDING_TIME -> {
+                mqttOptions.pendingTimeAway = pendingAwayPreference.text.toIntOrNull()?:60
+                pendingAwayPreference.summary = getString(R.string.pref_away_pending_summary, mqttOptions.pendingTimeAway.toString())
             }
-            "pref_sensor_three_name" -> {
-                mqttOptions.sensorThreeName = sensorThreeNamePreference.text
-                sensorThreeNamePreference.text = mqttOptions.sensorThreeName
-                sensorThreeNamePreference.summary = mqttOptions.sensorThreeName
+            PREF_HOME_PENDING_TIME -> {
+                mqttOptions.pendingTimeHome = pendingHomePreference.text.toIntOrNull()?:60
+                pendingHomePreference.summary = getString(R.string.pref_home_pending_summary, mqttOptions.pendingTimeHome.toString())
             }
-            "pref_sensor_three_topic" -> {
-                mqttOptions.sensorThreeTopic = sensorThreeTopicPreference.text
-                sensorThreeTopicPreference.text = mqttOptions.sensorThreeTopic
-                sensorThreeTopicPreference.summary = mqttOptions.sensorThreeTopic
+            PREF_NIGHT_PENDING_TIME -> {
+                mqttOptions.pendingTimeNight = pendingNightPreference.text.toIntOrNull()?:60
+                pendingNightPreference.summary = getString(R.string.preference_summary_night_pending_time, mqttOptions.pendingTimeNight.toString())
             }
-            "pref_sensor_three_state" -> {
-                mqttOptions.sensorThreeState = sensorThreeStatePreference.text.toUpperCase(Locale.getDefault())
-                sensorThreeStatePreference.text = mqttOptions.sensorThreeState
-                sensorThreeStatePreference.summary = mqttOptions.sensorThreeState
+            PREF_BYPASS_PENDING_TIME -> {
+                mqttOptions.pendingTimeBypass = pendingBypassPreference.text.toIntOrNull()?:60
+                pendingBypassPreference.summary = getString(R.string.pref_bypass_pending_summary, mqttOptions.pendingTimeBypass.toString())
             }
-
-            "pref_sensor_four" -> {
-                mqttOptions.sensorFourActive = sensorFourPreference.isChecked
+            PREF_AWAY_DELAY_TIME -> {
+                mqttOptions.delayTimeAway = delayAwayPreference.text.toIntOrNull()?:60
+                delayAwayPreference.summary = getString(R.string.pref_away_delay_summary, mqttOptions.delayTimeAway.toString())
             }
-            "pref_sensor_four_name" -> {
-                mqttOptions.sensorFourName = sensorFourNamePreference.text
-                sensorFourNamePreference.text = mqttOptions.sensorFourName
-                sensorFourNamePreference.summary = mqttOptions.sensorFourName
+            PREF_HOME_DELAY_TIME -> {
+                mqttOptions.delayTimeHome = delayHomePreference.text.toIntOrNull()?:60
+                delayHomePreference.summary = getString(R.string.pref_home_delay_summary, mqttOptions.delayTimeHome.toString())
             }
-            "pref_sensor_four_topic" -> {
-                mqttOptions.sensorFourTopic = sensorFourTopicPreference.text
-                sensorFourTopicPreference.text = mqttOptions.sensorFourTopic
-                sensorFourTopicPreference.summary = mqttOptions.sensorFourTopic
+            PREF_NIGHT_DELAY_TIME -> {
+                mqttOptions.delayTimeNight = delayHomePreference.text.toIntOrNull()?:60
+                delayNightPreference.summary = getString(R.string.pref_night_delay_summary, mqttOptions.delayTimeNight.toString())
             }
-            "pref_sensor_four_state" -> {
-                mqttOptions.sensorFourState = sensorFourStatePreference.text.toUpperCase(Locale.getDefault())
-                sensorFourStatePreference.text = mqttOptions.sensorFourState
-                sensorFourStatePreference.summary = mqttOptions.sensorFourState
+            PREF_BYPASS_DELAY_TIME -> {
+                mqttOptions.delayTimeBypass = delayHomePreference.text.toIntOrNull()?:60
+                delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
+            }
+            PREF_ALARM_REMOTE_DISARM -> {
+                val checked = remoteDisarmSwitchPreference.isChecked
+                checked.let {
+                    mqttOptions.useRemoteDisarm = checked
+                }
             }
         }
+    }
+
+    companion object {
+        const val PREF_AWAY_PENDING_TIME = "settings_pref_away_pending_time"
+        const val PREF_HOME_PENDING_TIME = "settings_pref_home_pending_time"
+        const val PREF_NIGHT_PENDING_TIME = "settings_pref_night_pending_time"
+        const val PREF_BYPASS_PENDING_TIME = "settings_pref_bypass_pending_time"
+        const val PREF_AWAY_DELAY_TIME = "settings_pref_away_delay_time"
+        const val PREF_HOME_DELAY_TIME = "settings_pref_home_delay_time"
+        const val PREF_NIGHT_DELAY_TIME = "settings_pref_night_delay_time"
+        const val PREF_BYPASS_DELAY_TIME = "settings_pref_bypass_delay_time"
+        const val PREF_ALARM_REMOTE_DISARM = "settings_alarm_remote_disarm"
     }
 }

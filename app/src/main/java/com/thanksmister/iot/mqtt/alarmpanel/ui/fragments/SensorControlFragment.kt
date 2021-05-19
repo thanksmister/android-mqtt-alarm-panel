@@ -98,7 +98,7 @@ class SensorControlFragment : BaseFragment() {
                     activity?.runOnUiThread {
                         messages.forEach { message ->
                             when (message.topic?.toLowerCase(Locale.getDefault())) {
-                                mqttOptions.sensorOneTopic -> {
+                                /*mqttOptions.sensorOneTopic -> {
                                     if(topic.equals(message.topic, ignoreCase = true)) {
                                         stateText.text = message.payload?.toUpperCase(Locale.getDefault())
                                         if(message.payload.equals(mqttOptions.sensorOneState, ignoreCase = true)) {
@@ -137,7 +137,7 @@ class SensorControlFragment : BaseFragment() {
                                             iconImageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.light_red))
                                         }
                                     }
-                                }
+                                }*/
                             }
                         }
                     }

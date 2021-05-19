@@ -14,13 +14,13 @@
   ~ limitations under the License.
   -->
 
-<com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sensorDialogView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,33 +30,45 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            style="@style/WizardPageTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingBottom="8dp"
-            android:text="Edit Sensor"
-            android:textAllCaps="true"
-            android:textSize="18sp" />
-
-        <Spinner
-            android:id="@+id/sensorType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/closeDialogButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/ic_close"/>
 
         <TextView
             style="@style/TextAppearance.SmallText.ExtraSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:text="Pick sensor type or use generic." />
+            android:layout_marginStart="4dp"
+            android:text="Pick sensor type or leave as generic." />
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/sensorIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/ic_sensor"/>
+
+            <Spinner
+                style="@style/TextAppearance.TextMedium"
+                android:id="@+id/sensorType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
         <EditText
+            style="@style/TextAppearance.TextMedium"
             android:id="@+id/sensorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +79,7 @@
             style="@style/TextAppearance.SmallText.ExtraSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:text="The display name for the sensor (Front Door)." />
 
         <Space
@@ -81,21 +93,22 @@
 
             <TextView
                 android:id="@+id/sensorTopicPrefix"
-                style="@style/TextAppearance.TextLarge"
-                android:textSize="18sp"
-                android:layout_marginLeft="4dp"
+                style="@style/TextAppearance.TextMedium"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:hint="home/sensor/"/>
+                tools:text="home/sensor/"/>
 
             <EditText
                 android:id="@+id/sensorTopic"
+                style="@style/TextAppearance.TextMedium"
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:hint="Topic"/>
+                android:hint="frontdoor"/>
 
         </LinearLayout>
 
@@ -112,6 +125,7 @@
             android:layout_height="12dp" />
 
         <EditText
+            style="@style/TextAppearance.TextMedium"
             android:id="@+id/sensorPayloadActive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,6 +144,7 @@
             android:layout_height="12dp" />
 
         <EditText
+            style="@style/TextAppearance.TextMedium"
             android:id="@+id/sensorPayloadInactive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,7 +155,7 @@
             style="@style/TextAppearance.SmallText.ExtraSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:text="Payload value when the sensor is inative (close, off, no, empty)." />
 
         <Space
@@ -152,7 +167,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:paddingBottom="8dp"
             android:textAllCaps="true"
             android:text="MQTT Output" />
@@ -163,10 +178,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="8dp"
             android:selectAllOnFocus="true"
             android:textIsSelectable="true"
-            android:text="{&quot;payload&quot;:&quot;open&quot;,&quot;topic&quot;:&quot;home/sensor/frontdoor/&quot;}" />
+            tools:text="{&quot;payload&quot;:&quot;open&quot;,&quot;topic&quot;:&quot;home/sensor/frontdoor/&quot;}" />
 
         <Space
             android:layout_width="match_parent"
@@ -174,17 +189,17 @@
 
         <CheckBox
             android:id="@+id/sensorAlarm"
-            style="@style/TextAppearance.TextMedium.SmallAction"
+            style="@style/TextAppearance.TextMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Required for Alarm Set"/>
+            android:text="Required for Setting Alarm"/>
 
         <TextView
             style="@style/TextAppearance.SmallText.ExtraSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:text="The alarm can not be set if the sensor is active." />
+            android:text="The alarm can not be set if sensor is active (open, on, presence)." />
 
         <Space
             android:layout_width="match_parent"
@@ -192,7 +207,7 @@
 
         <CheckBox
             android:id="@+id/sensorNotification"
-            style="@style/TextAppearance.TextMedium.SmallAction"
+            style="@style/TextAppearance.TextMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Active Notification Sound"/>
@@ -204,6 +219,32 @@
             android:layout_marginLeft="4dp"
             android:text="Play notification sound when sensor is active (open, on, presence)." />
 
+        <LinearLayout
+            android:id="@+id/dialogButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:padding="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/removeSensorButton"
+                style="@style/AppTheme.Button.Red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Remove"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/updateSensorButton"
+                style="@style/AppTheme.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Update"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

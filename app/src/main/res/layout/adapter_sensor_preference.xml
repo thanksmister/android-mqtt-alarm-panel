@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:foreground="?android:selectableItemBackground"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:layout_height="56dp"
         android:layout_marginLeft="16dp"
         android:layout_gravity="top"
-        android:tint="@color/gray"
+        app:tint="@color/gray"
         tools:src="@drawable/ic_sensor"/>
 
     <LinearLayout
@@ -130,7 +130,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginBottom="8dp"
-                android:tint="@color/body_text"
+                app:tint="@color/body_text"
                 android:src="@drawable/ic_lock"
                 android:visibility="gone"
                 tools:visibility="visible"/>
@@ -139,7 +139,7 @@
                 android:id="@+id/notifyIcon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:tint="@color/body_text"
+                app:tint="@color/body_text"
                 android:src="@drawable/ic_room_service"
                 android:visibility="gone"
                 tools:visibility="visible"/>

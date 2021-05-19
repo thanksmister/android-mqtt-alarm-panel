@@ -38,7 +38,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="32dp"
+        android:padding="8dp"
         android:layout_weight="1"
         android:gravity="center">
 
@@ -47,10 +47,10 @@
             android:layout_width="420dp"
             android:layout_height="420dp"
             ProgressWheel:barColor="@color/green"
-            ProgressWheel:barWidth="16dp"
+            ProgressWheel:barWidth="8dp"
             ProgressWheel:contourColor="@color/gray_color"
             ProgressWheel:rimColor="@color/gray_color"
-            ProgressWheel:rimWidth="16dp"
+            ProgressWheel:rimWidth="8dp"
             ProgressWheel:textColor="@color/text"
             ProgressWheel:textSize="32sp"
             tools:text="60"/>
@@ -63,19 +63,7 @@
             android:layout_toEndOf="@+id/countDownProgressWheel"
             android:layout_toRightOf="@+id/countDownProgressWheel"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/disable_fingerprint_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:drawableLeft="@drawable/ic_fingerprint"
-                android:drawableStart="@drawable/ic_fingerprint"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                android:text="@string/text_touch_sensor"
-                android:visibility="invisible"
-                tools:visibility="visible" />
+            
 
             <LinearLayout
                 android:id="@+id/imageLayout"
@@ -91,7 +79,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_radio_button_unchecked_black"
-                    android:tint="@color/dark_gray" />
+                    app:tint="@color/dark_gray" />
 
                 <View
                     android:layout_width="6dp"
@@ -103,7 +91,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_radio_button_unchecked_black"
-                    android:tint="@color/dark_gray" />
+                    app:tint="@color/dark_gray" />
 
                 <View
                     android:layout_width="6dp"
@@ -115,7 +103,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_radio_button_unchecked_black"
-                    android:tint="@color/dark_gray" />
+                    app:tint="@color/dark_gray" />
 
                 <View
                     android:layout_width="6dp"
@@ -127,7 +115,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_radio_button_unchecked_black"
-                    android:tint="@color/dark_gray" />
+                    app:tint="@color/dark_gray" />
 
             </LinearLayout>
 

@@ -26,24 +26,30 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import kotlinx.android.synthetic.main.adapter_sensor_preference.view.*
 
-class SensorAdapter(private val items: List<Sensor>?, private val sensorTopic: String, private val listener: OnItemClickListener) : RecyclerView.Adapter<SensorAdapter.ViewHolder>() {
+class SensorAdapter(private val sensorTopic: String, private val listener: OnItemClickListener) : RecyclerView.Adapter<SensorAdapter.ViewHolder>() {
+
+    private var items: List<Sensor> = emptyList()
 
     interface OnItemClickListener {
         fun onItemClick(sensor: Sensor)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SensorAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.adapter_sensor_preference, parent, false)
         return ViewHolder(v)
     }
 
+    fun setItems(items: List<Sensor>){
+        this.items = items
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
-        if (items == null) return 0
         return if (items.isNotEmpty()) items.size else 0
     }
 
     override fun onBindViewHolder(holder: SensorAdapter.ViewHolder, position: Int) {
-        holder.bindItems(items!![position], sensorTopic, listener)
+        holder.bindItems(items[position], sensorTopic, listener)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -52,28 +58,29 @@ class SensorAdapter(private val items: List<Sensor>?, private val sensorTopic: S
         fun bindItems(item: Sensor, sensorTopic: String, listener: OnItemClickListener) {
 
             itemView.nameText.text = item.name
-            itemView.topicSensorText.text = sensorTopic + itemView.context.getString(R.string.text_sensor_topic, item.topic)
+            itemView.topicSensorText.text = sensorTopic + item.topic
             itemView.payloadSensorText.text = itemView.context.getString(R.string.text_sensor_payload, item.payloadActive, item.payloadInactive)
 
-            when {
-                item.type == MqttUtils.SENSOR_DOOR_TYPE -> {
+            when (item.type) {
+                MqttUtils.SENSOR_DOOR_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_door)
                 }
-                item.type == MqttUtils.SENSOR_WINDOW_TYPE -> {
+                MqttUtils.SENSOR_WINDOW_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_window_open)
                 }
-                item.type == MqttUtils.SENSOR_MOTION_TYPE -> {
-                    itemView.typeIcon.setImageResource(R.drawable.ic_run_fast)
+                MqttUtils.SENSOR_MOTION_TYPE -> {
+                    itemView.typeIcon.setImageResource(R.drawable.ic_motion_sensor)
                 }
-                item.type == MqttUtils.SENSOR_CAMERA_TYPE -> {
+                MqttUtils.SENSOR_CAMERA_TYPE -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_video)
                 }
-                item.type == MqttUtils.SENSOR_SOUND_TYPE -> {
-                    itemView.typeIcon.setImageResource(R.drawable.ic_volume_high)
+                MqttUtils.SENSOR_SOUND_TYPE -> {
+                    itemView.typeIcon.setImageResource(R.drawable.ic_baseline_mic)
                 }
                 else -> {
                     itemView.typeIcon.setImageResource(R.drawable.ic_sensor) // generic sensor icon
                 }
+
             }
 
             when {

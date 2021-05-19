@@ -61,8 +61,8 @@
     <string name="preference_summary_password">Defina a password do servidor MQTT (se necessário).</string>
     <string name="preference_title_alarm">Alarme</string>
     <string name="preference_summary_alarm">Configurações do código de alarme</string>
-    <string name="preference_title_pending_time">Tempo de Espera</string>
-    <string name="preference_summary_pending_time">O tempo, em segundos, antes que o alarme seja armado ("Em Casa" ou "Fora de Casa"). Actualmente, %1$s segundos.</string>
+    <string name="preference_title_night_pending_time">Tempo de Espera</string>
+    <string name="preference_summary_night_pending_time">O tempo, em segundos, antes que o alarme seja armado ("Em Casa" ou "Fora de Casa"). Actualmente, %1$s segundos.</string>
     <string name="preference_title_trigger_time">Tempo de Disparo</string>
     <string name="preference_summary_trigger_time">O tempo, em segundos, antes de disparar o alarme. Actualmente, %1$s segundos.</string>
 
@@ -243,8 +243,8 @@
     <string name="text_update_available">Existe uma nova actualização, deseja instalá-la agora?</string>
     <string name="pref_home_pending_title">Tempo de Espera para Armar Casa</string>
     <string name="pref_home_pending_summary">O tempo em segundos antes do alarme passar ao modo CASA. Actualmente é %1$s segundos.</string>
-    <string name="pref_delay_title">Tempo de Espera para Desarmar</string>
-    <string name="pref_delay_summary">O tempo em segundos para mostrar a caixa de diálogo de desarme antes que o alarme seja accionado, a menos que sejam atinguidos os tempos de atraso de CASA ou FORA. Actualmente é %1$s segundos.</string>
+    <string name="pref_night_delay_title">Tempo de Espera para Desarmar</string>
+    <string name="pref_night_delay_summary">O tempo em segundos para mostrar a caixa de diálogo de desarme antes que o alarme seja accionado, a menos que sejam atinguidos os tempos de atraso de CASA ou FORA. Actualmente é %1$s segundos.</string>
     <string name="pref_away_pending_title">Tempo de Espera para Armar Fora</string>
     <string name="pref_away_pending_summary">O tempo em segundos antes do alarme passar ao modo FORA. Currently %1$s segundos.</string>
     <string name="pref_pending_times_description">Estes tempos devem corresponder aos definidos na sua plataforma de automação doméstica. Se não deseja utilizar tempos de espera, configure todos estes tempos com o mesmo valor que o seu Tempo de Espera para Armar Casa. Para o Home Assistant, veja a documentação em https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -310,7 +310,7 @@
     <string name="pref_sensor_list_summary">Abaixo está uma lista de dados do sensor disponíveis neste dispositivo para serem publicados como dados MQTT.</string>
     <string name="pref_qr_code_summary">Digitalizará códigos QR usando a câmera do dispositivo e publicará o código digitalizado sobre o MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publicar Frequência (em segundos)</string>
-    <string name="summary_setting_mqtt_basetopic">Identificador para receber comandos MQTT para este painel. Cada painel deve ter um identificador exclusivo.</string>
+    <string name="summary_mqtt_remote_commands">Identificador para receber comandos MQTT para este painel. Cada painel deve ter um identificador exclusivo.</string>
     <string name="title_setting_mqtt_basetopic">Tópico base</string>
     <string name="service_notification_message">Painel de alarme…</string>
     <string name="toast_camera_source_error">Não foi possível iniciar a fonte da câmera, você pode tentar novamente.</string>
@@ -429,6 +429,27 @@
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
     <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
+    <string name="pref_bypass_delay_summary">The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds.</string>
+
+    <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
+    <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
+    <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>

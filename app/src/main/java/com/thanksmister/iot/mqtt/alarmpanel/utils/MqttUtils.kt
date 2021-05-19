@@ -18,6 +18,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.utils
 
 import android.content.Context
 import android.text.TextUtils
+import com.google.gson.JsonObject
 
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTService
 
@@ -26,6 +27,9 @@ import org.eclipse.paho.client.mqttv3.IMqttMessageListener
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 
 import timber.log.Timber
 
@@ -37,14 +41,20 @@ class MqttUtils {
         const val TYPE_ALARM = "alarm"
         const val TYPE_SENSOR = "sensor"
         const val TYPE_COMMAND = "command"
+        const val TYPE_EVENT = "event"
 
         const val PORT = 1883
         const val TOPIC_COMMAND = "command"
         const val COMMAND_STATE = "state"
-        const val PANIC_STATE = "panic"
+
+        const val EVENT_INVALID_CODE = "invalid_code_provided"
+        const val EVENT_NO_CODE = "no_code_provided"
+        const val EVENT_ARM_FAILED = "failed_to_arm"
+        const val EVENT_SYSTEM_DISABLED = "system_disabled"
+        const val EVENT_COMMAND_NOT_ALLOWED = "command_not_allowed"
+        const val EVENT_UNKNOWN = "unknown"
 
         const val VALUE = "value"
-        const val ACTION = "action"
         const val COMMAND = "command"
         const val CODE = "code"
 
@@ -53,22 +63,21 @@ class MqttUtils {
         const val COMMAND_SENSOR_MOTION = "sensor/motion"
 
         const val STATE_CURRENT_URL = "currentUrl"
-
         const val STATE_SCREEN_ON = "screenOn"
         const val STATE_BRIGHTNESS = "brightness"
         const val STATE_PRESENCE = "presence"
         const val COMMAND_SENSOR_PREFIX = "sensor/"
 
         const val COMMAND_WAKE = "wake"
+        const val COMMAND_DASHBOARD = "dashboard"
         const val COMMAND_AUDIO = "audio"
         const val COMMAND_SPEAK = "speak"
         const val COMMAND_NOTIFICATION = "notification"
         const val COMMAND_ALERT = "alert"
-        const val COMMAND_DEVICE_SENSOR = "sensor"
+
         const val COMMAND_CAPTURE = "capture"
         const val COMMAND_WEATHER = "weather"
         const val COMMAND_SUN = "sun"
-
 
         const val SENSOR_GENERIC_TYPE = "GENERIC"
         const val SENSOR_DOOR_TYPE = "DOOR"
@@ -83,8 +92,8 @@ class MqttUtils {
         const val COMMAND_ARM_CUSTOM_BYPASS = "ARM_CUSTOM_BYPASS"
         const val COMMAND_ARM_AWAY = "ARM_AWAY"
         const val COMMAND_DISARM = "DISARM"
+        const val COMMAND_PANIC = "PANIC"
         const val COMMAND_ON = "ON"
-        const val NO_RESPONSE = "NO RESPONSE"
 
         // mqtt states
         const val STATE_DISARMED = "disarmed"
@@ -92,47 +101,26 @@ class MqttUtils {
         const val STATE_ARMED_HOME = "armed_home"
         const val STATE_ARMED_NIGHT = "armed_night"
         const val STATE_PENDING = "pending"
-        const val STATE_PENDING_ALARM = "pending_alarm"
         const val STATE_ARMING = "arming"
-        const val STATE_DISARMING = "disarming"
-
-        const val STATE_ARMING_AWAY = "arming_away"
+        const val STATE_ARMED_CUSTOM_BYPASS = "armed_custom_bypass"
+        const val STATE_TRIGGERED = "triggered"
+        const val STATE_DISABLED = "disabled"
         const val STATE_ARM_AWAY = "arm_away"
-        const val STATE_ARMING_HOME = "arming_home"
         const val STATE_ARM_HOME = "arm_home"
-        const val STATE_ARMING_NIGHT = "arming_night"
+        const val STATE_DISARM = "disarm"
         const val STATE_ARM_NIGHT = "arm_night"
+        const val STATE_ARM_CUSTOM_BYPASS = "arm_custom_bypass"
 
         const val DEFAULT_COMMAND_TOPIC = "home/alarm/set"
-        const val DEFAULT_SENSOR_TOPIC = "home/sensor/"
+        const val DEFAULT_SENSOR_TOPIC = "home/alarm/sensor"
         const val DEFAULT_CONFIG_TOPIC = "home/alarm/config"
-        const val DEFAULT_STATUS_TOPIC = "home/alarm/status"
+        const val DEFAULT_EVENT_TOPIC = "home/alarm/event"
         const val DEFAULT_STATE_TOPIC = "home/alarm"
         const val DEFAULT_PANEL_COMMAND_TOPIC = "alarmpanel"
 
-        const val DEFAULT_INVALID = "INVALID"
-
-        const val STATE_TRIGGERED = "triggered"
-        const val STATE_DISABLED = "disabled"
-
-        private val supportedCommands = ArrayList<String>()
-        private val supportedStates = ArrayList<String>()
         val sensorTypes = java.util.ArrayList<String>()
         
         init {
-            supportedCommands.add(COMMAND_ARM_HOME)
-            supportedCommands.add(COMMAND_ARM_AWAY)
-            supportedCommands.add(COMMAND_ARM_NIGHT)
-            supportedCommands.add(COMMAND_DISARM)
-            supportedStates.add(STATE_DISARMED)
-            supportedStates.add(STATE_ARMED_AWAY)
-            supportedStates.add(STATE_ARMED_HOME)
-            supportedStates.add(STATE_PENDING)
-            supportedStates.add(STATE_ARMING)
-            supportedStates.add(STATE_ARMING_AWAY)
-            supportedStates.add(STATE_ARMING_HOME)
-            supportedStates.add(STATE_ARMING_NIGHT)
-            supportedStates.add(STATE_TRIGGERED)
             sensorTypes.add(SENSOR_GENERIC_TYPE)
             sensorTypes.add(SENSOR_DOOR_TYPE)
             sensorTypes.add(SENSOR_WINDOW_TYPE)
@@ -165,6 +153,75 @@ class MqttUtils {
                 mqttMessageListeners[i] = mqttMessageListener
             }
             return mqttMessageListeners
+        }
+
+        /**
+         * Validate if we have valid json for parsing.
+         */
+        fun isJSONValid(value: String?): Boolean {
+            value?.let {
+                try {
+                    JSONObject(value)
+                } catch (ex: JSONException) {
+                    return false
+                }
+                return true
+            }?: return false
+        }
+
+        fun parseJSONObjectOrEmpty(value: String?): JSONObject? {
+            value?.let {
+                return try {
+                    JSONObject(value)
+                } catch (ex: JSONException) {
+                    JSONObject()
+                }
+            }?: return null
+        }
+
+        fun parseEventFromJson(payload: String): String {
+            var event = payload
+            if(isJSONValid(payload)) {
+                val json = parseJSONObjectOrEmpty(payload)
+                json?.let {
+                    if(json.has("event")) {
+                        event = json.getString("event") ?: ""
+                    }
+                }
+                return event
+            } else {
+                return event
+            }
+        }
+
+        fun parseStateFromJson(payload: String): String {
+            var state = payload
+            if(isJSONValid(payload)) {
+                val json = parseJSONObjectOrEmpty(payload)
+                json?.let {
+                    if(json.has("state")) {
+                        state = json.getString("state") ?: ""
+                    }
+                }
+                return state
+            } else {
+                return state
+            }
+        }
+
+        fun parseDelayFromJson(payload: String): Int {
+            var delay = -1
+            if(isJSONValid(payload)) {
+                val json = parseJSONObjectOrEmpty(payload)
+                json?.let {
+                    if(json.has("delay")) {
+                        delay = json.getInt("delay")
+                    }
+                }
+                return delay
+            } else {
+                return delay
+            }
         }
 
         /**

@@ -147,7 +147,7 @@
     <string name="toast_camera_source_error">Kamera konnte nicht gestartet werden, versuchen Sie es eventuell noch einmal.</string>
     <string name="service_notification_message">Alarm-Panel läuft...</string>
     <string name="title_setting_mqtt_basetopic">Base-Topic</string>
-    <string name="summary_setting_mqtt_basetopic">MQTT Identifier für Befehle für dieses Panel. Jedes Panel sollte einen eigenen Identifier haben.</string>
+    <string name="summary_mqtt_remote_commands">MQTT Identifier für Befehle für dieses Panel. Jedes Panel sollte einen eigenen Identifier haben.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publish-Frequenz (in Sekunden)</string>
     <string name="pref_qr_code_summary">Scannt QR-Codes mit der Kamera und published die gescannten Codes über MQTT.</string>
     <string name="pref_sensor_list_summary">Liste der für MQTT-Publishing verfügbaren Sensordaten.</string>
@@ -202,8 +202,8 @@
     <string name="pref_pending_times_description">Diese Zeiten sollten mit denen in Ihrer Home Automation Platform übereinstimmen. Sollten Sie die Zeiten für Verzögerung, schwebender Home-Modus, schwebender Away-Modus nicht verwenden möchten, setzen Sie alle auf den selben Wert wie ihre schwebende Zeit. Für Home Assistant, folgen Sie der MQTT manual alarm control panel Dokumentation auf https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
     <string name="pref_away_pending_summary">Sekunden bevor der Away-Modus aktiviert wird. Derzeit %1$s Sekunden.</string>
     <string name="pref_away_pending_title">Schwebende Away-Modus Zeit</string>
-    <string name="pref_delay_summary">Sekunden die der Entschärfen-Dialog angezeigt wird bevor der Alarm ausgelöst wird, wenn nicht durch die Home- oder Away-Modus-Einstellungen überschrieben wurde. Derzeit %1$s Sekunden.</string>
-    <string name="pref_delay_title">Entschärfen Zeit</string>
+    <string name="pref_night_delay_summary">Sekunden die der Entschärfen-Dialog angezeigt wird bevor der Alarm ausgelöst wird, wenn nicht durch die Home- oder Away-Modus-Einstellungen überschrieben wurde. Derzeit %1$s Sekunden.</string>
+    <string name="pref_night_delay_title">Entschärfen Zeit</string>
     <string name="pref_home_pending_title">Schwebende Home-Modus Zeit</string>
     <string name="pref_home_pending_summary">Sekunden bevor der Home-Modus aktiviert wird. Derzeit %1$s Sekunden.</string>
     <string name="preference_summary_tls_connection">Zum Broker Port 8883 mit SSL/TLS verbinden.</string>
@@ -246,8 +246,8 @@
     <string name="preference_summary_password">Setzt das Service-Passwort (falls benötigt).</string>
     <string name="preference_title_alarm">Alarm</string>
     <string name="preference_summary_alarm">Alarmcode-Einstellungen</string>
-    <string name="preference_title_pending_time">Schwebende Zeit</string>
-    <string name="preference_summary_pending_time">Sekunden bis die Alarmanlage auf den Home- oder Away-Modus scharf geschalten wird. Derzeit %1$s Sekunden.</string>
+    <string name="preference_title_night_pending_time">Schwebende Zeit</string>
+    <string name="preference_summary_night_pending_time">Sekunden bis die Alarmanlage auf den Home- oder Away-Modus scharf geschalten wird. Derzeit %1$s Sekunden.</string>
     <string name="preference_title_trigger_time">Auslösezeit</string>
     <string name="preference_summary_trigger_time">Sekunden bevor der Alarm ausgelöst wird. Derzeit %1$s Sekunden.</string>
     <string name="preference_title_weather_settings">Wetter</string>
@@ -359,4 +359,87 @@
     <string name="pref_automatic_time_zone_title">Automatische Zeitzone</string>
     <string name="pref_automatic_time_zone_summary">Verwende Netzwerk-Zeitzone</string>
     <string name="pref_time_summary">Gerätezeit aktualisieren.</string>
+
+    <string name="toast_config_invalid">Error parsing remote configuration file, check your configuration.</string>
+    <string name="title_setting_camera_motionleniency">Maximum Leniency</string>
+    <string name="title_setting_camera_motionminluma">Minimum Luma</string>
+
+    <string name="text_triggered">TRIGGERED</string>
+    <string name="text_armed_night">ARMED NIGHT</string>
+    <string name="text_disarming">DISARMING</string>
+    <string name="text_arming">ARMING</string>
+    <string name="text_disabled">DISABLED</string>
+
+    <string name="text_broadcast_alert">BROADCAST ALERT</string>
+    <string name="text_send_alert_description">Send an alert message for help or other emergency.</string>
+    <string name="button_send_alert">SEND</string>
+    <string name="sensor_no_response">NO RESPONSE</string>
+    <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
+    <string name="text_alarm_entry">ALARM ENTRY</string>
+
+    <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
+    <string name="pref_bypass_delay_summary">The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds.</string>
+    <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
+    <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
+    <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+
+    <string-array name="inactivity_times">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+    </string-array>
+
+    <string-array name="timeout_times">
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>24 hours</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>None</item>
+        <item>Rotate Left</item>
+        <item>Rotate Right</item>
+        <item>Flip Vertical</item>
+    </string-array>
+
+    <string-array name="sensor_types">
+        <item>Generic</item>
+        <item>Door</item>
+        <item>Window</item>
+        <item>Sound</item>
+        <item>Motion</item>
+        <item>Camera</item>
+    </string-array>
+
 </resources>

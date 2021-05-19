@@ -32,11 +32,10 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.network.ImageOptions
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Dashboard
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.WeatherDao
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.AlarmCodeView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.ScreenSaverView
-import com.thanksmister.iot.mqtt.alarmpanel.ui.views.SensorDialogView
+import com.thanksmister.iot.mqtt.alarmpanel.ui.views.*
 import timber.log.Timber
 
 /**
@@ -151,7 +150,23 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
                 .show()
     }
 
-    fun showCodeDialog(activity: AppCompatActivity, confirmCode: Boolean, listener: AlarmCodeView.ViewListener, onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
+    fun showEditTextDialog(context: Context, value: String, listener: EditTextDialogView.ViewListener) {
+        clearDialogs()
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_edit_text, null, false)
+        val editTextDialogView = view.findViewById<EditTextDialogView>(R.id.editTextDialogView)
+        editTextDialogView.setListener(listener)
+        editTextDialogView.setValue(value)
+        alertDialog = AlertDialog.Builder(context, R.style.CustomAlertDialog)
+                .setView(editTextDialogView)
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onComplete(editTextDialogView.value)}
+                .setNegativeButton(android.R.string.cancel, { _, _ -> listener.onCancel() })
+                .show()
+    }
+
+    fun showCodeDialog(activity: Context, confirmCode: Boolean,
+                       listener: AlarmCodeView.ViewListener,
+                       onCancelListener: DialogInterface.OnCancelListener, systemSounds: Boolean) {
         clearDialogs()
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_alarm_code_set, null, false)
@@ -168,43 +183,30 @@ class DialogUtils(base: Context) : ContextWrapper(base), LifecycleObserver {
         dialog?.show()
     }
 
-    fun showSensorDialog(activity: AppCompatActivity, sensor: Sensor, topic: String, listener: SensorDialogView.ViewListener) {
+    // TODO make this custom dialog with remove button
+    fun showSensorDialog(context: Context, sensor: Sensor, topic: String, listener: SensorDialogView.ViewListener) {
         clearDialogs()
-        val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.dialog_sensor, null, false)
         val sensorDialogView = view.findViewById<SensorDialogView>(R.id.sensorDialogView)
         sensorDialogView.setListener(listener)
         sensorDialogView.setSensor(sensor, topic)
-        alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog)
-                .setView(sensorDialogView)
-                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onComplete(sensorDialogView.sensor) }
-                .setNegativeButton(android.R.string.cancel, { _, _ -> listener.onCancel() })
-                .show()
+        dialog = Dialog(context, R.style.CustomAlertDialog)
+        dialog?.setContentView(view)
+        dialog?.show()
     }
 
-    /* fun showExtendedForecastDialog(activity: AppCompatActivity, weather: Weather) {
-         clearDialogs()
-         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-         val view = inflater.inflate(R.layout.dialog_extended_forecast, null, false)
-         val displayRectangle = Rect()
-         val window = activity.window
-         window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-         view.minimumWidth = (displayRectangle.width() * 0.9f).toInt()
-         val density = activity.resources.displayMetrics.densityDpi
-         if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-             if (density == DisplayMetrics.DENSITY_MEDIUM) {
-                 view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
-             } else {
-                 view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
-             }
-         } else {
-             view.minimumHeight = (displayRectangle.height() * 0.9f).toInt()
-         }
-         val extendedForecastView = view.findViewById<ExtendedForecastView>(R.id.extendedForecastView)
-         extendedForecastView.setExtendedForecast(weather)
-         dialog = buildImmersiveDialog(activity, true, view, false)
-     }*/
-
+    fun showDashboardDialog(context: Context, dashboard: Dashboard, listener: EditDashboardDialogView.ViewListener) {
+        clearDialogs()
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.dialog_edit_dashboard, null, false)
+        val dashboardDialogView = view.findViewById<EditDashboardDialogView>(R.id.editDashboardDialog)
+        dashboardDialogView.setListener(listener)
+        dashboardDialogView.setValue(dashboard)
+        dialog = Dialog(context, R.style.CustomAlertDialog)
+        dialog?.setContentView(view)
+        dialog?.show()
+    }
 
     /**
      * Show the screen saver only if the alarm isn't triggered. This shouldn't be an issue

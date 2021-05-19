@@ -29,8 +29,13 @@ class CustomViewPager(context: Context, attrs: AttributeSet) : ViewPager(context
 
     private var swipeEnabled: Boolean = false
 
+    override fun performClick(): Boolean {
+        return swipeEnabled && super.performClick()
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return swipeEnabled && super.onTouchEvent(event)
+        performClick()
+        return super.onTouchEvent(event)
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {

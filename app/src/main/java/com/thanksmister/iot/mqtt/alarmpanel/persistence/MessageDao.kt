@@ -19,6 +19,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.persistence
 import androidx.room.*
 
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 
 /**
  * Data Access Object for the messages table.
@@ -44,8 +45,15 @@ interface MessageDao {
      * Get all messages
      * @return list of all messages
      */
-    @Query("SELECT * FROM Messages WHERE type = :type")
+    @Query("SELECT * FROM Messages WHERE type = :type ORDER BY createdAt DESC LIMIT 1")
     fun getMessages(type: String): Flowable<List<MessageMqtt>>
+
+    /**
+     * Get all messages
+     * @return list of all messages
+     */
+    @Query("SELECT * FROM Messages WHERE type = :type ORDER BY createdAt DESC LIMIT 1")
+    fun getSensorMessages(type: String): Maybe<List<MessageMqtt>>
 
     /**
      * Insert a message in the database. If the message already exists, replace it.

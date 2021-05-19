@@ -60,8 +60,8 @@
     <string name="preference_summary_password">Ange tjänstens lösenord (vid behov).</string>
     <string name="preference_title_alarm">Larm</string>
     <string name="preference_summary_alarm">Inställning för larmkod</string>
-    <string name="preference_title_pending_time">Utgångstid</string>
-    <string name="preference_summary_pending_time">Tid i sekunder att vänta innan larmet är tillkopplat i borta- eller hemmaläge. Nuvarande tid är %1$s sekunder.</string>
+    <string name="preference_title_night_pending_time">Utgångstid</string>
+    <string name="preference_summary_night_pending_time">Tid i sekunder att vänta innan larmet är tillkopplat i borta- eller hemmaläge. Nuvarande tid är %1$s sekunder.</string>
     <string name="preference_title_trigger_time">Aktiveringstid</string>
     <string name="preference_summary_trigger_time">Tid i sekunder innan larmet löser ut. Nuvarande tid är %1$s sekunder.</string>
 
@@ -242,8 +242,8 @@
     <string name="text_update_available">Det finns en ny uppdatering tillgänglig, vill du installera den nu?</string>
     <string name="pref_home_pending_title">Tillkoppling i hemmaläge in/utpasseringstid</string>
     <string name="pref_home_pending_summary">Tiden det tar innan larmet är tillkopplat vid manövrering till hemmaläge. Aktuellt värde: %1$s sekunder.</string>
-    <string name="pref_delay_title">Inpasseringstid</string>
-    <string name="pref_delay_summary">Tid i sekunder att visa vyn för frånkoppling innan larmet löser ut om det inte är förbisatt av hemmaläge eller bortaläge. Nu är den: %1$s sekunder.</string>
+    <string name="pref_night_delay_title">Inpasseringstid</string>
+    <string name="pref_night_delay_summary">Tid i sekunder att visa vyn för frånkoppling innan larmet löser ut om det inte är förbisatt av hemmaläge eller bortaläge. Nu är den: %1$s sekunder.</string>
     <string name="pref_away_pending_title">Larm i bortaläge utpasseringstid</string>
     <string name="pref_away_pending_summary">Tiden det tar innan larmet är tillkopplat vid manövrering till bortaläge. Aktuellt värde: %1$s sekunder.</string>
     <string name="pref_pending_times_description">Dessa tider bör matcha det som står i automations platformen. Om du inte vill använda dessa tider så sätt dem alla till samma som din utpasseringstid. För Home Assistant, se MQTT manual alarm control dokumenttion här: https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -309,7 +309,7 @@
     <string name="pref_sensor_list_summary">Nedan är en lista på tillgängliga sensorer på denna nehet för publicering som MQTT data.</string>
     <string name="pref_qr_code_summary">Scannar QR koder med enhetens kamera och publicerar dessa över MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Publicerinsgfrekvens (i sekunder)</string>
-    <string name="summary_setting_mqtt_basetopic">Identifierare för att ta emot MQTT kommandon för denna panel. Varje panel behöver en unik identifierare.</string>
+    <string name="summary_mqtt_remote_commands">Identifierare för att ta emot MQTT kommandon för denna panel. Varje panel behöver en unik identifierare.</string>
     <string name="title_setting_mqtt_basetopic">Basämne</string>
     <string name="service_notification_message">Larmpanel körs…</string>
     <string name="toast_camera_source_error">Kunde inte starta kameran, vill du försöka igen?</string>
@@ -428,6 +428,27 @@
     <string name="sensor_no_response">NO RESPONSE</string>
     <string name="pref_summary_send_code">Send code to the server to update alarm state.</string>
     <string name="text_alarm_entry">ALARM ENTRY</string>
+    <string name="pref_title_alarm_modes_sensors">Additional Settings</string>
+    <string name="text_arm">ARM</string>
+    <string name="text_arm_night">NIGHT</string>
+    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_arm_custom">CUSTOM</string>
+    <string name="text_arm_custom_bypass">BYPASS</string>
+    <string name="preference_title_event_topic">Alarm Event Topic</string>
+    <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+    <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+    <string name="error_no_code">A code is required and was not provided.</string>
+    <string name="error_system_disabled">The system is disabled, check the server.</string>
+    <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+    <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+    <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
+    <string name="pref_bypass_delay_summary">The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds.</string>
+
+    <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
+    <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
+    <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
 
     <string-array name="inactivity_times">
         <item>15 sekunder</item>

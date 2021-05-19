@@ -19,15 +19,12 @@
 
     <color name="colorPrimary">#393C44</color>
     <color name="colorPrimaryDark">#292929</color>
-    <color name="colorAccent">#C91976D2</color>
-    <color name="dialogBackgroundColor">#121212</color>
-
-    <color name="dialogBackgroundText">#CCFFFFFF</color>
-
-
+    <color name="colorAccent">#0EABEE</color>
+    <color name="dialogBackgroundColor">#363636</color>
+    <color name="dialogBackgroundText">#FCFFFFFF</color>
 
     <color name="body_text_1">#f4f4f4</color>
-    <color name="body_text_2">#E5F4F4F4</color>
+    <color name="body_text_2">#E5FFFFFF</color>
     <color name="body_text_3">#CCF4F4F4</color>
     <color name="dark_gray_color">#A3A1A1</color>
     <color name="dark_gray">#fff4f4f4</color>
@@ -39,5 +36,9 @@
     <color name="weather_card_background">#393C44</color>
     <color name="weather_card_icon">#C9EFEDED</color>
     <color name="weather_card_border">#292929</color>
+
+    <color name="sensor_icon">#E5FFFFFF</color>
+
+    <color name="dot_color">#7AFFFFFF</color>
 
 </resources>

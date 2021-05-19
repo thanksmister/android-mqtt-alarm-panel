@@ -25,20 +25,24 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_SENSO
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class MainViewModel @Inject
-constructor(application: Application, private val messageDataSource: MessageDao,
-            private val sunSource: SunDao, private val configuration: Configuration) : AndroidViewModel(application) {
+constructor(application: Application,
+            private val messageDataSource: MessageDao,
+            private val sensorSource: SensorDao,
+            private val sunSource: SunDao,
+            private val dashboardSource: DashboardDao,
+            private val configuration: Configuration) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
     private val toastText = ToastMessage()
     private val alertText = AlertMessage()
     private val snackbarText = SnackbarMessage()
-    private var initialized = false;
-    private var previousAlarmMode: String = ""
 
     fun getToastMessage(): ToastMessage {
         return toastText
@@ -69,15 +73,33 @@ constructor(application: Application, private val messageDataSource: MessageDao,
                 .filter {messages -> messages.isNotEmpty()}
     }
 
-    fun getAlarmState():Flowable<String> {
+    /**
+     * Get sensors.
+     * @return a [Flowable]
+     */
+    fun getSensors(): Flowable<List<Sensor>> {
+        return sensorSource.getSenors()
+    }
+
+    inner class AlarmState {
+        var payload: String? = null
+        var delay: Int? = -1
+    }
+
+    fun getAlarmState():Flowable<AlarmState> {
         return messageDataSource.getMessages(TYPE_ALARM)
                 .filter {messages -> messages.isNotEmpty()}
                 .map {messages -> messages[messages.size - 1]}
                 .map {message ->
-                    val payload = message.payload
-                    //setAlarmModeFromState(payload)
-                    payload
+                    val state = AlarmState()
+                    state.delay = message.delay
+                    state.payload = message.payload
+                    state
                 }
+    }
+
+    fun getDashboards():Flowable<List<Dashboard>> {
+        return dashboardSource.getDashboards()
     }
 
     fun clearMessages():Completable {
@@ -90,14 +112,8 @@ constructor(application: Application, private val messageDataSource: MessageDao,
         return (configuration.hasPlatformModule() && configuration.webUrl?.isNotEmpty()?:false)
     }
 
-    private fun setAlarmModeFromState(state: String?) {
-        state?.let {
-            setAlarmMode(state)
-        }
-    }
-
     fun setAlarmMode(value: String) {
-        configuration.alarmMode = value;
+        configuration.alarmMode = value
     }
 
     fun getAlarmMode(): String {

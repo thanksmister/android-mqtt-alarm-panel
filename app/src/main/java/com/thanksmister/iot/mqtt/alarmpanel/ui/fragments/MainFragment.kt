@@ -18,18 +18,23 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.thanksmister.iot.mqtt.alarmpanel.BaseFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
+import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.SensorDisplayAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.MainViewModel
@@ -44,6 +49,7 @@ class MainFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     lateinit var viewModel: MainViewModel
 
     @Inject
@@ -57,20 +63,20 @@ class MainFragment : BaseFragment() {
 
     private var listener: OnMainFragmentListener? = null
 
+    private var hasSensors: Boolean = false
 
     interface OnMainFragmentListener {
         fun manuallyLaunchScreenSaver()
-        fun navigatePlatformPanel()
+        fun navigateDashBoard(dashboard: Int)
         fun publishDisarm(code: String)
         fun publishAlertCall()
-        fun showCodeDialog(type: CodeTypes)
+        fun showCodeDialog(type: CodeTypes, delay: Int?)
         fun showAlarmTriggered()
         fun hideTriggeredView()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Timber.d("onAttach")
         if (context is OnMainFragmentListener) {
             listener = context
         } else {
@@ -80,100 +86,109 @@ class MainFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Timber.d("onActivityCreated")
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
         observeViewModel(viewModel)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("onViewCreated")
-
-        buttonSettings?.setOnClickListener {
-            showSettingsCodeDialog()
-        }
-
-        platformButton?.setOnClickListener {
-            listener?.navigatePlatformPanel()
-        }
-
-        buttonSleep?.setOnClickListener {
-            listener?.manuallyLaunchScreenSaver()
-        }
-
-        alertButton?.setOnClickListener {
-            listener?.publishAlertCall()
-        }
+        sensorsDisplayList.layoutManager = LinearLayoutManager(context)
+        sensorsDisplayList.adapter = sensorAdapter
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    /**
-     * Here we setup the visibility of the bottom navigation bar buttons based on changes in the settings.
-     */
+    private val sensorAdapter: SensorDisplayAdapter by lazy {
+        SensorDisplayAdapter()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
     override fun onResume() {
-
         super.onResume()
+        handleDisplayAlignment(hasSensors)
+    }
 
-        if (viewModel.hasPlatform()) {
-            buttonPlatformLayout?.visibility = View.VISIBLE;
-        } else {
-            buttonPlatformLayout?.visibility = View.INVISIBLE;
-        }
-        if (configuration.hasScreenSaver()) {
-            buttonSleepLayout?.visibility = View.VISIBLE
-        } else {
-            buttonSleepLayout?.visibility = View.GONE
-        }
-        if (configuration.panicButton.not()) {
-            alertButton?.visibility = View.GONE
-        } else {
-            alertButton?.visibility = View.VISIBLE
-        }
+    private fun observeViewModel(viewModel: MainViewModel) {
+        disposable.add(viewModel.getAlarmState()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ state ->
+                    Timber.d("Alarm state: $state")
+                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}")
+                    val payload = state.payload
+                    activity?.runOnUiThread {
+                        when (payload) {
+                            MqttUtils.STATE_ARMED_AWAY,
+                            MqttUtils.STATE_ARMED_NIGHT,
+                            MqttUtils.STATE_ARMED_HOME -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_ARMING -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_DISARMED -> {
+                                dialogUtils.clearDialogs()
+                                listener?.hideTriggeredView()
+                            }
+                            MqttUtils.STATE_PENDING -> {
+                                dialogUtils.clearDialogs()
+                            }
+                            MqttUtils.STATE_TRIGGERED -> {
+                                dialogUtils.clearDialogs()
+                                listener?.showAlarmTriggered()
+                            }
+                        }
+                    }
+                }, { error -> Timber.e("Unable to get message: $error") }))
 
-        if (mqttOptions.sensorOneActive.not()) {
-            view?.findViewById<View>(R.id.oneSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.oneSensorContainer)?.visibility = View.VISIBLE
-        }
+        disposable.add(viewModel.getSensors()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ items ->
+                    if (items.isNullOrEmpty()) {
+                        this.hasSensors = false
+                        handleDisplayAlignment(false)
+                        sensorsDisplayList.visibility = View.GONE
+                    } else {
+                        this.hasSensors = true
+                        handleDisplayAlignment(true)
+                        sensorsDisplayList.visibility = View.VISIBLE
+                        sensorAdapter.setItems(items)
+                    }
+                }, { error ->
+                    Timber.e("Unable to get sensors: $error")
+                }))
+    }
 
-        if (mqttOptions.sensorTwoActive.not()) {
-            view?.findViewById<View>(R.id.twoSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.twoSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorThreeActive.not()) {
-            view?.findViewById<View>(R.id.threeSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.threeSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        if (mqttOptions.sensorFourActive.not()) {
-            view?.findViewById<View>(R.id.fourSensorContainer)?.visibility = View.GONE
-        } else {
-            view?.findViewById<View>(R.id.fourSensorContainer)?.visibility = View.VISIBLE
-        }
-
-        // TODO handle 600 dp vs others?
+    private fun handleDisplayAlignment(hasSensors: Boolean) {
         val metrics = resources.displayMetrics
         val scaleFactor = metrics.density
         val widthDp = metrics.widthPixels / scaleFactor
         val heightDp = metrics.heightPixels / scaleFactor
         val orientation = resources.configuration.orientation
         val smallestWidth = widthDp.coerceAtMost(heightDp)
-        if (mqttOptions.hasNoSensors()) {
+        val smallestHeight = heightDp.coerceAtMost(widthDp)
+        if (hasSensors.not()) {
             if (orientation == ORIENTATION_LANDSCAPE) {
                 when {
-                    smallestWidth > 720 -> {
+                    smallestWidth >= 720 -> {
                         guideControlMiddle?.setGuidelinePercent(0.80f)
                         guidelineStart?.setGuidelinePercent(0.2f)
                     }
-                    smallestWidth > 500 -> {
-                        guideControlMiddle?.setGuidelinePercent(0.82f)
-                        guidelineStart?.setGuidelinePercent(0.18f)
+                    smallestWidth >= 600 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.78f)
+                        guidelineStart?.setGuidelinePercent(0.22f)
+                    }
+                    smallestWidth >= 500 -> {
+                        guideControlMiddle?.setGuidelinePercent(0.78f)
+                        guidelineStart?.setGuidelinePercent(0.22f)
+
                     }
                     else -> {
                         guideControlMiddle?.setGuidelinePercent(0.78f)
@@ -183,6 +198,10 @@ class MainFragment : BaseFragment() {
             } else {
                 when {
                     smallestWidth > 720 -> {
+                        guideControlTop?.setGuidelinePercent(0.32f)
+                        guideControlBottom?.setGuidelinePercent(0.64f)
+                    }
+                    smallestWidth >= 600 -> {
                         guideControlTop?.setGuidelinePercent(0.32f)
                         guideControlBottom?.setGuidelinePercent(0.64f)
                     }
@@ -214,7 +233,6 @@ class MainFragment : BaseFragment() {
                 }
 
             } else {
-
                 when {
                     smallestWidth > 720 -> {
                         guideControlTop?.setGuidelinePercent(0.26f)
@@ -231,90 +249,6 @@ class MainFragment : BaseFragment() {
                 }
 
             }
-        }
-
-        childFragmentManager.findFragmentById(R.id.oneSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorOneName)
-            sensor.setSensorState(mqttOptions.sensorOneState)
-            sensor.setSensorTopic(mqttOptions.sensorOneTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.twoSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorTwoName)
-            sensor.setSensorState(mqttOptions.sensorTwoState)
-            sensor.setSensorTopic(mqttOptions.sensorTwoTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.threeSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorThreeName)
-            sensor.setSensorState(mqttOptions.sensorThreeState)
-            sensor.setSensorTopic(mqttOptions.sensorThreeTopic)
-        }
-
-        childFragmentManager.findFragmentById(R.id.fourSensorContainer)?.apply {
-            val sensor = this as SensorControlFragment
-            sensor.setSensorTitle(mqttOptions.sensorFourName)
-            sensor.setSensorState(mqttOptions.sensorFourState)
-            sensor.setSensorTopic(mqttOptions.sensorFourTopic)
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        buttonSleep?.apply {
-            setOnTouchListener(null)
-        }
-        listener = null
-    }
-
-    private fun observeViewModel(viewModel: MainViewModel) {
-        disposable.add(viewModel.getAlarmState()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ state ->
-                    Timber.d("Alarm state: $state")
-                    Timber.d("Alarm mode: ${viewModel.getAlarmMode()}")
-                    activity?.runOnUiThread {
-                        when (state) {
-                            MqttUtils.STATE_ARMED_AWAY,
-                            MqttUtils.STATE_ARMED_NIGHT,
-                            MqttUtils.STATE_ARMED_HOME -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            MqttUtils.STATE_ARMING_NIGHT,
-                            MqttUtils.STATE_ARMING_AWAY,
-                            MqttUtils.STATE_ARMING_HOME,
-                            MqttUtils.STATE_ARMING -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            MqttUtils.STATE_DISARMED -> {
-                                dialogUtils.clearDialogs()
-                                listener?.hideTriggeredView()
-                            }
-                            MqttUtils.STATE_PENDING -> {
-                                dialogUtils.clearDialogs()
-                            }
-                            MqttUtils.STATE_TRIGGERED -> {
-                                dialogUtils.clearDialogs()
-                                listener?.showAlarmTriggered()
-                            }
-                        }
-                    }
-                }, { error -> Timber.e("Unable to get message: $error") }))
-    }
-
-
-    private fun showSettingsCodeDialog() {
-        if (configuration.isFirstTime) {
-            activity?.let {
-                val intent = SettingsActivity.createStartIntent(it.applicationContext)
-                startActivity(intent)
-            }
-        } else {
-            listener?.showCodeDialog(CodeTypes.SETTINGS)
         }
     }
 

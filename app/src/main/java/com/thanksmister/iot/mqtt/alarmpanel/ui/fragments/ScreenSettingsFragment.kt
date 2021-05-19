@@ -63,6 +63,10 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     private var dimPreference: ListPreference? = null
     private var brightnessPreference: Preference? = null
 
+    private val inactivityTimerPreference: SwitchPreference by lazy {
+        findPreference("pref_settings_inactivity_timer") as SwitchPreference
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -94,6 +98,9 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+
+        // automatically switches screen on user inactivity
+        inactivityTimerPreference.isChecked = configuration.useInactivityTimer
 
         clockSaverPreference = findPreference("pref_settings_clock_saver") as SwitchPreference
         unsplashScreenSaver = findPreference("pref_screensaver_wallpaper") as SwitchPreference
@@ -246,6 +253,9 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
                     screenUtils.restoreDeviceBrightnessControl()
                 }
             }
+            "pref_settings_inactivity_timer" -> {
+                configuration.useInactivityTimer = inactivityTimerPreference.isChecked
+            }
             "pref_settings_image_rotation"-> {
                 val rotationValue = rotationPreference?.text?.toIntOrNull()
                 if(rotationValue != null) {
@@ -283,7 +293,7 @@ class ScreenSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnS
             "pref_settings_day_night" -> {
                 val checked = dayNightPreference!!.isChecked
                 configuration.useNightDayMode = checked
-                configuration.nightModeChanged = true
+                //configuration.nightModeChanged = true
             }
             "pref_settings_hardware_acceleration" -> {
                 val checked = hardwareAcceleration!!.isChecked

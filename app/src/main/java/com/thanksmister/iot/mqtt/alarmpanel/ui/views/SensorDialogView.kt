@@ -23,110 +23,124 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ScrollView
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
-import kotlinx.android.synthetic.main.dialog_sensor.view.*
 import android.widget.ArrayAdapter
+import android.widget.ScrollView
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DEVICE_SENSOR
+import com.thanksmister.iot.mqtt.alarmpanel.persistence.Sensor
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_CAMERA_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_DOOR_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_GENERIC_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_MOTION_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_SOUND_TYPE
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.SENSOR_WINDOW_TYPE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.sensorTypes
+import kotlinx.android.synthetic.main.dialog_sensor.view.*
 import timber.log.Timber
 
 class SensorDialogView : ScrollView {
 
-    internal var sensorDialogListener: ViewListener? = null
+    internal var listener: ViewListener? = null
     internal var sensor: Sensor = Sensor()
     internal var topicPrefix: String = ""
 
     interface ViewListener {
-        fun onComplete(sensor: Sensor)
+        fun onUpdate(sensor: Sensor)
+        fun onRemove(sensor: Sensor)
         fun onCancel()
     }
 
     fun setListener(listener: ViewListener) {
-        this.sensorDialogListener = listener
+        this.listener = listener
     }
 
     constructor(context: Context) : super(context) {}
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
 
-    fun setSensor(sensor: Sensor, topicPrefix: String) {
+    fun setSensor(sensor: Sensor, topic: String) {
         this.sensor = sensor
-        this.topicPrefix = topicPrefix
+        this.topicPrefix = topic + "/"
 
-        if(TextUtils.isEmpty(sensor.name)) {
+        if (sensor.name.isNullOrEmpty()) {
             sensorName.setText(context.getString(R.string.text_sensor))
         } else {
             sensorName.setText(sensor.name)
         }
 
-        if(!TextUtils.isEmpty(sensor.topic)){
+        if (sensor.topic.isNullOrEmpty().not()) {
             sensorTopic.setText(sensor.topic)
         }
 
-        if(!TextUtils.isEmpty(sensor.payloadActive)){
+        if (sensor.payloadActive.isNullOrEmpty().not()) {
             sensorPayloadActive.setText(sensor.payloadActive)
         }
 
-        if(!TextUtils.isEmpty(sensor.payloadInactive)){
+        if (sensor.payloadInactive.isNullOrEmpty().not()) {
             sensorPayloadInactive.setText(sensor.payloadInactive)
         }
 
         sensorAlarm.isChecked = sensor.alarmMode
         sensorNotification.isChecked = sensor.notify
 
-        if(TextUtils.isEmpty(sensor.type)) {
+        if (sensor.type.isNullOrEmpty()) {
             sensor.type = SENSOR_GENERIC_TYPE
         }
-        val pos = sensorTypes.indexOf(sensor.type)
-        sensorType.setSelection(pos)
+
+        sensor.type?.let {
+            val pos = sensorTypes.indexOf(it)
+            sensorType.setSelection(pos)
+        }
 
         val topicDescription = context.getString(R.string.sensor_topic_description, topicPrefix)
         sensorTopicDescription.text = topicDescription
         sensorTopicPrefix.text = topicPrefix
-
         createSensorMQTT(sensor)
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
 
-        sensorName.addTextChangedListener(object:TextWatcher{
+        sensorName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 sensor.name = s.toString()
-                Timber.d("Sensor Name: " + sensor.name)
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
 
-        sensorTopic.addTextChangedListener(object:TextWatcher{
+        sensorTopic.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 sensor.topic = s.toString()
-                createSensorMQTT(sensor)
+                sensor.let {
+                    createSensorMQTT(it)
+                }
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
 
-        sensorPayloadActive.addTextChangedListener(object:TextWatcher {
+        sensorPayloadActive.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 sensor.payloadActive = s.toString()
-                createSensorMQTT(sensor)
+                sensor.let {
+                    createSensorMQTT(it)
+                }
             }
             override fun afterTextChanged(s: Editable?) {
             }
         })
 
-        sensorPayloadInactive.addTextChangedListener(object:TextWatcher {
+        sensorPayloadInactive.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -139,26 +153,57 @@ class SensorDialogView : ScrollView {
         sensorNotification.setOnClickListener { sensor.notify = sensorNotification.isChecked }
         sensorAlarm.setOnClickListener { sensor.alarmMode = sensorAlarm.isChecked }
 
-        val adapter = ArrayAdapter.createFromResource(context, R.array.sensor_types , android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sensorType.adapter = adapter;
-        sensorType.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        val adapter = ArrayAdapter.createFromResource(context, R.array.sensor_types, android.R.layout.simple_spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        sensorType.adapter = adapter
+
+        sensorType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 sensor.type = sensorTypes[position]
-                Timber.d("Sensor Type: " + sensor.type)
+                if(sensor.type == SENSOR_GENERIC_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_sensor))
+                } else if (sensor.type == SENSOR_DOOR_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_door))
+                } else if (sensor.type == SENSOR_WINDOW_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_window_open))
+                } else if (sensor.type == SENSOR_SOUND_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_baseline_mic))
+                } else if (sensor.type == SENSOR_MOTION_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_run_fast))
+                } else if (sensor.type == SENSOR_CAMERA_TYPE) {
+                    sensorIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_video))
+                }
+            }
+        }
+
+        closeDialogButton.setOnClickListener {
+            sensor.let {
+                listener?.onCancel()
+            }
+        }
+
+        updateSensorButton.setOnClickListener {
+            sensor.let {
+                listener?.onUpdate(it)
+            }
+        }
+
+        removeSensorButton.setOnClickListener {
+            sensor.let {
+                listener?.onRemove(it)
             }
         }
     }
 
     private fun createSensorMQTT(sensor: Sensor) {
         var payload = sensor.payloadActive
-        var topic = COMMAND_DEVICE_SENSOR + sensor.topic
-        if(TextUtils.isEmpty(sensor.topic)) {
-            topic = COMMAND_DEVICE_SENSOR + "frontdoor"
+        var topic = topicPrefix + sensor.topic
+        if (TextUtils.isEmpty(sensor.topic)) {
+            topic = topicPrefix  + "frontdoor"
         }
-        if(TextUtils.isEmpty(sensor.payloadActive)) {
+        if (TextUtils.isEmpty(sensor.payloadActive)) {
             payload = "open"
         }
         sensorMQTT.text = context.getString(R.string.text_sensor_mqtt_output, topic, payload)

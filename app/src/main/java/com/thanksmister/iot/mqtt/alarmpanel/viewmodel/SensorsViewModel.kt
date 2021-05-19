@@ -23,14 +23,15 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class SensorViewModel @Inject
-constructor(application: Application, private val dataSource: SensorDao, private val configuration: Configuration) : AndroidViewModel(application) {
+class SensorsViewModel @Inject
+constructor(application: Application, private val dataSource: SensorDao) : AndroidViewModel(application) {
 
     private val disposable = CompositeDisposable()
 
@@ -41,9 +42,8 @@ constructor(application: Application, private val dataSource: SensorDao, private
      * Get the items.
      * @return a [Flowable]
      */
-    fun getItems(): Flowable<List<Sensor>> {
-        return dataSource.getItems()
-                .filter { items -> items.isNotEmpty() }
+    fun getSenors(): Flowable<List<Sensor>> {
+        return dataSource.getSenors()
     }
 
     /**
@@ -53,6 +53,20 @@ constructor(application: Application, private val dataSource: SensorDao, private
         Timber.d("insertItem")
         disposable.add(Completable.fromAction {
             dataSource.insertItem(sensor)
+        }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { error -> Timber.e("Database error" + error.message) }))
+
+    }
+
+    /**
+     * Insert new item into the database.
+     */
+    fun deleteItem(sensor: Sensor) {
+        disposable.add(Completable.fromAction {
+            dataSource.deleteItem(sensor)
         }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())

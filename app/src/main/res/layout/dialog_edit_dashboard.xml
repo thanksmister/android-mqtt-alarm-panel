@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditDashboardDialogView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/editDashboardDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/closeDashboardDialogButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="8dp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_close"/>
+
+    <LinearLayout
+        android:id="@+id/dialogTitle"
+        android:layout_marginTop="36dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            style="@style/TextAppearance.TextLarge.SmallAction"
+            android:id="@+id/editDashboardUrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:hint="http://mydashboard.com/dashboard"
+            android:inputType="text"
+            android:autofillHints="ur"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dialogButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialogTitle"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:padding="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.Button.Red"
+            android:id="@+id/removeDashboardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Remove"/>
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.Button"
+            android:id="@+id/updateDashboardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Update"/>
+
+    </LinearLayout>
+
+</com.thanksmister.iot.mqtt.alarmpanel.ui.views.EditDashboardDialogView>

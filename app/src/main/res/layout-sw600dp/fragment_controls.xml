@@ -18,14 +18,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
     app:theme="@style/Theme.MaterialComponents"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardCornerRadius="7dp"
     app:cardElevation="0dp"
-    app:strokeWidth="1.5dp"
-    app:strokeColor="@color/cardStroke"
-    app:cardBackgroundColor="@color/transparent"
+    app:cardBackgroundColor="@color/colorPrimary"
     android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical">
 
@@ -38,46 +37,105 @@
         android:orientation="horizontal">
 
         <FrameLayout
-            android:id="@+id/alarmTriggeredLayout"
-            android:layout_width="190dp"
-            android:layout_height="190dp"
+            android:id="@+id/disabledLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="@drawable/background_round_white"
+            android:background="@color/gray_pressed"
             android:gravity="center"
             android:orientation="vertical"
+            tools:visibility="visible"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <FrameLayout
+            android:id="@+id/armAwayLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/red"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:visibility="visible"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-            <ImageView
-                android:layout_width="86dp"
-                android:layout_height="86dp"
-                android:layout_gravity="center"
-                android:src="@drawable/alarm_light"
-                app:tint="@color/red"
-                tools:ignore="ContentDescription" />
+        <FrameLayout
+            android:id="@+id/armHomeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/yellow"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:visibility="visible"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/armNightLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/black"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:visibility="visible"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <FrameLayout
+            android:id="@+id/armBypassLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/blue"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:visibility="visible"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <FrameLayout
+            android:id="@+id/disarmLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/green"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:visibility="visible"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
 
         <FrameLayout
             android:id="@+id/alarmStateLayout"
             android:layout_width="170dp"
             android:layout_height="170dp"
             android:layout_gravity="center"
-            android:background="@drawable/button_round_gray"
+            android:background="@drawable/button_round_gray_alpha"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent">
-
-            <com.github.ybq.android.spinkit.SpinKitView
-                android:id="@+id/pendingAnimation"
-                style="@style/SpinKitView.Large.Pulse"
-                android:layout_width="170dp"
-                android:layout_height="170dp"
-                android:layout_gravity="center"
-                android:visibility="invisible"
-                app:SpinKit_Color="@color/white" />
 
             <ImageView
                 android:id="@+id/alarmImage"
@@ -86,6 +144,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_large"
                 android:visibility="invisible"
+                tools:visibility="invisible"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -95,7 +154,34 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_lock_open_variant"
                 app:tint="@color/white"
+                android:visibility="invisible"
+                tools:visibility="invisible"
                 tools:ignore="ContentDescription" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.todddavies.components.progressbar.ProgressWheel
+                android:id="@+id/countDownProgressWheel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                ProgressWheel:barColor="@color/white"
+                ProgressWheel:contourColor="@color/transparent"
+                ProgressWheel:rimColor="@color/transparent"
+                ProgressWheel:textColor="@color/white"
+                ProgressWheel:barWidth="6dp"
+                ProgressWheel:rimWidth="6dp"
+                ProgressWheel:textSize="54sp"
+                android:visibility="invisible"
+                tools:visibility="invisible"
+                tools:text="100"/>
 
         </FrameLayout>
 

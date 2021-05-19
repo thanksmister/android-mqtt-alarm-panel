@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.multidex.MultiDex
 
 import com.facebook.stetho.Stetho
+import com.google.firebase.FirebaseApp
 import com.thanksmister.iot.mqtt.alarmpanel.di.DaggerApplicationComponent
 import com.thanksmister.iot.mqtt.alarmpanel.utils.CrashlyticsTree
 import dagger.android.AndroidInjector
@@ -41,10 +42,10 @@ class BaseApplication : DaggerApplication() {
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build())
         } else {
-            //Fabric.with(this, Answers())
-            //Fabric.with(this, Crashlytics())
             Timber.plant(CrashlyticsTree())
         }
+        Timber.plant(CrashlyticsTree())
+        FirebaseApp.initializeApp(applicationContext)
     }
 
     override fun attachBaseContext(base: Context) {
