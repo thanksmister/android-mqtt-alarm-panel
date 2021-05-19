@@ -150,8 +150,8 @@ However, if you want to send the alarm code with a command, the alarm panel will
 
 ```
 {
-  "command": "<my command>",
-  "code": "<my pin>"
+  "command": "ARM_HOME",
+  "code": "1234"
 }
 ```
 
@@ -221,8 +221,8 @@ There is an option called `Remote Code` that will send both the alarm state and 
 
 ```
 {
-  "command": "<my command>",
-  "code": "<my pin>"
+  "command": "ARM_HOME",
+  "code": "1234"
 }
 ```
 
