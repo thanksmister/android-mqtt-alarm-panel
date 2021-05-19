@@ -42,24 +42,25 @@ Here are some key features of the application:
 
 ## Screen Shots:
 
-![main](https://user-images.githubusercontent.com/142340/118820787-f927cf00-b88c-11eb-8e16-b49e873dab78.png)
+#### Main Screen
+![main](https://user-images.githubusercontent.com/142340/118822330-7273f180-b88e-11eb-95b4-c929368bf2b3.png)
 
 
-![options](https://user-images.githubusercontent.com/142340/118820820-ffb64680-b88c-11eb-82d0-374f38eda13b.png)
+#### Arming Options
+![options](https://user-images.githubusercontent.com/142340/118822345-756ee200-b88e-11eb-9e55-f773376a878c.png)
 
+#### Disarm Screen
+![code](https://user-images.githubusercontent.com/142340/118822371-7c95f000-b88e-11eb-97aa-61d74bf9b1ea.png)
 
-![code](https://user-images.githubusercontent.com/142340/118820838-02b13700-b88d-11eb-8a95-fb6c29fb898c.png)
-
-
-![home](https://user-images.githubusercontent.com/142340/118820855-06dd5480-b88d-11eb-833e-5bec7b2e8abe.png)
-
-
-![settings](https://user-images.githubusercontent.com/142340/118820868-0b097200-b88d-11eb-8ab5-a3bce076b3c0.png)
+#### Armed Home
+![home](https://user-images.githubusercontent.com/142340/118822415-8586c180-b88e-11eb-91e0-63297f826745.png)
 
 
 You can also load multiple home automation platform webpages. Each page will slide from the right on the main screen to expose additional home automation controls. 
 
-![platform](https://user-images.githubusercontent.com/142340/118820765-f4631b00-b88c-11eb-9961-2cb5c06555a1.png)
+#### Platform
+![platform](https://user-images.githubusercontent.com/142340/118822433-89b2df00-b88e-11eb-9a49-51a0be27ac3f.png)
+
 
 ## Installation
 
