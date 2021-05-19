@@ -99,6 +99,10 @@ alarm_control_panel:
 
 Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
 
+#### Note about MQTT: 
+
+Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker.  This may mean that features that depend on MQTT such as weather, sun, and the alarm state, may initially be in their default or disabled states until data is received.   
+
 #### Supported States and State Topic
 
 Alarm panel subscribes to MQTT state changes published from the remote alarm system. The default state topic is `home/alarm` and can be changed in the settings. Here is a list of state values and their descriptions that the applicatoin can handle.
