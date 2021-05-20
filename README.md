@@ -1,12 +1,12 @@
 # MQTT Alarm Panel for Home Automation Platforms
 
-This project is a MQTT Alarm Control Panel and has originally been created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component. However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging such as OpenHab, Node-Red, and SmartThings. Alarm Panel is designed specifically for Android Tablet devices, usually mounted inside your home or business.
+This project is a MQTT Alarm Control Panel and has originally been created for use with [Home Assistant's Manual Alarm Control Panel](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) component.  However, the Alarm Control Panel should work with any home automation platform that supports MQTT messaging, such as OpenHab, Node-Red, and SmartThings.  Alarm Panel is designed specifically for Android Tablet devices, usually mounted inside your home or business.
 
 ## Support
 
 For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join my [Discord](https://discord.com/invite/euh9J2d) channel to ask questions or get support. 
 
-***MQTT Alarm Panel does not support Android versions piror to Android 4.4***
+***MQTT Alarm Panel does not support Android versions prior to Android 4.4***
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ).
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
@@ -14,14 +14,14 @@ For issues, feature requests, comments or questions, use the [Github issues trac
 
 ## Features
 
-The alarm panel acts as an interface for Home Assistant's Manual MQTT component but adds additional features not directly supported. You can set the alarm state to away, home, night, or custom bypass and you disarm the alarm using a code. In addition it has some nice features such as weather forecast, displaying your alarm sensors, face detection, and screen saver mode.
+The alarm panel acts as an interface for Home Assistant's Manual MQTT component, but adds additional features not directly supported. You can set the alarm state to away, home, night, or custom bypass and you disarm the alarm using a code. In addition it has some nice features, such as weather forecast, displaying your alarm sensors, face detection and screen saver mode.
 
-MQTT allows for communication between the alarm panel application and your home automation platform. The alarm panel interface will reflect the current state of the remote alarm system.  This means that it is your home automation platform that is responsible for triggering the alarm when entry is detected and sounding the physical sirens or sending alerts.   The alarm panel's role is providing a wall-mounted interface or key pad for your alarm system.
+MQTT allows for communication between the alarm panel application and your home automation platform. The alarm panel interface will reflect the current state of the remote alarm system. This means that it is your home automation platform, that is responsible for triggering the alarm, when entry is detected and sounding the physical sirens or sending alerts. The alarm panel's role is providing a wall-mounted interface or key pad for your alarm system.
 
 Here are some key features of the application:
 
-- Alarm sensors, display up to four sensors and their states in the alarm screen.
-- Stream video, detect motion, detect faces, or read QR Codes.
+- Alarm sensors, display a list of configured sensors and their states in the alarm screen.
+- Stream video, detect motion, detect faces or read QR Codes.
 - Capture and email images, when the alarm is disabled.
 - MQTT commands to remotely control the application (speak text, play audio, display notifications, alerts, etc.).
 - Device sensor data reporting over MQTT (temperature, light, pressure, battery, etc.).
@@ -33,9 +33,9 @@ Here are some key features of the application:
 
 ## Hardware & Software 
 
-- Android Device running Android 4.4 (API level 19) or later. It'a also recommended that you use your own screensaver, like Daydream for Android so that your device does not go to sleep. You also want to disable your lock screen. The application will not work if your device sleeps (i.e. you need to unlock your device to open it).  
+- Android Device running Android 4.4 (API level 19) or later. It's also recommended that you use your own screensaver, like Daydream for Android, so that your device does not go to sleep. You also want to disable your lock screen. The application will not work, if your device sleeps (i.e. you need to unlock your device to open it).  
 
-- There is a known issue with Fire OS devices from Amazon, they usually have a custom OS and may not include Daydream. You will then need to use the built-in screensaver features or you need to install an alternative solution. Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
+- There is a known issue with Fire OS devices from Amazon, as they usually have a custom OS and may not include Daydream. You will then need to use the built-in screensaver features or you need to install an alternative solution. Some Fire OS devices also lack haptic feedback for key presses and the ability to customize the alarm sound. 
 
 - The WebView shipped with Android 4.4 (KitKat) is based on the same code as Chrome for Android version 30. This WebView does not have full feature parity with Chrome for Android and is given the version number 30.0.0.0.  
 
@@ -95,21 +95,21 @@ alarm_control_panel:
 ```
 
 -- If I set the alarm mode home, the alarm will immediately be on without any pending time. If the alarm is triggered, there will be no pending time before the siren sounds. If the alarm mode is away, I have 60 seconds to leave before the alarm is active and 30 seconds to disarm the alarm when entering.   
--- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds until it stops and it doesn't reset after it is triggered. 
+-- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds, until it stops and it doesn't reset after it is triggered. 
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings. By default the pending_time and delay_time are used for all alarm modes, unless otherwise changed.
 
 ## MQTT Alarm Setup
 
-Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
+Under the settings (gear icon) enter the MQTT information, that you configured in your MQTT service. This might include a username and password. If you are not using SSL, just enter the IP address of your broker like 192.168.1.1.  You enter the port and credentials in separate fields. The alarm will try to connect using TCP, unless you enter HTTP/HTTPS in front of the IP address like http://192.168.1.1. However, for most MQTT brokers, using TCP is fine.
 
 #### Note about MQTT: 
 
-Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker.  This may mean that features that depend on MQTT such as weather, sun, and the alarm state, may initially be in their default or disabled states until data is received.   
+Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker. This may mean that features, that depend on MQTT such as weather, sun and the alarm state, may initially be in their default or disabled states until data is received.   
 
 #### Supported States and State Topic
 
-Alarm panel subscribes to MQTT state changes published from the remote alarm system. The default state topic is `home/alarm` and can be changed in the settings. Here is a list of state values and their descriptions that the applicatoin can handle.
+Alarm panel subscribes to MQTT state changes published from the remote alarm system. The default state topic is `home/alarm` and can be changed in the settings. Here is a list of state values and their descriptions, that the application can handle.
 
 
 | State                      | Description                                                                              |
@@ -123,12 +123,12 @@ Alarm panel subscribes to MQTT state changes published from the remote alarm sys
 | `triggered`                | The alarm is triggered.                                                                  |
 
 
-* Note not all states are supprted by the HA Manuam MQTTcomponent and would need to manually handled.  Sending additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  
+* Note not all states are supported by the HA Manual MQTT component and would need to manually handled.  Sending additional states is optional and the alarm panel will function without the additional states `arm_away, arm_home, arm_night, arm_custom_bypass`.  
 
 
 #### Supported Commands and Command Topic:
 
-Alarm Panel can send to the server commands for different alarm states.  The MQTT Broker listens to these commands to update the state of alarm.  The default command topic is `home/alarm/set` which can be changed in the settings.   Here is a list of commands sent from the application to the MQTT broker.
+Alarm Panel can send to the server commands for different alarm states.  The MQTT Broker listens to these commands to update the state of alarm.  The default command topic is `home/alarm/set`, which can be changed in the settings.   Here is a list of commands sent from the application to the MQTT broker.
 
 | Command | Description | 
 | ------- | ----------- | 
@@ -139,14 +139,14 @@ Alarm Panel can send to the server commands for different alarm states.  The MQT
 | `DISARM` | Disarm the alarm. |
 | `PANIC` | Alarm panic button pressed. |
 
-* Note not all commands are supported by the Home Asssistant Manual MQTT component. You will need listen to the incoming command and handle the command manually using an automotion or blueprint to handle modes `ARM_NIGHT, ARM_CUSTOM_BYPASS, PANIC`.  If you are using your own MQTT broker, you can optionally handle these commands. 
+* Note: not all commands are supported by the Home Asssistant Manual MQTT component. You will need to listen to the incoming command and handle the command manually, using an automation or blueprint to handle modes `ARM_NIGHT, ARM_CUSTOM_BYPASS, PANIC`.  If you are using your own MQTT broker, you can optionally handle these commands. 
 
 By default, alarm commands send a single payload on the command topic:
 
 Command topic: `home/alarm/set`
 Command payload: `ARM_AWAY`
 
-However, if you want to send the alarm code with a command, the alarm panel will send the payload as JSON, which you will need to listen for and manually handle to parse out the command and the code value:
+However, if you want to send the alarm code with the command, the alarm panel will send the payload as JSON, which you will need to listen for and manually handle to parse out the command and the code value:
 
 ```
 {
@@ -158,14 +158,14 @@ However, if you want to send the alarm code with a command, the alarm panel will
 
 #### Supported Event and Event Topic
 
-Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, the event topic will notify the application of alarm errors such as invalid codes and the inablity to activate the alarm due to oen sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of event payloads that Alarm Panel can handle, not that the payload using JSON.
+Alarm Panel can subscribe to an event topic to receive additional information from the remote alarm system. For example, the event topic will notify the application of alarm errors, such as invalid codes and the inablity to activate the alarm due to open sensors.  The default topic for event is `home/alarm/event` and can be changed in the settings.  Here is a list of event payloads that Alarm Panel can handle, note that the payload is using JSON.
 
 | Event               | Description                                      |                                                                                         
 | ------------------- | ------------------------------------------------------ |
 | `invalid_code_provided` | The code to disarm or arm the alarm is incorrect. | 
 | `no_code_provided` | The code to disarm or arm the alarm is required but missing. | 
 | `failed_to_arm` | The alarm could not be armed due to open sensors. | 
-| `system_disabled` | The alarm state could not be changed because the system was unresponsive or unavailable. | 
+| `system_disabled` | The alarm state could not be changed, because the system was unresponsive or unavailable. | 
 | `unknown` | The alarm state could not be changed due to an unknown error, check your setup. | 
 | `ARM_AWAY, ARM_HOME, ARM_NIGHT, ARM_CUSTOM_BYPASS` | Used for syncing the alarm command across multiple devices or with the remote server. | 
 
@@ -178,9 +178,9 @@ If you wanted to send the error that an invalid code was entered to disarm or ar
 }
 ```
 
-Each device will display or handle the error message accordingly, either by showing a message or udpating the interface. 
+Each device will display or handle the error message accordingly, either by showing a message or updating the interface. 
 
-In addition to sending error events, we can also use the `event` topic to sync the device or multiple devices with the same command value.  In the remote server, you can subscribe to the command topic, and when you receive a command message, send out that message as a on the event topic. This will sync all devices listenting to the event topic. For example, receiving a command `ARM_AWAY` from one device should send out the same `ARM_AWAY` payload so that all devices receive this same command. 
+In addition to sending error events, we can also use the `event` topic to sync the device or multiple devices with the same command value.  In the remote server, you can subscribe to the command topic, and when you receive a command message, send out that message as an event topic. This will sync all devices listening to the event topic. For example, receiving a command `ARM_AWAY` from one device should send out the same `ARM_AWAY` payload, so that all devices receive this same command. 
 
 To do this, we send a JSON payload that contains the event and any additional information such as the `delay` time, the time before the alarm is armed or triggered.  The `delay` time is optional and can be omitted from the JSON payload.
 
@@ -217,7 +217,7 @@ The payload contains extra information about the alarm command, in this example 
 
 Under the settings, you can update the default security code, it is 1234 on first instalation. The security code is used to access the alarm settings and disarm the alarm from the alarm control panel application. You can choose to use the security code to disarm or arm the system. The security code is not sent over MQTT, it is only used from the application to control the alarm.   
 
-There is an option called `Remote Code` that will send both the alarm state and the code entered when arming or optionally disarming the alarm to your MQTT broker.  The payload will be sent as JSON.  This requires extra work on your part to parse the code and command paylaod from the JSON paylaod using your available platform tools. Here is an example JSON payload of an alarm command with the code:
+There is an option called `Remote Code` that will send both the alarm state and the code entered when arming or optionally disarming the alarm to your MQTT broker.  The payload will be sent as JSON.  This requires extra work on your part to parse the code and command payload from the JSON payload using your available platform tools. Here is an example JSON payload of an alarm command with the code:
 
 ```
 {
@@ -226,14 +226,14 @@ There is an option called `Remote Code` that will send both the alarm state and 
 }
 ```
 
-When choosing to use this feature, the security code you set within the application settings is only used to access the settings, is is no longer used to arm or disarm the system. When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
+When choosing to use this feature, the security code you set within the application settings, is only used to access the settings and it is no longer used to arm or disarm the system. When entering a code to arm or disarm your system, the code will now be sent to the remote server along with the command as a JSON payload.  
 
 The server must respond with either a alert message or return the new alarm state. You must validate the alarm code on the server and either update the alarm state or return an alert message that the code is invalid. 
 
 
 ### Alarm Sensors
 
-Under the `Alarm Sensors` option in the settings, you can add up to four sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The active state shows as green in the interface and red for any other reported state. The topic should include the entity id or name of your sensor and the current state. Here is a sample automation for a Home Assistant platform automation.
+Under the `Alarm Sensors` option in the MQTT settings, you can add sensors devices to display on the alarm interface. For each sensor, you must specificy the topic and active state of the sensor, such as closed for a door or off for motion. The inactive state shows as green in the interface and red for any other reported state. The topic should include the entity id or name of your sensor and the current state. Here is a sample automation for a Home Assistant platform automation.
 
 ```
 alias: MQTT Inside Motion
@@ -251,13 +251,13 @@ action:
 mode: single
 ```
 
-Create an automation like this for each of the four components, sending the topic with the entity id and using a payload template to send the current state. The resulting payload for a door sensor might look like this for a closed door sensor:
+Create an automation like this for each of the sensors, sending the topic with the entity id and using a payload template to send the current state. The resulting payload for a door sensor might look like this for a closed door sensor:
 
 Command topic: `/home/alarm/sensor/inside_motion`
 Command payloads: `no`
 
 
-And this when the door sensor is open:
+And this if the door sensor is open:
 
 Command topic: `/home/alarm/sensor/inside_motion`
 Command payloads: `yes`
@@ -267,7 +267,7 @@ This really depends entirely on your platform and setup. You can configure the a
 
 ### Panic Button
 
-This feature will display a panic button on the main interface that when pressed, will send a command with a single payload, you must handle this command as you want in your home automation platform. This would be like an emergency call or way to silently trigger the alarm.
+This feature will display a panic button on the main interface that, when pressed, will send a command with a single payload, you must handle this command as you want in your home automation platform. This would be like an emergency call or way to silently trigger the alarm.
 
 The alarm panel will send the following command and payload:
 
@@ -277,9 +277,9 @@ Command payload: `PANIC`
 
 ## MQTT Communication
 
-The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day or Night mode, and send various remote commands to the application.
+The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day or Night mode and send various remote commands to the application.
 
-You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is `alarmpanel`.  This distinguishes your device if you are running multiple devices. 
+You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is `alarmpanel`.  This distinguishes your device, if you are running multiple devices. 
 
 
 ### MQTT Weather
@@ -288,7 +288,7 @@ You can also interact and control the application and device remotely using eith
 
 ***Update We have deprecated support for Darksky, now you can use any weather integration.***
 
-You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this you need to setup an automation that publishes a formatted MQTT message on an interval. Then in the application settings, you can use almost any weather integration, as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application.
+You can also use MQTT to publish the weather to the Alarm Panel application, which it will then display on the main view. To do this, you need to setup an automation that publishes a formatted MQTT message on an interval. Then in the application settings, you can use almost any weather integration, as long as it supports the standard attributes. I am using Met.no integration (https://www.home-assistant.io/integrations/met/) for my weather with this automation to send weather data to the application.
 
 
 ```
@@ -307,7 +307,7 @@ action:
 mode: single
 ```
 
-For alternate way of getting the payload with the current condition, you can use this for the payload_template:
+For an alternate way of getting the payload with the current condition, you can use this for the payload_template:
 
 ```
 payload_template: >-
@@ -385,9 +385,9 @@ If you wish, you can use an offset to change the day or night mode values or sen
 
 ### MQTT Alarm Commands with Mosquitto 
 
-Sending commands to your MQTT Broker to arm or disarm the alarm, include your MQTT Broker IP address, port, and optionally the username and password if needed. The "-d" is to get the debug information. 
+Sending commands to your MQTT Broker to arm or disarm the alarm, include your MQTT Broker IP address, port, and optionally the username and password, if needed. The "-d" is to get the debug information. 
 ```
-mosquitto_pub -h 192.168.1.2  -t home/alarm/set -m "ARM_HOME" -d -p 1883 -u username -P password
+mosquitto_pub -h 192.168.1.2 -t home/alarm/set -m "ARM_HOME" -d -p 1883 -u username -P password
 mosquitto_pub -h 192.168.1.2 -t home/alarm/set -m "DISARM" -d -p 1883 -u username -P password
 ```
 Publish a message from your MQTT Broker to your MQTT client (the Android application). You may need to add `-h localhost`, but you shouldn't, since you are publishing directly from your MQTT broker. 
@@ -396,7 +396,7 @@ mosquitto_pub -t home/alarm -m "armed_home"
 mosquitto_pub -t home/alarm -m "disarmed" 
 ```
 
-Note that the application, when sending a command, expects a MQTT response. If you use the application to set the alarm to be armed home, the MQTT Broker should respond with the message that the alarm was set to armed home. The application is just an interface for the MQTT service, its not the alarm system. The alarm system is your server, either Home Assistant or your MQTT Broker and server. 
+Note that the application, when sending a command, expects a MQTT response. If you use the application to set the alarm to be armed home, the MQTT Broker should respond with the message that the alarm was set to armed home. The application is just an interface for the MQTT service, it´s not the alarm system. The alarm system is your server, either Home Assistant or your MQTT Broker and server. 
 
 
 ### MQTT Commands
@@ -539,15 +539,15 @@ screenOn | true/false | ```{"screenOn":true}``` | If the screen is currently on
 
 ## Capture Images (Telegram/Mailgun)
 
-If you would like to capture and email images, when the alarm is deactivated then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun account into the application settings screen, along with other information. 
+If you would like to capture and email images, when the alarm is deactivated, then you need to setup a [Mailgun](https://www.mailgun.com/) account. You will need to enter the domain address and API key from your Mailgun account into the application settings screen, along with other information. 
 
-You may also use Telegram to recieve a notification with the image when the alarm is deactivated. To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram. Enter the chat Id and token into the application settings screen.
+You may also use Telegram to receive a notification with the image, when the alarm is deactivated. To use Telegram you need a chat Id and a Telegram Bot API token.  Follow the [Telegram guide on Home Assistant](https://home-assistant.io/components/notify.telegram/) to setup Telegram. Enter the chat Id and token into the application settings screen.
 
 The camera only captures images, when activated in the settings and MailGun is setup properly. Images are captured each time the alarm is deactivated. You may use either Mailgun, Telegram, or both to send notifications. 
 
 ## Screensaver, Unsplash, Clock, Webpage
 
-Since the applicaiton was designed to run as a full-screen dedicated wall panel application, it is important that you have a screensaver enabled. You can use Android's built-in DayDream which does a nice job dimming the screen. However, on some devices like the Fire OS tablets, this is not an option. Instead, activate the screensaver feature under the `Display Settings` section. The default screen saver will display the current time, and if you are sending weather data, the current weather conditions. You can change this to display a webpage of your choosing, even with animation or you can display one from Unsplash. Performance may vary depending on your device. 
+Since the application was designed to run as a full-screen dedicated wall panel application, it is important that you have a screensaver enabled. You can use Android's built-in DayDream, which does a nice job dimming the screen. However, on some devices like the Fire OS tablets, this is not an option. Instead, activate the screensaver feature under the `Display Settings` section. The default screen saver will display the current time, and if you are sending weather data, the current weather conditions. You can change this to display a webpage of your choosing, even with animation or you can display one from Unsplash. Performance may vary depending on your device. 
 
 ## Platform Screen or Webpage View
 
@@ -572,7 +572,7 @@ camera:
 
 ## Notes
 
-- To use TTS and the Camera you will need Android Lollipop SDK or greater, as well as camera permissions. Older versions of Android are currently not supported. The application is locked into the landscape mode for usability. It is meant to run on dedicated tablets or large screen devices that will be used mainly for an alarm control panel. 
+- To use TTS and the Camera you will need Android Lollipop SDK or greater, as well as camera permissions. Older versions of Android are currently not supported. The application is locked into the landscape mode for usability. It is meant to run on dedicated tablets or large screen devices, that will be used mainly for an alarm control panel. 
 
 ## Acknowledgements
 
