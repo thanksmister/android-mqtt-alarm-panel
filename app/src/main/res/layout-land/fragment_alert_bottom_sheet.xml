@@ -96,7 +96,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@string/button_send_alert"
-            android:textColor="@color/white_alpha"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -51,7 +51,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_CA
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DASHBOARD
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_NOTIFICATION
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_PANIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_FACE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_MOTION
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_SENSOR_PREFIX
@@ -1066,7 +1065,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 publishAlarm(alarmMode, alarmCode)
             } else if (BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
                 val mode = intent.getStringExtra(BROADCAST_EVENT_PUBLISH_PANIC).orEmpty()
-                publishAlarm(mode, 0)
+                var alarmCode = 0
+                if (mqttOptions.useRemoteCode) {
+                    alarmCode = -1
+                }
+                publishAlarm(mode, alarmCode)
             }
         }
     }

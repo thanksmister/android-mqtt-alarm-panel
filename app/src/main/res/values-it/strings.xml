@@ -60,9 +60,7 @@
     <string name="preference_summary_password">Imposta la password del servizio (se necessario).</string>
     <string name="preference_title_alarm">Allarme</string>
     <string name="preference_summary_alarm">Impostazioni codice allarme</string>
-    <string name="preference_title_pending_time">Tempo In Attesa</string>
-    <string name="preference_summary_pending_time">Il tempo di attesa in secondi prima che l\'allarme venga inserito fuori casa od in casa). Attualmente %1$s secondi.</string>
-    <string name="preference_title_trigger_time">Tempo Di Attivazione</string>
+   <string name="preference_title_trigger_time">Tempo Di Attivazione</string>
     <string name="preference_summary_trigger_time">Il tempo in secondi prima che scatti l\'allarme. Attualmente %1$s secondi.</string>
 
     <string name="preference_title_weather_settings">Meteo</string>
@@ -244,8 +242,6 @@
     <string name="text_update_available">È disponibile un nuovo aggiornamento, desideri installarlo ora?</string>
     <string name="pref_home_pending_title">Tempo Di Attesa Armamento ad Home</string>
     <string name="pref_home_pending_summary">Il tempo in secondi prima che l\'allarme venga impostato sulla modalità Home. Attualmente %1$s secondi.</string>
-    <string name="pref_delay_title">Tempo di Ritardo Disarmamento</string>
-    <string name="pref_delay_summary">Il tempo in secondi per visualizzare la finestra di disarmo prima che l\'allarme venga attivato, a meno che non venga sovrascritto dai tempi di ritardo per le modalità in casa o fuori casa. Attualmente %1$s secondi.</string>
     <string name="pref_away_pending_title">Tempo di Attesa Attivazione Fuori Casa</string>
     <string name="pref_away_pending_summary">Il tempo in secondi prima che l\'allarme venga impostato in modalità Fuori Casa. Attualmente %1$s secondi.</string>
     <string name="pref_pending_times_description">Questi tempi dovrebbero corrispondere a quelli impostati nella tua piattaforma di automazione domestica. Se non si desidera utilizzare i tempi di ritardo, in attesa in modalità Casa, in attesa in modalità Fuori Casa, è sufficiente impostarli tutti in modo che corrispondano al tempo di attesa. Per Home Assistant, rivedere la documentazione del pannello di controllo dell\'allarme manuale MQTT su https://home-assistant.io/components/alarm_control_panel.manual_mqtt/.</string>
@@ -313,7 +309,6 @@
     <string name="pref_sensor_list_summary">Di seguito è riportato un elenco di dati del sensore disponibili su questo dispositivo da pubblicare su MQTT.</string>
     <string name="pref_qr_code_summary">Eseguirà la scansione dei codici QR utilizzando la fotocamera del dispositivo e pubblicherà il codice scansionato su MQTT.</string>
     <string name="title_setting_mqtt_sensorfrequency">Frequenza di pubblicazione (in secondi)</string>
-    <string name="summary_setting_mqtt_basetopic">Identificatore per ricevere comandi per questo pannello. Ogni pannello dovrebbe avere un identificatore univoco.</string>
     <string name="title_setting_mqtt_basetopic">Topic del Comando Di Allarme</string>
     <string name="service_notification_message">Pannello Di Allarme In Esecuzione ...</string>
     <string name="toast_camera_source_error">Impossibile avviare la sorgente della fotocamera, potresti provare di nuovo.</string>
@@ -334,7 +329,7 @@
     <string name="pref_face_detection_title">Rilevamento Volto</string>
     <string name="pref_motion_leniency_description">La tolleranza massima della differenza tra le immagini. Una tolleranza inferiore significa che il movimento è più sensibile (1 - 20).</string>
     <string name="pref_motion_luma_description">Livello di luminosità minimo per rilevare il movimento. Non verrà rilevato alcun movimento se la luminosità scende al di sotto di questo valore (1 - 1000).</string>
-    <string name="pref_mjpeg_streaming_description">Usa la fotocamera del dispositivo come streaming MJPEG live. Connettiti allo stream utilizzando l\'indirizzo IP del dispositivo, la porta HTTP e l'EndPoint: http://192.168.1.1:2971/camera/stream</string>
+    <string name="pref_mjpeg_streaming_description">Usa la fotocamera del dispositivo come streaming MJPEG live. Connettiti allo stream utilizzando l\'indirizzo IP del dispositivo, la porta HTTP e l\'EndPoint: http://192.168.1.1:2971/camera/stream</string>
     <string name="pref_mjpeg_streaming_title">Streaming MJPEG</string>
     <string name="pref_mjpeg_streaming_summary">Usa la fotocamera del dispositivo come streaming MJPEG live.</string>
     <string name="title_setting_camera_enabled">Fotocamera Abilitata</string>
@@ -433,7 +428,27 @@
     <string name="pref_summary_send_code">Invia il codice al server per aggiornare lo stato dell\'allarme.</string>
     <string name="text_alarm_entry">INGRESSO ALLARME</string>
 
-    <string-array name="inactivity_times">
+ <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
+ <string name="text_arm_night">NIGHT</string>
+ <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+ <string name="text_arm_custom">CUSTOM</string>
+ <string name="text_arm_custom_bypass">BYPASS</string>
+ <string name="preference_title_event_topic">Alarm Event Topic</string>
+ <string name="pref_summary_sensor_active">When active, displays sensor state.</string>
+ <string name="pref_category_title_alarm_sensors">Alarm Sensors</string>
+ <string name="error_no_code">A code is required and was not provided.</string>
+ <string name="error_system_disabled">The system is disabled, check the server.</string>
+ <string name="error_command_not_allowed">Command not allowed, system arming.</string>
+ <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
+ <string name="error_unknown">An unknown error has occurred, please check the server.</string>
+ <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+ <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
+ <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
+ <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
+ <string name="pref_bypass_delay_summary">The time in seconds before the alarm state is set to custom bypass mode. Currently %1$s seconds.</string>
+ <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+
+ <string-array name="inactivity_times">
         <item>15 secondi</item>
         <item>30 secondi</item>
         <item>1 minuto</item>

@@ -20,7 +20,6 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DeviceUtils
-import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.COMMAND_ON
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_COMMAND_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_CONFIG_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_PANEL_COMMAND_TOPIC
@@ -29,12 +28,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_ST
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.DEFAULT_EVENT_TOPIC
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.PORT
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TOPIC_COMMAND
-import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -214,10 +208,10 @@ constructor(private val sharedPreferences: SharedPreferences, private  val senso
         setOptionsUpdated(true)
     }
 
-    var useRemoteDisarm: Boolean
-        get() = sharedPreferences.getBoolean(PREF_REMOTE_DISARM, false)
+    var useRemoteCode: Boolean
+        get() = sharedPreferences.getBoolean(PREF_REMOTE_CODE, false)
         set(value) {
-            this.sharedPreferences.edit().putBoolean(PREF_REMOTE_DISARM, value).apply()
+            this.sharedPreferences.edit().putBoolean(PREF_REMOTE_CODE, value).apply()
             setOptionsUpdated(true)
         }
 
@@ -320,7 +314,7 @@ constructor(private val sharedPreferences: SharedPreferences, private  val senso
         const val PREF_BROKER = "pref_broker"
         const val PREF_RETAIN = "pref_retain"
         const val PREF_REMOTE_CONFIG = "pref_remote_config"
-        const val PREF_REMOTE_DISARM = "pref_remote_disarm"
+        const val PREF_REMOTE_CODE = "pref_remote_code"
         const val PREF_MANUAL_CONFIG = "pref_manual_config"
         const val MQTT_OPTIONS_UPDATED = "pref_mqtt_options_updated"
         const val PREF_CONFIG_TOPIC = "pref_config_topic"

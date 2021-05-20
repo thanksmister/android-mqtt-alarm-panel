@@ -506,7 +506,7 @@ class MainActivity : BaseActivity(),
     @Deprecated("Doesn't appear to be used")
     private fun showDisarmCodeDialog(delay: Int?) {
         var codeType = CodeTypes.DISARM
-        if (mqttOptions.useRemoteDisarm) {
+        if (mqttOptions.useRemoteCode) {
             codeType = CodeTypes.DISARM_REMOTE
         }
         codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), delay, codeType,
@@ -534,10 +534,11 @@ class MainActivity : BaseActivity(),
      */
     override fun showCodeDialog(type: CodeTypes, delay: Int?) {
         var codeType = type
-        if (mqttOptions.useRemoteDisarm) {
+        val useRemoteCode = mqttOptions.useRemoteCode
+        if (useRemoteCode) {
             if (type == CodeTypes.DISARM) {
                 codeType = CodeTypes.DISARM_REMOTE
-            } else if (type == CodeTypes.ARM) {
+            } else if (type == CodeTypes.ARM_HOME || type == CodeTypes.ARM_AWAY || type == CodeTypes.ARM_NIGHT || type == CodeTypes.ARM_BYPASS) {
                 codeType = CodeTypes.ARM_REMOTE
             }
         }

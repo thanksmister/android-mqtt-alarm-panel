@@ -112,9 +112,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     // When activity is recreated we can switch the day night mode
     fun setDayNightMode(force: Boolean = false) {
         val dayNightMode = configuration.dayNightMode
-        if (dayNightMode == Configuration.SUN_BELOW_HORIZON) {
+        if (dayNightMode == Configuration.DISPLAY_MODE_NIGHT) {
             setDarkTheme(force)
-        } else if (dayNightMode == Configuration.SUN_ABOVE_HORIZON) {
+        } else if (dayNightMode == Configuration.DISPLAY_MODE_DAY) {
             setLightTheme(force)
         }
     }

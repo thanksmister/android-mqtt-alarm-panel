@@ -29,7 +29,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
-import java.util.*
 import javax.inject.Inject
 
 class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -40,8 +39,8 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
     @Inject
     lateinit var mqttOptions: MQTTOptions
 
-    private val remoteDisarmSwitchPreference: SwitchPreference by lazy {
-        findPreference(PREF_ALARM_REMOTE_DISARM) as SwitchPreference
+    private val remoteCodeSwitchPreference: SwitchPreference by lazy {
+        findPreference(PREF_ALARM_REMOTE_CODE) as SwitchPreference
     }
 
     private val awayModePreference: SwitchPreference by lazy {
@@ -148,7 +147,7 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         delayBypassPreference.text = mqttOptions.delayTimeBypass.toString()
         delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
 
-        remoteDisarmSwitchPreference.isChecked = mqttOptions.useRemoteDisarm
+        remoteCodeSwitchPreference.isChecked = mqttOptions.useRemoteCode
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -204,10 +203,10 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
                 mqttOptions.delayTimeBypass = delayHomePreference.text.toIntOrNull()?:60
                 delayBypassPreference.summary = getString(R.string.pref_bypass_delay_summary, mqttOptions.delayTimeBypass.toString())
             }
-            PREF_ALARM_REMOTE_DISARM -> {
-                val checked = remoteDisarmSwitchPreference.isChecked
+            PREF_ALARM_REMOTE_CODE -> {
+                val checked = remoteCodeSwitchPreference.isChecked
                 checked.let {
-                    mqttOptions.useRemoteDisarm = checked
+                    mqttOptions.useRemoteCode = checked
                 }
             }
         }
@@ -222,6 +221,6 @@ class AlarmSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSh
         const val PREF_HOME_DELAY_TIME = "settings_pref_home_delay_time"
         const val PREF_NIGHT_DELAY_TIME = "settings_pref_night_delay_time"
         const val PREF_BYPASS_DELAY_TIME = "settings_pref_bypass_delay_time"
-        const val PREF_ALARM_REMOTE_DISARM = "settings_alarm_remote_disarm"
+        const val PREF_ALARM_REMOTE_CODE = "settings_alarm_remote_code"
     }
 }

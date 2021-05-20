@@ -19,7 +19,6 @@ package com.thanksmister.iot.mqtt.alarmpanel.network
 import android.R.id.message
 import android.content.Context
 import com.thanksmister.iot.mqtt.alarmpanel.R
-import com.thanksmister.iot.mqtt.alarmpanel.persistence.SensorDao
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils
 import com.thanksmister.iot.mqtt.alarmpanel.utils.StringUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -113,11 +112,13 @@ class MQTTService(private var context: Context,
                 mqttOptions?.let {
                     val mqttMessage = MqttMessage()
                     var payloadString = command
-                    if(it.useRemoteDisarm && code != 0) {
+                    if(it.useRemoteCode && code != 0) {
                         val payloadJson = JSONObject()
                         payloadJson.put(MqttUtils.COMMAND, command)
                         if (code > 0) {
                             payloadJson.put(MqttUtils.CODE, code.toString())
+                        } else if (command == MqttUtils.COMMAND_PANIC && code < 0) {
+                            payloadJson.put(MqttUtils.CODE, "")
                         }
                         payloadString = payloadJson.toString()
                     }

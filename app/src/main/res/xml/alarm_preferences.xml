@@ -20,7 +20,7 @@
     <PreferenceCategory android:title="Alarm Remote Code">
 
         <SwitchPreference
-            android:key="settings_alarm_remote_disarm"
+            android:key="settings_alarm_remote_code"
             android:icon="@drawable/ic_baseline_settings_remote"
             android:summary="@string/pref_summary_send_code"
             android:title="Remote Code" />

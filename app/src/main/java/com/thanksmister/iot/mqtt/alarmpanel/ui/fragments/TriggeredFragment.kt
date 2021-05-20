@@ -32,10 +32,8 @@ import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.utils.DialogUtils
 import com.thanksmister.iot.mqtt.alarmpanel.viewmodel.TriggeredViewModel
 import kotlinx.android.synthetic.main.dialog_alarm_triggered_code.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_keypad.*
 import kotlinx.android.synthetic.main.view_keypad.view.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class TriggeredFragment : BaseFragment() {
@@ -90,7 +88,7 @@ class TriggeredFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(TriggeredViewModel::class.java)
         observeViewModel(viewModel)
-        val useRemoteDisarm = mqttOptions.useRemoteDisarm
+        val useRemoteDisarm = mqttOptions.useRemoteCode
         val requireCodeForDisarming = mqttOptions.requireCodeForDisarming
         if (useRemoteDisarm && requireCodeForDisarming) {
             codeType = CodeTypes.DISARM_REMOTE
