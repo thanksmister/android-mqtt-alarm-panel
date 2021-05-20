@@ -269,10 +269,18 @@ This really depends entirely on your platform and setup. You can configure the a
 
 This feature will display a panic button on the main interface that, when pressed, will send a command with a single payload, you must handle this command as you want in your home automation platform. This would be like an emergency call or way to silently trigger the alarm.
 
-The alarm panel will send the following command and payload:
+The alarm panel will send the following command and payload by default:
 
 Command topic:  `home/alarm/set`
 Command payload: `PANIC`
+
+If you have opted to use the remote code feature, the following JSON payload will be sent:
+
+```
+{"command":"PANIC","code":""}
+```
+
+The code will be blank as it is not required.
 
 
 ## MQTT Communication
