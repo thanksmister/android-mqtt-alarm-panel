@@ -42,6 +42,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_PUBLISH_PANIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
+import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MainSlidePagerAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
@@ -283,15 +284,16 @@ class MainActivity : BaseActivity(),
                                     awakenDeviceForAction() // 3 hours
                                     stopDisconnectTimer() // stop screen saver mode
                                     clearInactivityTimer() // Remove inactivity timer
+                                    dismissBottomSheets()
                                 }
                                 MqttUtils.STATE_PENDING -> {
                                     awakenDeviceForAction()
                                     resetInactivityTimer()
-                                    if (configuration.isAlarmArmedMode()) {
-                                        showCodeDialog(CodeTypes.DISARM, delay)
-                                    }
+                                    val pendingTime = getPendingTime(payload, delay)
+                                    showCodeDialog(CodeTypes.DISARM, pendingTime)
                                 }
                                 MqttUtils.STATE_ARMING -> {
+                                    dismissBottomSheets()
                                     awakenDeviceForAction()
                                     resetInactivityTimer()
                                 }
@@ -348,6 +350,7 @@ class MainActivity : BaseActivity(),
         filter.addAction(AlarmPanelService.BROADCAST_SCREEN_WAKE)
         filter.addAction(AlarmPanelService.BROADCAST_SERVICE_STARTED)
         filter.addAction(AlarmPanelService.BROADCAST_DASHBOARD)
+        filter.addAction(AlarmPanelService.BROADCAST_TRIGGER_EVENT)
         filter.addAction(BROADCAST_SNACK_MESSAGE)
         filter.addAction(BROADCAST_EVENT_PUBLISH_PANIC)
         localBroadCastManager = LocalBroadcastManager.getInstance(this)
@@ -500,39 +503,39 @@ class MainActivity : BaseActivity(),
         startActivity(intent)
     }
 
-    /**
-     * Show the code dialog with a CodeTypes value take different actions on code such as disarm, settings, or arming.
-     */
-    @Deprecated("Doesn't appear to be used")
-    private fun showDisarmCodeDialog(delay: Int?) {
-        var codeType = CodeTypes.DISARM
-        if (mqttOptions.useRemoteCode) {
-            codeType = CodeTypes.DISARM_REMOTE
+
+    private fun getPendingTime(state: String, delay: Int?): Int {
+        delay?.let {
+            return it
         }
-        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), delay, codeType,
-                object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
-                    override fun onComplete(code: String) {
-                        if (codeType == CodeTypes.DISARM) {
-                            publishDisarm(code)
-                        }
-                        codeBottomSheet?.dismiss()
-                    }
-
-                    override fun onCodeError() {
-                        Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
-
-                    override fun onCancel() {
-                        codeBottomSheet?.dismiss()
-                    }
-                })
-        codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+        when (state) {
+            MqttUtils.COMMAND_ARM_HOME,
+            MqttUtils.STATE_ARM_HOME -> {
+                return mqttOptions.pendingTimeHome
+            }
+            MqttUtils.COMMAND_ARM_AWAY,
+            MqttUtils.STATE_ARM_AWAY -> {
+                return mqttOptions.pendingTimeAway
+            }
+            MqttUtils.COMMAND_ARM_NIGHT,
+            MqttUtils.STATE_ARM_NIGHT -> {
+                return mqttOptions.pendingTimeNight
+            }
+            MqttUtils.COMMAND_ARM_CUSTOM_BYPASS,
+            MqttUtils.STATE_ARM_CUSTOM_BYPASS -> {
+                return mqttOptions.pendingTimeBypass
+            }
+            else -> {
+                return 0
+            }
+        }
     }
 
     /**
      * Show the code dialog with a CodeTypes value take different actions on code such as disarm, settings, or arming.
      */
     override fun showCodeDialog(type: CodeTypes, delay: Int?) {
+        Timber.d("isAlarmArmedMode 3 showCodeDialog")
         var codeType = type
         val useRemoteCode = mqttOptions.useRemoteCode
         if (useRemoteCode) {
@@ -542,44 +545,51 @@ class MainActivity : BaseActivity(),
                 codeType = CodeTypes.ARM_REMOTE
             }
         }
-        codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), delay, codeType,
-                object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
-                    override fun onComplete(code: String) {
-                        when (type) {
-                            CodeTypes.DISARM -> {
-                                publishDisarm(code)
+        if(codeBottomSheet == null || codeBottomSheet?.isAdded == false) {
+            Timber.d("isAlarmArmedMode 4 codeBottomSheet")
+            codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), delay, codeType,
+                    object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
+                        override fun onComplete(code: String) {
+                            when (type) {
+                                CodeTypes.DISARM -> {
+                                    publishDisarm(code)
+                                }
+                                CodeTypes.SETTINGS -> {
+                                    openSettings()
+                                }
+                                CodeTypes.ARM_HOME -> {
+                                    publishArmedHome(code)
+                                }
+                                CodeTypes.ARM_AWAY -> {
+                                    publishArmedAway(code)
+                                }
+                                CodeTypes.ARM_NIGHT -> {
+                                    publishArmedNight(code)
+                                }
+                                CodeTypes.ARM_BYPASS -> {
+                                    publishCustomBypass(code)
+                                }
+                                else -> {
+                                    // na-da
+                                }
                             }
-                            CodeTypes.SETTINGS -> {
-                                openSettings()
-                            }
-                            CodeTypes.ARM_HOME -> {
-                                publishArmedHome(code)
-                            }
-                            CodeTypes.ARM_AWAY -> {
-                                publishArmedAway(code)
-                            }
-                            CodeTypes.ARM_NIGHT -> {
-                                publishArmedNight(code)
-                            }
-                            CodeTypes.ARM_BYPASS -> {
-                                publishCustomBypass(code)
-                            }
-                            else -> {
-                                // na-da
-                            }
+                            codeBottomSheet?.dismiss()
                         }
-                        codeBottomSheet?.dismiss()
-                    }
 
-                    override fun onCodeError() {
-                        Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_SHORT).show()
-                    }
+                        override fun onCodeEmpty() {
+                            Toast.makeText(this@MainActivity, R.string.error_no_code, Toast.LENGTH_LONG).show()
+                        }
 
-                    override fun onCancel() {
-                        codeBottomSheet?.dismiss()
-                    }
-                })
-        codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+                        override fun onCodeError() {
+                            Toast.makeText(this@MainActivity, R.string.toast_code_invalid, Toast.LENGTH_LONG).show()
+                        }
+
+                        override fun onCancel() {
+                            codeBottomSheet?.dismiss()
+                        }
+                    })
+            codeBottomSheet?.show(supportFragmentManager, codeBottomSheet?.tag)
+        }
     }
 
     override fun showAlarmTriggered() {
@@ -595,40 +605,42 @@ class MainActivity : BaseActivity(),
     }
 
     override fun showArmOptionsDialog() {
-        optionsBottomSheet = OptionsBottomSheetFragment(object : OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
-            override fun onArmHome() {
-                if (mqttOptions.requireCodeForArming) {
-                    showCodeDialog(CodeTypes.ARM_HOME, -1)
-                } else {
-                    publishArmedHome("")
+        if(optionsBottomSheet == null || optionsBottomSheet?.isAdded == false) {
+            optionsBottomSheet = OptionsBottomSheetFragment(object : OptionsBottomSheetFragment.OptionsBottomSheetFragmentListener {
+                override fun onArmHome() {
+                    if (mqttOptions.requireCodeForArming) {
+                        showCodeDialog(CodeTypes.ARM_HOME, -1)
+                    } else {
+                        publishArmedHome("")
+                    }
                 }
-            }
 
-            override fun onArmAway() {
-                if (mqttOptions.requireCodeForArming) {
-                    showCodeDialog(CodeTypes.ARM_AWAY, -1)
-                } else {
-                    publishArmedAway("")
+                override fun onArmAway() {
+                    if (mqttOptions.requireCodeForArming) {
+                        showCodeDialog(CodeTypes.ARM_AWAY, -1)
+                    } else {
+                        publishArmedAway("")
+                    }
                 }
-            }
 
-            override fun onArmNight() {
-                if (mqttOptions.requireCodeForArming) {
-                    showCodeDialog(CodeTypes.ARM_NIGHT, -1)
-                } else {
-                    publishArmedNight("")
+                override fun onArmNight() {
+                    if (mqttOptions.requireCodeForArming) {
+                        showCodeDialog(CodeTypes.ARM_NIGHT, -1)
+                    } else {
+                        publishArmedNight("")
+                    }
                 }
-            }
 
-            override fun onArmCustomBypass() {
-                if (mqttOptions.requireCodeForArming) {
-                    showCodeDialog(CodeTypes.ARM_BYPASS, -1)
-                } else {
-                    publishCustomBypass("")
+                override fun onArmCustomBypass() {
+                    if (mqttOptions.requireCodeForArming) {
+                        showCodeDialog(CodeTypes.ARM_BYPASS, -1)
+                    } else {
+                        publishCustomBypass("")
+                    }
                 }
-            }
-        }, mqttOptions = mqttOptions)
-        optionsBottomSheet?.show(supportFragmentManager, optionsBottomSheet?.tag)
+            }, mqttOptions = mqttOptions)
+            optionsBottomSheet?.show(supportFragmentManager, optionsBottomSheet?.tag)
+        }
     }
 
     override fun onSendAlert() {
@@ -722,6 +734,13 @@ class MainActivity : BaseActivity(),
             } else if (AlarmPanelService.BROADCAST_DASHBOARD == intent.action && !isFinishing) {
                 val dashboard = intent.getIntExtra(AlarmPanelService.BROADCAST_DASHBOARD, 0)
                 navigateDashBoard(dashboard)
+            } else if (AlarmPanelService.BROADCAST_TRIGGER_EVENT == intent.action && !isFinishing) {
+                val delay = intent.getIntExtra(AlarmPanelService.EXTRA_DELAY_TIME, -1)
+                val state = intent.getStringExtra(AlarmPanelService.EXTRA_STATE).orEmpty()
+                val pendingTime = getPendingTime(state, delay)
+                awakenDeviceForAction()
+                resetInactivityTimer()
+                showCodeDialog(CodeTypes.DISARM, pendingTime)
             }
         }
     }

@@ -17,11 +17,13 @@
 package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.animation.RotateAnimation
 import android.widget.FrameLayout
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -31,12 +33,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import kotlinx.android.synthetic.main.fragment_code_bottom_sheet.*
+import kotlinx.android.synthetic.main.fragment_code_bottom_sheet.countDownProgressWheel
+import kotlinx.android.synthetic.main.fragment_controls.*
 import kotlinx.android.synthetic.main.view_keypad.*
+import timber.log.Timber
 
 class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentListener) : BottomSheetDialogFragment() {
 
     private var codeComplete = false
     private var enteredCode = ""
+    private var countDownTimer: CountDownTimer? = null
+    private var countDownTimeRemaining: Int = 0
     private val handler: Handler by lazy {
         Handler()
     }
@@ -55,6 +62,7 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
     interface OnAlarmCodeFragmentListener {
         fun onComplete(code: String)
         fun onCodeError()
+        fun onCodeEmpty()
         fun onCancel()
     }
 
@@ -103,6 +111,7 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
                 val dialog = dialog as BottomSheetDialog
                 val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
                 val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.isDraggable = false
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         })
@@ -110,14 +119,34 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
         if(codeType == CodeTypes.ARM_REMOTE || codeType == CodeTypes.DISARM_REMOTE) {
             buttonKey.visibility = View.VISIBLE
             buttonKey.setOnClickListener {
-                codeComplete = true
-                handler.postDelayed(delayRunnable, 500)
+                if(enteredCode.isNotEmpty()) {
+                    codeComplete = true
+                    handler.postDelayed(delayRunnable, 500)
+                } else {
+                    alarmListener.onCodeEmpty()
+                }
             }
         }
 
         if(delayTime > 0) {
             countDownProgressWheel.visibility = View.VISIBLE
-            countDownProgressWheel.setWheelProgress(delayTime)
+            val divideBy = 360 / delayTime
+            countDownTimer = object : CountDownTimer((delayTime * 1000).toLong(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    countDownTimeRemaining = (millisUntilFinished / 1000).toInt()
+                    val an = RotateAnimation(0.0f, 90.0f, 250f, 273f)
+                    an.fillAfter = true
+                    countDownProgressWheel.setText(countDownTimeRemaining.toString())
+                    countDownProgressWheel.setWheelProgress(countDownTimeRemaining * divideBy)
+                }
+
+                override fun onFinish() {
+                    Timber.d("Timed up...")
+                    countDownTimeRemaining = 0
+                    countDownProgressWheel.visibility = View.GONE
+                    onCancel()
+                }
+            }.start()
         }
     }
 
@@ -148,6 +177,10 @@ class CodeBottomSheetFragment (private val alarmListener: OnAlarmCodeFragmentLis
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(delayRunnable)
+        countDownTimer?.cancel()
+        countDownTimer = null
+        countDownTimeRemaining = 0
+        countDownProgressWheel?.visibility = View.GONE
     }
 
     private fun addPinCode(code: String) {

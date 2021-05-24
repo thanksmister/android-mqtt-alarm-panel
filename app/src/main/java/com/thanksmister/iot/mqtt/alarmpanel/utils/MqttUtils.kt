@@ -50,6 +50,7 @@ class MqttUtils {
         const val EVENT_INVALID_CODE = "invalid_code_provided"
         const val EVENT_NO_CODE = "no_code_provided"
         const val EVENT_ARM_FAILED = "failed_to_arm"
+        const val EVENT_TRIGGER = "trigger"
         const val EVENT_SYSTEM_DISABLED = "system_disabled"
         const val EVENT_COMMAND_NOT_ALLOWED = "command_not_allowed"
         const val EVENT_UNKNOWN = "unknown"

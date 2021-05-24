@@ -454,7 +454,7 @@
     <string name="error_command_not_allowed">Command not allowed, system arming.</string>
     <string name="error_invalid_code">An invalid code has been entered, check the code and try again.</string>
     <string name="error_unknown">An unknown error has occurred, please check the server.</string>
-    <string name="error_arm_failed">Unable to arm system, please check settings.</string>
+    <string name="error_arm_failed">Unable to arm system, please check if a sensor is open or the alarm settings.</string>
     <string name="snack_check_sensors">Please check sensors. One or more of your alarm sensors are active, the alarm cannot be set.</string>
     <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
     <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>

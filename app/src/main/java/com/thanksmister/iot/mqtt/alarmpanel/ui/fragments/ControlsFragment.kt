@@ -278,7 +278,7 @@ class ControlsFragment : BaseFragment() {
                             }
                             STATE_PENDING -> {
                                 if (configuration.isAlarmArmedMode()) {
-                                    setEntryMode(delay)
+                                    setEntryMode(payload)
                                 } else if (configuration.isAlarmArming()) {
                                     setArmingMode(payload, delay)
                                 }
@@ -376,48 +376,10 @@ class ControlsFragment : BaseFragment() {
         }
     }
 
-    /**
-     * We want to show a pending view when alarm is armed and entry occurs.
-     */
-    private fun setPendingMode(state: String, delay: Int?) {
-        viewModel.setAlarmMode(state)
-        startCountdown(getPendingTime(configuration.alarmMode, delay))
-        when (configuration.alarmMode) {
-            COMMAND_ARM_HOME -> {
-                hideAlarmStates()
-                armHomeLayout.visibility = View.VISIBLE
-                alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow_alpha))
-            }
-            COMMAND_ARM_AWAY -> {
-                hideAlarmStates()
-                armAwayLayout.visibility = View.VISIBLE
-                alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red_alpha))
-            }
-            COMMAND_ARM_NIGHT -> {
-                hideAlarmStates()
-                armNightLayout.visibility = View.VISIBLE
-                alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black_alpha))
-            }
-            COMMAND_ARM_CUSTOM_BYPASS,
-            STATE_ARM_CUSTOM_BYPASS -> {
-                hideAlarmStates()
-                armBypassLayout.visibility = View.VISIBLE
-                alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_blue_alpha))
-            }
-            STATE_PENDING -> {
-                disabledLayout.visibility = View.VISIBLE
-                if (configuration.isAlarmDisarmedMode()) {
-                    alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray_alpha))
-                }
-            }
-        }
-        showAlarmIcons()
-    }
-
     // TODO show the disarm dialog?
-    private fun setEntryMode(delay: Int?) {
+    private fun setEntryMode(state: String) {
         alarmText.text = getString(R.string.text_alarm_entry)
-        startCountdown(getPendingTime(configuration.alarmMode, delay), true)
+        playContinuousAlarm()
         when (configuration.alarmMode) {
             COMMAND_ARM_HOME,
             STATE_ARMED_HOME -> {
@@ -439,6 +401,7 @@ class ControlsFragment : BaseFragment() {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray_alpha))
             }
         }
+        //viewModel.setAlarmMode(state)
     }
 
     private fun setDisarmingMode(state: String) {
@@ -652,10 +615,8 @@ class ControlsFragment : BaseFragment() {
     }
 
     private fun stopCountdown() {
-        if (countDownTimer != null) {
-            countDownTimer!!.cancel()
-            countDownTimer = null
-        }
+        countDownTimer?.cancel()
+        countDownTimer = null
         countDownTimeRemaining = 0
         destroySoundUtils()
         countDownProgressWheel?.visibility = View.GONE
@@ -725,10 +686,12 @@ class ControlsFragment : BaseFragment() {
     }
 
     private fun playContinuousBeep() {
-        pendingSoundFlag = false
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.beep_loop)
-        mediaPlayer?.isLooping = true
-        mediaPlayer?.start()
+        pendingSoundFlag = true
+        if(pendingSoundFlag) {
+            mediaPlayer = MediaPlayer.create(requireContext(), R.raw.beep_loop)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
+        }
     }
 
     companion object {

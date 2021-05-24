@@ -92,6 +92,7 @@ class OptionsBottomSheetFragment(val listener: OptionsBottomSheetFragmentListene
                 val dialog = dialog as BottomSheetDialog
                 val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
                 val behavior = BottomSheetBehavior.from(bottomSheet!!)
+                behavior.isDraggable = false
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         })

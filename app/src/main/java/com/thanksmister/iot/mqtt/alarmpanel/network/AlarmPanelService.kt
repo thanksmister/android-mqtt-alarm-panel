@@ -65,6 +65,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_COMM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_INVALID_CODE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_NO_CODE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_SYSTEM_DISABLED
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_TRIGGER
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.EVENT_UNKNOWN
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARM_AWAY
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_ARM_CUSTOM_BYPASS
@@ -75,6 +76,7 @@ import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_CURR
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_DISARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_PRESENCE
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_SCREEN_ON
+import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.STATE_TRIGGERED
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_ALARM
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_COMMAND
 import com.thanksmister.iot.mqtt.alarmpanel.utils.MqttUtils.Companion.TYPE_EVENT
@@ -678,7 +680,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
                         EVENT_SYSTEM_DISABLED -> {
-                            sendSnackMessage(getString(R.string.error_system_disabled))
+                            sendAlertMessage(getString(R.string.error_system_disabled))
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
                         EVENT_COMMAND_NOT_ALLOWED -> {
@@ -690,11 +692,11 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
                         EVENT_UNKNOWN -> {
-                            sendSnackMessage(getString(R.string.error_unknown))
+                            sendAlertMessage(getString(R.string.error_unknown))
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
                         EVENT_ARM_FAILED -> {
-                            sendSnackMessage(getString(R.string.error_arm_failed))
+                            sendAlertMessage(getString(R.string.error_arm_failed))
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
                         STATE_ARM_HOME,
@@ -707,6 +709,12 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                         COMMAND_ARM_CUSTOM_BYPASS -> {
                             val delay = MqttUtils.parseDelayFromJson(payload)
                             insertMessage(id, topic, event, TYPE_ALARM, delay)
+                        }
+                        // TODO this is a hack for alarmo because does not append delay time to pending
+                        EVENT_TRIGGER -> {
+                            val delay = MqttUtils.parseDelayFromJson(payload)
+                            insertMessage(id, topic, event, TYPE_EVENT)
+                            sendTriggerEvent(delay)
                         }
                     }
                 }
@@ -959,6 +967,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun insertMessage(messageId: String, topic: String, payload: String, type: String, delay: Int = -1) {
         Timber.d("insertMessage topic: $topic")
         Timber.d("insertMessage payload: $payload")
+        Timber.d("insertMessage delay: $delay")
         disposable.add(Completable.fromAction {
             val createdAt = DateUtils.generateCreatedAtDate()
             val message = MessageMqtt()
@@ -1020,6 +1029,14 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
     private fun clearAlertMessage() {
         Timber.d("clearAlertMessage")
         val intent = Intent(BROADCAST_CLEAR_ALERT_MESSAGE)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
+    private fun sendTriggerEvent(delay: Int) {
+        val intent = Intent(BROADCAST_TRIGGER_EVENT)
+        intent.putExtra(EXTRA_DELAY_TIME, delay)
+        intent.putExtra(EXTRA_STATE, MqttUtils.STATE_PENDING)
         val bm = LocalBroadcastManager.getInstance(applicationContext)
         bm.sendBroadcast(intent)
     }
@@ -1237,7 +1254,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_EVENT_USER_INACTIVE = "BROADCAST_EVENT_USER_INACTIVE"
         const val BROADCAST_EVENT_ALARM_MODE = "BROADCAST_EVENT_ALARM_MODE"
         const val BROADCAST_ALARM_COMMAND = "BROADCAST_ALARM_COMMAND"
-        const val BROADCAST_ALARM_DELAY = "BROADCAST_ALARM_DELAY"
+        const val BROADCAST_TRIGGER_EVENT = "BROADCAST_TRIGGER_EVENT"
         const val BROADCAST_EVENT_ALARM_CODE = "BROADCAST_EVENT_ALARM_CODE"
         const val BROADCAST_ALERT_MESSAGE = "BROADCAST_ALERT_MESSAGE"
         const val BROADCAST_SNACK_MESSAGE = "BROADCAST_SNACK_MESSAGE"
@@ -1246,5 +1263,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_CLEAR_ALERT_MESSAGE = "BROADCAST_CLEAR_ALERT_MESSAGE"
         const val BROADCAST_SERVICE_STARTED = "BROADCAST_SERVICE_STARTED"
         const val BROADCAST_DASHBOARD = "BROADCAST_ACTION_LOAD_URL"
+        const val EXTRA_DELAY_TIME = "EXTRA_DELAY_TIME"
+        const val EXTRA_STATE = "EXTRA_STATE"
     }
 }
