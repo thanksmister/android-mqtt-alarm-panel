@@ -75,26 +75,26 @@ class DayNightAlarmLiveData(private val context: Context, private val configurat
 
         if(startTime == endTime) {
             Timber.d("Tis forever night")
-            configuration.dayNightMode = Configuration.DISPLAY_MODE_NIGHT
+            configuration.dayNightMode = Configuration.SUN_BELOW_HORIZON
             value = Configuration.DISPLAY_MODE_NIGHT
         } else if(endTime < startTime) {
             if(nowTime >= startTime || nowTime <= endTime) {
                 Timber.d("Tis the night")
-                configuration.dayNightMode = Configuration.DISPLAY_MODE_NIGHT
+                configuration.dayNightMode = Configuration.SUN_BELOW_HORIZON
                 value = Configuration.DISPLAY_MODE_NIGHT
             } else {
                 Timber.d("Tis the day")
-                configuration.dayNightMode = Configuration.DISPLAY_MODE_DAY
+                configuration.dayNightMode = Configuration.SUN_ABOVE_HORIZON
                 value = Configuration.DISPLAY_MODE_DAY
             }
         } else if (endTime > startTime) {
             if(nowTime >= startTime && nowTime <= endTime) {
                 Timber.d("Tis the night")
-                configuration.dayNightMode = Configuration.DISPLAY_MODE_NIGHT
+                configuration.dayNightMode = Configuration.SUN_BELOW_HORIZON
                 value = Configuration.DISPLAY_MODE_NIGHT
             } else {
                 Timber.d("Tis the day")
-                configuration.dayNightMode = Configuration.DISPLAY_MODE_DAY
+                configuration.dayNightMode = Configuration.SUN_ABOVE_HORIZON
                 value = Configuration.DISPLAY_MODE_DAY
             }
         }

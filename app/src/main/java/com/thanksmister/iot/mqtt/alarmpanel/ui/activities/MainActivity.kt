@@ -237,13 +237,11 @@ class MainActivity : BaseActivity(),
 
     override fun onUserInteraction() {
         onWindowFocusChanged(true)
-        if (!userPresent) {
-            userPresent = true
-            val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
-            intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
-            val bm = LocalBroadcastManager.getInstance(applicationContext)
-            bm.sendBroadcast(intent)
-        }
+        userPresent = true
+        val intent = Intent(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH)
+        intent.putExtra(AlarmPanelService.BROADCAST_EVENT_SCREEN_TOUCH, true)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
         resetInactivityTimer()
     }
 
@@ -267,39 +265,37 @@ class MainActivity : BaseActivity(),
                 .subscribe({ state ->
                     val payload = state.payload
                     val delay = state.delay
-                    if (previousAlarmMode != configuration.alarmMode) {
-                        this@MainActivity.runOnUiThread {
-                            when (payload) {
-                                MqttUtils.STATE_DISARMED -> {
-                                    awakenDeviceForAction()
-                                    resetInactivityTimer()
-                                }
-                                MqttUtils.STATE_ARMED_NIGHT,
-                                MqttUtils.STATE_ARMED_AWAY,
-                                MqttUtils.STATE_ARMED_HOME -> {
-                                    awakenDeviceForAction()
-                                    resetInactivityTimer()
-                                }
-                                MqttUtils.STATE_TRIGGERED -> {
-                                    awakenDeviceForAction() // 3 hours
-                                    stopDisconnectTimer() // stop screen saver mode
-                                    clearInactivityTimer() // Remove inactivity timer
-                                    dismissBottomSheets()
-                                }
-                                MqttUtils.STATE_PENDING -> {
-                                    awakenDeviceForAction()
-                                    resetInactivityTimer()
-                                    val pendingTime = getPendingTime(payload, delay)
-                                    showCodeDialog(CodeTypes.DISARM, pendingTime)
-                                }
-                                MqttUtils.STATE_ARMING -> {
-                                    dismissBottomSheets()
-                                    awakenDeviceForAction()
-                                    resetInactivityTimer()
-                                }
+                    val alarmMode = configuration.alarmMode
+                    awakenDeviceForAction()
+                    resetInactivityTimer()
+                    this@MainActivity.runOnUiThread {
+                        when (payload) {
+                            MqttUtils.STATE_DISARM,
+                            MqttUtils.STATE_DISARMED,
+                            MqttUtils.STATE_ARM_CUSTOM_BYPASS,
+                            MqttUtils.STATE_ARM_NIGHT,
+                            MqttUtils.STATE_ARM_AWAY,
+                            MqttUtils.STATE_ARM_HOME,
+                            MqttUtils.STATE_ARMED_CUSTOM_BYPASS,
+                            MqttUtils.STATE_ARMED_NIGHT,
+                            MqttUtils.STATE_ARMED_AWAY,
+                            MqttUtils.STATE_ARMED_HOME -> {
+                                // na-da
+                            }
+                            MqttUtils.STATE_TRIGGERED -> {
+                                awakenDeviceForAction() // 3 hours
+                                stopDisconnectTimer() // stop screen saver mode
+                                clearInactivityTimer() // Remove inactivity timer
+                                dismissBottomSheets()
+                            }
+                            MqttUtils.STATE_PENDING -> {
+                                val pendingTime = getPendingTime(payload, delay)
+                                showCodeDialog(CodeTypes.DISARM, pendingTime)
+                            }
+                            MqttUtils.STATE_ARMING -> {
+                                dismissBottomSheets()
                             }
                         }
-                        previousAlarmMode = payload
                     }
                 }, { error -> Timber.e("Unable to get message: " + error) }))
 
@@ -691,9 +687,7 @@ class MainActivity : BaseActivity(),
     }
 
     private fun stopDisconnectTimer() {
-        if (!userPresent) {
-            userPresent = true
-        }
+        userPresent = true
         hideScreenSaver()
         clearInactivityTimer()
     }
