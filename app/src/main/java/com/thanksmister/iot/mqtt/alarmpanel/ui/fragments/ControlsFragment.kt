@@ -253,7 +253,7 @@ class ControlsFragment : BaseFragment() {
                             STATE_PENDING -> {
                                 if (configuration.isAlarmArmedMode()) {
                                     setEntryMode(payload)
-                                } else if (configuration.isAlarmArming()) {
+                                } else if (configuration.isAlarmArming().not()) {
                                     setArmingMode(payload, delay)
                                 }
                             }

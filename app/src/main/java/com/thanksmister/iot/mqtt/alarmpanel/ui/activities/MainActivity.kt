@@ -289,7 +289,11 @@ class MainActivity : BaseActivity(),
                             }
                             MqttUtils.STATE_PENDING -> {
                                 val pendingTime = getPendingTime(payload, delay)
-                                showCodeDialog(CodeTypes.DISARM, pendingTime)
+                                val isArming = configuration.isAlarmArming()
+                                val alarmMode = configuration.alarmMode
+                                if(configuration.isAlarmArming().not()) {
+                                    showCodeDialog(CodeTypes.DISARM, pendingTime)
+                                }
                             }
                             MqttUtils.STATE_ARMING -> {
                                 dismissBottomSheets()
@@ -589,12 +593,10 @@ class MainActivity : BaseActivity(),
     override fun showAlarmTriggered() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // keep the screen awake
         triggeredView.visibility = View.VISIBLE
-        //pagerView.visibility = View.GONE
     }
 
     override fun hideTriggeredView() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // let the screen sleep
-        //pagerView.visibility = View.VISIBLE
         triggeredView.visibility = View.GONE
     }
 
