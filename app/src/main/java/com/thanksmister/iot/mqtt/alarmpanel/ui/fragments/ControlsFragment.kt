@@ -92,37 +92,12 @@ class ControlsFragment : BaseFragment() {
 
     private var listener: OnControlsFragmentListener? = null
     private var filter = IntentFilter(AlarmPanelService.BROADCAST_ALARM_COMMAND)
-    private var delayTimerHandler: Handler? = null
     private var mediaPlayer: MediaPlayer? = null
     private var alarmListener: AlarmDelayView.ViewListener? = null
     private var pendingSoundFlag = false
     private var countDownTimeRemaining: Int = 0
     private var countDownTimer: CountDownTimer? = null
     private var sensorActiveMap: HashMap<String, Sensor> = HashMap<String, Sensor>()
-
-    @Deprecated("We don't need this any longer")
-    private val delayTimerRunnable = object : Runnable {
-        override fun run() {
-            delayTimerHandler?.removeCallbacks(this)
-            when (configuration.alarmMode) {
-                STATE_ARMED_HOME -> {
-                    setArmedAwayView(configuration.alarmMode)
-                }
-                STATE_ARMED_AWAY -> {
-                    setArmedAwayView(configuration.alarmMode)
-                }
-                STATE_ARMED_NIGHT -> {
-                    setArmedAwayView(configuration.alarmMode)
-                }
-                STATE_ARMED_CUSTOM_BYPASS -> {
-                    setArmedCustomBypass(configuration.alarmMode)
-                }
-                STATE_DISARMED -> {
-                    setDisarmedView(configuration.alarmMode)
-                }
-            }
-        }
-    }
 
     interface OnControlsFragmentListener {
         fun publishArmedHome(code: String)
@@ -181,7 +156,6 @@ class ControlsFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(alarmBroadcastReceiver)
-        delayTimerHandler?.removeCallbacks(delayTimerRunnable)
     }
 
     override fun onAttach(context: Context) {
@@ -207,9 +181,9 @@ class ControlsFragment : BaseFragment() {
     private val alarmBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (AlarmPanelService.BROADCAST_ALARM_COMMAND == intent.action) {
-                val alarmMode = intent.getStringExtra(AlarmPanelService.BROADCAST_ALARM_COMMAND).orEmpty()
+                val alarmMode = intent.getStringExtra(AlarmPanelService.EXTRA_ALARM_COMMAND).orEmpty()
                 if (alarmMode == COMMAND_DISARM) {
-                    setDisarmingMode(alarmMode)
+                    //setDisarmingMode(alarmMode)
                 } else if (alarmMode == COMMAND_ARM_AWAY ||
                         alarmMode == COMMAND_ARM_HOME ||
                         alarmMode == COMMAND_ARM_NIGHT ||

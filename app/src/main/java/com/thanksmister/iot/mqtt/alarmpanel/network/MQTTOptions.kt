@@ -327,39 +327,19 @@ constructor(private val sharedPreferences: SharedPreferences, private  val senso
         private const val PREF_ARMING_AWAY_TIME = "pref_arming_away_time"
         private const val PREF_ARMING_NIGHT_TIME = "pref_arming_night_time"
 
-        private const val PREF_ONE_SENSOR_ACTIVE = "pref_sensor_active_one"
-        private const val PREF_ONE_SENSOR_NAME = "pref_sensor_name_one"
-        private const val PREF_ONE_SENSOR_TOPIC = "pref_sensor_topic_one"
-        private const val PREF_ONE_SENSOR_STATE = "pref_sensor_state_one"
+        private const val PREF_MODE_HOME = "pref_alarm_mode_homer"
+        private const val PREF_MODE_AWAY = "pref_alarm_mode_away"
+        private const val PREF_MODE_NIGHT = "pref_alarm_mode_night"
+        private const val PREF_MODE_CUSTOM_BYPASS = "pref_alarm_mode_custom_bypass"
 
-        private const val PREF_TWO_SENSOR_ACTIVE = "pref_sensor_active_two"
-        private const val PREF_TWO_SENSOR_NAME = "pref_sensor_name_two"
-        private const val PREF_TWO_SENSOR_TOPIC = "pref_sensor_topic_two"
-        private const val PREF_TWO_SENSOR_STATE = "pref_sensor_state_two"
-
-        private const val PREF_THREE_SENSOR_ACTIVE = "pref_sensor_active_three"
-        private const val PREF_THREE_SENSOR_NAME = "pref_sensor_name_three"
-        private const val PREF_THREE_SENSOR_TOPIC = "pref_sensor_topic_three"
-        private const val PREF_THREE_SENSOR_STATE = "pref_sensor_state_three"
-
-        private const val PREF_FOUR_SENSOR_ACTIVE = "pref_sensor_active_four"
-        private const val PREF_FOUR_SENSOR_NAME = "pref_sensor_name_four"
-        private const val PREF_FOUR_SENSOR_TOPIC = "pref_sensor_topic_four"
-        private const val PREF_FOUR_SENSOR_STATE = "pref_sensor_state_four"
-
-        private const val PREF_MODE_HOME = "pref_mode_homer"
-        private const val PREF_MODE_AWAY = "pref_mode_away"
-        private const val PREF_MODE_NIGHT = "pref_mode_night"
-        private const val PREF_MODE_CUSTOM_BYPASS = "pref_mode_custom_bypass"
-
-        private const val PREF_AWAY_PENDING_TIME = "pref_away_pending_time"
-        private const val PREF_HOME_PENDING_TIME = "pref_home_pending_time"
-        private const val PREF_NIGHT_PENDING_TIME = "pref_night_pending_time"
-        private const val PREF_BYPASS_PENDING_TIME = "pref_bypass_pending_time"
-        private const val PREF_AWAY_DELAY_TIME = "pref_away_delay_time"
-        private const val PREF_HOME_DELAY_TIME = "pref_home_delay_time"
-        private const val PREF_NIGHT_DELAY_TIME = "pref_night_delay_time"
-        private const val PREF_BYPASS_DELAY_TIME = "pref_bypass_delay_time"
+        private const val PREF_AWAY_PENDING_TIME = "pref_alarm_away_pending_time"
+        private const val PREF_HOME_PENDING_TIME = "pref_alarm_home_pending_time"
+        private const val PREF_NIGHT_PENDING_TIME = "pref_alarm_night_pending_time"
+        private const val PREF_BYPASS_PENDING_TIME = "pref_alarm_bypass_pending_time"
+        private const val PREF_AWAY_DELAY_TIME = "pref_alarm_away_delay_time"
+        private const val PREF_HOME_DELAY_TIME = "pref_alarm_home_delay_time"
+        private const val PREF_NIGHT_DELAY_TIME = "pref_alarm_night_delay_time"
+        private const val PREF_BYPASS_DELAY_TIME = "pref_alarm_bypass_delay_time"
     }
 
     var pendingTimeAway: Int

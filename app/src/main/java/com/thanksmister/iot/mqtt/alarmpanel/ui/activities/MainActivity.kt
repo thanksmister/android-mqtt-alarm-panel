@@ -265,7 +265,6 @@ class MainActivity : BaseActivity(),
                 .subscribe({ state ->
                     val payload = state.payload
                     val delay = state.delay
-                    val alarmMode = configuration.alarmMode
                     awakenDeviceForAction()
                     resetInactivityTimer()
                     this@MainActivity.runOnUiThread {
@@ -280,7 +279,7 @@ class MainActivity : BaseActivity(),
                             MqttUtils.STATE_ARMED_NIGHT,
                             MqttUtils.STATE_ARMED_AWAY,
                             MqttUtils.STATE_ARMED_HOME -> {
-                                // na-da
+                                dismissBottomSheets()
                             }
                             MqttUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction() // 3 hours
@@ -498,7 +497,6 @@ class MainActivity : BaseActivity(),
         val intent = SettingsActivity.createStartIntent(applicationContext)
         startActivity(intent)
     }
-
 
     private fun getPendingTime(state: String, delay: Int?): Int {
         delay?.let {

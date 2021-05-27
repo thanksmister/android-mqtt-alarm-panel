@@ -1033,6 +1033,13 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         bm.sendBroadcast(intent)
     }
 
+    private fun broadcastAlarmCommand(command: String) {
+        val intent = Intent(BROADCAST_ALARM_COMMAND)
+        intent.putExtra(EXTRA_ALARM_COMMAND, command)
+        val bm = LocalBroadcastManager.getInstance(applicationContext)
+        bm.sendBroadcast(intent)
+    }
+
     private fun sendTriggerEvent(delay: Int) {
         val intent = Intent(BROADCAST_TRIGGER_EVENT)
         intent.putExtra(EXTRA_DELAY_TIME, delay)
@@ -1080,6 +1087,9 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 var alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE).orEmpty().toIntOrNull()
                 if (alarmCode == null) alarmCode = 0
                 publishAlarm(alarmMode, alarmCode)
+                if(mqttOptions.useRemoteCode.not()) {
+                    broadcastAlarmCommand(alarmMode)
+                }
             } else if (BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
                 val mode = intent.getStringExtra(BROADCAST_EVENT_PUBLISH_PANIC).orEmpty()
                 var alarmCode = 0
@@ -1264,6 +1274,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         const val BROADCAST_SERVICE_STARTED = "BROADCAST_SERVICE_STARTED"
         const val BROADCAST_DASHBOARD = "BROADCAST_ACTION_LOAD_URL"
         const val EXTRA_DELAY_TIME = "EXTRA_DELAY_TIME"
+        const val EXTRA_ALARM_COMMAND = "EXTRA_ALARM_COMMAND"
         const val EXTRA_STATE = "EXTRA_STATE"
     }
 }
