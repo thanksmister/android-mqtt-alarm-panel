@@ -42,7 +42,6 @@ import com.thanksmister.iot.mqtt.alarmpanel.constants.CodeTypes
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_EVENT_PUBLISH_PANIC
 import com.thanksmister.iot.mqtt.alarmpanel.network.AlarmPanelService.Companion.BROADCAST_SNACK_MESSAGE
-import com.thanksmister.iot.mqtt.alarmpanel.network.MQTTOptions
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Weather
 import com.thanksmister.iot.mqtt.alarmpanel.ui.adapters.MainSlidePagerAdapter
 import com.thanksmister.iot.mqtt.alarmpanel.ui.fragments.*
@@ -764,7 +763,7 @@ class MainActivity : BaseActivity(),
             dots[i].setImageDrawable(drawable)
         }
         if(idx == 0) {
-            //settingsContainer.visibility = View.VISIBLE
+            settingsContainer.visibility = View.VISIBLE
             buttonSettings.visibility = View.VISIBLE
             if (configuration.hasScreenSaver()) {
                 buttonSleep.visibility = View.VISIBLE
@@ -779,10 +778,10 @@ class MainActivity : BaseActivity(),
             buttonRefresh.visibility = View.GONE
             platformButton.visibility = View.GONE
         } else {
-            if(configuration.platformBar.not()) {
-               // settingsContainer.visibility = View.GONE
+            if(configuration.dashboardBar.not()) {
+                settingsContainer.visibility = View.GONE
             } else {
-                //settingsContainer.visibility = View.VISIBLE
+                settingsContainer.visibility = View.VISIBLE
                 buttonSleep.visibility = View.GONE
                 alertButton.visibility = View.GONE
                 buttonRefresh.visibility = View.VISIBLE

@@ -120,7 +120,7 @@ class SettingsActivity : DaggerAppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-        inactivityHandler.postDelayed(inactivityCallback, 60000)
+        inactivityHandler.postDelayed(inactivityCallback, 180000)
     }
 
     override fun onDestroy() {
@@ -131,7 +131,7 @@ class SettingsActivity : DaggerAppCompatActivity(){
 
     override fun onUserInteraction() {
         inactivityHandler.removeCallbacks(inactivityCallback)
-        inactivityHandler.postDelayed(inactivityCallback, 60000)
+        inactivityHandler.postDelayed(inactivityCallback, 180000)
     }
 
     private fun logs() {

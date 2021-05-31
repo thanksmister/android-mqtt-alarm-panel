@@ -232,7 +232,7 @@ class ControlsFragment : BaseFragment() {
                                 setArmedMode(payload, delay)
                             }
                             STATE_ARMING -> {
-                                if (configuration.isAlarmArming().not()) {
+                                if (configuration.isAlarmArming().not() && configuration.isAlarmArmedMode().not()) {
                                     setArmingMode(payload, delay)
                                 }
                             }
@@ -240,13 +240,8 @@ class ControlsFragment : BaseFragment() {
                             STATE_ARM_NIGHT,
                             STATE_ARM_HOME,
                             STATE_DISARM,
-                            STATE_ARM_AWAY,
-                            COMMAND_ARM_CUSTOM_BYPASS,
-                            COMMAND_ARM_HOME,
-                            COMMAND_ARM_NIGHT,
-                            COMMAND_ARM_AWAY,
-                            COMMAND_DISARM -> {
-                                if (configuration.isAlarmArmedMode().not()) {
+                            STATE_ARM_AWAY -> {
+                                if (configuration.isAlarmArmedMode().not() && configuration.isAlarmArming().not()) {
                                     setArmingMode(payload, delay)
                                 }
                             }

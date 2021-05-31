@@ -48,6 +48,12 @@
             android:title="@string/preference_title_sun"
             android:textSize="12sp"/>
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_settings_inactivity_timer"
+            android:title="Enable switch screens on inactivity"
+            android:summary="When active, screen will switch to alarm screen on user inactivity."/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title_screen_brightness">
@@ -104,11 +110,6 @@
             android:summary="When active, uses unsplash.it to get random wallpapers"
             android:key="pref_screensaver_wallpaper" />
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="pref_settings_inactivity_timer"
-            android:title="Enable switch screens on inactivity"
-            android:summary="When active, screen will switch to alarm screen on user inactivity."/>
 
         <EditTextPreference
             android:key="pref_settings_image_rotation"

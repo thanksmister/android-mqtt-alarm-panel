@@ -33,7 +33,7 @@
             android:summary="Add, edit, and remove dashboards."
             android:title="Manage Dashboards" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="pref_platform_bar"
             android:summary="@string/pref_description_show_platform_bar"

@@ -267,7 +267,7 @@
     <string name="toast_screen_timeout">Screen timed out…</string>
     <string name="button_hide_text">Hide</string>
     <string name="pref_title_platform_bar">Show Bottom Bar</string>
-    <string name="pref_description_show_platform_bar">When checked, displays a bottom navigation buttons on the platform screen.</string>
+    <string name="pref_description_show_platform_bar">When checked, displays a bottom navigation buttons on the dashboard screen.</string>
     <string name="pref_telegram_title">Telegram</string>
     <string name="pref_telegram_chat_id_summary">Enter your Telegram bot chat id.</string>
     <string name="pref_telegram_token_summary">Enter your Telegram bot API token.</string>

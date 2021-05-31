@@ -20,14 +20,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import androidx.preference.*
 import com.thanksmister.iot.mqtt.alarmpanel.R
 import com.thanksmister.iot.mqtt.alarmpanel.persistence.Configuration
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.DashboardsActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.LiveCameraActivity
-import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SensorsActivity
 import com.thanksmister.iot.mqtt.alarmpanel.ui.activities.SettingsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -37,10 +34,12 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     @Inject lateinit var configuration: Configuration
 
     private var browserHeaderPreference: EditTextPreference? = null
-    private var platformBarPreference: CheckBoxPreference? = null
-
     private val manageDashboardsPreference: Preference by lazy {
         findPreference("button_dashboards") as Preference
+    }
+
+    private val platformBarPreference: SwitchPreference by lazy {
+        findPreference("pref_platform_bar") as SwitchPreference
     }
 
     override fun onAttach(context: Context) {
@@ -78,9 +77,9 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-        platformBarPreference = findPreference("pref_platform_bar") as CheckBoxPreference
+
         browserHeaderPreference = findPreference(getString(R.string.key_setting_browser_user_agent)) as EditTextPreference
-        platformBarPreference?.isChecked = configuration.platformBar
+        platformBarPreference.isChecked = configuration.dashboardBar
 
         manageDashboardsPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             startDashboardsActivity(it.context)
@@ -95,8 +94,7 @@ class PlatformSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.O
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             "pref_platform_bar" -> {
-                val checked = platformBarPreference!!.isChecked
-                configuration.platformBar = checked
+                configuration.dashboardBar = platformBarPreference.isChecked
             }
             getString(R.string.key_setting_browser_user_agent) -> {
                 val value = browserHeaderPreference!!.text

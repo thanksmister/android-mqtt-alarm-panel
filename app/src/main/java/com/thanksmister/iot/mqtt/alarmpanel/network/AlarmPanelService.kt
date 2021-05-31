@@ -428,12 +428,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 STATE_ARM_NIGHT,
                 STATE_ARM_AWAY,
                 STATE_ARM_HOME,
-                STATE_DISARM,
-                COMMAND_ARM_CUSTOM_BYPASS,
-                COMMAND_ARM_NIGHT,
-                COMMAND_ARM_AWAY,
-                COMMAND_DISARM,
-                COMMAND_ARM_HOME -> {
+                STATE_DISARM -> {
                     insertMessage(id, topic, payload, TYPE_ALARM, delay)
                 }
                 STATE_TRIGGERED -> {
@@ -479,9 +474,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
      * Publish command with default payload.
      */
     private fun publishCommand(command: String, message: String) {
-        mqttModule?.let {
-            it.publishCommand(command, message)
-        }
+        mqttModule?.publishCommand(command, message)
     }
 
     /**
@@ -701,16 +694,15 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                             sendAlertMessage(getString(R.string.error_arm_failed))
                             insertMessage(id, topic, event, TYPE_EVENT)
                         }
+                        // TODO hack for events from alarmo with no delay values, they should be ignored and only use alarm state
                         STATE_ARM_HOME,
                         STATE_ARM_AWAY,
                         STATE_ARM_NIGHT,
-                        STATE_ARM_CUSTOM_BYPASS,
-                        COMMAND_ARM_HOME,
-                        COMMAND_ARM_AWAY,
-                        COMMAND_ARM_NIGHT,
-                        COMMAND_ARM_CUSTOM_BYPASS -> {
+                        STATE_ARM_CUSTOM_BYPASS -> {
                             val delay = MqttUtils.parseDelayFromJson(payload)
-                            insertMessage(id, topic, event, TYPE_ALARM, delay)
+                            if(delay > 0) {
+                                insertMessage(id, topic, event, TYPE_ALARM, delay)
+                            }
                         }
                         // TODO this is a hack for alarmo because does not append delay time to pending
                         EVENT_TRIGGER -> {

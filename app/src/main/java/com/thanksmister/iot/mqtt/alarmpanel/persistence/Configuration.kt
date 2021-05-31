@@ -89,11 +89,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         return (alarmMode == MqttUtils.STATE_ARM_HOME
                 || alarmMode == MqttUtils.STATE_ARM_CUSTOM_BYPASS
                 || alarmMode == MqttUtils.STATE_ARM_NIGHT
-                || alarmMode == MqttUtils.STATE_ARM_AWAY
-                || alarmMode == MqttUtils.COMMAND_ARM_HOME
-                || alarmMode == MqttUtils.COMMAND_ARM_CUSTOM_BYPASS
-                || alarmMode == MqttUtils.COMMAND_ARM_NIGHT
-                || alarmMode == MqttUtils.COMMAND_ARM_AWAY)
+                || alarmMode == MqttUtils.STATE_ARM_AWAY)
     }
 
     fun isAlarmDisarmedMode(): Boolean {
@@ -160,7 +156,7 @@ constructor(private val context: Context, private val sharedPreferences: SharedP
         get() = sharedPreferences.getBoolean(PREF_HARDWARE_ACCELERATION, false)
         set(value) = sharedPreferences.edit().putBoolean(PREF_HARDWARE_ACCELERATION, value).apply()
 
-    var platformBar: Boolean
+    var dashboardBar: Boolean
         get() = this.sharedPreferences.getBoolean(PREF_PLATFORM_BAR, true)
         set(value) = this.sharedPreferences.edit().putBoolean(PREF_PLATFORM_BAR, value).apply()
 
