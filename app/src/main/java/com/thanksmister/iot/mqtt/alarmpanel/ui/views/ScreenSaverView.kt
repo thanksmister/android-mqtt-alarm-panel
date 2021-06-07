@@ -272,17 +272,17 @@ class ScreenSaverView : RelativeLayout {
         this.callOnClick()
     }
 
-    private fun startWebScreenSaver(url: String) {
-        Timber.d("startWebScreenSaver $url")
-        loadWebPage(url)
-    }
-
     private fun startImageScreenSavor() {
         Picasso.get()
                 .load(String.format(UNSPLASH_IT_URL, screenSaverView.width, screenSaverView.height))
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .into(screenSaverImage)
+    }
+
+    private fun startWebScreenSaver(url: String) {
+        Timber.d("startWebScreenSaver $url")
+        loadWebPage(url)
     }
 
     private fun loadWebPage(url: String) {

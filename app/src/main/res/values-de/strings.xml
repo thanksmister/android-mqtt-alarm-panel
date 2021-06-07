@@ -380,7 +380,7 @@
     <string name="pref_title_alarm_modes_sensors">Advanced Settings</string>
     <string name="text_arm">ARM</string>
     <string name="text_arm_night">NIGHT</string>
-    <string name="text_armed_custom_bypass">ARMED CUSTOM BYPASS</string>
+    <string name="text_armed_custom_bypass">CUSTOM BYPASS</string>
     <string name="text_arm_custom">CUSTOM</string>
     <string name="text_arm_custom_bypass">BYPASS</string>
     <string name="preference_title_event_topic">Alarm Event Topic</string>

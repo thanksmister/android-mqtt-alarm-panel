@@ -202,7 +202,8 @@ class ControlsFragment : BaseFragment() {
                     items.forEach { sensor ->
                         if (sensor.notify && sensor.payloadActive == sensor.payload) {
                             playNotificationSound()
-                        } else if (sensor.alarmMode && sensor.payloadActive == sensor.payload) {
+                        }
+                        if (sensor.alarmMode && sensor.payloadActive == sensor.payload) {
                             sensorActiveMap.put(sensor.uid.toString(), sensor)
                         } else if (sensor.alarmMode && sensor.payloadActive != sensor.payload) {
                             sensorActiveMap.remove(sensor.uid.toString())
@@ -345,24 +346,19 @@ class ControlsFragment : BaseFragment() {
         }
     }
 
-    // TODO show the disarm dialog?
     private fun setEntryMode(state: String) {
         alarmText.text = getString(R.string.text_alarm_entry)
         playContinuousAlarm()
         when (configuration.alarmMode) {
-            COMMAND_ARM_HOME,
             STATE_ARMED_HOME -> {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_yellow_alpha))
             }
-            COMMAND_ARM_AWAY,
             STATE_ARMED_AWAY -> {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_red_alpha))
             }
-            COMMAND_ARM_NIGHT,
             STATE_ARMED_NIGHT -> {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_black_alpha))
             }
-            COMMAND_ARM_CUSTOM_BYPASS,
             STATE_ARMED_CUSTOM_BYPASS -> {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_blue_alpha))
             }
@@ -370,7 +366,7 @@ class ControlsFragment : BaseFragment() {
                 alarmStateLayout.setBackgroundDrawable(resources.getDrawable(R.drawable.button_round_gray_alpha))
             }
         }
-        //viewModel.setAlarmMode(state)
+        viewModel.setAlarmMode(state)
     }
 
     private fun setDisarmingMode(state: String) {

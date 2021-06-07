@@ -419,6 +419,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     }
                     insertMessage(id, topic, payload, TYPE_ALARM, delay)
                 }
+                MqttUtils.STATE_ARMED_CUSTOM_BYPASS,
                 MqttUtils.STATE_ARMED_AWAY,
                 MqttUtils.STATE_ARMED_NIGHT,
                 MqttUtils.STATE_ARMED_HOME -> {
@@ -432,7 +433,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                     insertMessage(id, topic, payload, TYPE_ALARM, delay)
                 }
                 STATE_TRIGGERED -> {
-                    if (configuration.alarmMode == MqttUtils.STATE_TRIGGERED && configuration.hasSystemAlerts()) {
+                    if (configuration.alarmMode == STATE_TRIGGERED && configuration.hasSystemAlerts()) {
                         notifications.createAlarmNotification(getString(R.string.text_notification_trigger_title), getString(R.string.text_notification_trigger_description))
                     }
                     insertMessage(id, topic, payload, TYPE_ALARM, delay)
@@ -707,7 +708,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                         // TODO this is a hack for alarmo because does not append delay time to pending
                         EVENT_TRIGGER -> {
                             val delay = MqttUtils.parseDelayFromJson(payload)
-                            insertMessage(id, topic, event, TYPE_EVENT)
+                            insertMessage(id, STATE_PENDING, event, TYPE_EVENT)
                             sendTriggerEvent(delay)
                         }
                     }

@@ -278,7 +278,9 @@ class MainActivity : BaseActivity(),
                             MqttUtils.STATE_ARMED_NIGHT,
                             MqttUtils.STATE_ARMED_AWAY,
                             MqttUtils.STATE_ARMED_HOME -> {
-                                dismissBottomSheets()
+                                if(configuration.isAlarmPending().not() && configuration.isAlarmArmedMode().not()) {
+                                    dismissBottomSheets()
+                                }
                             }
                             MqttUtils.STATE_TRIGGERED -> {
                                 awakenDeviceForAction() // 3 hours
@@ -288,14 +290,14 @@ class MainActivity : BaseActivity(),
                             }
                             MqttUtils.STATE_PENDING -> {
                                 val pendingTime = getPendingTime(payload, delay)
-                                val isArming = configuration.isAlarmArming()
-                                val alarmMode = configuration.alarmMode
-                                if(configuration.isAlarmArming().not()) {
+                                if(configuration.isAlarmArming().not() && configuration.isAlarmArmedMode() && configuration.isAlarmPending().not()) {
                                     showCodeDialog(CodeTypes.DISARM, pendingTime)
                                 }
                             }
                             MqttUtils.STATE_ARMING -> {
-                                dismissBottomSheets()
+                                if(configuration.isAlarmArmedMode().not()) {
+                                    dismissBottomSheets()
+                                }
                             }
                         }
                     }
@@ -543,7 +545,6 @@ class MainActivity : BaseActivity(),
             }
         }
         if(codeBottomSheet == null || codeBottomSheet?.isAdded == false) {
-            Timber.d("isAlarmArmedMode 4 codeBottomSheet")
             codeBottomSheet = CodeBottomSheetFragment.newInstance(configuration.alarmCode.toString(), delay, codeType,
                     object : CodeBottomSheetFragment.OnAlarmCodeFragmentListener {
                         override fun onComplete(code: String) {
@@ -731,9 +732,12 @@ class MainActivity : BaseActivity(),
                 val delay = intent.getIntExtra(AlarmPanelService.EXTRA_DELAY_TIME, -1)
                 val state = intent.getStringExtra(AlarmPanelService.EXTRA_STATE).orEmpty()
                 val pendingTime = getPendingTime(state, delay)
-                awakenDeviceForAction()
-                resetInactivityTimer()
-                showCodeDialog(CodeTypes.DISARM, pendingTime)
+                if(configuration.isAlarmPending().not()) {
+                    awakenDeviceForAction()
+                    resetInactivityTimer()
+                    dismissBottomSheets()
+                    showCodeDialog(CodeTypes.DISARM, pendingTime)
+                }
             }
         }
     }
