@@ -75,6 +75,7 @@ Alarm Panel should work with any MQTT broker and does not require Home Assistant
 - Add the [MQTT Manual](https://home-assistant.io/components/alarm_control_panel.manual_mqtt/) Home Assistant component to your configuration with the default settings.
 - Add any sensors (like Zwave door sensors or sirens) and configure automations to trigger the alarm.
 
+
 ### Example Home Assistant Manual MQTT component:
 
 ```
@@ -98,6 +99,13 @@ alarm_control_panel:
 -- Notice that my trigger_time is 1800 and disarm_after_trigger is false, this means the alarm runs for 1800 seconds, until it stops and it doesn't reset after it is triggered. 
 
 -- Be sure to change the settings in the Alarm Control Panel application to match these settings. By default the pending_time and delay_time are used for all alarm modes, unless otherwise changed.
+
+### Home Assistant Alarmo Integration
+
+Alarm Panel supports the [Alarmo](https://github.com/nielsfaber/alarmo) integration used with Home Assistant.  This integration allows arming and unarming with codes, as well as additional alarm modes such as Night and Custom-Bypass.  Alarmo communicates with Alarm Panel using MQTT.  For MQTT setup, use the following in Alarmo settings to match the MQTT topics in Alarm Panel:
+
+<img width="661" alt="alarmo_mqtt_setup" src="https://user-images.githubusercontent.com/142340/121052871-2af7cb80-c791-11eb-9f20-34cf1a2f27b6.png">
+
 
 ## MQTT Alarm Setup
 
