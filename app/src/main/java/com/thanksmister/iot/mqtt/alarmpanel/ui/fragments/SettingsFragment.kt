@@ -19,6 +19,7 @@ package com.thanksmister.iot.mqtt.alarmpanel.ui.fragments
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -102,6 +103,10 @@ class SettingsFragment : BaseSettingsFragment() {
         findPreference("key_require_code_arm") as SwitchPreference
     }
 
+    private val resetHomeApp: Preference by lazy {
+        findPreference("button_reset_home_app") as Preference
+    }
+
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -168,6 +173,10 @@ class SettingsFragment : BaseSettingsFragment() {
             view.let { Navigation.findNavController(it).navigate(R.id.sensors_action) }
             false
         }
+        resetHomeApp.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            resetHomeApp()
+            true
+        }
 
         themePreference.isChecked = configuration.useDarkTheme
         panicPreference.isChecked = configuration.panicButton
@@ -179,6 +188,12 @@ class SettingsFragment : BaseSettingsFragment() {
 
         requireCodeToDisarmPreference.isChecked = mqttOptions.requireCodeForDisarming
         requireCodeToArmPreference.isChecked = mqttOptions.requireCodeForArming
+    }
+
+    private fun resetHomeApp() {
+        val pm: PackageManager = requireActivity().packageManager
+        pm.clearPackagePreferredActivities(requireActivity().packageName)
+        requireActivity().recreate()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

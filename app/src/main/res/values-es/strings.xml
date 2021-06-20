@@ -97,7 +97,7 @@
     <string name="preference_title_image_rotation">Intervalo de la rotación de imágenes</string>
     <string name="preference_summary_image_rotation">Tiempo en minutos para la actualización de las imágenes. Actualmete es de %1$s.</string>
 
-    <string name="preference_title_web_settings">HASS</string>
+    <string name="preference_title_web_settings">Dashboards</string>
     <string name="preference_summary_web_settings">Te permite introducir una dirección para el acceso a tu sistema de domótica.</string>
     <string name="preference_title_web">Página para el sistema de domótica</string>
     <string name="preference_summary_web">Visualiza la página de tu sistema de domótica deslizando la pantalla principal.</string>
@@ -450,6 +450,16 @@
     <string name="pref_bypass_pending_title">Custom Bypass Pending Time</string>
     <string name="pref_bypass_delay_title">Custom Bypass Delay Time</string>
     <string name="pref_bypass_pending_summary">The time in seconds to disarm the alarm before the alarm is triggered. Currently %1$s seconds.</string>
+    <string name="pref_panic_button_title">Panic Button</string>
+    <string name="pref_panic_button_description">Displays a panic button on the main screen that when pressed sends a panic alert message.</string>
+    <string name="pref_require_disarming_code_title">Require Disarming Code</string>
+    <string name="pref_require_disarming_code_description">Require the the code to disarm the alarm.</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_theme_description">Use Dark theme (overrides Sun settings)</string>
+    <string name="pref_clear_home_title">Clear Home Screen</string>
+    <string name="pref_clear_home_description">Removes the app as the default Home screen (Important!! use this is you want to reset your device home app).</string>
+    <string name="pref_advanced_settings_description">Additional alarm settings.</string>
+    <string name="pref_notification_settings_title">Notification Settings</string>
 
     <string-array name="inactivity_times">
         <item>15 segundos</item>
