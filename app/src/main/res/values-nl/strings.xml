@@ -456,7 +456,7 @@
     <string name="pref_theme_title">Theme</string>
     <string name="pref_theme_description">Use Dark theme (overrides Sun settings)</string>
     <string name="pref_clear_home_title">Clear Home Screen</string>
-    <string name="pref_clear_home_description">Removes the app as the default Home screen (Important!! use this is you want to reset your device home app).</string>
+    <string name="pref_clear_home_description">Removes the app as the default Home screen (Important!! use this if you want to reset your device home app).</string>
     <string name="pref_advanced_settings_description">Additional alarm settings.</string>
     <string name="pref_notification_settings_title">Notification Settings</string>
 
