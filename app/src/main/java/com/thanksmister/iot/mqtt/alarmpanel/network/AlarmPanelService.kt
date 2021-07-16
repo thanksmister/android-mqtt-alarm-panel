@@ -455,7 +455,7 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
         }
     }
 
-    private fun publishAlarm(action: String, code: Int) {
+    private fun publishAlarm(action: String, code: String) {
         mqttModule?.let {
             it.publishAlarm(action, code)
             if (action == COMMAND_DISARM) {
@@ -1079,17 +1079,17 @@ class AlarmPanelService : LifecycleService(), MQTTModule.MQTTListener {
                 this@AlarmPanelService.publishCommand(COMMAND_STATE, getState(userPresence.get()).toString())
             } else if (BROADCAST_EVENT_ALARM_MODE == intent.action) {
                 val alarmMode = intent.getStringExtra(BROADCAST_EVENT_ALARM_MODE).orEmpty()
-                var alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE).orEmpty().toIntOrNull()
-                if (alarmCode == null) alarmCode = 0
+                var alarmCode = intent.getStringExtra(BROADCAST_EVENT_ALARM_CODE).orEmpty()
+                if (alarmCode.isEmpty()) alarmCode = "0"
                 publishAlarm(alarmMode, alarmCode)
                 if(mqttOptions.useRemoteCode.not()) {
                     broadcastAlarmCommand(alarmMode)
                 }
             } else if (BROADCAST_EVENT_PUBLISH_PANIC == intent.action) {
                 val mode = intent.getStringExtra(BROADCAST_EVENT_PUBLISH_PANIC).orEmpty()
-                var alarmCode = 0
+                var alarmCode = "0"
                 if (mqttOptions.useRemoteCode) {
-                    alarmCode = -1
+                    alarmCode = "-1"
                 }
                 publishAlarm(mode, alarmCode)
             }

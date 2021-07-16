@@ -184,6 +184,20 @@ class ScreenSaverView : RelativeLayout {
             screenSaverClockSmall.setTextSize(TypedValue.COMPLEX_UNIT_PX, initialSmall + 60)
         }
 
+        if (useClockScreenSaver) { // use clock
+            screenSaverWebViewLayout.visibility = View.GONE
+            screenSaverImageLayout.visibility = View.GONE
+            screenSaverClockLayout.visibility = View.VISIBLE
+            if (!hasWeather) {
+                screenSaverWeatherLayout.visibility = View.GONE
+            } else {
+                setWeatherDataOnView()
+                screenSaverWeatherLayout.visibility = View.VISIBLE
+            }
+            timeHandler = Handler()
+            timeHandler?.postDelayed(timeRunnable, 10)
+        }
+
         if (useUnsplashScreenSaver) {
             screenSaverImageLayout.visibility = View.VISIBLE
             screenSaverWebViewLayout.visibility = View.GONE
@@ -198,6 +212,7 @@ class ScreenSaverView : RelativeLayout {
             }
             rotationHandler = Handler()
             rotationHandler?.postDelayed(delayRotationRunnable, 10)
+
         } else if (useWebScreenSaver && webUrl.isNotEmpty()) {
             screenSaverWebViewLayout.visibility = View.VISIBLE
             screenSaverImageLayout.visibility = View.GONE
@@ -209,19 +224,8 @@ class ScreenSaverView : RelativeLayout {
                 timeHandler = Handler()
                 timeHandler?.postDelayed(timeRunnable, 10)
             }
+
             startWebScreenSaver(webUrl)
-        } else if (useClockScreenSaver) { // use clock
-            screenSaverWebViewLayout.visibility = View.GONE
-            screenSaverImageLayout.visibility = View.GONE
-            screenSaverClockLayout.visibility = View.VISIBLE
-            if (!hasWeather) {
-                screenSaverWeatherLayout.visibility = View.GONE
-            } else {
-                setWeatherDataOnView()
-                screenSaverWeatherLayout.visibility = View.VISIBLE
-            }
-            timeHandler = Handler()
-            timeHandler?.postDelayed(timeRunnable, 10)
         }
     }
 

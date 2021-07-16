@@ -85,7 +85,7 @@ class MQTTService(private var context: Context,
         disposable.dispose()
     }
 
-    override fun publishAlarm(command: String, code: Int) {
+    override fun publishAlarm(command: String, code: String) {
         try {
             if (mReady.get()) {
                 mqttClient?.let {
@@ -95,29 +95,23 @@ class MQTTService(private var context: Context,
                         try {
                             initializeMqttClient()
                         } catch (e: MqttException) {
-                            if (listener != null) {
-                                listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
-                            }
+                            listener?.handleMqttException("Could not initialize MQTT: " + e.message)
                         } catch (e: IOException) {
-                            if (listener != null) {
-                                listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
-                            }
+                            listener?.handleMqttException("Could not initialize MQTT: " + e.message)
                         } catch (e: GeneralSecurityException) {
-                            if (listener != null) {
-                                listener!!.handleMqttException("Could not initialize MQTT: " + e.message)
-                            }
+                            listener?.handleMqttException("Could not initialize MQTT: " + e.message)
                         }
                     }
                 }
                 mqttOptions?.let {
                     val mqttMessage = MqttMessage()
                     var payloadString = command
-                    if(it.useRemoteCode && code != 0) {
+                    if(it.useRemoteCode && code != "0") {
                         val payloadJson = JSONObject()
                         payloadJson.put(MqttUtils.COMMAND, command)
-                        if (code > 0) {
-                            payloadJson.put(MqttUtils.CODE, code.toString())
-                        } else if (command == MqttUtils.COMMAND_PANIC && code < 0) {
+                        if (code != "-1" && code != "0") {
+                            payloadJson.put(MqttUtils.CODE, code)
+                        } else if (command == MqttUtils.COMMAND_PANIC && code == "-1") {
                             payloadJson.put(MqttUtils.CODE, "")
                         }
                         payloadString = payloadJson.toString()

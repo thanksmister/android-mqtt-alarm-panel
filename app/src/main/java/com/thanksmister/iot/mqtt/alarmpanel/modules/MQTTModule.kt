@@ -82,7 +82,7 @@ class MQTTModule (base: Context?,
         stop()
     }
 
-    fun publishAlarm(action : String, code: Int) {
+    fun publishAlarm(action : String, code: String) {
         Timber.d("action: $action")
         Timber.d("code: $code")
         mqttService?.publishAlarm(action, code)
