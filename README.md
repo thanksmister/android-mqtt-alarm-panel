@@ -116,7 +116,10 @@ Under the settings (gear icon) enter the MQTT information, that you configured i
 
 #### Note about MQTT: 
 
-Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker. This may mean that features, that depend on MQTT such as weather, sun and the alarm state, may initially be in their default or disabled states until data is received.   Android applications depend upon the Android Paho project from Github.  This library seems to be out of date and may not function correctly on devices running Android 9 or higher.  There is no other library compatible with Android to manage MQTT connections. 
+Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker. This may mean that features, that depend on MQTT such as weather, sun and the alarm state, may initially be in their default or disabled states until data is received. 
+
+Android applications depend upon the [Android Paho](https://github.com/eclipse/paho.mqtt.android)project from Github.  This open source project seems to be out of date and those running Android 9 or higher may experience crashes or disconnectivity.  There is no other library compatible with Android to manage MQTT connections at this time.  In encourage you to help update this project if possible since it provides a valuable way for Android applications to communicate with MQTT servers.
+
 
 #### Supported States and State Topic
 
