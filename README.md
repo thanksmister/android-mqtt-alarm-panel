@@ -60,13 +60,14 @@ Here are some key features of the application:
 
 You can also load multiple home automation platform webpages. Each page will slide from the right on the main screen to expose additional home automation controls. 
 
-#### Platform
+#### Dashboard
 ![platform](https://user-images.githubusercontent.com/142340/118822433-89b2df00-b88e-11eb-9a49-51a0be27ac3f.png)
 
 
 ## Installation
 
 You can clone the repository and compile the APK using Android Studio, then side load the APK file onto your device. You can also side load the built APK from the [release section](https://github.com/thanksmister/android-mqtt-alarm-panel/releases) or just install the application from the [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
+
 
 ## Home Assistant Setup
 
@@ -115,7 +116,7 @@ Under the settings (gear icon) enter the MQTT information, that you configured i
 
 #### Note about MQTT: 
 
-Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker. This may mean that features, that depend on MQTT such as weather, sun and the alarm state, may initially be in their default or disabled states until data is received.   
+Depending on your MQTT broker, after you setup mqtt, you may not receive the "initial" state or message from the broker. This may mean that features, that depend on MQTT such as weather, sun and the alarm state, may initially be in their default or disabled states until data is received.   Android applications depend upon the Android Paho project from Github.  This library seems to be out of date and may not function correctly on devices running Android 9 or higher.  There is no other library compatible with Android to manage MQTT connections. 
 
 #### Supported States and State Topic
 
@@ -567,9 +568,13 @@ The camera only captures images, when activated in the settings and MailGun is s
 
 Since the application was designed to run as a full-screen dedicated wall panel application, it is important that you have a screensaver enabled. You can use Android's built-in DayDream, which does a nice job dimming the screen. However, on some devices like the Fire OS tablets, this is not an option. Instead, activate the screensaver feature under the `Display Settings` section. The default screen saver will display the current time, and if you are sending weather data, the current weather conditions. You can change this to display a webpage of your choosing, even with animation or you can display one from Unsplash. Performance may vary depending on your device. 
 
-## Platform Screen or Webpage View
+## Dashboard or Webpage View
 
 You can load your Home Assistant (or any web page) as alternative view by entering your Home Assistant address. The address should be in the format http://192.168.1.1:8123 and include the port number. You can use HADashboard or Home Assistant kiosk mode as well. This feature uses an Android web view component and may not work on older SDK versions. 
+
+### Note Dashboard Issues
+
+Rendering issues with the webpage you are trying to view.  Android applications use a component to render webpages, it's called the WebView component.   WebView is not the same as Google Chrome app, it does not render the pages the same.  The biggest issue is that your version of WebView is not capable of rendering the webpage you are trying to view.   The only way possible to fix this issue is to update the WebView component (from Google Play Store), use a different webpage, or update your device OS. 
 
 ## MJPEG Video Streaming
 
