@@ -4,13 +4,15 @@ This project is a MQTT Alarm Control Panel and has originally been created for u
 
 ## Support
 
-For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. You can also join my [Discord](https://discord.com/invite/euh9J2d) channel to ask questions or get support. 
+For issues, feature requests, comments or questions, use the [Github issues tracker](https://github.com/thanksmister/android-mqtt-alarm-panel/issues). For HASS specific questions, you can join the [Home Assistant Community Discussion](https://community.home-assistant.io/t/mqtt-alarm-control-panel-for-raspberry-pi-and-android/26484/94) page, which already has a lot information from the community. 
 
 ***MQTT Alarm Panel does not support Android versions prior to Android 4.4***
 
 - [Alarm Panel Video](https://youtu.be/xspCZoRIBNQ).
 - [Google Play Store](https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel). 
 - [Android Things and Raspbery Pi 3](https://github.com/thanksmister/androidthings-mqtt-alarm-panel) (Deprecated).   
+
+<a href='https://play.google.com/store/apps/details?id=com.thanksmister.iot.mqtt.alarmpanel&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width='240'/></a>
 
 ## Features
 
