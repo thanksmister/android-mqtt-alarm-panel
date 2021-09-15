@@ -301,7 +301,7 @@ The code will be blank as it is not required.
 
 The Alarm Panel application can display and control components using the MQTT protocol. Alarm Panel and Home Assistant work together to control the Home Assistant Alarm Control Panel, display weather data, receive sensor data, control the application Day or Night mode and send various remote commands to the application.
 
-You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speach. Each device required a unique base topic which you set in the MQTT settings, the default is `alarmpanel`.  This distinguishes your device, if you are running multiple devices. 
+You can also interact and control the application and device remotely using either MQTT commands, including using your device as an announcer with Google Text-To-Speech. Each device requires a unique base topic which you set in the MQTT settings, the default is `alarmpanel`.  This distinguishes your device, if you are running multiple devices. 
 
 
 ### MQTT Weather
@@ -440,8 +440,8 @@ sun | data | ```{"sun": "above_horizon"}``` | Changes the application day or nig
     * Default Topic: ```alarmpanel/command```
   * Publish a JSON payload to this topic (be mindful of quotes in JSON should be single quotes not double)
 
-### Google Text-To-Speach Command
-You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speach. Note, that the device must be running Android Lollipop or above. 
+### Google Text-To-Speech Command
+You can send a command using either HTTP or MQTT to have the device speak a message using Google's Text-To-Speech. Note, that the device must be running Android Lollipop or above. 
 
 Example format for the message topic and payload: 
 
@@ -602,7 +602,7 @@ camera:
 
 ## Acknowledgements
 
-Special thanks to Colin O'Dell who's work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) help to make this project possible. Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations, [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese, [electricJP](https://github.com/electricJP) and [jncanches](https://github.com/jncanches) for French translations.
+Special thanks to Colin O'Dell whose work on the Home Assistant Manual Alarm Control Panel component and his [MQTT Alarm Panel](https://github.com/colinodell/mqtt-control-panel) help to make this project possible. Thanks to [Juan Manuel Vioque](https://github.com/tremebundo) for Spanish translations and [Gerben Bol](https://gerbenbol.com/) for Dutch translations, [Jorge Assunção](https://github.com/jorgeassuncao) for Portuguese, [electricJP](https://github.com/electricJP) and [jncanches](https://github.com/jncanches) for French translations.
 
 ## Contributors
 [Sergio Viudes](https://github.com/sjvc) for Fingerprint unlock support and his [Home-Assistant-WebView](https://github.com/sjvc/Home-Assistant-WebView) component.
