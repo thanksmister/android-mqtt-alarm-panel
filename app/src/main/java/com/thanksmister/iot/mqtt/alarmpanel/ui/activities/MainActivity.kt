@@ -651,9 +651,10 @@ class MainActivity : BaseActivity(),
      */
     private fun awakenDeviceForAction() {
         Timber.d("awakenDeviceForAction")
-        if (pagerAdapter.itemCount > 0) {
-            pagerView.currentItem = 0
-        }
+        // disazbled to allow mqtt dashboard command working
+        // if (pagerAdapter.itemCount > 0) {
+        //    pagerView.currentItem = 0
+        // }
     }
 
     /**
